@@ -211,16 +211,6 @@ ul {
   margin-top: 5px;
 }
 
-.welcome-message {
-  /* Sebelumnya .selamat-datang-di-sistem-pengelolaan-laboratorium */
-  color: #065ba6;
-  font-family: "Poppins-Regular", sans-serif; /* Atau Poppins-SemiBold jika ingin lebih tebal */
-  font-size: 48px; /* Ukuran font sambutan diperkecil */
-  line-height: 1.2; /* Jarak antar baris lebih nyaman */
-  font-weight: 600; /* Dibuat lebih tebal */
-  flex-grow: 1; /* Dorong atoy ke bawah jika konten tidak banyak */
-}
-
 .atoy {
   width: 160px; /* Ukuran Atoy diperkecil */
   height: auto; /* Biarkan tinggi menyesuaikan */
