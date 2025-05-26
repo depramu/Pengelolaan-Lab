@@ -1,0 +1,233 @@
+html, body {
+  height: 100%;
+  overflow: hidden; /* cegah scroll */
+}
+
+/* Reset dasar bisa ditaruh di HTML style atau di sini jika vars.css tidak mengcover */
+body {
+  font-family: "Poppins-Regular", sans-serif; /* Set default font */
+  background: #f9fafc; /* Latar belakang utama halaman */
+  margin: 0;
+  padding: 0;
+}
+
+a,
+button,
+input,
+select,
+h1,
+h2,
+h3,
+h4,
+h5,
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-decoration: none;
+  background: none;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+menu,
+ol,
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-pic {
+  padding: 20px; /* Jarak dari tepi halaman */
+  height: 100vh; /* fix penuh layar */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+}
+
+
+/* 1. HEADER SECTION (Logo & User Icons) */
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px; /* Jarak atas-bawah & kiri-kanan dalam header */
+  margin-bottom: 20px; /* Jarak dari header ke konten di bawahnya */
+  /* background: #ffffff; */ /* Jika ingin header punya background beda */
+  /* border-bottom: 1px solid #e0e0e0; */ /* Garis pemisah tipis */
+}
+
+.logo {
+  width: 220px; /* Ukuran logo diperkecil */
+  height: auto; /* Biarkan tinggi menyesuaikan agar proporsional */
+  object-fit: contain;
+}
+
+.user-profile-icons {
+  display: flex;
+  align-items: center;
+}
+
+.icon-notification,
+.icon-profile {
+  width: 32px; /* Ukuran ikon diperkecil */
+  height: 32px;
+  margin-left: 20px; /* Jarak antar ikon */
+  cursor: pointer;
+}
+
+/* 2. MAIN CONTENT WRAPPER (Sidebar & Content Area) */
+.main-content-wrapper {
+  flex: 1; /* isi ruang kosong setelah header */
+  display: flex;
+  gap: 20px;
+  overflow: hidden; /* cegah scroll internal */
+}
+/* Untuk menghindari scroll di dalam .main-content-wrapper */
+
+/* 3. SIDEBAR (.sidebar) */
+.sidebar {
+  background: #065ba6;
+  border-radius: 15px;
+  width: 280px; /* Lebar sidebar */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+.menu-item-wrapper {
+  margin-bottom: 15px; /* Jarak antar item menu utama */
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px; /* Padding di dalam link menu */
+  color: #ffffff;
+  font-size: 18px; /* Ukuran font menu */
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
+}
+.menu-link:hover,
+.menu-item-wrapper.active .main-menu-toggle {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding-left: 20px; /* Efek geser saat hover/active */
+}
+
+.menu-icon {
+  width: 24px; /* Ukuran ikon menu */
+  height: 24px;
+  margin-right: 15px; /* Jarak ikon ke teks */
+  object-fit: contain;
+}
+/* Khusus untuk ikon logout yang mungkin asalnya dari SVG <path> */
+.menu-icon[src*="vector3.svg"] {
+  width: 20px;
+  height: 20px;
+}
+
+.menu-text {
+  flex-grow: 1; /* Agar teks mengisi sisa ruang */
+  font-family: "Poppins-Regular", sans-serif;
+}
+.menu-item-wrapper a.menu-link .menu-text {
+  /* Khusus dashboard dan link biasa */
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-weight: 600;
+}
+.menu-item-wrapper.active .main-menu-toggle .menu-text {
+  /* Teks menu aktif */
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-weight: 600;
+}
+
+.arrow-icon {
+  width: 16px; /* Ukuran panah */
+  height: 16px;
+  margin-left: auto; /* Dorong panah ke kanan */
+  transition: transform 0.3s ease;
+  /* Default rotasi akan diatur oleh JS atau di bawah */
+}
+
+.submenu {
+  display: none; /* Sembunyikan submenu secara default */
+  list-style: none;
+  padding-left: 39px; /* Indentasi submenu (kira-kira sejajar ikon + margin) */
+  margin-top: 8px;
+}
+
+.submenu li a {
+  display: block;
+  padding: 8px 10px;
+  color: #e0e0e0; /* Warna submenu item sedikit redup */
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.submenu li a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Hilangkan styling lama yang berbasis absolut untuk elemen di .component-40 */
+/* Seperti .dashboard, .dashboard2, .manajemen-aset, .peminjaman, .ic-twotone-sync-alt, dst. */
+/* Ini karena kita sudah menggunakan struktur flexbox dan flow normal dalam .menu-item-wrapper */
+
+/* 4. CONTENT AREA (.content-area) */
+.content-area {
+  background: #ffffff;
+  border-radius: 15px;
+  flex-grow: 1; /* Agar mengisi sisa ruang di .main-content-wrapper */
+  padding: 30px 40px; /* Padding dalam area konten */
+  position: relative; /* Untuk positioning .atoy */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.greeting-header {
+  margin-left: -50%;
+}
+
+.hello {
+  color: #3a3a3a;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 28px; /* Ukuran font Hello diperkecil */
+  line-height: 1;
+}
+
+.pengguna {
+  color: #000000;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 18px; /* Ukuran font nama diperkecil */
+  line-height: 1;
+  margin-top: 5px;
+}
+
+.welcome-message {
+  /* Sebelumnya .selamat-datang-di-sistem-pengelolaan-laboratorium */
+  color: #065ba6;
+  font-family: "Poppins-Regular", sans-serif; /* Atau Poppins-SemiBold jika ingin lebih tebal */
+  font-size: 48px; /* Ukuran font sambutan diperkecil */
+  line-height: 1.2; /* Jarak antar baris lebih nyaman */
+  font-weight: 600; /* Dibuat lebih tebal */
+  flex-grow: 1; /* Dorong atoy ke bawah jika konten tidak banyak */
+}
+
+.atoy {
+  width: 160px; /* Ukuran Atoy diperkecil */
+  height: auto; /* Biarkan tinggi menyesuaikan */
+  object-fit: contain;
+  position: absolute; /* Positioning relatif ke .content-area */
+  right: 40px;
+  /* Hilangkan border jika tidak perlu */
+  /* border-style: solid;
+  border-color: #ffffff;
+  border-width: 1px; */
+}
