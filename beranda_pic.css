@@ -124,11 +124,14 @@ ul {
   margin-right: 15px; /* Jarak ikon ke teks */
   object-fit: contain;
 }
+
 /* Khusus untuk ikon logout yang mungkin asalnya dari SVG <path> */
 .menu-icon[src*="vector3.svg"] {
   width: 20px;
   height: 20px;
 }
+
+
 
 .menu-text {
   flex-grow: 1; /* Agar teks mengisi sisa ruang */
@@ -225,7 +228,7 @@ ul {
   height: auto; /* Biarkan tinggi menyesuaikan */
   object-fit: contain;
   position: absolute; /* Positioning relatif ke .content-area */
-  right: 40px;
+  right: 70px;
   /* Hilangkan border jika tidak perlu */
   /* border-style: solid;
   border-color: #ffffff;
