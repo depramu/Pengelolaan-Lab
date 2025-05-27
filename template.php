@@ -248,15 +248,18 @@
         <div class="pengguna">Nadira Anindita (PIC)</div>
       </div>
       <div class="user-profile-icons">
-        <img class="icon-notification" src="icon/bell.png" />
+        <a href="notif.php">
+          <img class="icon-notification" src="icon/bell.png" />
+        </a>
         <a href="profil.php">
-        <img class="icon-profile" src="icon/vector0.svg" />
+          <img class="icon-profile" src="icon/vector0.svg" />
 
         </a>
       </div>
     </div>
 
     <div class="main-content-wrapper">
+      <!-- SIDEBAR START -->
       <div class="sidebar">
         <div class="component-40">
           <div class="menu-item-wrapper">
@@ -317,6 +320,7 @@
           </div>
         </div>
       </div>
+      <!-- SIDEBAR END -->
 
       <!-- CONTENT AREA TEMPLATE -->
       <!-- ===================== -->
@@ -340,14 +344,14 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       const submenuToggles = document.querySelectorAll('.main-menu-toggle');
 
       submenuToggles.forEach(toggle => {
-        toggle.addEventListener('click', function () {
+        toggle.addEventListener('click', function() {
           // Toggle kelas 'active' pada parent (.menu-item-wrapper)
           this.parentElement.classList.toggle('active');
-          
+
           // Toggle submenu
           const submenu = this.nextElementSibling;
           if (submenu && submenu.classList.contains('submenu')) {
@@ -379,4 +383,4 @@
   </script>
 </body>
 
-</html> 
+</html>
