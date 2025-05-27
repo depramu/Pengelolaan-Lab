@@ -236,6 +236,84 @@
       line-height: 1;
       margin-top: 5px;
     }
+
+    .profile-content-area {
+    background: #f9fafc;
+    min-height: 500px;
+    border-radius: 15px;
+    padding: 40px 40px 40px 40px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  .profile-breadcrumb {
+    font-size: 16px;
+    color: #1976d2;
+    margin-bottom: 18px;
+  }
+  .profile-breadcrumb .profile-breadcrumb-link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #1976d2;
+  }
+  .profile-breadcrumb .profile-breadcrumb-current {
+    color: #000;
+    text-decoration: none;
+  }
+  .profile-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 32px;
+    font-family: 'Poppins', sans-serif;
+  }
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  .profile-avatar {
+    width: 140px;
+    height: 140px;
+    min-width: 140px;
+    min-height: 140px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 8px solid #111;
+  }
+  .profile-name {
+    margin-left: 40px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #111;
+    font-family: 'Poppins', sans-serif;
+  }
+  .profile-info-box {
+    background: #065ba6;
+    border-radius: 18px;
+    padding: 32px 32px 24px 32px;
+    display: flex;
+    gap: 60px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    max-width: 700px;
+  }
+  .profile-info-col {
+    flex: 1;
+    min-width: 120px;
+  }
+  .profile-info-label {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .profile-info-value {
+    font-size: 20px;
+    font-weight: 400;
+  }
+
   </style>
 </head>
 
@@ -320,17 +398,34 @@
       <!-- This section is a template that can be replaced with different content -->
       <!-- You can create separate PHP files for each page content and include them here -->
       <!-- Example: include 'pages/dashboard.php' or include 'pages/manajemen_aset.php' -->
-      <div class="content-area">
-        <!-- Current welcome page content - can be replaced -->
-        <div class="welcome-message">
-          Selamat Datang
-          <br />
-          di Sistem Pengelolaan
-          <br />
-          Laboratorium!
-        </div>
-        <img class="atoy" src="icon/atoy0.png" />
-      </div>
+       <div class="content-area">
+     <div class="profile-content-area">
+  <div class="profile-breadcrumb">
+    <span class="profile-breadcrumb-link"><a href="template.php">Sistem Pengelolaan Lab</a></span> <span class="profile-breadcrumb-current">/ Profile</span>
+  </div>
+  <div class="profile-title">Data Akun</div>
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+    </div>
+    <div class="profile-name">Nadira Anindita</div>
+  </div>
+  <div class="profile-info-box">
+    <div class="profile-info-col">
+      <div class="profile-info-label">NPK :</div>
+      <div class="profile-info-value">7203974538</div>
+    </div>
+    <div class="profile-info-col">
+      <div class="profile-info-label">No Telp :</div>
+      <div class="profile-info-value">089876543210</div>
+    </div>
+    <div class="profile-info-col">
+      <div class="profile-info-label">Role :</div>
+      <div class="profile-info-value">PIC Aset</div>
+    </div>
+    </div>
+  </div>
+</div>
       <!-- END CONTENT AREA TEMPLATE -->
 
     </div>
