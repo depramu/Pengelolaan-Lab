@@ -1,3 +1,12 @@
+<?php
+include 'koneksi.php';
+$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang";
+$result = sqlsrv_query($conn, $query);
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -113,7 +122,7 @@
       <nav class="col-auto sidebar d-flex flex-column p-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link active"><img src="icon/dashboard0.svg">Dashboard</a>
+            <a href="template.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
           </li>
           <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
@@ -141,7 +150,7 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="pinjamSubmenu">
-              <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+              <a href="peminjamanBarang.php" class="nav-link active">Barang</a>
               <a href="#" class="nav-link">Ruangan</a>
             </div>
           </li>
@@ -160,16 +169,104 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="template.php">Sistem Pengelolaan Lab</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+              <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
             </ol>
           </nav>
         </div>
-        <div class="mb-5">
-          <div class="display-3 fw-semibold text-primary">Selamat Datang</div>
-          <div class="display-3 fw-semibold text-primary">di Sistem Pengelolaan <br>Laboratorium!</div>
-        </div>
-        <img src="icon/atoy0.png" class="atoy-img d-none d-md-block" alt="Atoy" />
+        <div class="table-responsive">
+          <table class="table table-hover align-middle table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>ID Peminjaman</th>
+                <th>ID Barang</th>
+                <th>Jumlah </th>
+                <th>Tanggal Peminjaman</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              // Initialize IntlDateFormatter for Indonesian date format.
+              // Ensure the 'intl' PHP extension is enabled in your environment.
+              $dateFormatter = null;
+              if (class_exists('IntlDateFormatter')) {
+                $dateFormatter = new IntlDateFormatter(
+                  'id_ID', // Locale for Indonesian
+                  IntlDateFormatter::FULL, // Date type (not strictly necessary when pattern is used)
+                  IntlDateFormatter::NONE, // Time type (not strictly necessary when pattern is used)
+                  ini_get('date.timezone') ?: 'Asia/Jakarta', // Timezone
+                  IntlDateFormatter::GREGORIAN, // Calendar
+                  'EEEE, dd MMMM yyyy' // Desired pattern: e.g., Senin, 07 April 2025
+                );
+              }
 
+              while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+              ?>
+                <tr>
+                  <td><?= $row['idPeminjamanBrg'] ?></td>
+                  <td><?= $row['idBarang'] ?></td>
+                  <td><?= $row['jumlahBrg'] ?></td>
+                  <td>
+                    <?php
+                    if ($dateFormatter && isset($row['tglPeminjamanBrg']) && $row['tglPeminjamanBrg'] instanceof DateTimeInterface) {
+                      echo htmlspecialchars($dateFormatter->format($row['tglPeminjamanBrg']));
+                    } elseif (isset($row['tglPeminjamanBrg']) && $row['tglPeminjamanBrg'] instanceof DateTimeInterface) {
+                      // Fallback if IntlDateFormatter is not available but it's a DateTime object
+                      echo htmlspecialchars($row['tglPeminjamanBrg']->format('D, d M Y')); // e.g., Mon, 07 Apr 2025
+                    } elseif (isset($row['tglPeminjamanBrg'])) {
+                      // If it's already a string or other type, display as is (escaped).
+                      echo htmlspecialchars((string)$row['tglPeminjamanBrg']);
+                    } else {
+                      echo 'N/A'; // No date provided
+                    }
+                    ?>
+                  </td>
+                  <td>
+                    <?php
+                    // --- ACTION COLUMN - STATUS ICON PLACEHOLDER LOGIC ---
+                    // IMPORTANT: This section uses placeholder logic to mimic the icons in your image.
+                    // Your SQL query: SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang
+                    // This query does NOT include a status field. You must:
+                    // 1. Add a status field to your query (e.g., 'statusPeminjaman').
+                    // 2. Replace the placeholder logic below with your actual status determination logic.
+
+                    $peminjamanId = $row['idPeminjamanBrg'] ?? ''; // Get ID for demo
+                    $iconClass = 'bi-hourglass-split text-info'; // Default icon for unknown status
+                    $iconTitle = 'Status Tidak Diketahui';
+
+                    // Placeholder logic to match icons from the image based on idPeminjamanBrg ending.
+                    // REPLACE THIS with your actual status logic based on $row['your_status_field'].
+                    if (!empty($peminjamanId)) {
+                      if (substr($peminjamanId, -1) === '1' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB001
+                        $iconClass = 'bi-clock-history text-warning';
+                        $iconTitle = 'Menunggu Persetujuan';
+                      } elseif (substr($peminjamanId, -1) === '2' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB002
+                        $iconClass = 'bi-clock-fill text-success';
+                        $iconTitle = 'Proses Verifikasi'; // Green clock
+                      } elseif (substr($peminjamanId, -1) === '3' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB003
+                        $iconClass = 'bi-check-circle-fill text-success';
+                        $iconTitle = 'Disetujui';
+                      } elseif (substr($peminjamanId, -1) === '4' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB004
+                        $iconClass = 'bi-x-circle-fill text-danger';
+                        $iconTitle = 'Ditolak';
+                      }
+                    }
+                    // --- END OF STATUS ICON PLACEHOLDER LOGIC ---
+                    ?>
+                    <span title="<?= htmlspecialchars($iconTitle); ?>" style="cursor: help; vertical-align: middle;">
+                      <i class="bi <?= $iconClass; ?> me-2" style="font-size: 1.2rem;"></i>
+                    </span>
+                    <a href="detail_peminjaman.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                      <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                    </a>
+                  </td>
+                </tr>
+              <?php } // End while loop 
+              ?>
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
   </div>
 
