@@ -154,10 +154,31 @@
             <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
           </li>
           <li class="nav-item mt-0">
-            <a href="#" class="nav-link logout"><img src="icon/exit.png">Log Out</a>
+            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
           </li>
         </ul>
       </nav>
+      <!-- End Sidebar -->
+
+      <!-- Modal Show Exit -->
+      <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="margin-left: 35px;">
+              Yakin ingin log out?
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+              <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
+              <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Modal Show Exit -->
 
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
@@ -174,7 +195,8 @@
           <div class="display-3 fw-semibold text-primary">di Sistem Pengelolaan <br>Laboratorium!</div>
         </div>
         <img src="icon/atoy0.png" class="atoy-img d-none d-md-block" alt="Atoy" />
-
+      </main>
+      <!-- End Content Area -->
     </div>
   </div>
 
