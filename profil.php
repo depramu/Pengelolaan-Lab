@@ -78,7 +78,7 @@
         <span class="fw-normal fs-6 font-monospace">Nadira Anindita (PIC)</span>
       </div>
       <div>
-        <a href="notif.php" class="me-3"><img src="icon/bell.png" class="profile-img" alt="Notif"></a>
+        <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img" alt="Notif"></a>
         <a href="profil.php"><img src="icon/vector0.svg" class="profile-img" alt="Profil"></a>
       </div>
     </header>
