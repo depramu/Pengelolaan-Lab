@@ -10,8 +10,13 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }   
+
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -73,7 +78,7 @@
     <!-- Header -->
     <header class="d-flex justify-content-between align-items-center px-5 py-3">
       <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -57%;">
+      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
         <span class="fw-semibold fs-3 font-poppins">Hello,</span>
         <span class="fw-normal fs-6 font-poppins">Nadira Anindita (PIC)</span>
       </div>
@@ -174,11 +179,11 @@
 
         <!-- ====== PROFILE SECTION END ====== -->
 
-                </div>
-              </div>
+    </div>
+  </div>
 
-              <!-- Bootstrap JS -->
-              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 

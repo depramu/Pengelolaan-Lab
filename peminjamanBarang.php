@@ -19,8 +19,13 @@ $result = sqlsrv_query($conn, $query);
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -107,7 +112,7 @@ $result = sqlsrv_query($conn, $query);
     <!-- Header -->
     <header class="d-flex justify-content-between align-items-center px-5 py-3">
       <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -57%;">
+      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
         <span class="fw-semibold fs-3 font-poppins">Hello,</span>
         <span class="fw-normal fs-6 font-poppins">Nadira Anindita (PIC)</span>
       </div>
@@ -162,6 +167,11 @@ $result = sqlsrv_query($conn, $query);
           </li>
         </ul>
       </nav>
+
+
+      <!-- Modal Show Exit -->
+
+      
 
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
@@ -224,18 +234,10 @@ $result = sqlsrv_query($conn, $query);
                   <td>
                     <?php
                     // --- ACTION COLUMN - STATUS ICON PLACEHOLDER LOGIC ---
-                    // IMPORTANT: This section uses placeholder logic to mimic the icons in your image.
-                    // Your SQL query: SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang
-                    // This query does NOT include a status field. You must:
-                    // 1. Add a status field to your query (e.g., 'statusPeminjaman').
-                    // 2. Replace the placeholder logic below with your actual status determination logic.
-
                     $peminjamanId = $row['idPeminjamanBrg'] ?? ''; // Get ID for demo
                     $iconClass = 'bi-hourglass-split text-info'; // Default icon for unknown status
                     $iconTitle = 'Status Tidak Diketahui';
 
-                    // Placeholder logic to match icons from the image based on idPeminjamanBrg ending.
-                    // REPLACE THIS with your actual status logic based on $row['your_status_field'].
                     if (!empty($peminjamanId)) {
                       if (substr($peminjamanId, -1) === '1' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB001
                         $iconClass = 'bi-clock-history text-warning';
@@ -256,7 +258,7 @@ $result = sqlsrv_query($conn, $query);
                     <span title="<?= htmlspecialchars($iconTitle); ?>" style="cursor: help; vertical-align: middle;">
                       <i class="bi <?= $iconClass; ?> me-2" style="font-size: 1.2rem;"></i>
                     </span>
-                    <a href="detail_peminjaman.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                    <a href="detail_peminjam  an.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
                       <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                     </a>
                   </td>
