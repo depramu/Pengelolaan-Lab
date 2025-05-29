@@ -2,7 +2,7 @@
 include 'koneksi.php';
 $query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang";
 $result = sqlsrv_query($conn, $query);
-
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
 ?>
 
@@ -144,13 +144,17 @@ $result = sqlsrv_query($conn, $query);
             </div>
           </li>
           <li class="nav-item mb-2">
+            <?php
+            $peminjamanPages = ['peminjamanBarang.php', 'peminjamanRuangan.php'];
+            $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
+            ?>
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="false" aria-controls="pinjamSubmenu">
               <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
-            <div class="collapse ps-4" id="pinjamSubmenu">
-              <a href="peminjamanBarang.php" class="nav-link active">Barang</a>
-              <a href="#" class="nav-link">Ruangan</a>
+            <div class="collapse ps-4 <?php if ($isPeminjamanActive) echo 'show'; ?>" id="pinjamSubmenu">
+              <a href="peminjamanBarang.php" class="nav-link <?php if ($currentPage === 'peminjamanBarang.php') echo 'active-submenu'; ?>">Barang</a>
+              <a href="peminjamanRuangan.php" class="nav-link <?php if ($currentPage === 'peminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">
@@ -185,7 +189,7 @@ $result = sqlsrv_query($conn, $query);
 
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
-        <div class="mb-5">
+        <div class="mb-4">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="template.php">Sistem Pengelolaan Lab</a></li>
@@ -193,6 +197,8 @@ $result = sqlsrv_query($conn, $query);
             </ol>
           </nav>
         </div>
+
+        <!-- Table Peminjaman Barang -->
         <div class="table-responsive">
           <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
