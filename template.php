@@ -18,7 +18,8 @@
     }
 
     .sidebar-logo {
-      width: 180px;
+      width: 150px;
+      max-width: 100%;
       height: auto;
       margin-top: 1rem;
       margin-bottom: 1rem;
@@ -103,7 +104,7 @@
     <!-- Header -->
     <header class="d-flex justify-content-between align-items-center px-5 py-3">
       <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
+      <div class="d-flex flex-column align-items-center mt-2">
         <span class="fw-semibold fs-3">Hello,</span>
         <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
       </div>
