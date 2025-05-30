@@ -18,7 +18,7 @@
     }
 
     .sidebar-logo {
-      width: 150px;
+      width: 160px;
       max-width: 100%;
       height: auto;
       margin-top: 1rem;
