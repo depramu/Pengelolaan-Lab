@@ -15,7 +15,7 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-    }   
+    }
 
     .sidebar-logo {
       width: 180px;
@@ -26,10 +26,15 @@
 
     .sidebar {
       background: #065ba6;
-      height: 80vh;
-      margin-left: 20px;
+      height: 82vh;
       border-radius: 12px;
+    }
 
+    @media (max-width: 991.98px) {
+      .sidebar {
+        border-radius: 0;
+        height: 100vh;
+      }
     }
 
     .sidebar .nav-link {
@@ -49,7 +54,6 @@
       object-fit: contain;
     }
 
-
     .profile-img {
       width: 32px;
       height: 32px;
@@ -58,17 +62,78 @@
     }
 
     .atoy-img {
-      width: 160px;
+      width: clamp(100px, 15vw, 160px);
+      height: auto;
       position: absolute;
-      right: 60px;
-      bottom: 30px;
+      right: clamp(30px, 5vw, 60px);
+      bottom: clamp(15px, 3vh, 30px);
+    }
+
+    @media (max-width: 991.98px) {
+      .atoy-img {
+        display: none !important;
+      }
     }
 
     main {
-      margin-left: 20px;
-      margin-right: 20px;
-      margin-bottom: 40px;
+      margin-left: 3vh;
+      margin-right: 3vh;
       border-radius: 12px;
+      height: 82vh;
+    }
+
+    .sidebar .collapse .nav-link {
+      color: #ffffff !important;
+      background-color: transparent !important;
+    }
+
+    .sidebar .collapse .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+      color: #ffffff !important;
+    }
+
+    .sidebar .collapse .nav-link.active-submenu {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+      font-weight: 500;
+      color: #ffffff !important;
+    }
+
+    @media (max-width: 767.98px) {
+      header.d-flex {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+      }
+
+      header .fw-semibold.fs-3 {
+        font-size: 1.1rem !important;
+      }
+
+      header .fw-normal.fs-6 {
+        font-size: 0.9rem !important;
+      }
+
+      .sidebar-logo {
+        width: 110px;
+        margin-top: 0.5rem;
+        margin-left: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .profile-img {
+        width: 24px;
+        height: 24px;
+        margin-left: 5px;
+      }
+
+      main {
+        height: 90vh;
+      }
+
+      main nav {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
@@ -76,21 +141,26 @@
 <body class="bg-light">
   <div class="container-fluid min-vh-100 d-flex flex-column p-0">
     <!-- Header -->
-    <header class="d-flex justify-content-between align-items-center px-5 py-3">
-      <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
-        <span class="fw-semibold fs-3 font-poppins">Hello,</span>
-        <span class="fw-normal fs-6 font-poppins">Nadira Anindita (PIC)</span>
+    <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
+      <div class="d-flex align-items-center">
+        <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+        <div class="d-none d-md-block ps-3 ps-md-4">
+          <span class="fw-semibold fs-3">Hello,</span><br>
+          <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+        </div>
       </div>
-      <div>
-        <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img" alt="Notif"></a>
-        <a href="profil.php"><img src="icon/vector0.svg" class="profile-img" alt="Profil"></a>
+      <div class="d-flex align-items-center">
+        <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+        <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+        <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+          <i class="bi bi-list"></i>
+        </button>
       </div>
     </header>
+    <!-- End Header -->
     <div class="row flex-grow-1 g-0">
-
-      <!-- Sidebar -->
-      <nav class="col-auto sidebar d-flex flex-column p-4">
+      <!-- Sidebar for large screens -->
+      <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
             <a href="template.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
@@ -133,31 +203,62 @@
           </li>
         </ul>
       </nav>
-
-      <!-- End Sidebar -->
-
-      <!-- Modal Show Exit -->
-      <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="margin-left: 35px;">
-              Yakin ingin log out?
-            </div>
-            <div class="modal-footer d-flex justify-content-center">
-              <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-              <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
-            </div>
-          </div>
+      <!-- End Sidebar for large screens -->
+      <!-- Offcanvas Sidebar for small screens -->
+      <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+          <nav class="sidebar flex-column p-4 h-100">
+            <ul class="nav nav-pills flex-column mb-auto">
+              <li class="nav-item mb-2">
+                <a href="template.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
+                  <span><img src="icon/layers0.png">Manajemen Aset</span>
+                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
+                </a>
+                <div class="collapse ps-4" id="asetSubmenuMobile">
+                  <a href="#" class="nav-link">Barang</a>
+                  <a href="#" class="nav-link">Ruangan</a>
+                </div>
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
+                  <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
+                </a>
+                <div class="collapse ps-4" id="akunSubmenuMobile">
+                  <a href="#" class="nav-link">Mahasiswa</a>
+                  <a href="#" class="nav-link">Karyawan</a>
+                </div>
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
+                  <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
+                </a>
+                <div class="collapse ps-4" id="pinjamSubmenuMobile">
+                  <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                  <a href="#" class="nav-link">Ruangan</a>
+                </div>
+              </li>
+              <li class="nav-item mb-2">
+                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+              </li>
+              <li class="nav-item mt-0">
+                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
-      <!-- End Modal Show Exit -->
-
+      <!-- End Offcanvas Sidebar for small screens -->
       <!-- Content Area -->
-      <main class="col bg-white px-4 py-3 position-relative">
+      <main class="col bg-white px-3 px-md-4 py-3 position-relative">
         <div class="mb-5">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -166,11 +267,9 @@
             </ol>
           </nav>
         </div>
-
         <!-- ====== PROFILE SECTION START ====== -->
         <div class="col-lg-7 col-md-9">
           <h2 class="fw-bold display-5" style=" margin-left: 50px; margin-bottom: -30px;">Data Akun</h2>
-
           <div class="card-body p-4 p-md-5">
             <div class="d-flex align-items-center mb-3 pb-1">
               <div class="me-4">
@@ -179,7 +278,6 @@
               </div>
               <h3 class="fw-bold mb-0" style="font-size: 1.75rem; margin-left: 20px;">Nadira Anindita</h3>
             </div>
-
             <div class="bg-primary text-white p-4 rounded-3">
               <div class="row gy-3">
                 <div class="col-md-4">
@@ -198,17 +296,34 @@
             </div>
           </div>
         </div>
-
         <!-- ====== PROFILE SECTION END ====== -->
-
+        <img src="icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
+      </main>
+      <!-- End Content Area -->
     </div>
   </div>
-
+  <!-- End Container -->
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Yakin ingin log out?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
+          <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Logout Modal -->
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
 </body>
 
 </html>
