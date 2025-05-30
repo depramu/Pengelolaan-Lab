@@ -297,7 +297,8 @@
           </div>
         </div>
         <!-- ====== PROFILE SECTION END ====== -->
-        <img src="icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
+
+
       </main>
       <!-- End Content Area -->
     </div>

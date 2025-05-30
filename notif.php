@@ -269,8 +269,6 @@
                         </ol>
                     </nav>
                 </div>
-                <!-- Tambahkan gambar Atoy seperti di template -->
-                <img src="icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
             </main>
         </div>
     </div>
