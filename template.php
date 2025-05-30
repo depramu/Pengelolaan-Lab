@@ -18,8 +18,7 @@
     }
 
     .sidebar-logo {
-      width: 160px;
-      max-width: 100%;
+      width: 180px;
       height: auto;
       margin-top: 1rem;
       margin-bottom: 1rem;
@@ -59,10 +58,15 @@
     }
 
     .atoy-img {
-      width: 160px;
+      width: clamp(100px, 15vw, 160px);
+      /* Responsive width: min 100px, preferred 15% of viewport width, max 160px */
+      height: auto;
+      /* Maintain aspect ratio */
       position: absolute;
-      right: 60px;
-      bottom: 30px;
+      right: clamp(30px, 5vw, 60px);
+      /* Responsive right offset */
+      bottom: clamp(15px, 3vh, 30px);
+      /* Responsive bottom offset */
     }
 
     main {
@@ -104,7 +108,7 @@
     <!-- Header -->
     <header class="d-flex justify-content-between align-items-center px-5 py-3">
       <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items-center mt-2">
+      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
         <span class="fw-semibold fs-3">Hello,</span>
         <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
       </div>
