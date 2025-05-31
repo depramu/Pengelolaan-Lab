@@ -12,6 +12,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
         .sidebar-logo {
             width: 180px;
             height: auto;
@@ -73,9 +77,9 @@
         <!-- Header -->
         <header class="d-flex justify-content-between align-items-center px-5 py-3">
             <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-            <div class="d-flex flex-column align-items mt-2" style="margin-left: -57%;">
-                <span class="fw-semibold fs-3 font-poppins">Hello,</span>
-                <span class="fw-normal fs-6 font-poppins">Nadira Anindita (PIC)</span>
+            <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
+                <span class="fw-semibold fs-3">Hello,</span>
+                <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
             </div>
             <div>
                 <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img" alt="Notif"></a>
