@@ -1,11 +1,3 @@
-<?php
-include 'koneksi.php';
-$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang";
-$result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,11 +16,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     body {
       font-family: 'Poppins', sans-serif;
     }
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -75,16 +63,21 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
     .atoy-img {
       width: clamp(100px, 15vw, 160px);
+      /* Responsive width: min 100px, preferred 15% of viewport width, max 160px */
       height: auto;
+      /* Maintain aspect ratio */
       position: absolute;
       right: clamp(30px, 5vw, 60px);
+      /* Responsive right offset */
       bottom: clamp(15px, 3vh, 30px);
+      /* Responsive bottom offset */
     }
 
     @media (max-width: 991.98px) {
       .atoy-img {
         display: none !important;
       }
+
     }
 
     main {
@@ -94,22 +87,30 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       height: 82vh;
     }
 
+    /* === Styling for SUBMENU items (e.g., Barang, Ruangan) === */
     .sidebar .collapse .nav-link {
       color: #ffffff !important;
+      /* White text for submenu items */
       background-color: transparent !important;
     }
 
     .sidebar .collapse .nav-link:hover {
       background-color: rgba(255, 255, 255, 0.15) !important;
+      /* Subtle hover for submenu items */
       color: #ffffff !important;
     }
 
+    /* Optional: If a submenu item itself can be marked 'active' (e.g. current page is 'Barang') */
+    /* You would need to add class="active-submenu" to the link via PHP/JS */
     .sidebar .collapse .nav-link.active-submenu {
       background-color: rgba(255, 255, 255, 0.2) !important;
+      /* Slightly more prominent for active submenu */
       font-weight: 500;
+      /* Or bold, as you prefer */
       color: #ffffff !important;
     }
 
+    /* Header kecil di layar kecil */
     @media (max-width: 767.98px) {
       header.d-flex {
         padding-left: 0.5rem !important;
@@ -146,6 +147,8 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       main nav {
         font-size: 0.8rem;
       }
+
+
     }
   </style>
 </head>
@@ -153,13 +156,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 <body class="bg-light">
   <div class="container-fluid min-vh-100 d-flex flex-column p-0">
     <!-- Header -->
-<<<<<<< HEAD
-    <header class="d-flex justify-content-between align-items-center px-5 py-3">
-      <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
-        <span class="fw-semibold fs-3">Hello,</span>
-        <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
-=======
     <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
       <div class="d-flex align-items-center">
         <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
@@ -167,23 +163,25 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           <span class="fw-semibold fs-3">Hello,</span><br>
           <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
         </div>
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
       </div>
       <div class="d-flex align-items-center">
         <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
         <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+        <!-- Sidebar toggle button for mobile -->
         <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
           <i class="bi bi-list"></i>
         </button>
       </div>
     </header>
-    <div class="row flex-grow-1 g-0">
+    <!-- End Header -->
 
+    <!-- Content -->
+    <div class="row flex-grow-1 g-0">
       <!-- Sidebar for large screens -->
       <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
-            <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+            <a href="#" class="nav-link active"><img src="icon/dashboard0.svg">Dashboard</a>
           </li>
           <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
@@ -206,17 +204,13 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
             </div>
           </li>
           <li class="nav-item mb-2">
-            <?php
-            $peminjamanPages = ['peminjamanBarang.php', 'peminjamanRuangan.php'];
-            $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
-            ?>
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="false" aria-controls="pinjamSubmenu">
               <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
-            <div class="collapse ps-4 <?php if ($isPeminjamanActive) echo 'show'; ?>" id="pinjamSubmenu">
-              <a href="peminjamanBarang.php" class="nav-link <?php if ($currentPage === 'peminjamanBarang.php') echo 'active-submenu'; ?>">Barang</a>
-              <a href="peminjamanRuangan.php" class="nav-link <?php if ($currentPage === 'peminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
+            <div class="collapse ps-4" id="pinjamSubmenu">
+              <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+              <a href="#" class="nav-link">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">
@@ -239,7 +233,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           <nav class="sidebar flex-column p-4 h-100">
             <ul class="nav nav-pills flex-column mb-auto">
               <li class="nav-item mb-2">
-                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                <a href="#" class="nav-link active"><img src="icon/dashboard0.svg">Dashboard</a>
               </li>
               <li class="nav-item mb-2">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
@@ -247,7 +241,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="asetSubmenuMobile">
-                  <a href="#" class="nav-link">Barang</a>
+                  <a href="manajemenBarang.php" class="nav-link">Barang</a>
                   <a href="#" class="nav-link">Ruangan</a>
                 </div>
               </li>
@@ -283,110 +277,27 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       </div>
       <!-- End Offcanvas Sidebar for small screens -->
 
+
       <!-- Content Area -->
-      <main class="col bg-white px-4 py-3 position-relative">
-        <div class="mb-3">
+      <main class="col bg-white px-3 px-md-4 py-3 position-relative">
+        <div class="mb-5">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
+              <li class="breadcrumb-item"><a href="template.php">Sistem Pengelolaan Lab</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
             </ol>
           </nav>
         </div>
-
-        <!-- Table Peminjaman Barang -->
-        <div class="table-responsive">
-          <table class="table table-hover align-middle table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>ID Peminjaman</th>
-                <th>ID Barang</th>
-                <th>Jumlah </th>
-                <th>Tanggal Peminjaman</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              // Initialize IntlDateFormatter for Indonesian date format.
-              // Ensure the 'intl' PHP extension is enabled in your environment.
-              $dateFormatter = null;
-              if (class_exists('IntlDateFormatter')) {
-                $dateFormatter = new IntlDateFormatter(
-                  'id_ID', // Locale for Indonesian
-                  IntlDateFormatter::FULL, // Date type (not strictly necessary when pattern is used)
-                  IntlDateFormatter::NONE, // Time type (not strictly necessary when pattern is used)
-                  ini_get('date.timezone') ?: 'Asia/Jakarta', // Timezone
-                  IntlDateFormatter::GREGORIAN, // Calendar
-                  'EEEE, dd MMMM yyyy' // Desired pattern: e.g., Senin, 07 April 2025
-                );
-              }
-
-              while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-              ?>
-                <tr>
-                  <td><?= $row['idPeminjamanBrg'] ?></td>
-                  <td><?= $row['idBarang'] ?></td>
-                  <td><?= $row['jumlahBrg'] ?></td>
-                  <td>
-                    <?php
-                    if ($dateFormatter && isset($row['tglPeminjamanBrg']) && $row['tglPeminjamanBrg'] instanceof DateTimeInterface) {
-                      echo htmlspecialchars($dateFormatter->format($row['tglPeminjamanBrg']));
-                    } elseif (isset($row['tglPeminjamanBrg']) && $row['tglPeminjamanBrg'] instanceof DateTimeInterface) {
-                      // Fallback if IntlDateFormatter is not available but it's a DateTime object
-                      echo htmlspecialchars($row['tglPeminjamanBrg']->format('D, d M Y')); // e.g., Mon, 07 Apr 2025
-                    } elseif (isset($row['tglPeminjamanBrg'])) {
-                      // If it's already a string or other type, display as is (escaped).
-                      echo htmlspecialchars((string)$row['tglPeminjamanBrg']);
-                    } else {
-                      echo 'N/A'; // No date provided
-                    }
-                    ?>
-                  </td>
-                  <td>
-                    <?php
-                    // --- ACTION COLUMN - STATUS ICON PLACEHOLDER LOGIC ---
-                    $peminjamanId = $row['idPeminjamanBrg'] ?? ''; // Get ID for demo
-                    $iconClass = 'bi-hourglass-split text-info'; // Default icon for unknown status
-                    $iconTitle = 'Status Tidak Diketahui';
-
-                    if (!empty($peminjamanId)) {
-                      if (substr($peminjamanId, -1) === '1' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB001
-                        $iconClass = 'bi-clock-history text-warning';
-                        $iconTitle = 'Menunggu Persetujuan';
-                      } elseif (substr($peminjamanId, -1) === '2' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB002
-                        $iconClass = 'bi-clock-fill text-success';
-                        $iconTitle = 'Proses Verifikasi'; // Green clock
-                      } elseif (substr($peminjamanId, -1) === '3' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB003
-                        $iconClass = 'bi-check-circle-fill text-success';
-                        $iconTitle = 'Disetujui';
-                      } elseif (substr($peminjamanId, -1) === '4' && substr($peminjamanId, 0, 4) === 'PB00') { // For PB004
-                        $iconClass = 'bi-x-circle-fill text-danger';
-                        $iconTitle = 'Ditolak';
-                      }
-                    }
-                    // --- END OF STATUS ICON PLACEHOLDER LOGIC ---
-                    ?>
-                    <span title="<?= htmlspecialchars($iconTitle); ?>" style="cursor: help; vertical-align: middle;">
-                      <i class="bi <?= $iconClass; ?> me-2" style="font-size: 1.2rem;"></i>
-                    </span>
-                    <a href="detail_peminjam  an.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                      <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
-                    </a>
-                  </td>
-                </tr>
-              <?php } // End while loop 
-              ?>
-            </tbody>
-          </table>
+        <div class="mb-5">
+          <div class="display-5 display-md-3 fw-semibold text-primary">Selamat Datang</div>
+          <div class="display-5 display-md-3 fw-semibold text-primary">di Sistem Pengelolaan <br>Laboratorium!</div>
         </div>
+        <img src="icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
       </main>
       <!-- End Content Area -->
     </div>
   </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- End Container -->
 
   <!-- Logout Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -401,12 +312,15 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+          <button type="button" class="btn btn-primary ps-4 pe-4">Ya</button>
         </div>
       </div>
     </div>
   </div>
   <!-- End Logout Modal -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
