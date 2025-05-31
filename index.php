@@ -189,7 +189,7 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="asetSubmenu">
-              <a href="#" class="nav-link">Barang</a>
+              <a href="manajemenBarang.php" class="nav-link">Barang</a>
               <a href="#" class="nav-link">Ruangan</a>
             </div>
           </li>
@@ -241,7 +241,7 @@
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="asetSubmenuMobile">
-                  <a href="#" class="nav-link">Barang</a>
+                  <a href="manajemenBarang.php" class="nav-link">Barang</a>
                   <a href="#" class="nav-link">Ruangan</a>
                 </div>
               </li>
