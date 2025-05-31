@@ -152,7 +152,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
       <div class="d-flex align-items-center">
         <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
-        <div class="d-none d-md-block ps-3 ps-md-4">
+        <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
           <span class="fw-semibold fs-3">Hello,</span><br>
           <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
         </div>
@@ -171,7 +171,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
-            <a href="template.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+            <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
           </li>
           <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
@@ -179,7 +179,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="asetSubmenu">
-              <a href="#" class="nav-link">Barang</a>
+              <a href="manajemenBarang.php" class="nav-link">Barang</a>
               <a href="#" class="nav-link">Ruangan</a>
             </div>
           </li>
@@ -227,7 +227,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           <nav class="sidebar flex-column p-4 h-100">
             <ul class="nav nav-pills flex-column mb-auto">
               <li class="nav-item mb-2">
-                <a href="template.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
               </li>
               <li class="nav-item mb-2">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
@@ -273,10 +273,10 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
-        <div class="mb-4">
+        <div class="mb-3">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="template.php">Sistem Pengelolaan Lab</a></li>
+              <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
               <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
             </ol>
           </nav>
