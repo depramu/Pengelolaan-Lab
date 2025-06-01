@@ -277,21 +277,21 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Manajemen Barang</li>
+                            <li class="breadcrumb-item active" aria-current="page">Manajemen Ruangan</li>
                         </ol>
                     </nav>
                 </div>
 
                 <!-- Table Manajemen Barang -->
                 <div class="d-flex justify-content-start mb-2">
-                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">Tambah Barang</a>
+                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">Tambah Ruangan</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle table-bordered">
                         <thead class="table-light">
                             <tr>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
+                                <th>ID Ruangan</th>
+                                <th>Nama Ruangan</th>
                                 <th>Stok Barang</th>
                                 <th>Lokasi Barang</th>
                                 <th>Aksi</th>
@@ -307,8 +307,8 @@
                                 <td><?= $row['stokBarang'] ?></td>
                                 <td><?= $row['lokasiBarang'] ?></td>
                                 <td>
-                                    <a href="CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-warning">Edit</a>
-                                    <a href="CRUD/Barang/hapusBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-danger">Hapus</a>
+                                    <a href="CRUD/Barang/editRuangan.php?id=<?= $row['idRuangan'] ?>" class="btn btn-warning">Edit</a>
+                                    <a href="CRUD/Barang/hapusRuangan.php?id=<?= $row['idRuangan'] ?>" class="btn btn-danger">Hapus</a>
                                 </td>
                             </tr>
                             <?php

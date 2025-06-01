@@ -28,7 +28,9 @@
       background: #065ba6;
       height: 82vh;
       border-radius: 12px;
+      width: 278px;
     }
+
 
     @media (max-width: 991.98px) {
       .sidebar {
@@ -158,15 +160,15 @@
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
       <div class="d-flex align-items-center">
-        <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+        <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
         <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
           <span class="fw-semibold fs-3">Hello,</span><br>
-          <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+          <span class="fw-normal fs-6">Dyah Ayu Puspitosari (Peminjam)</span>
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-        <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+        <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+        <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
         <!-- Sidebar toggle button for mobile -->
         <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
           <i class="bi bi-list"></i>
@@ -178,46 +180,34 @@
     <!-- Content -->
     <div class="row flex-grow-1 g-0">
       <!-- Sidebar for large screens -->
-      <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
+      <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link active"><img src="icon/dashboard0.svg">Dashboard</a>
+            <a href="#" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
           </li>
           <li class="nav-item mb-2">
-            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
-              <span><img src="icon/layers0.png">Manajemen Aset</span>
+            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
+              <span><img src="../icon/peminjaman.svg">Peminjaman</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
-            <div class="collapse ps-4" id="asetSubmenu">
-              <a href="manajemenBarang.php" class="nav-link">Barang</a>
-              <a href="#" class="nav-link">Ruangan</a>
-            </div>
-          </li>
-          <li class="nav-item mb-2">
-            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-              <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
-              <i class="bi bi-chevron-down transition-chevron ps-3"></i>
-            </a>
-            <div class="collapse ps-4" id="akunSubmenu">
-              <a href="#" class="nav-link">Mahasiswa</a>
-              <a href="#" class="nav-link">Karyawan</a>
-            </div>
-          </li>
-          <li class="nav-item mb-2">
-            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="false" aria-controls="pinjamSubmenu">
-              <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
-              <i class="bi bi-chevron-down transition-chevron ps-3"></i>
-            </a>
-            <div class="collapse ps-4" id="pinjamSubmenu">
+            <div class="collapse ps-4" id="peminjamanSubmenu">
               <a href="peminjamanBarang.php" class="nav-link">Barang</a>
               <a href="#" class="nav-link">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+            <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
+              <span><img src="../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
+              <i class="bi bi-chevron-down transition-chevron ps-3"></i>
+            </a>
+            <div class="collapse ps-4" id="riwayatSubmenu">
+              <a href="#" class="nav-link">Barang</a>
+              <a href="#" class="nav-link">Ruangan</a>
+            </div>
           </li>
+
           <li class="nav-item mt-0">
-            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
           </li>
         </ul>
       </nav>
@@ -233,43 +223,30 @@
           <nav class="sidebar flex-column p-4 h-100">
             <ul class="nav nav-pills flex-column mb-auto">
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link active"><img src="icon/dashboard0.svg">Dashboard</a>
+                <a href="#" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
               </li>
               <li class="nav-item mb-2">
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                  <span><img src="icon/layers0.png">Manajemen Aset</span>
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="false" aria-controls="peminjamanSubmenuMobile">
+                  <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
-                <div class="collapse ps-4" id="asetSubmenuMobile">
-                  <a href="manajemenBarang.php" class="nav-link">Barang</a>
-                  <a href="#" class="nav-link">Ruangan</a>
-                </div>
-              </li>
-              <li class="nav-item mb-2">
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                  <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
-                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
-                </a>
-                <div class="collapse ps-4" id="akunSubmenuMobile">
-                  <a href="#" class="nav-link">Mahasiswa</a>
-                  <a href="#" class="nav-link">Karyawan</a>
-                </div>
-              </li>
-              <li class="nav-item mb-2">
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                  <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
-                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
-                </a>
-                <div class="collapse ps-4" id="pinjamSubmenuMobile">
+                <div class="collapse ps-4" id="peminjamanSubmenuMobile">
                   <a href="peminjamanBarang.php" class="nav-link">Barang</a>
                   <a href="#" class="nav-link">Ruangan</a>
                 </div>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenuMobile" role="button" aria-expanded="false" aria-controls="riwayatSubmenuMobile">
+                  <span><img src="../icon/riwayat.svg">Riwayat</span>
+                  <i class="bi bi-chevron-down transition-chevron ps-3"></i>
+                </a>
+                <div class="collapse ps-4" id="riwayatSubmenuMobile">
+                  <a href="#" class="nav-link">Barang</a>
+                  <a href="#" class="nav-link">Ruangan</a>
+                </div>
               </li>
               <li class="nav-item mt-0">
-                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
               </li>
             </ul>
           </nav>
@@ -292,7 +269,7 @@
           <div class="display-5 display-md-3 fw-semibold text-primary">Selamat Datang</div>
           <div class="display-5 display-md-3 fw-semibold text-primary">di Sistem Pengelolaan <br>Laboratorium!</div>
         </div>
-        <img src="icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
+        <img src="../icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
       </main>
       <!-- End Content Area -->
     </div>
@@ -304,7 +281,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+          <h5 class="modal-title" id="logoutModalLabel"><i><img src="../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
