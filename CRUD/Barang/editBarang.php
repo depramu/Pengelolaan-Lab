@@ -1,10 +1,47 @@
 <?php
-        include 'koneksi.php';
-        $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang";
-        $result = sqlsrv_query($conn, $query);
-        $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+include '../../koneksi.php';
 
-        ?>
+$idBarang = $_GET['id'] ?? null;
+
+if (!$idBarang) {
+    header('Location: ../../manajemenBarang.php');
+    exit;
+}
+
+$query = "SELECT * FROM Barang WHERE idBarang = ?";
+$stmt = sqlsrv_query($conn, $query, [$idBarang]);
+$data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $namaBarang = $_POST['namaBarang'];
+    $stokBarang = $_POST['stokBarang'];
+    $lokasiBarang = $_POST['lokasiBarang'];
+
+    $query = "UPDATE Barang SET namaBarang = ?, stokBarang = ?, lokasiBarang = ? WHERE idBarang = ?";
+    $params = [$namaBarang, $stokBarang, $lokasiBarang, $idBarang];
+    $stmt = sqlsrv_query($conn, $query, $params);
+
+    if ($stmt) {
+        header('Location: ../../manajemenBarang.php');
+        exit;
+    } else {
+        $error = "Gagal mengubah data barang.";
+    }
+}
+
+$lokasiList = [];
+$sqlLokasi = "SELECT idRuangan FROM Ruangan";
+$stmtLokasi = sqlsrv_query($conn, $sqlLokasi);
+if ($stmtLokasi) {
+    while ($row = sqlsrv_fetch_array($stmtLokasi, SQLSRV_FETCH_ASSOC)) {
+        $lokasiList[] = $row['idRuangan'];
+    }
+}
+
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$manajemenAsetPages = ['../manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
+$isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -151,15 +188,15 @@
         <!-- Header -->
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
-                <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="../../notif.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="../../profil.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -171,25 +208,21 @@
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                        <a href="../../index.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <?php
-                        $manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php'];
-                        $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
-                        ?>
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAsetSubmenu">
-                            <span><img src="icon/layers0.png">Manajemen Aset</span>
+                            <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="manajemenAsetSubmenu">
-                            <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
                             <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-                            <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                            <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="akunSubmenu">
@@ -199,7 +232,7 @@
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                            <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                            <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -208,10 +241,10 @@
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                        <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                     </li>
                     <li class="nav-item mt-0">
-                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                        <a href="../../logout.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -227,21 +260,21 @@
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                                <a href="../../index.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                                    <span><img src="icon/layers0.png">Manajemen Aset</span>
+                                    <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="asetSubmenuMobile">
-                                    <a href="manajemenBarang.php" class="nav-link">Barang</a>
-                                    <a href="manajemenRuangan.php" class="nav-link">Ruangan</a>
+                                    <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                                    <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                                    <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="akunSubmenuMobile">
@@ -251,7 +284,7 @@
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                                    <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                                    <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -260,10 +293,10 @@
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                                <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                                <a href="../../logout.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -276,49 +309,90 @@
                 <div class="mb-3">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Manajemen Barang</li>
+                            <li class="breadcrumb-item"><a href="../../index.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item"><a href="../../manajemenBarang.php">Manajemen Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
                         </ol>
                     </nav>
                 </div>
 
-                <!-- Table Manajemen Barang -->
-                <div class="d-flex justify-content-start mb-2">
-                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">Tambah Barang</a>
+
+                <!-- Edit Barang -->
+                <div class="container mt-4">
+                    <?php if (isset($error)) : ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <?php echo $error; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
+                            <div class="card border border-dark">
+                                <div class="card-header bg-white border-bottom border-dark">
+                                    <span class="fw-semibold">Edit Barang</span>
+                                </div>
+                                <div class="card-body">
+                                    <form method="POST">
+                                        <div class="mb-2">
+                                            <label for="idBarang" class="form-label">ID Barang</label>
+                                            <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="namaBarang" class="form-label">Nama Barang</label>
+                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($data['namaBarang']) ?>" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="stokBarang" class="form-label">Stok Barang</label>
+                                            <div class="input-group" style="max-width: 180px;">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                                <input type="number" class="form-control text-center" id="stokBarang" name="stokBarang" value="<?= htmlspecialchars($data['stokBarang']) ?>" min="0" required style="max-width: 70px;">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label for="lokasiBarang" class="form-label">Lokasi Barang</label>
+                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang" required>
+                                                <option value="" disabled selected>Pilih Lokasi</option>
+                                                <?php foreach ($lokasiList as $lokasi) : ?>
+                                                    <option value="<?= htmlspecialchars($lokasi) ?>" <?php if ($data['lokasiBarang'] == $lokasi) echo 'selected'; ?>><?= htmlspecialchars($lokasi) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <a href="../../manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Berhasil -->
+                    <div class="modal fade" id="successModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Data barang berhasil diubah.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="../../manajemenBarang.php" class="btn btn-primary">OK</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Stok Barang</th>
-                                <th>Lokasi Barang</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                            ?>
-                            <tr>
-                                <td><?= $row['idBarang'] ?></td>
-                                <td><?= $row['namaBarang'] ?></td>
-                                <td><?= $row['stokBarang'] ?></td>
-                                <td><?= $row['lokasiBarang'] ?></td>
-                                <td>
-                                    <a href="CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-warning">Edit</a>
-                                    <a href="CRUD/Barang/hapusBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-danger">Hapus</a>
-                                </td>
-                            </tr>
-                            <?php
-                            }
-                            ?>
-                        </tbody>
+                <!-- End Edit Barang -->
 
 
-                        <!-- End Content Area -->
-                </div>
+            </main>
+
         </div>
 
         <!-- Logout Modal -->
@@ -326,7 +400,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+                        <h5 class="modal-title" id="logoutModalLabel"><i><img src="../../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -334,7 +408,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="../../logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
@@ -343,6 +417,23 @@
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            function changeStok(val) {
+                var stokInput = document.getElementById('stokBarang');
+                var current = parseInt(stokInput.value) || 0;
+                var next = current + val;
+                if (next < 0) next = 0;
+                stokInput.value = next;
+            }
+        </script>
+
+        <?php if ($showModal) : ?>
+            <script>
+                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
 
 
 
