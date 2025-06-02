@@ -24,11 +24,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     body {
       font-family: 'Poppins', sans-serif;
     }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -153,13 +148,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 <body class="bg-light">
   <div class="container-fluid min-vh-100 d-flex flex-column p-0">
     <!-- Header -->
-<<<<<<< HEAD
-    <header class="d-flex justify-content-between align-items-center px-5 py-3">
-      <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-      <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
-        <span class="fw-semibold fs-3">Hello,</span>
-        <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
-=======
     <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
       <div class="d-flex align-items-center">
         <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
@@ -167,7 +155,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           <span class="fw-semibold fs-3">Hello,</span><br>
           <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
         </div>
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
       </div>
       <div class="d-flex align-items-center">
         <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
