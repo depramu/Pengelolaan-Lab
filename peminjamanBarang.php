@@ -357,8 +357,8 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                     <span title="<?= htmlspecialchars($iconTitle); ?>" style="cursor: help; vertical-align: middle;">
                       <i class="bi <?= $iconClass; ?> me-2" style="font-size: 1.2rem;"></i>
                     </span>
-                    <a href="detail_peminjam  an.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                      <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                    <a href="pengembalianBarang.php?id=<?= $row['idPeminjamanBrg'] ?>">
+                       <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                     </a>
                   </td>
                 </tr>
