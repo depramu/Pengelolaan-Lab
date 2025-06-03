@@ -1,4 +1,4 @@
-    <?php $serverName = "DEPENIGER\\SQLEXPRESS01";
+    <?php $serverName = "LAPTOP-U0TB8VN9\\SQLEXPRESS";
     $connectionOptions = ["Database" => "PENGELOLAAN_LAB", "TrustServerCertificate" => true,];
     $conn = sqlsrv_connect($serverName, $connectionOptions);
     if ($conn === false) {
