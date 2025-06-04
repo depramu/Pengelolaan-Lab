@@ -1,10 +1,23 @@
 <?php
-        include 'koneksi.php';
-        $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang";
-        $result = sqlsrv_query($conn, $query);
-        $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+include 'koneksi.php';
 
-        ?>
+// Pagination setup
+$perPage = 9;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+// Hitung total data
+$countQuery = "SELECT COUNT(*) AS total FROM Barang";
+$countResult = sqlsrv_query($conn, $countQuery);
+$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
+$totalData = $countRow['total'];
+$totalPages = ceil($totalData / $perPage);
+// Ambil data sesuai halaman
+$offset = ($page - 1) * $perPage;
+$query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$result = sqlsrv_query($conn, $query);
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +26,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Pengelolaan Laboratorium</title>
+    <title>Manajemen Barang - Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -284,7 +297,8 @@
 
                 <!-- Table Manajemen Barang -->
                 <div class="d-flex justify-content-start mb-2">
-                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">Tambah Barang</a>
+                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">
+                        <img src="icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle table-bordered">
@@ -297,28 +311,89 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                            <tbody>
+                                <?php
+                                while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                ?>
+                                    <tr>
+                                        <td><?= $row['idBarang'] ?></td>
+                                        <td><?= $row['namaBarang'] ?></td>
+                                        <td><?= $row['stokBarang'] ?></td>
+                                        <td><?= $row['lokasiBarang'] ?></td>
+                                        <td>
+                                            <a href="CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                                        
+                                            <!-- delete -->
+                                            <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
+                                                tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <form action="CRUD/Barang/hapusBarang.php" method="POST">
+                                                        <input type="hidden" name="idBarang" value="<?= $row['idBarang'] ?>">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalLabel<?= $row['idBarang'] ?>">Konfirmasi Hapus</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Apakah Anda yakin ingin menghapus Barang "<strong><?= htmlspecialchars($row['namaBarang']) ?></strong>"?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-danger">Ya. Hapus</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                                ?>
+                            </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="fixed-pagination">
+                        <ul class="pagination justify-content-end">
+                            <!-- Previous button -->
+                            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
+                            </li>
+                            <!-- Page numbers -->
                             <?php
-                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                            $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
+                            $ellipsisShown = false;
+                            for ($i = 1; $i <= $totalPages; $i++) {
+                                if (
+                                    $i <= $showPages || // always show first 3
+                                    $i > $totalPages - $showPages || // always show last 3
+                                    abs($i - $page) <= 1 // show current, previous, next
+                                ) {
+                                    $ellipsisShown = false;
                             ?>
-                            <tr>
-                                <td><?= $row['idBarang'] ?></td>
-                                <td><?= $row['namaBarang'] ?></td>
-                                <td><?= $row['stokBarang'] ?></td>
-                                <td><?= $row['lokasiBarang'] ?></td>
-                                <td>
-                                    <a href="CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-warning">Edit</a>
-                                    <a href="CRUD/Barang/hapusBarang.php?id=<?= $row['idBarang'] ?>" class="btn btn-danger">Hapus</a>
-                                </td>
-                            </tr>
+                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                    </li>
                             <?php
+                                } elseif (!$ellipsisShown) {
+                                    // Show ellipsis only once
+                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                    $ellipsisShown = true;
+                                }
                             }
                             ?>
-                        </tbody>
+                            <!-- Next button -->
+                            <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
+                            </li>
+                        </ul>
+                    </nav>
 
 
-                        <!-- End Content Area -->
                 </div>
+            </main>
         </div>
 
         <!-- Logout Modal -->
@@ -334,7 +409,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
@@ -343,9 +418,7 @@
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
+    </div>
 </body>
 
 </html>
