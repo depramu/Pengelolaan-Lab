@@ -29,14 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stokBarang = $_POST['stokBarang'];
     $lokasiBarang = $_POST['lokasiBarang'];
 
-    $query = "INSERT INTO Barang (namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?)";
-    $params = [$namaBarang, $stokBarang, $lokasiBarang];
-    $stmt = sqlsrv_query($conn, $query, $params);
+    // Cek apakah nama barang sudah ada
+    $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Barang WHERE namaBarang = ?";
+    $cekNamaParams = [$namaBarang];
+    $cekNamaStmt = sqlsrv_query($conn, $cekNamaQuery, $cekNamaParams);
+    $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
 
-    if ($stmt) {
-        $showModal = true;
+    if ($cekNamaRow['jumlah'] > 0) {
+        $error = "Nama barang sudah terdaftar, silakan gunakan nama lain.";
     } else {
-        $error = "Gagal menambahkan barang.";
+        $query = "INSERT INTO Barang (namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?)";
+        $params = [$namaBarang, $stokBarang, $lokasiBarang];
+        $stmt = sqlsrv_query($conn, $query, $params);
+
+        if ($stmt) {
+            $showModal = true;
+        } else {
+            $error = "Gagal menambahkan barang.";
+        }
     }
 }
 
@@ -52,7 +62,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Pengelolaan Laboratorium</title>
+    <title>Tambah Barang - Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -322,7 +332,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 <!-- Tambah Barang -->
                 <div class="container mt-4">
                     <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
                             <?php echo $error; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -341,20 +351,29 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                             <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
                                         </div>
                                         <div class="mb-2">
-                                            <label for="namaBarang" class="form-label">Nama Barang</label>
-                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang" required>
+                                            <label for="namaBarang" class="form-label">
+                                                Nama Barang
+                                                <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                            </label>
+                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="stokBarang" class="form-label">Stok Barang</label>
+                                            <label for="stokBarang" class="form-label">
+                                                Stok Barang
+                                                <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                            </label>
                                             <div class="input-group" style="max-width: 180px;">
                                                 <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                                <input type="number" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="0" required style="max-width: 70px;">
+                                                <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
                                                 <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label for="lokasiBarang" class="form-label">Lokasi Barang</label>
-                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang" required>
+                                            <label for="lokasiBarang" class="form-label">
+                                                Lokasi Barang
+                                                <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                            </label>
+                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang">
                                                 <option value="" disabled selected>Pilih Lokasi</option>
                                                 <?php foreach ($lokasiList as $lokasi) : ?>
                                                     <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
@@ -410,7 +429,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="../../logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="../../pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
@@ -428,6 +447,42 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 if (next < 0) next = 0;
                 stokInput.value = next;
             }
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                let valid = true;
+
+                // Nama Barang
+                const namaBarang = document.getElementById('namaBarang');
+                const errorNamaBarang = document.getElementById('errorNamaBarang');
+                if (namaBarang.value.trim() === '') {
+                    errorNamaBarang.style.display = 'inline';
+                    valid = false;
+                } else {
+                    errorNamaBarang.style.display = 'none';
+                }
+
+                // Stok Barang
+                const stokBarang = document.getElementById('stokBarang');
+                const errorStokBarang = document.getElementById('errorStokBarang');
+                if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
+                    errorStokBarang.style.display = 'inline';
+                    valid = false;
+                } else {
+                    errorStokBarang.style.display = 'none';
+                }
+
+                // Lokasi Barang
+                const lokasiBarang = document.getElementById('lokasiBarang');
+                const errorLokasiBarang = document.getElementById('errorLokasiBarang');
+                if (!lokasiBarang.value) {
+                    errorLokasiBarang.style.display = 'inline';
+                    valid = false;
+                } else {
+                    errorLokasiBarang.style.display = 'none';
+                }
+
+                if (!valid) e.preventDefault();
+            });
         </script>
 
 
