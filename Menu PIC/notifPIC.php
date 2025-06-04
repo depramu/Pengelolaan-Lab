@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -143,15 +144,24 @@
         <!-- Header -->
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
-                <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
-                    <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+                    <span class="fw-normal fs-6">
+                        <?php
+                        if (isset($_SESSION['user_nama'])) {
+                            echo htmlspecialchars($_SESSION['user_nama']);
+                        } else {
+                            echo "PIC User"; // Default if name not set
+                        }
+                        ?>
+                        (PIC)
+                    </span>
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="notifPIC.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="profilPIC.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -163,11 +173,11 @@
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
-                            <span><img src="icon/layers0.png">Manajemen Aset</span>
+                            <span><img src="../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="asetSubmenu">
@@ -177,7 +187,7 @@
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-                            <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                            <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="akunSubmenu">
@@ -187,7 +197,7 @@
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="false" aria-controls="pinjamSubmenu">
-                            <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                            <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="pinjamSubmenu">
@@ -196,10 +206,10 @@
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                        <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                     </li>
                     <li class="nav-item mt-0">
-                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -215,11 +225,11 @@
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                                <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                                    <span><img src="icon/layers0.png">Manajemen Aset</span>
+                                    <span><img src="../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="asetSubmenuMobile">
@@ -229,7 +239,7 @@
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                                    <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                                    <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="akunSubmenuMobile">
@@ -239,7 +249,7 @@
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                                    <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                                    <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -248,10 +258,10 @@
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                                <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -264,7 +274,7 @@
                 <div class="mb-5">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Notifikasi</li>
                         </ol>
                     </nav>
@@ -281,7 +291,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+                    <h5 class="modal-title" id="logoutModalLabel"><i><img src="../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -289,7 +299,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                    <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                    <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                 </div>
             </div>
         </div>

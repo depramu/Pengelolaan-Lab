@@ -1,8 +1,24 @@
 <?php
-include 'koneksi.php';
-$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang";
-$result = sqlsrv_query($conn, $query);
+session_start();
+include '../koneksi.php';
+
+// Pagination setup
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$perPage = 9;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
+// Hitung total data
+$countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Barang";
+$countResult = sqlsrv_query($conn, $countQuery);
+$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
+$totalData = $countRow['total'];
+$totalPages = ceil($totalData / $perPage);
+
+// Ambil data sesuai halaman
+$offset = ($page - 1) * $perPage;
+$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg FROM Peminjaman_Barang ORDER BY idPeminjamanBrg OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$result = sqlsrv_query($conn, $query);
 
 ?>
 
@@ -143,6 +159,12 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         font-size: 0.8rem;
       }
     }
+
+    .fixed-pagination {
+      position: fixed;
+      bottom: 30px;
+      right: 40px;
+    }
   </style>
 </head>
 
@@ -151,15 +173,24 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
       <div class="d-flex align-items-center">
-        <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+        <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
         <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
           <span class="fw-semibold fs-3">Hello,</span><br>
-          <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+          <span class="fw-normal fs-6">
+            <?php
+            if (isset($_SESSION['user_nama'])) {
+              echo htmlspecialchars($_SESSION['user_nama']);
+            } else {
+              echo "PIC User"; // Default if name not set
+            }
+            ?>
+            (PIC)
+          </span>
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-        <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+        <a href="notifPIC.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+        <a href="profilPIC.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
         <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
           <i class="bi bi-list"></i>
         </button>
@@ -171,11 +202,11 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item mb-2">
-            <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+            <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
           </li>
           <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
-              <span><img src="icon/layers0.png">Manajemen Aset</span>
+              <span><img src="../icon/layers0.png">Manajemen Aset</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="asetSubmenu">
@@ -185,7 +216,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           </li>
           <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-              <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+              <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="akunSubmenu">
@@ -199,7 +230,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
             $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
             ?>
             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="false" aria-controls="pinjamSubmenu">
-              <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+              <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4 <?php if ($isPeminjamanActive) echo 'show'; ?>" id="pinjamSubmenu">
@@ -208,10 +239,10 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
             </div>
           </li>
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+            <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
           </li>
           <li class="nav-item mt-0">
-            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+            <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
           </li>
         </ul>
       </nav>
@@ -227,11 +258,11 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
           <nav class="sidebar flex-column p-4 h-100">
             <ul class="nav nav-pills flex-column mb-auto">
               <li class="nav-item mb-2">
-                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
               </li>
               <li class="nav-item mb-2">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                  <span><img src="icon/layers0.png">Manajemen Aset</span>
+                  <span><img src="../icon/layers0.png">Manajemen Aset</span>
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="asetSubmenuMobile">
@@ -241,7 +272,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
               </li>
               <li class="nav-item mb-2">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                  <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                  <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="akunSubmenuMobile">
@@ -251,7 +282,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
               </li>
               <li class="nav-item mb-2">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                  <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                  <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -260,10 +291,10 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                 </div>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
               </li>
               <li class="nav-item mt-0">
-                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
               </li>
             </ul>
           </nav>
@@ -276,7 +307,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         <div class="mb-3">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
+              <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
               <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
             </ol>
           </nav>
@@ -310,7 +341,9 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                 );
               }
 
+              $hasData = false;
               while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                $hasData = true;
               ?>
                 <tr>
                   <td><?= $row['idPeminjamanBrg'] ?></td>
@@ -359,11 +392,15 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                       <i class="bi <?= $iconClass; ?> me-2" style="font-size: 1.2rem;"></i>
                     </span>
                     <a href="detail_peminjam  an.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                      <i><img src="icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                      <i><img src="../icon/detail.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                     </a>
                   </td>
                 </tr>
               <?php } // End while loop 
+
+              if (!$hasData) {
+                echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
+              }
               ?>
             </tbody>
           </table>
@@ -371,6 +408,46 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
       </main>
       <!-- End Content Area -->
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <nav aria-label="Page navigation" class="fixed-pagination">
+    <ul class="pagination justify-content-end">
+      <!-- Previous button -->
+      <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
+      </li>
+      <!-- Page numbers -->
+      <?php
+      $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
+      $ellipsisShown = false;
+      for ($i = 1; $i <= $totalPages; $i++) {
+        if (
+          $i <= $showPages || // always show first 3
+          $i > $totalPages - $showPages || // always show last 3
+          abs($i - $page) <= 1 // show current, previous, next
+        ) {
+          $ellipsisShown = false;
+      ?>
+          <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+          </li>
+      <?php
+        } elseif (!$ellipsisShown) {
+          // Show ellipsis only once
+          echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+          $ellipsisShown = true;
+        }
+      }
+      ?>
+      <!-- Next button -->
+      <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
+      </li>
+    </ul>
+  </nav>
+
+
   </div>
 
   <!-- Bootstrap JS -->
@@ -381,7 +458,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+          <h5 class="modal-title" id="logoutModalLabel"><i><img src="../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -389,7 +466,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+          <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
         </div>
       </div>
     </div>

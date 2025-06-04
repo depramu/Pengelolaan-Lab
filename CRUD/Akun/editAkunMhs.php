@@ -1,58 +1,61 @@
 <?php
-
+session_start(); // Added session_start()
 include '../../koneksi.php';
 
-$showModal = false;
+$nim = $_GET['id'] ?? null;
 
-// Auto-generate idBarang dari database SQL Server
-$idBarang = 'BRG001';
-$sqlId = "SELECT TOP 1 idBarang FROM Barang WHERE idBarang LIKE 'BRG%' ORDER BY idBarang DESC";
-$stmtId = sqlsrv_query($conn, $sqlId);
-if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['idBarang']; // contoh: BRG012
-    $num = intval(substr($lastId, 3));
-    $newNum = $num + 1;
-    $idBarang = 'BRG' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
+if (!$nim) {
+    // Redirect to a more appropriate page if nim is not found, e.g., the main mahasiswa management page
+    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
+    exit;
 }
 
-$lokasiList = [];
-$sqlLokasi = "SELECT idRuangan FROM Ruangan";
-$stmtLokasi = sqlsrv_query($conn, $sqlLokasi);
-if ($stmtLokasi) {
-    while ($row = sqlsrv_fetch_array($stmtLokasi, SQLSRV_FETCH_ASSOC)) {
-        $lokasiList[] = $row['idRuangan'];
-    }
+$showModal = false; // Initialize the modal visibility variable
+
+$query = "SELECT * FROM Mahasiswa WHERE nim = ?";
+$stmt = sqlsrv_query($conn, $query, [$nim]);
+$data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+
+if (!$data) {   
+    // Handle case where NIM doesn't exist in DB, redirect or show error
+    // For now, redirecting back to management page
+    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaBarang = $_POST['namaBarang'];
-    $stokBarang = $_POST['stokBarang'];
-    $lokasiBarang = $_POST['lokasiBarang'];
+    // No need to fetch nim from POST if it's from URL and disabled in form, use $nim from GET
+    $namaMhs = $_POST['namaMhs']; // Should also be from $data if disabled, or ensure it's submitted if editable
+    $kataSandi = $_POST['kataSandi'];
+    // konfirmasiSandi is only for client-side validation, not stored
 
-    // Cek apakah nama barang sudah ada
-    $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Barang WHERE namaBarang = ?";
-    $cekNamaParams = [$namaBarang];
-    $cekNamaStmt = sqlsrv_query($conn, $cekNamaQuery, $cekNamaParams);
-    $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
+    // Assuming nim and namaMhs are not changed through this form as they are disabled
+    // If they were changeable, they should be part of the $params array
+    $updateQuery = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
+    $params = [$kataSandi, $nim];
+    $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
 
-    if ($cekNamaRow['jumlah'] > 0) {
-        $error = "Nama barang sudah terdaftar, silakan gunakan nama lain.";
+    if ($updateStmt) {
+        $showModal = true; // Set to true to show the modal
+        // Re-fetch data to show updated values if needed, though kataSandi isn't displayed directly
+        $stmt = sqlsrv_query($conn, $query, [$nim]); // Re-run original query
+        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
-        $query = "INSERT INTO Barang (namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?)";
-        $params = [$namaBarang, $stokBarang, $lokasiBarang];
-        $stmt = sqlsrv_query($conn, $query, $params);
-
-        if ($stmt) {
-            $showModal = true;
-        } else {
-            $error = "Gagal menambahkan barang.";
-        }
+        $error = "Gagal mengubah data akun. Error: " . print_r(sqlsrv_errors(), true); // More detailed error
     }
 }
 
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-$manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+// Define page groups for active sidebar states (using only basenames)
+$manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php', 'tambahRuangan.php', 'editRuangan.php'];
 $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
+
+$manajemenAkunPages = ['manajemenAkunMhs.php', 'tambahAkunMhs.php', 'editAkunMhs.php', 'manajemenAkunKry.php', 'tambahAkunKry.php', 'editAkunKry.php'];
+$isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
+
+$peminjamanPages = ['peminjamanBarang.php', 'peminjamanRuangan.php', 'detailPeminjaman.php']; // Add other relevant peminjaman pages
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +65,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tambah Barang - Sistem Pengelolaan Laboratorium</title>
+    <title>Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -203,12 +206,21 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
-                    <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+                    <span class="fw-normal fs-6">
+                        <?php
+                        if (isset($_SESSION['user_nama'])) {
+                            echo htmlspecialchars($_SESSION['user_nama']);
+                        } else {
+                            echo "PIC User"; // Default if name not set
+                        }
+                        ?>
+                        (PIC)
+                    </span>
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="../../notif.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="../../profil.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="../../Menu PIC/notifPIC.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="../../Menu PIC/profilPIC.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -223,40 +235,40 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                         <a href="../../Menu PIC/dashboardPIC.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAsetSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isManajemenAsetActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="<?php echo $isManajemenAsetActive ? 'true' : 'false'; ?>" aria-controls="manajemenAsetSubmenu">
                             <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="manajemenAsetSubmenu">
                             <a href="../../Menu PIC/manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
-                            <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
+                            <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php' || $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isManajemenAkunActive); ?>" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="<?php echo $isManajemenAkunActive ? 'true' : 'false'; ?>" aria-controls="akunSubmenu">
                             <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="akunSubmenu">
-                            <a href="#" class="nav-link">Mahasiswa</a>
-                            <a href="#" class="nav-link">Karyawan</a>
+                        <div class="collapse ps-4 <?php if ($isManajemenAkunActive) echo 'show'; ?>" id="akunSubmenu">
+                            <a href="../../Menu PIC/manajemenAkunMhs.php" class="nav-link <?php if ($currentPage === 'manajemenAkunMhs.php' || $currentPage === 'tambahAkunMhs.php' || $currentPage === 'editAkunMhs.php') echo 'active-submenu'; ?>">Mahasiswa</a>
+                            <a href="../../Menu PIC/manajemenAkunKry.php" class="nav-link <?php if ($currentPage === 'manajemenAkunKry.php' || $currentPage === 'tambahAkunKry.php' || $currentPage === 'editAkunKry.php') echo 'active-submenu'; ?>">Karyawan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
+                        <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isPeminjamanActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="<?php echo $isPeminjamanActive ? 'true' : 'false'; ?>" aria-controls="pinjamSubmenu">
                             <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="pinjamSubmenuMobile">
-                            <a href="../../peminjamanBarang.php" class="nav-link">Barang</a>
-                            <a href="#" class="nav-link">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($isPeminjamanActive) echo 'show'; ?>" id="pinjamSubmenu">
+                            <a href="../../Menu PIC/peminjamanBarang.php" class="nav-link <?php if ($currentPage === 'peminjamanBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="../../Menu PIC/peminjamanRuangan.php" class="nav-link <?php if ($currentPage === 'peminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
                         <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                     </li>
                     <li class="nav-item mt-0">
-                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
+                        <a href="../../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -275,40 +287,40 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                 <a href="../../Menu PIC/dashboardPIC.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isManajemenAsetActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="<?php echo $isManajemenAsetActive ? 'true' : 'false'; ?>" aria-controls="asetSubmenuMobile">
                                     <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="asetSubmenuMobile">
+                                <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="asetSubmenuMobile">
                                     <a href="../../Menu PIC/manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
-                                    <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
+                                    <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php' || $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isManajemenAkunActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="<?php echo $isManajemenAkunActive ? 'true' : 'false'; ?>" aria-controls="akunSubmenuMobile">
                                     <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="akunSubmenuMobile">
-                                    <a href="#" class="nav-link">Mahasiswa</a>
-                                    <a href="#" class="nav-link">Karyawan</a>
+                                <div class="collapse ps-4 <?php if ($isManajemenAkunActive) echo 'show'; ?>" id="akunSubmenuMobile">
+                                    <a href="../../Menu PIC/manajemenAkunMhs.php" class="nav-link <?php if ($currentPage === 'manajemenAkunMhs.php' || $currentPage === 'tambahAkunMhs.php' || $currentPage === 'editAkunMhs.php') echo 'active-submenu'; ?>">Mahasiswa</a>
+                                    <a href="../../Menu PIC/manajemenAkunKry.php" class="nav-link <?php if ($currentPage === 'manajemenAkunKry.php' || $currentPage === 'tambahAkunKry.php' || $currentPage === 'editAkunKry.php') echo 'active-submenu'; ?>">Karyawan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isPeminjamanActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="<?php echo $isPeminjamanActive ? 'true' : 'false'; ?>" aria-controls="pinjamSubmenuMobile">
                                     <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="pinjamSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                                    <a href="#" class="nav-link">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($isPeminjamanActive) echo 'show'; ?>" id="pinjamSubmenuMobile">
+                                    <a href="../../Menu PIC/peminjamanBarang.php" class="nav-link <?php if ($currentPage === 'peminjamanBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="../../Menu PIC/peminjamanRuangan.php" class="nav-link <?php if ($currentPage === 'peminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
                                 <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
+                                <a href="../../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -322,68 +334,59 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Tambah Barang</li>
+                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Akun</li>
                         </ol>
                     </nav>
                 </div>
 
 
-                <!-- Tambah Barang -->
+                <!-- Edit Akun Mahasiswa -->
                 <div class="container mt-4">
                     <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <?php echo $error; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
 
                     <div class="row justify-content-center">
-                        <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
+                        <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                             <div class="card border border-dark">
                                 <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Tambah Barang</span>
+                                    <span class="fw-semibold">Edit Akun</span>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST">
-                                        <div class="mb-2">
-                                            <label for="idBarang" class="form-label">ID Barang</label>
-                                            <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="namaBarang" class="form-label">
-                                                Nama Barang
-                                                <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="stokBarang" class="form-label">
-                                                Stok Barang
-                                                <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <div class="input-group" style="max-width: 180px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                                <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                        <div class="mb-2 row">
+                                            <div class="col-md-6">
+                                                <label for="nim" class="form-label">NIM</label>
+                                                <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled>
+                                                <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="namaMhs" class="form-label">Nama Lengkap</label>
+                                                <input type="text" class="form-control" id="namaMhs" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>" disabled>
+                                                <input type="hidden" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>">
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label for="lokasiBarang" class="form-label">
-                                                Lokasi Barang
-                                                <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                            <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                                <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
+                                                <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
                                             </label>
-                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                                <option value="" disabled selected>Pilih Lokasi</option>
-                                                <?php foreach ($lokasiList as $lokasi) : ?>
-                                                    <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
                                         </div>
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
-                                            <button type="submit" class="btn btn-primary">Tambah</button>
-                                        </div>
+                                        <div class="mb-2">
+                                            <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
+                                                <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
+                                                <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
+                                            </label>
+                                            <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                            <div class="d-flex justify-content-between mt-4">
+                                                <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </div>
                                     </form>
                                 </div>
                             </div>
@@ -396,20 +399,20 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="../../Menu PIC/manajemenBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                                    <a href="../../Menu PIC/manajemenAkunMhs.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Data barang berhasil ditambahkan.</p>
+                                    <p>Data akun berhasil diubah.</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-primary">OK</a>
+                                    <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-primary">OK</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <!-- End Tambah Barang -->
+                <!-- End Edit Akun Mahasiswa -->
 
 
             </main>
@@ -439,52 +442,54 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
+        <!-- <script>
             function changeStok(val) {
-                var stokInput = document.getElementById('stokBarang');
+                var stokInput = document.getElementById('namaKry');
                 var current = parseInt(stokInput.value) || 0;
                 var next = current + val;
                 if (next < 0) next = 0;
                 stokInput.value = next;
             }
+        </script> -->
 
+        <script>
             document.querySelector('form').addEventListener('submit', function(e) {
-                let valid = true;
+                var pass = document.getElementById('kataSandi').value;
+                var conf = document.getElementById('konfirmasiSandi').value;
 
-                // Nama Barang
-                const namaBarang = document.getElementById('namaBarang');
-                const errorNamaBarang = document.getElementById('errorNamaBarang');
-                if (namaBarang.value.trim() === '') {
-                    errorNamaBarang.style.display = 'inline';
+                var passError = document.getElementById('passError');
+                var passMatchError = document.getElementById('passMatchError');
+                var confPassError = document.getElementById('confPassError');
+                var passLengthError = document.getElementById('passLengthError');
+
+                var valid = true;
+
+                // Reset error
+                passError.style.display = 'none';
+                confPassError.style.display = 'none';
+                passMatchError.style.display = 'none';
+                passLengthError.style.display = 'none';
+
+                if (pass === "") {
+                    passError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorNamaBarang.style.display = 'none';
                 }
-
-                // Stok Barang
-                const stokBarang = document.getElementById('stokBarang');
-                const errorStokBarang = document.getElementById('errorStokBarang');
-                if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
-                    errorStokBarang.style.display = 'inline';
+                if (pass.length > 0 && pass.length < 8) {
+                    passLengthError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorStokBarang.style.display = 'none';
                 }
-
-                // Lokasi Barang
-                const lokasiBarang = document.getElementById('lokasiBarang');
-                const errorLokasiBarang = document.getElementById('errorLokasiBarang');
-                if (!lokasiBarang.value) {
-                    errorLokasiBarang.style.display = 'inline';
+                if (conf === "") {
+                    confPassError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorLokasiBarang.style.display = 'none';
+                }
+                if (pass !== "" && conf !== "" && pass !== conf) {
+                    passMatchError.style.display = 'block';
+                    valid = false;
                 }
 
                 if (!valid) e.preventDefault();
             });
         </script>
-
 
         <?php if ($showModal) : ?>
             <script>

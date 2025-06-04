@@ -1,22 +1,22 @@
 <?php
-include 'koneksi.php';
+session_start();
+include '../koneksi.php';
 
 // Pagination setup
 $perPage = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Barang";
+$countQuery = "SELECT COUNT(*) AS total FROM Karyawan";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT npk, namaKry, noHP, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manajemen Barang - Sistem Pengelolaan Laboratorium</title>
+    <title>Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -156,6 +156,12 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                 font-size: 0.8rem;
             }
         }
+
+        .fixed-pagination {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+        }
     </style>
 </head>
 
@@ -164,15 +170,24 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         <!-- Header -->
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
-                <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
-                    <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+                    <span class="fw-normal fs-6">
+                        <?php
+                        if (isset($_SESSION['user_nama'])) {
+                            echo htmlspecialchars($_SESSION['user_nama']);
+                        } else {
+                            echo "PIC User"; // Default if name not set
+                        }
+                        ?>
+                        (PIC)
+                    </span>
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="profil.php"><img src="icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="notifPIC.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="profilPIC.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -184,7 +199,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <?php
@@ -192,7 +207,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                         ?>
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAsetSubmenu">
-                            <span><img src="icon/layers0.png">Manajemen Aset</span>
+                            <span><img src="../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="manajemenAsetSubmenu">
@@ -201,18 +216,22 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-                            <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                        <?php
+                        $manajemenAkunPages = ['manajemenAkunMhs.php', 'manajemenAkunKry.php'];
+                        $isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
+                        ?>
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAkunSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAkunSubmenu">
+                            <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="akunSubmenu">
-                            <a href="#" class="nav-link">Mahasiswa</a>
-                            <a href="#" class="nav-link">Karyawan</a>
+                        <div class="collapse ps-4 <?php if ($isManajemenAkunActive) echo 'show'; ?>" id="manajemenAkunSubmenu">
+                            <a href="manajemenAkunMhs.php" class="nav-link <?php if ($currentPage === 'manajemenAkunMhs.php') echo 'active-submenu'; ?>">Mahasiswa</a>
+                            <a href="manajemenAkunKry.php" class="nav-link <?php if ($currentPage === 'manajemenAkunKry.php') echo 'active-submenu'; ?>">Karyawan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                            <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                            <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -221,10 +240,10 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                        <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                     </li>
                     <li class="nav-item mt-0">
-                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -240,11 +259,11 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                                <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                                    <span><img src="icon/layers0.png">Manajemen Aset</span>
+                                    <span><img src="../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="asetSubmenuMobile">
@@ -254,17 +273,17 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                                    <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                                    <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="akunSubmenuMobile">
-                                    <a href="#" class="nav-link">Mahasiswa</a>
-                                    <a href="#" class="nav-link">Karyawan</a>
+                                    <a href="manajemenAkunMhs.php" class="nav-link">Mahasiswa</a>
+                                    <a href="manajemenAkunKry.php" class="nav-link">Karyawan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                                    <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                                    <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -273,10 +292,10 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                                <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -289,71 +308,76 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                 <div class="mb-3">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Manajemen Barang</li>
+                            <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Manajemen Akun Karyawan</li>
                         </ol>
                     </nav>
                 </div>
 
-                <!-- Table Manajemen Barang -->
+                <!-- Table Manajemen Akun Karyawan -->
                 <div class="d-flex justify-content-start mb-2">
-                    <a href="CRUd/Barang/tambahBarang.php" class="btn btn-primary">
-                        <img src="icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
+                    <a href="../CRUD/Akun/tambahAkunKry.php" class="btn btn-primary">
+                        <img src="../icon/tambah.svg" alt="tambahAkun" class="me-1">
+                        Tambah Akun</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle table-bordered">
                         <thead class="table-light">
                             <tr>
-                                <th>ID Barang</th>
-                                <th>Nama Barang</th>
-                                <th>Stok Barang</th>
-                                <th>Lokasi Barang</th>
-                                <th>Aksi</th>
+                                <th>NPK</th>
+                                <th>Nama Lengkap</th>
+                                <th>Nomor Telepon</th>
+                                <th>Role</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
-                            <tbody>
-                                <?php
-                                while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                ?>
-                                    <tr>
-                                        <td><?= $row['idBarang'] ?></td>
-                                        <td><?= $row['namaBarang'] ?></td>
-                                        <td><?= $row['stokBarang'] ?></td>
-                                        <td><?= $row['lokasiBarang'] ?></td>
-                                        <td>
-                                            <a href="CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                                        
-                                            <!-- delete -->
-                                            <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
-                                                tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <form action="CRUD/Barang/hapusBarang.php" method="POST">
-                                                        <input type="hidden" name="idBarang" value="<?= $row['idBarang'] ?>">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="modalLabel<?= $row['idBarang'] ?>">Konfirmasi Hapus</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Apakah Anda yakin ingin menghapus Barang "<strong><?= htmlspecialchars($row['namaBarang']) ?></strong>"?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                <button type="submit" class="btn btn-danger">Ya. Hapus</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php
-                                }
-                                ?>
-                            </tbody>
-                    </table>
+                        <tbody>
+                            <?php
+                            $hasData = false; // Flag to check if there is data
+                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                $hasData = true; // Set flag to true if data is found
+                            ?>
+                                <tr>
+                                    <td><?= $row['npk'] ?></td>
+                                    <td><?= $row['namaKry'] ?></td>
+                                    <td><?= $row['noHP'] ?></td>
+                                    <td><?= $row['jenisRole'] ?></td>
+                                    <td class="text-center">
+                                        <a href="../CRUD/Akun/editAkunKry.php?id=<?= $row['npk'] ?>"><img src="../icon/edit.svg" alt="" style=" width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                                        <a href="../CRUD/Akun/hapusAkunKry.php?id=<?= $row['npk'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['npk'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
 
+                                        <!-- delete -->
+                                        <div class="modal fade" id="deleteModal<?= $row['npk'] ?>"
+                                            tabindex="-1" aria-labelledby="modalLabel<?= $row['npk'] ?>" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <form action="../CRUD/Akun/hapusAkunKry.php" method="POST">
+                                                    <input type="hidden" name="npk" value="<?= $row['npk'] ?>">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalLabel<?= $row['npk'] ?>">Konfirmasi Hapus</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['namaKry']) ?></strong>"?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn btn-danger">Ya, hapus</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                            if (!$hasData) {
+                                echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                     <!-- Pagination -->
                     <nav aria-label="Page navigation" class="fixed-pagination">
                         <ul class="pagination justify-content-end">
@@ -391,17 +415,16 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         </ul>
                     </nav>
 
-
                 </div>
             </main>
+            <!-- End Content Area -->
         </div>
-
         <!-- Logout Modal -->
         <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+                        <h5 class="modal-title" id="logoutModalLabel"><i><img src="../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -409,7 +432,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
@@ -417,8 +440,9 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         <!-- End Logout Modal -->
 
         <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+        </script>
+
 </body>
 
 </html>

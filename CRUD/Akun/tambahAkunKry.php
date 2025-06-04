@@ -1,58 +1,65 @@
 <?php
+session_start();
 
 include '../../koneksi.php';
 
 $showModal = false;
 
-// Auto-generate idBarang dari database SQL Server
-$idBarang = 'BRG001';
-$sqlId = "SELECT TOP 1 idBarang FROM Barang WHERE idBarang LIKE 'BRG%' ORDER BY idBarang DESC";
+// Auto-generate npk dari database SQL Server
+$npk = '51001';
+$sqlId = "SELECT TOP 1 npk FROM Karyawan WHERE npk LIKE '51%' ORDER BY npk DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
 if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['idBarang']; // contoh: BRG012
+    $lastId = $rowId['npk']; // contoh: 51001
     $num = intval(substr($lastId, 3));
     $newNum = $num + 1;
-    $idBarang = 'BRG' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
+    $npk = '51' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
 }
 
-$lokasiList = [];
-$sqlLokasi = "SELECT idRuangan FROM Ruangan";
-$stmtLokasi = sqlsrv_query($conn, $sqlLokasi);
-if ($stmtLokasi) {
-    while ($row = sqlsrv_fetch_array($stmtLokasi, SQLSRV_FETCH_ASSOC)) {
-        $lokasiList[] = $row['idRuangan'];
-    }
-}
+// $roleList = [];
+// $sqlRole = "SELECT jenisRole FROM Karyawan";
+// $stmtRole = sqlsrv_query($conn, $sqlRole);
+// if ($stmtRole) {
+//     while ($row = sqlsrv_fetch_array($stmtRole, SQLSRV_FETCH_ASSOC)) {
+//         $role[] = $row['jenisRole'];
+//     }
+// }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaBarang = $_POST['namaBarang'];
-    $stokBarang = $_POST['stokBarang'];
-    $lokasiBarang = $_POST['lokasiBarang'];
+    $namaKry = $_POST['namaKry'];
+    $noHP = $_POST['noHP'];
+    $jenisRole = $_POST['jenisRole'];
+    $kataSandi = $_POST['kataSandi'];
+    $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    // Cek apakah nama barang sudah ada
-    $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Barang WHERE namaBarang = ?";
-    $cekNamaParams = [$namaBarang];
-    $cekNamaStmt = sqlsrv_query($conn, $cekNamaQuery, $cekNamaParams);
-    $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
+    $query = "INSERT INTO Karyawan   (namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?)";
+    $params = [$namaKry, $noHP, $jenisRole, $kataSandi];
+    $stmt = sqlsrv_query($conn, $query, $params);
 
-    if ($cekNamaRow['jumlah'] > 0) {
-        $error = "Nama barang sudah terdaftar, silakan gunakan nama lain.";
+    if ($stmt) {
+        $showModal = true;
     } else {
-        $query = "INSERT INTO Barang (namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?)";
-        $params = [$namaBarang, $stokBarang, $lokasiBarang];
-        $stmt = sqlsrv_query($conn, $query, $params);
-
-        if ($stmt) {
-            $showModal = true;
-        } else {
-            $error = "Gagal menambahkan barang.";
-        }
+        $error = "Gagal menambahkan akun.";
     }
 }
 
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+
+// Variabel untuk Manajemen Aset (dibiarkan jika masih ada kemungkinan digunakan atau untuk konsistensi struktur)
 $manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
 $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
+
+// Variabel untuk Manajemen Akun
+$manajemenAkunPages = [
+    'manajemenAkunKry.php',
+    'tambahAkunKry.php',
+    'editAkunKry.php',
+    'manajemenAkunMhs.php',
+    'tambahAkunMhs.php',
+    'editAkunMhs.php'
+];
+$isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
+
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +69,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tambah Barang - Sistem Pengelolaan Laboratorium</title>
+    <title>Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -223,7 +230,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                         <a href="../../Menu PIC/dashboardPIC.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAsetSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="<?php echo $isManajemenAsetActive ? 'true' : 'false'; ?>" aria-controls="manajemenAsetSubmenu">
                             <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
@@ -233,13 +240,13 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="<?php echo $isManajemenAkunActive ? 'true' : 'false'; ?>" aria-controls="akunSubmenu">
                             <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="akunSubmenu">
-                            <a href="#" class="nav-link">Mahasiswa</a>
-                            <a href="#" class="nav-link">Karyawan</a>
+                        <div class="collapse ps-4 <?php if ($isManajemenAkunActive) echo 'show'; ?>" id="akunSubmenu">
+                            <a href="../../Menu PIC/manajemenAkunMhs.php" class="nav-link <?php if ($currentPage === 'manajemenAkunMhs.php' || $currentPage === 'tambahAkunMhs.php' || $currentPage === 'editAkunMhs.php') echo 'active-submenu'; ?>">Mahasiswa</a>
+                            <a href="../../Menu PIC/manajemenAkunKry.php" class="nav-link <?php if ($currentPage === 'manajemenAkunKry.php' || $currentPage === 'tambahAkunKry.php' || $currentPage === 'editAkunKry.php') echo 'active-submenu'; ?>">Karyawan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -272,26 +279,26 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="../../Menu PIC/dashboardPIC.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                                <a href="../../index.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="<?php echo $isManajemenAsetActive ? 'true' : 'false'; ?>" aria-controls="asetSubmenuMobile">
                                     <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="asetSubmenuMobile">
+                                <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="asetSubmenuMobile">
                                     <a href="../../Menu PIC/manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
                                     <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="<?php echo $isManajemenAkunActive ? 'true' : 'false'; ?>" aria-controls="akunSubmenuMobile">
                                     <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="akunSubmenuMobile">
-                                    <a href="#" class="nav-link">Mahasiswa</a>
-                                    <a href="#" class="nav-link">Karyawan</a>
+                                <div class="collapse ps-4 <?php if ($isManajemenAkunActive) echo 'show'; ?>" id="akunSubmenuMobile">
+                                    <a href="../../Menu PIC/manajemenAkunMhs.php" class="nav-link <?php if ($currentPage === 'manajemenAkunMhs.php' || $currentPage === 'tambahAkunMhs.php' || $currentPage === 'editAkunMhs.php') echo 'active-submenu'; ?>">Mahasiswa</a>
+                                    <a href="../../Menu PIC/manajemenAkunKry.php" class="nav-link <?php if ($currentPage === 'manajemenAkunKry.php' || $currentPage === 'tambahAkunKry.php' || $currentPage === 'editAkunKry.php') echo 'active-submenu'; ?>">Karyawan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -300,7 +307,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                                    <a href="../../peminjamanBarang.php" class="nav-link">Barang</a>
                                     <a href="#" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
@@ -322,8 +329,8 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Tambah Barang</li>
+                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunKry.php">Manajemen Akun Karyawan</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Tambah Akun</li>
                         </ol>
                     </nav>
                 </div>
@@ -332,7 +339,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 <!-- Tambah Barang -->
                 <div class="container mt-4">
                     <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <?php echo $error; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -342,46 +349,55 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                         <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                             <div class="card border border-dark">
                                 <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Tambah Barang</span>
+                                    <span class="fw-semibold">Tambah Akun</span>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST">
-                                        <div class="mb-2">
-                                            <label for="idBarang" class="form-label">ID Barang</label>
-                                            <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                        <div class="mb-2 row">
+                                            <div class="col-md-6">
+                                                <label for="npk" class="form-label">NPK</label>
+                                                <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="namaKry" class="form-label d-flex align-items-center">Nama Lengkap
+                                                    <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                                </label>
+                                                <input type="text" class="form-control" id="namaKry" name="namaKry">
+                                            </div>
                                         </div>
-                                        <div class="mb-2">
-                                            <label for="namaBarang" class="form-label">
-                                                Nama Barang
-                                                <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="stokBarang" class="form-label">
-                                                Stok Barang
-                                                <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <div class="input-group" style="max-width: 180px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                                <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                        <div class="mb-2 row">
+                                            <div class="col-md-6">
+                                                <label for="noHP" class="form-label d-flex align-items-center">Nomor Telepon
+                                                    <span id="noHPError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                                </label>
+                                                <input type="text" class="form-control" id="noHP" name="noHP">
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <label for="jenisRole" class="form-label">Role</label>
+                                                <select class="form-select" id="jenisRole" name="jenisRole">
+                                                    <option value="" selected>Pilih Role</option>
+                                                    <option value="PIC Aset">PIC Aset</option>
+                                                    <option value="KA UPT">KA UPT</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="mb-2">
-                                            <label for="lokasiBarang" class="form-label">
-                                                Lokasi Barang
-                                                <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                            <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                                <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minimal 8 karakter</span>
+                                                <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                             </label>
-                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                                <option value="" disabled selected>Pilih Lokasi</option>
-                                                <?php foreach ($lokasiList as $lokasi) : ?>
-                                                    <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <input type="password" class="form-control" id="kataSandi" name="kataSandi">
                                         </div>
+                                        <div class="mb-2">
+                                            <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
+                                                <span id="passMatchError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Tidak sesuai</span>
+                                                <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                            </label>
+                                            <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi">
+                                        </div>
+
                                         <div class="d-flex justify-content-between mt-4">
-                                            <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                            <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-secondary">Kembali</a>
                                             <button type="submit" class="btn btn-primary">Tambah</button>
                                         </div>
                                     </form>
@@ -396,22 +412,20 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="../../Menu PIC/manajemenBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                                    <a href="../../Menu PIC/manajemenAkunKry.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Data barang berhasil ditambahkan.</p>
+                                    <p>Data akun berhasil ditambahkan.</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-primary">OK</a>
+                                    <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-primary">OK</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <!-- End Tambah Barang -->
-
-
+                <!-- End Tambah Akun -->
             </main>
 
         </div>
@@ -429,7 +443,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="../../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="../../logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
@@ -439,52 +453,68 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
+        <!-- <script>
             function changeStok(val) {
-                var stokInput = document.getElementById('stokBarang');
+                var stokInput = document.getElementById('noHP');
                 var current = parseInt(stokInput.value) || 0;
                 var next = current + val;
                 if (next < 0) next = 0;
                 stokInput.value = next;
             }
+        </script> -->
 
+        <script>
             document.querySelector('form').addEventListener('submit', function(e) {
-                let valid = true;
+                var nama = document.getElementById('namaKry').value.trim();
+                var nohp = document.getElementById('noHP').value.trim();
+                var pass = document.getElementById('kataSandi').value;
+                var conf = document.getElementById('konfirmasiSandi').value;
 
-                // Nama Barang
-                const namaBarang = document.getElementById('namaBarang');
-                const errorNamaBarang = document.getElementById('errorNamaBarang');
-                if (namaBarang.value.trim() === '') {
-                    errorNamaBarang.style.display = 'inline';
+                var namaError = document.getElementById('namaError');
+                var nohpError = document.getElementById('noHPError');
+                var passError = document.getElementById('passError');
+                var passMatchError = document.getElementById('passMatchError');
+                var confPassError = document.getElementById('confPassError');
+                var passLengthError = document.getElementById('passLengthError');
+
+                var valid = true;
+
+                // Reset error
+                namaError.style.display = 'none';
+                nohpError.style.display = 'none';
+                passError.style.display = 'none';
+                confPassError.style.display = 'none';
+                passMatchError.style.display = 'none';
+                passLengthError.style.display = 'none';
+
+                if (nama === "") {
+                    namaError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorNamaBarang.style.display = 'none';
                 }
-
-                // Stok Barang
-                const stokBarang = document.getElementById('stokBarang');
-                const errorStokBarang = document.getElementById('errorStokBarang');
-                if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
-                    errorStokBarang.style.display = 'inline';
+                if (nohp === "") {
+                    nohpError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorStokBarang.style.display = 'none';
                 }
-
-                // Lokasi Barang
-                const lokasiBarang = document.getElementById('lokasiBarang');
-                const errorLokasiBarang = document.getElementById('errorLokasiBarang');
-                if (!lokasiBarang.value) {
-                    errorLokasiBarang.style.display = 'inline';
+                if (pass === "") {
+                    passError.style.display = 'block';
                     valid = false;
-                } else {
-                    errorLokasiBarang.style.display = 'none';
+                }
+                if (pass.length > 0 && pass.length < 8) {
+                    passLengthError.style.display = 'block';
+                    valid = false;
+                }
+                if (conf === "") {
+                    confPassError.style.display = 'block';
+                    valid = false;
+                }
+                if (pass !== "" && conf !== "" && pass !== conf) {
+                    passMatchError.style.display = 'block';
+                    valid = false;
                 }
 
                 if (!valid) e.preventDefault();
             });
         </script>
-
 
         <?php if ($showModal) : ?>
             <script>
@@ -492,8 +522,6 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 modal.show();
             </script>
         <?php endif; ?>
-
-
 
 </body>
 
