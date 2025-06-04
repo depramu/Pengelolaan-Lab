@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Pengelolaan Laboratorium</title>
+    <title>Notifikasi - Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,22 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-<<<<<<< HEAD
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .sidebar-logo {
-            width: 180px;
-            height: auto;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-        }
-=======
     body {
       font-family: 'Poppins', sans-serif;
     }
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
 
     .sidebar-logo {
       width: 180px;
@@ -154,13 +141,6 @@
 <body class="bg-light">
     <div class="container-fluid min-vh-100 d-flex flex-column p-0">
         <!-- Header -->
-<<<<<<< HEAD
-        <header class="d-flex justify-content-between align-items-center px-5 py-3">
-            <img src="icon/logo0.png" class="sidebar-logo" alt="Logo" />
-            <div class="d-flex flex-column align-items mt-2" style="margin-left: -54%;">
-                <span class="fw-semibold fs-3">Hello,</span>
-                <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
-=======
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
                 <img src="icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
@@ -168,7 +148,6 @@
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
                 </div>
->>>>>>> 8aca877311bab46c57411a1b62dcaa8f86c5168d
             </div>
             <div class="d-flex align-items-center">
                 <a href="notif.php" class="me-0"><img src="icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
@@ -310,7 +289,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                    <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                    <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                 </div>
             </div>
         </div>

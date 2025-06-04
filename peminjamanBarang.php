@@ -13,7 +13,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Pengelolaan Laboratorium</title>
+  <title>Peminjaman Barang - Sistem Pengelolaan Laboratorium</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -24,6 +24,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     body {
       font-family: 'Poppins', sans-serif;
     }
+
     .sidebar-logo {
       width: 180px;
       height: auto;
@@ -388,7 +389,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+          <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
         </div>
       </div>
     </div>

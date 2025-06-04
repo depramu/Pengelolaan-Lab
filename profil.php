@@ -316,7 +316,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+          <a href="pilihRole.php" class="btn btn-primary ps-4 pe-4">Ya</a>
         </div>
       </div>
     </div>
