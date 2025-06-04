@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -163,7 +164,20 @@
         <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
         <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
           <span class="fw-semibold fs-3">Hello,</span><br>
-          <span class="fw-normal fs-6">Dyah Ayu Puspitosari (Peminjam)</span>
+          <span class="fw-normal fs-6">
+            <?php
+            if (isset($_SESSION['peminjam_nama'])) {
+              echo htmlspecialchars($_SESSION['peminjam_nama']);
+            } else {
+              echo "Peminjam"; // Default if name not set
+            }
+            if (isset($_SESSION['peminjam_role'])) {
+              echo " (" . htmlspecialchars($_SESSION['peminjam_role']) . ")";
+            } else {
+              echo " (Peminjam)"; // Default if role not set
+            }
+            ?>
+          </span>
         </div>
       </div>
       <div class="d-flex align-items-center">
@@ -246,7 +260,7 @@
                 </div>
               </li>
               <li class="nav-item mt-0">
-                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                <a href="../index.php" class="nav-link logout"><img src="../icon/exit.png">Log Out</a>
               </li>
             </ul>
           </nav>
@@ -289,7 +303,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <button type="button" class="btn btn-primary ps-4 pe-4">Ya</button>
+          <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
         </div>
       </div>
     </div>

@@ -9,12 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = sqlsrv_query($conn, $query, [$idBarang]);
 
         if ($stmt) {
-            header("Location: ../../manajemenBarang.php");
+            header("Location: ../../Menu PIC/manajemenBarang.php");
             exit;
         } else {
             echo "<script>
         alert ('Gagal menghapus Barang. Silahkan coba lagi.');
-        window.location.href = '../../manajemenBarang.php'
+        window.location.href = '../../Menu PIC/manajemenBarang.php'
         </script>";
         exit;
         }
@@ -22,6 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 
-header("Location: ../../manajemenBarang.php");
+header("Location: ../../Menu PIC/manajemenBarang.php");
 exit;
 ?>
