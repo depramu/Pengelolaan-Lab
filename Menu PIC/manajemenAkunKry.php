@@ -295,7 +295,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                 <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                                <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -432,7 +432,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                        <a href="logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+                        <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                     </div>
                 </div>
             </div>
