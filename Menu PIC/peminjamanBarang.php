@@ -235,7 +235,7 @@ $result = sqlsrv_query($conn, $query);
             </div>
           </li>
           <li class="nav-item mb-2">
-            <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isPeminjamanActive); ?>" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="<?php echo $isPeminjamanActive ? 'true' : 'false'; ?>" aria-controls="pinjamSubmenu">
+            <a class="nav-link d-flex justify-content-between align-items-center <?php if ($isPeminjamanActive) echo 'active'; ?>" data-bs-toggle="collapse" href="#pinjamSubmenu" role="button" aria-expanded="<?php echo $isPeminjamanActive ? 'true' : 'false'; ?>" aria-controls="pinjamSubmenu">
               <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
