@@ -408,7 +408,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <a href="../../Menu PIC/manajemenRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
                                     <p>Data ruangan berhasil diubah.</p>

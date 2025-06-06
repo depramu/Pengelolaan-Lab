@@ -224,7 +224,7 @@
             </div>
           </li>
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+            <a href="laporan.php" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
           </li>
           <li class="nav-item mt-0">
             <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
