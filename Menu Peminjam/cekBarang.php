@@ -2,6 +2,8 @@
 session_start();
 include '../koneksi.php';
 
+$tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg'] : null;
+
 
 ?>
 
@@ -196,7 +198,7 @@ include '../koneksi.php';
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="pinjamBarang.php" class="nav-link">Barang</a>
+                            <a href="cekBarang.php" class="nav-link">Barang</a>
                             <a href="#" class="nav-link">Ruangan</a>
                         </div>
                     </li>
@@ -236,7 +238,7 @@ include '../koneksi.php';
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="pinjamBarang.php" class="nav-link">Barang</a>
+                                    <a href="cekBarang.php" class="nav-link">Barang</a>
                                     <a href="#" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
@@ -265,11 +267,12 @@ include '../koneksi.php';
                 <div class="mb-5">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
+                            <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Cek Barang</li>
                         </ol>
                     </nav>
                 </div>
+                
                 <!-- Peminjaman Barang -->
                 <div class="container mt-4">
                     <div class="row justify-content-center">
@@ -279,10 +282,10 @@ include '../koneksi.php';
                                     <span class="fw-semibold">Peminjaman Barang</span>
                                 </div>
                                 <div class="card-body">
-                                    <form method="GET" action="viewBarang.php">
+                                    <form method="POST" action="lihatBarang.php">
                                         <div class=" mb-2">
-                                            <label for="tanggal_peminjaman" class="form-label">Pilih Tanggal Peminjaman</label>
-                                            <input type="date" class="form-control" id="tanggal_peminjaman" name="tanggal_peminjaman" required>
+                                            <label for="tglPeminjamanBrg" class="form-label">Pilih Tanggal Peminjaman</label>
+                                            <input type="date" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg">
                                         </div>
                                         <div class="d-flex justify-content-end mt-4">
                                             <button type="submit" class="btn btn-primary">Cek</button>
