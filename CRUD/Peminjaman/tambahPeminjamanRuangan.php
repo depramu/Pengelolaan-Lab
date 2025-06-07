@@ -1,5 +1,5 @@
 <?php
-include '../koneksi.php';
+include '../../koneksi.php';
 session_start();
 
 // Auto-generate id Peminjaman Ruangan dari database SQL Server
@@ -14,7 +14,7 @@ if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
 }
 
 // ID Ruangan
-$idRuangan = $_GET['idRuangan'] ?? null;
+$idRuangan = $_GET['id'] ?? null;
 if (empty($idRuangan)) {
     die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
 }
@@ -24,7 +24,7 @@ $nim = $_SESSION['nim'] ?? null;
 $npk = $_SESSION['npk'] ?? null;
 
 // Tanggal Peminjaman & Waktu Peminjaman
-$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? date('Y-m-d'); 
+$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? date('Y-m-d');
 $waktuMulai = $_SESSION['waktuMulai'] ?? '';
 $waktuSelesai = $_SESSION['waktuSelesai'] ?? '';
 
@@ -46,10 +46,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Gagal menambahkan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);
     }
 
-    $ketersediaan = "Tidak Tersedia";
-    $query = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
-    $params = [$ketersediaan, $idRuangan];
-    $stmt = sqlsrv_query($conn, $query, $params);
+    if ($stmt) {
+        $ketersediaan = "Tidak Tersedia";
+        $query = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
+        $params = [$ketersediaan, $idRuangan];
+        $stmt = sqlsrv_query($conn, $query, $params);
+    }
+    if ($stmt) {
+        $statusPeminjaman = "Sedang dipinjam";
+        $query = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = ? WHERE idRuangan = ?";
+        $params = [$statusPeminjaman, $idRuangan];
+        $stmt = sqlsrv_query($conn, $query, $params);
+    }
+
+    if ($stmt) {
+        $showModal = true;
+    } else {
+        $error = "Gagal menambahkan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);
+    }
 }
 ?>
 
@@ -197,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Header -->
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
-                <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">
@@ -217,8 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="../../notif.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="../../profil.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <!-- Sidebar toggle button for mobile -->
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
@@ -233,11 +247,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
-                            <span><img src="../icon/peminjaman.svg">Peminjaman</span>
+                            <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
@@ -247,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
-                            <span><img src="../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
+                            <span><img src="../../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="riwayatSubmenu">
@@ -257,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </li>
 
                     <li class="nav-item mt-0">
-                        <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                        <a href="../../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -273,11 +287,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                                <a href="dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="false" aria-controls="peminjamanSubmenuMobile">
-                                    <span><img src="../icon/peminjaman.svg">Peminjaman</span>
+                                    <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
@@ -287,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenuMobile" role="button" aria-expanded="false" aria-controls="riwayatSubmenuMobile">
-                                    <span><img src="../icon/riwayat.svg">Riwayat</span>
+                                    <span><img src="../../icon/riwayat.svg">Riwayat</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="riwayatSubmenuMobile">
@@ -296,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                                <a href="../../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -310,9 +324,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="mb-2">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="cekRuangan.php">Cek Ruangan</a></li>
-                            <li class="breadcrumb-item"><a href="lihatRuangan.php">Lihat Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/cekRuangan.php">Cek Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/lihatRuangan.php">Lihat Ruangan</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Ruangan</li>
                         </ol>
                     </nav>
@@ -332,7 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                             <div class="card border border-dark">
                                 <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Peminjaman Ruangan</span>
+                                    <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST">
@@ -424,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                                         <div class="d-flex justify-content-between mt-4">
-                                            <a href="lihatRuangan.php" class="btn btn-secondary">Kembali</a>
+                                            <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
                                             <button type="submit" class="btn btn-primary">Simpan</button>
                                         </div>
                                     </form>
@@ -440,13 +454,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                                    <a href="../../Menu Peminjam/lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
                                     <p>Peminjaman ruangan berhasil dibuat dengan ID: <?php echo htmlspecialchars($idPeminjamanRuangan); ?></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="lihatRuangan.php" class="btn btn-primary">OK</a>
+                                    <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-primary">OK</a>
                                 </div>
                             </div>
                         </div>
@@ -461,13 +475,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">Peminjaman Berhasil</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <a href="../../Menu Peminjam/lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                             </div>
                             <div class="modal-body">
                                 Peminjaman ruangan berhasil dibuat dengan ID: <?php echo htmlspecialchars($idPeminjamanRuangan); ?>
                             </div>
                             <div class="modal-footer">
-                                <a href="lihatPeminjaman.php" class="btn btn-primary">Lihat Peminjaman</a>
+                                <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-primary">Lihat Peminjaman</a>
                             </div>
                         </div>
                     </div>
@@ -485,7 +499,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel"><i><img src="../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+                    <h5 class="modal-title" id="logoutModalLabel"><i><img src="../../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -493,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                    <button type="button" class="btn btn-primary ps-4 pe-4">Ya</button>
+                    <button type="button" class="btn btn-primary ps-4 pe-4" onclick="window.location.href='../../index.php'">Ya</button>
                 </div>
             </div>
         </div>

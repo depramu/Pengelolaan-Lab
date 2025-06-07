@@ -181,8 +181,8 @@
         </div>
       </div>
       <div class="d-flex align-items-center">
-        <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-        <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+        <a href="notifPeminjam.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+        <a href="profilPeminjam.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
         <!-- Sidebar toggle button for mobile -->
         <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
           <i class="bi bi-list"></i>
@@ -303,7 +303,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-          <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
+          <button type="button" class="btn btn-primary ps-4 pe-4" onclick="window.location.href='../index.php'">Ya</button>
         </div>
       </div>
     </div>

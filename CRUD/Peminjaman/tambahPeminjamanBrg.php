@@ -1,5 +1,5 @@
     <?php
-    include '../koneksi.php';
+    include '../../koneksi.php';
     session_start();
 
     // Auto-generate id Peminjaman Ruangan dari database SQL Server
@@ -18,7 +18,6 @@
         die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
     }
 
-    // [PERBAIKAN] Satu query efisien untuk mengambil NAMA dan STOK barang sekaligus.
     $namaBarang = '';
     $stokTersedia = 0;
 
@@ -244,7 +243,7 @@
             <!-- Header -->
             <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
                 <div class="d-flex align-items-center">
-                    <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                    <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                     <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                         <span class="fw-semibold fs-3">Hello,</span><br>
                         <span class="fw-normal fs-6">
@@ -264,8 +263,8 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
-                    <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                    <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                    <a href="../../Menu Peminjam/notifPeminjam.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                    <a href="../../Menu Peminjam/profilPeminjam.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                     <!-- Sidebar toggle button for mobile -->
                     <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                         <i class="bi bi-list"></i>
@@ -280,21 +279,21 @@
                 <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                     <ul class="nav nav-pills flex-column mb-auto">
                         <li class="nav-item mb-2">
-                            <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                            <a href="../../Menu Peminjam/dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
                         </li>
                         <li class="nav-item mb-2">
                             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
-                                <span><img src="../icon/peminjaman.svg">Peminjaman</span>
+                                <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                             </a>
                             <div class="collapse ps-4" id="peminjamanSubmenu">
-                                <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                                <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                <a href="../../Menu Peminjam/cekBarang.php" class="nav-link">Barang</a>
+                                <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link">Ruangan</a>
                             </div>
                         </li>
                         <li class="nav-item mb-2">
                             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
-                                <span><img src="../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
+                                <span><img src="../../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
                                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                             </a>
                             <div class="collapse ps-4" id="riwayatSubmenu">
@@ -304,7 +303,7 @@
                         </li>
 
                         <li class="nav-item mt-0">
-                            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                            <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                         </li>
                     </ul>
                 </nav>
@@ -320,21 +319,21 @@
                         <nav class="sidebar flex-column p-4 h-100">
                             <ul class="nav nav-pills flex-column mb-auto">
                                 <li class="nav-item mb-2">
-                                    <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                                    <a href="dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="false" aria-controls="peminjamanSubmenuMobile">
-                                        <span><img src="../icon/peminjaman.svg">Peminjaman</span>
+                                        <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
                                     <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                        <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                                        <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                        <a href="../../Menu Peminjam/cekBarang.php" class="nav-link">Barang</a>
+                                        <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link">Ruangan</a>
                                     </div>
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenuMobile" role="button" aria-expanded="false" aria-controls="riwayatSubmenuMobile">
-                                        <span><img src="../icon/riwayat.svg">Riwayat</span>
+                                        <span><img src="../../icon/riwayat.svg">Riwayat</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
                                     <div class="collapse ps-4" id="riwayatSubmenuMobile">
@@ -343,13 +342,13 @@
                                     </div>
                                 </li>
                                 <li class="nav-item mt-0">
-                                    <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
+                                    <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                <!-- End Offcanvas Sidebar for small screens -->
+                <!-- End Offcanvas Sidebar for large screens -->
 
 
                 <!-- Offcanvas Sidebar for small screens -->
@@ -362,11 +361,11 @@
                         <nav class="sidebar flex-column p-4 h-100">
                             <ul class="nav nav-pills flex-column mb-auto">
                                 <li class="nav-item mb-2">
-                                    <a href="index.php" class="nav-link"><img src="icon/dashboard0.svg">Dashboard</a>
+                                    <a href="../../index.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                                        <span><img src="icon/layers0.png">Manajemen Aset</span>
+                                        <span><img src="../../icon/layers0.png">Manajemen Aset</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
                                     <div class="collapse ps-4" id="asetSubmenuMobile">
@@ -376,7 +375,7 @@
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                                        <span><img src="icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                                        <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
                                     <div class="collapse ps-4" id="akunSubmenuMobile">
@@ -386,7 +385,7 @@
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                                        <span><img src="icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                                        <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
                                     <div class="collapse ps-4" id="pinjamSubmenuMobile">
@@ -395,10 +394,10 @@
                                     </div>
                                 </li>
                                 <li class="nav-item mb-2">
-                                    <a href="#" class="nav-link"><img src="icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                                    <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                                 </li>
                                 <li class="nav-item mt-0">
-                                    <a href="logout.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="icon/exit.png">Log Out</a>
+                                    <a href="logout.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
                                 </li>
                             </ul>
                         </nav>
@@ -411,10 +410,10 @@
                     <div class="mb-3">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                                <li class="breadcrumb-item"><a href="cekBarang.php">Cek Barang</a></li>
-                                <li class="breadcrumb-item"><a href="lihatBarang.php">Lihat Barang</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Tambah Peminjaman Barang</li>
+                                <li class="breadcrumb-item"><a href="../../Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                                <li class="breadcrumb-item"><a href="../../Menu Peminjam/cekBarang.php">Cek Barang</a></li>
+                                <li class="breadcrumb-item"><a href="../../Menu Peminjam/lihatBarang.php">Lihat Barang</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Barang</li>
                             </ol>
                         </nav>
                     </div>
@@ -494,7 +493,7 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-between mt-4">
-                                                <a href="lihatBarang.php" class="btn btn-secondary">Kembali</a>
+                                                <a href="../../Menu Peminjam/lihatBarang.php" class="btn btn-secondary">Kembali</a>
                                                 <button type="submit" class="btn btn-primary">Kirim</button>
                                             </div>
                                         </form>
@@ -509,13 +508,13 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <a href="../../Menu Peminjam/lihatBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                     </div>
                                     <div class="modal-body">
                                         <p>Peminjaman barang <?= $namaBarang ?> berhasil.</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="lihatBarang.php" class="btn btn-primary">OK</a>
+                                        <a href="../../Menu Peminjam/lihatBarang.php" class="btn btn-primary">OK</a>
                                     </div>
                                 </div>
                             </div>
@@ -534,7 +533,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="logoutModalLabel"><i><img src="icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
+                            <h5 class="modal-title" id="logoutModalLabel"><i><img src="../../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
