@@ -6,12 +6,14 @@ include '../koneksi.php';
 $perPage = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
+
 // Hitung total data
 $countQuery = "SELECT COUNT(*) AS total FROM Mahasiswa";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
+
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
 $query = "SELECT nim, namaMhs FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";

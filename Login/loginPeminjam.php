@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['peminjam_id'] = $row_mhs['nim'];
                 $_SESSION['peminjam_nama'] = $row_mhs['namaMhs'];
                 $_SESSION['peminjam_role'] = 'Mahasiswa';
+                $_SESSION['nim'] = $row_mhs['nim'];
                 header('Location: ../Menu Peminjam/dashboardPeminjam.php');
                 exit;
             } else {
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $_SESSION['peminjam_id'] = $row_kry['npk'];
                         $_SESSION['peminjam_nama'] = $row_kry['namaKry'];
                         $_SESSION['peminjam_role'] = 'Karyawan';
+                        $_SESSION['npk'] = $row_kry['npk'];
                         header('Location: ../Menu Peminjam/dashboardPeminjam.php');
                         exit;
                     } else {

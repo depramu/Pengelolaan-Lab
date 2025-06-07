@@ -169,12 +169,12 @@
             if (isset($_SESSION['peminjam_nama'])) {
               echo htmlspecialchars($_SESSION['peminjam_nama']);
             } else {
-              echo "Peminjam"; // Default if name not set
+              echo "Peminjam"; 
             }
             if (isset($_SESSION['peminjam_role'])) {
               echo " (" . htmlspecialchars($_SESSION['peminjam_role']) . ")";
             } else {
-              echo " (Peminjam)"; // Default if role not set
+              echo " (Peminjam)"; 
             }
             ?>
           </span>
@@ -205,8 +205,8 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
-              <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-              <a href="#" class="nav-link">Ruangan</a>
+              <a href="cekBarang.php" class="nav-link">Barang</a>
+              <a href="cekRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">
@@ -215,8 +215,8 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="riwayatSubmenu">
-              <a href="#" class="nav-link">Barang</a>
-              <a href="#" class="nav-link">Ruangan</a>
+              <a href="cekBarang.php" class="nav-link">Barang</a>
+              <a href="cekRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
 
@@ -245,8 +245,8 @@
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                  <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                  <a href="#" class="nav-link">Ruangan</a>
+                  <a href="cekBarang.php" class="nav-link">Barang</a>
+                  <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                 </div>
               </li>
               <li class="nav-item mb-2">
@@ -255,8 +255,8 @@
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="riwayatSubmenuMobile">
-                  <a href="#" class="nav-link">Barang</a>
-                  <a href="#" class="nav-link">Ruangan</a>
+                  <a href="cekBarang.php" class="nav-link">Barang</a>
+                  <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                 </div>
               </li>
               <li class="nav-item mt-0">

@@ -331,22 +331,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     <?php endif; ?>
                     <div class="mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconID.svg" alt="Info Kontak"></span>
-                            <span class="form-control" style="background-color: #e9ecef; opacity: 1; display: flex; align-items: center;"><?php echo $_SESSION['noHP']; ?></span>
+                        <div class="input-group ">
+                            <span class="input-group-text"><img src="../icon/icon wa.svg" alt="Info Kontak"></span>
+                            <span class="form-control " style="color: #065ba6; background-color:rgb(255, 255, 255); opacity: 1; display: flex; align-items: center; font-size: 1.1rem;"><?php echo $_SESSION['noHP']; ?></span>
                         </div>
                     </div>
 
-                    <h3 class="text-center">atau</h3>
-
+                    <div class="mb-3">
+                        <h3 class="text-center fs-5" style="color: #fff;">atau</h3>
+                    </div>
                     <div class="mb-2">
                         <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconPass.svg" alt="Info Kata Sandi"></span>
-                            <span class="form-control text-center" style="background-color: #e9ecef; opacity: 1; display: flex; align-items: center;">Ruangan Tenaga Pendidik 2,<br>Lantai 1, AstraTech</span>
+                            <span class="input-group-text"><img src="../icon/location.svg" alt="Info Kata Sandi"></span>
+                            <span class="form-control text-center" style="color: #065ba6; background-color:rgb(255, 255, 255); opacity: 1; display: flex; align-items: center; font-size: 1rem; line-height: 1">Ruangan Tenaga Pendidik 2,<br>Lantai 1, AstraTech</span>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center mt-3">
-                        <button type="button" class="btn btn-primary w-75" onclick="window.location.href='../index.php'">Kembali</button>
+                    <div class="d-flex justify-content-center mt-5">
+                        <button type="button" class="btn btn-success w-75 p-2" onclick="window.location.href='../index.php'">Kembali</button>
                     </div>
                 </form>
             </div>
