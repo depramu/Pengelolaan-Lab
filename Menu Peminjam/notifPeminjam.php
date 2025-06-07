@@ -149,10 +149,10 @@
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">
                         <?php
-                        if (isset($_SESSION['user_nama'])) {
-                            echo htmlspecialchars($_SESSION['user_nama']);
+                        if (isset($_SESSION['peminjam_nama'])) {
+                            echo htmlspecialchars($_SESSION['peminjam_nama']);
                         } else {
-                            echo "PIC User"; // Default if name not set
+                            echo "Peminjam"; // Default if name not set
                         }
                         ?>
                         (PIC)

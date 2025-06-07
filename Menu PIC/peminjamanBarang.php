@@ -310,7 +310,7 @@ $result = sqlsrv_query($conn, $query);
 
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
-        <div class="mb-3">
+        <div class="mb-4">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>

@@ -36,14 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
 
         if ($updateStmt) {
-            // Option 1: Redirect immediately (original behavior)
-            header('Location: ../../Menu PIC/manajemenRuangan.php?status=updated');
-            exit;
-            // Option 2: Show success modal then redirect or let user click OK
-            // $showModal = true;
-            // // Re-fetch data to display updated values if form remained on page
-            // $stmt = sqlsrv_query($conn, $query, [$idRuangan]); 
-            // $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+            $showModal = true;
         } else {
             $error = "Gagal mengubah data ruangan. Error: " . print_r(sqlsrv_errors(), true);
         }
