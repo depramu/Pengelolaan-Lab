@@ -201,7 +201,7 @@ if (sqlsrv_num_rows($result) > 0) {
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                            <a href="cekBarang.php" class="nav-link">Barang</a>
                             <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
                         </div>
                     </li>
@@ -241,7 +241,7 @@ if (sqlsrv_num_rows($result) > 0) {
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                                    <a href="cekBarang.php" class="nav-link">Barang</a>
                                     <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
                                 </div>
                             </li>
@@ -252,7 +252,7 @@ if (sqlsrv_num_rows($result) > 0) {
                                 </a>
                                 <div class="collapse ps-4" id="riwayatSubmenuMobile">
                                     <a href="#" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
+                                    <a href="#" class="nav-link active">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mt-0">
@@ -298,7 +298,7 @@ if (sqlsrv_num_rows($result) > 0) {
                                     <td><?= $row['kondisiRuangan'] ?></td>
                                     <td><?= $row['ketersediaan'] ?></td>
                                     <td class="td-aksi text-center">
-                                        <a href="tambahPeminjamanRuangan.php?idRuangan=<?= $row['idRuangan'] ?>"> <img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
+                                        <a href="../CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= $row['idRuangan'] ?>"> <img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
 
                                     </td>
 

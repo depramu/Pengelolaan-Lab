@@ -227,7 +227,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                            <a href="cekBarang.php" class="nav-link">Barang</a>
                             <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
                         </div>
                     </li>
@@ -267,7 +267,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                                    <a href="cekBarang.php" class="nav-link">Barang</a>
                                     <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
@@ -314,7 +314,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                 <div class="card-body">
                                     <form method="POST">
                                         <div class="mb-2">
-                                            <label for="tgl" class="form-label">
+                                            <label for="tglPeminjamanRuangan" class="form-label">
                                                 Pilih Tanggal Peminjaman <span id="error-tanggal" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                             </label>
                                             <input type="date" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan">
