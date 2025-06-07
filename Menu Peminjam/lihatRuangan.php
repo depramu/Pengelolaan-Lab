@@ -2,7 +2,8 @@
 session_start();
 include '../koneksi.php';
 
-$query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan WHERE ketersediaan = 'Tersedia'";
+$tglPeminjamanRuangan = isset($_POST['tglPeminjamanRuangan']) ? $_POST['tglPeminjamanRuangan'] : null;
+$query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan WHERE ketersediaan = 'Tersedia' AND idRuangan NOT IN (SELECT idRuangan FROM Peminjaman_Ruangan WHERE tglPeminjamanRuangan = '$tglPeminjamanRuangan')";
 $result = sqlsrv_query($conn, $query);
 
 if (sqlsrv_num_rows($result) > 0) {

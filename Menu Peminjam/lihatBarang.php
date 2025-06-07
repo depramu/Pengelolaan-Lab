@@ -1,9 +1,9 @@
 <?php
 include '../koneksi.php';
-$tanggal_peminjaman = isset($_GET['tanggal_peminjaman']) ? $_GET['tanggal_peminjaman'] : null;
-$query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang";
+
+$query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
 $result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Pengelolaan Laboratorium</title>
+    <title>Peminjaman Barang - Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -153,7 +153,20 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                 <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
-                    <span class="fw-normal fs-6">Dyah Ayu Puspitosari (Peminjam)</span>
+                    <span class="fw-normal fs-6">
+                        <?php
+                        if (isset($_SESSION['peminjam_nama'])) {
+                            echo htmlspecialchars($_SESSION['peminjam_nama']);
+                        } else {
+                            echo "Peminjam";
+                        }
+                        if (isset($_SESSION['peminjam_role'])) {
+                            echo " (" . htmlspecialchars($_SESSION['peminjam_role']) . ")";
+                        } else {
+                            echo " (Peminjam)";
+                        }
+                        ?>
+                    </span>
                 </div>
             </div>
             <div class="d-flex align-items-center">
@@ -181,7 +194,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                            <a href="cekBarang.php" class="nav-link">Barang</a>
                             <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                         </div>
                     </li>
@@ -221,7 +234,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
+                                    <a href="cekBarang.php" class="nav-link">Barang</a>
                                     <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
@@ -251,7 +264,8 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
+                            <li class="breadcrumb-item"><a href="cekBarang.php">Cek Barang</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Lihat Barang</li>
                         </ol>
                     </nav>
                 </div>
@@ -277,7 +291,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                     <td><?= $row['stokBarang'] ?></td>
                                     <td><?= $row['lokasiBarang'] ?></td>
                                     <td class="td-aksi text-center">
-                                        <a href="tambahPeminjamanBrg.php?id=<?= $row['idBarang'] ?>&tanggal=<?= urlencode($tanggal_peminjaman) ?>"><img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
+                                        <a href="tambahPeminjamanBrg.php?id=<?= $row['idBarang'] ?>"><img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
                                     </td>
 
                                 </tr>
@@ -285,12 +299,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             }
                             ?>
                         </tbody>
-
-
-
-
-
-
+                    </table>
                 </div>
             </main>
             <!-- End Content Area -->
