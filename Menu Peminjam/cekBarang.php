@@ -199,7 +199,7 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
                         </a>
                         <div class="collapse ps-4" id="peminjamanSubmenu">
                             <a href="cekBarang.php" class="nav-link">Barang</a>
-                            <a href="#" class="nav-link">Ruangan</a>
+                            <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -239,7 +239,7 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
                                     <a href="cekBarang.php" class="nav-link">Barang</a>
-                                    <a href="#" class="nav-link">Ruangan</a>
+                                    <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -264,7 +264,7 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
 
             <!-- Content Area -->
             <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-                <div class="mb-5">
+                <div class="mb-1">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
@@ -272,7 +272,7 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
                         </ol>
                     </nav>
                 </div>
-                
+
                 <!-- Peminjaman Barang -->
                 <div class="container mt-4">
                     <div class="row justify-content-center">
