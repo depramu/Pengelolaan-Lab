@@ -337,8 +337,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
                         </div>
                     </div>
-                    <a href="lupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
-                    <button type="submit" class="btn-login-submit">Masuk</button>
+                    <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
+                    <button type="submit" class="btn-login-submit w-75">Masuk</button>
                 </form>
             </div>
         </div>
