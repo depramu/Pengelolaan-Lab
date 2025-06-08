@@ -211,10 +211,10 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                         if (isset($_SESSION['user_nama'])) {
                             echo htmlspecialchars($_SESSION['user_nama']);
                         } else {
-                            echo "PIC User"; // Default if name not set
+                            echo "PIC User";
                         }
                         ?>
-                        (PIC)
+                        (PIC Aset)
                     </span>
                 </div>
             </div>

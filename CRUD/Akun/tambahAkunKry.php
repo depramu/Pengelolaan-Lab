@@ -210,7 +210,16 @@ $isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
                 <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
-                    <span class="fw-normal fs-6">Nadira Anindita (PIC)</span>
+                    <span class="fw-normal fs-6">
+                        <?php
+                        if (isset($_SESSION['user_nama'])) {
+                            echo htmlspecialchars($_SESSION['user_nama']);
+                        } else {
+                            echo "PIC User";
+                        }
+                        ?>
+                        (PIC Aset)
+                    </span>
                 </div>
             </div>
             <div class="d-flex align-items-center">

@@ -6,10 +6,9 @@ $tglPeminjamanRuangan = isset($_POST['tglPeminjamanRuangan']) ? $_POST['tglPemin
 $query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan WHERE ketersediaan = 'Tersedia' AND idRuangan NOT IN (SELECT idRuangan FROM Peminjaman_Ruangan WHERE tglPeminjamanRuangan = '$tglPeminjamanRuangan')";
 $result = sqlsrv_query($conn, $query);
 
-if (sqlsrv_num_rows($result) > 0) {
-    $row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
-}
-
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php'];
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
 ?>
 
@@ -200,9 +199,9 @@ if (sqlsrv_num_rows($result) > 0) {
                             <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="cekBarang.php" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'lihatRuangan.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'lihatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'lihatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -212,7 +211,7 @@ if (sqlsrv_num_rows($result) > 0) {
                         </a>
                         <div class="collapse ps-4" id="riwayatSubmenu">
                             <a href="#" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
+                            <a href="#" class="nav-link <?php if ($currentPage === 'lihatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
 
@@ -240,9 +239,9 @@ if (sqlsrv_num_rows($result) > 0) {
                                     <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="cekBarang.php" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($currentPage === 'lihatRuangan.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                    <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'lihatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'lihatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -290,7 +289,9 @@ if (sqlsrv_num_rows($result) > 0) {
                         </thead>
                         <tbody>
                             <?php
+                            $hasData = false;
                             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                $hasData = true;
                             ?>
                                 <tr>
                                     <td><?= $row['idRuangan'] ?></td>
@@ -298,12 +299,15 @@ if (sqlsrv_num_rows($result) > 0) {
                                     <td><?= $row['kondisiRuangan'] ?></td>
                                     <td><?= $row['ketersediaan'] ?></td>
                                     <td class="td-aksi text-center">
-                                        <a href="../CRUD/Peminjaman/tambahPeminjamanRuangan.php?id=<?= $row['idRuangan'] ?>"> <img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
+                                        <a href="../CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= $row['idRuangan'] ?>"> <img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
 
                                     </td>
 
                                 </tr>
                             <?php
+                            }
+                            if (!$hasData) {
+                                echo '<tr><td colspan="5" class="text-center">Tidak ada ruangan yang tersedia</td></tr>';
                             }
                             ?>
                         </tbody>

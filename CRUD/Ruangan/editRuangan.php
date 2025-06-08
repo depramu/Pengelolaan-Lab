@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($updateStmt) {
             $showModal = true;
+            $stmt = sqlsrv_query($conn, $query, [$idRuangan]);
+            $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
         } else {
             $error = "Gagal mengubah data ruangan. Error: " . print_r(sqlsrv_errors(), true);
         }
@@ -209,10 +211,10 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                         if (isset($_SESSION['user_nama'])) {
                             echo htmlspecialchars($_SESSION['user_nama']);
                         } else {
-                            echo "PIC User"; // Default if name not set
+                            echo "PIC User";
                         }
                         ?>
-                        (PIC)
+                        (PIC Aset)
                     </span>
                 </div>
             </div>
@@ -391,7 +393,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                         </div>
                                     </form>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
                     </div>
 

@@ -2,7 +2,32 @@
 session_start();
 include '../koneksi.php';
 
-$tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg'] : null;
+if (isset($_POST['submit'])) {
+    $tglPeminjamanBrg = $_POST['tglPeminjamanBrg'];
+
+    // Store in session
+    $_SESSION['tglPeminjamanBrg'] = $tglPeminjamanBrg;
+
+    header('Location: lihatBarang.php');
+    exit();
+}
+
+// Get tanggal from session if set, or from POST data
+$tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? $_POST['tglPeminjamanBrg'] ?? '';
+
+
+$query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
+if ($tglPeminjamanBrg) {
+    $query .= " AND tglPeminjamanBrg = ?";
+    $params = array($tglPeminjamanBrg);
+    $stmt = sqlsrv_query($conn, $query, $params);
+} else {
+    $stmt = sqlsrv_query($conn, $query);
+}
+
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php'];
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
 
 ?>
@@ -190,16 +215,16 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPeminjam.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
                             <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="cekBarang.php" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'cekBarang.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -237,9 +262,9 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
                                     <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="cekBarang.php" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($currentPage === 'cekBarang.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                    <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -282,15 +307,37 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
                                     <span class="fw-semibold">Cek Barang</span>
                                 </div>
                                 <div class="card-body">
-                                    <form method="POST" action="lihatBarang.php">
+                                    <form method="POST">
                                         <div class=" mb-2">
-                                            <label for="tglPeminjamanBrg" class="form-label">Pilih Tanggal Peminjaman</label>
+                                            <label for="tglPeminjamanBrg" class="form-label">
+                                                Pilih Tanggal Peminjaman <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span> </label>
                                             <input type="date" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg">
                                         </div>
                                         <div class="d-flex justify-content-end mt-4">
-                                            <button type="submit" class="btn btn-primary">Cek</button>
+                                            <button type="submit" class="btn btn-primary" name="submit">Cek</button>
                                         </div>
                                     </form>
+                                    <!-- script untuk validasi kolom harus diisi input -->
+                                    <script>
+                                        document.querySelector('form').addEventListener('submit', function(event) {
+                                            var tglPeminjamanBrg = document.getElementById('tglPeminjamanBrg').value;
+
+                                            var errorTanggal = document.getElementById('error-message');
+
+                                            var isValid = true;
+
+                                            if (tglPeminjamanBrg.trim() === '') {
+                                                errorTanggal.style.display = 'inline';
+                                                isValid = false;
+                                            } else {
+                                                errorTanggal.style.display = 'inline';
+                                            }
+
+                                            if (!isValid) {
+                                                event.preventDefault(); // Mencegah submit jika ada input kosong
+                                            }
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         </div>
@@ -322,4 +369,4 @@ $tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg
 
 </body>
 
-</html>
+</html> 

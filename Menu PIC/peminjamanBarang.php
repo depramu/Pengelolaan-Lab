@@ -194,7 +194,7 @@ $result = sqlsrv_query($conn, $query);
               echo "PIC User"; // Default if name not set
             }
             ?>
-            (PIC)
+            (PIC Aset)
           </span>
         </div>
       </div>

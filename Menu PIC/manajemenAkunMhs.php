@@ -183,7 +183,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             echo "PIC User"; // Default if name not set
                         }
                         ?>
-                        (PIC)
+                        (PIC Aset)
                     </span>
                 </div>
             </div>
@@ -333,9 +333,9 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         </thead>
                         <tbody>
                             <?php
-                            $hasData = false; // Flag to check if there is data
+                            $hasData = false;
                             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                $hasData = true; // Set flag to true if data is found
+                                $hasData = true;
                             ?>
                                 <tr>
                                     <td><?= $row['nim'] ?></td>

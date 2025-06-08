@@ -32,6 +32,8 @@ if ($tglPeminjamanRuangan && $waktuMulai && $waktuSelesai) {
 
 $result = $stmt;
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php'];
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 ?>
 
 
@@ -219,20 +221,20 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="dashboardPeminjam.php" class="nav-link active"><img src="../icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPeminjam.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
                             <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="cekBarang.php" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link active">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'cekRuangan.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bfs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
                             <span><img src="../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
@@ -266,9 +268,9 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                     <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="cekBarang.php" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($currentPage === 'cekRuangan.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                    <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -325,7 +327,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                                                 <label for="waktuMulai" class="form-label">
                                                     Waktu Mulai <span id="error-waktu-dari" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                                 </label>
-                                                <input type="time" class="form-control" id="waktuMulai" name="waktuMulai" >
+                                                <input type="time" class="form-control" id="waktuMulai" name="waktuMulai">
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="waktuSelesai" class="form-label">
@@ -384,7 +386,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
         </main>
         <!-- End Content Area -->
     </div>
