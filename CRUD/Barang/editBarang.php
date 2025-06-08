@@ -19,7 +19,6 @@ $stmt = sqlsrv_query($conn, $query, [$idBarang]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if (!$data) {
-    // Handle case where ID doesn't exist in DB
     header('Location: ../../Menu PIC/manajemenBarang.php?error=notfound');
     exit;
 }
@@ -38,8 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
 
         if ($updateStmt) {
-            $showModal = true; // Show success modal
-            // Re-fetch data to display updated values as we are staying on the page to show the modal
+            $showModal = true;
             $stmt = sqlsrv_query($conn, $query, [$idBarang]);
             $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
         } else {
@@ -225,7 +223,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                             echo "PIC User"; // Default if name not set
                         }
                         ?>
-                        (PIC)
+                        (PIC Aset)
                     </span>
                 </div>
             </div>

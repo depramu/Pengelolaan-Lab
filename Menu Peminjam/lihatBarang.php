@@ -1,8 +1,17 @@
 <?php
+session_start();
 include '../koneksi.php';
 
+$tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg'] : null;
 $query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
+if ($tglPeminjamanBrg) {
+    $query .= " AND tglPeminjamanBrg = '$tglPeminjamanBrg'";
+}
 $result = sqlsrv_query($conn, $query);
+
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php', 'lihatBarang.php', 'lihatRuangan.php'];
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
 ?>
 
@@ -193,9 +202,9 @@ $result = sqlsrv_query($conn, $query);
                             <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="cekBarang.php" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'lihatBarang.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'lihatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'lihatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -233,9 +242,9 @@ $result = sqlsrv_query($conn, $query);
                                     <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="cekBarang.php" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($currentPage === 'lihatBarang.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                    <a href="lihatBarang.php" class="nav-link <?php if ($currentPage === 'lihatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="lihatRuangan.php" class="nav-link <?php if ($currentPage === 'lihatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -283,7 +292,9 @@ $result = sqlsrv_query($conn, $query);
                         </thead>
                         <tbody>
                             <?php
+                            $hasData = false;
                             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                $hasData = true;
                             ?>
                                 <tr>
                                     <td><?= $row['idBarang'] ?></td>
@@ -291,13 +302,17 @@ $result = sqlsrv_query($conn, $query);
                                     <td><?= $row['stokBarang'] ?></td>
                                     <td><?= $row['lokasiBarang'] ?></td>
                                     <td class="td-aksi text-center">
-                                        <a href="../CRUD/Peminjaman/tambahPeminjamanBrg.php?id=<?= $row['idBarang'] ?>"><img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
+                                        <a href="../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= $row['idBarang'] ?>"><img src="../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
                                     </td>
 
                                 </tr>
                             <?php
                             }
+                            if (!$hasData) {
+                                echo '<tr><td colspan="5" class="text-center">Tidak ada barang yang tersedia</td></tr>';
+                            }
                             ?>
+
                         </tbody>
                     </table>
                 </div>

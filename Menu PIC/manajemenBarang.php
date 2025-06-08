@@ -184,7 +184,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             echo "PIC User"; // Default if name not set
                         }
                         ?>
-                        (PIC)
+                        (PIC Aset)
                     </span>
                 </div>
             </div>

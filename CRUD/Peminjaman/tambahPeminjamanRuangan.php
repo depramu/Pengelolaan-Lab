@@ -2,6 +2,11 @@
 include '../../koneksi.php';
 session_start();
 
+$idRuangan = $_GET['idRuangan'] ?? null;
+if (empty($idRuangan)) {
+    die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
+}
+
 // Auto-generate id Peminjaman Ruangan dari database SQL Server
 $idPeminjamanRuangan = 'PJR001';
 $sqlId = "SELECT TOP 1 idPeminjamanRuangan FROM Peminjaman_Ruangan WHERE idPeminjamanRuangan LIKE 'PJR%' ORDER BY idPeminjamanRuangan DESC";
@@ -13,58 +18,41 @@ if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
     $idPeminjamanRuangan = 'PJR' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
 }
 
-// ID Ruangan
-$idRuangan = $_GET['id'] ?? null;
-if (empty($idRuangan)) {
-    die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
-}
-
-// NIM & NPK
+$showModal = false;
 $nim = $_SESSION['nim'] ?? null;
 $npk = $_SESSION['npk'] ?? null;
 
-// Tanggal Peminjaman & Waktu Peminjaman
-$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? date('Y-m-d');
-$waktuMulai = $_SESSION['waktuMulai'] ?? '';
-$waktuSelesai = $_SESSION['waktuSelesai'] ?? '';
+$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? null;
+$waktuMulai = $_SESSION['waktuMulai'] ?? null;
+$waktuSelesai = $_SESSION['waktuSelesai'] ?? null;
 
-// Validasi Input
-$error = null;
-$showModal = false;
-
-// Proses Peminjaman
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanRuangan = $_POST['alasanPeminjamanRuangan'];
 
-    $query = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, nim, npk, alasanPeminjamanRuangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $params = [$idPeminjamanRuangan, $idRuangan, $tglPeminjamanRuangan, $waktuMulai, $waktuSelesai, $nim, $npk, $alasanPeminjamanRuangan];
-    $stmt = sqlsrv_query($conn, $query, $params);
-
-    if ($stmt) {
-        $showModal = true;
+    if (empty($alasanPeminjamanRuangan)) {
+        $error = "Alasan peminjaman ruangan tidak boleh kosong";
     } else {
-        $error = "Gagal menambahkan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);
-    }
+        $sqlPeminjamanRuangan = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, nim, npk, tglPeminjamanRuangan, waktuMulai, waktuSelesai, alasanPeminjamanRuangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $params = [$idPeminjamanRuangan, $idRuangan, $nim, $npk, $tglPeminjamanRuangan, $waktuMulai, $waktuSelesai, $alasanPeminjamanRuangan];
+        $stmtPeminjamanRuangan = sqlsrv_query($conn, $sqlPeminjamanRuangan, $params);
 
-    if ($stmt) {
-        $ketersediaan = "Tidak Tersedia";
-        $query = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
-        $params = [$ketersediaan, $idRuangan];
-        $stmt = sqlsrv_query($conn, $query, $params);
-    }
-    if ($stmt) {
-        $statusPeminjaman = "Sedang dipinjam";
-        $query = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = ? WHERE idRuangan = ?";
-        $params = [$statusPeminjaman, $idRuangan];
-        $stmt = sqlsrv_query($conn, $query, $params);
-    }
+        $ketersediaan = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = '$idRuangan'";
+        $stmtKetersediaan = sqlsrv_query($conn, $ketersediaan);
+        $statusPeminjaman = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = 'Menunggu Persetujuan' WHERE idPeminjamanRuangan = '$idPeminjamanRuangan'";
+        $stmtStatusPeminjaman = sqlsrv_query($conn, $statusPeminjaman);
 
-    if ($stmt) {
-        $showModal = true;
-    } else {
-        $error = "Gagal menambahkan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);
+        if ($stmtStatusPeminjaman) {
+            $showModal = true;
+        } else {
+            $error = "Gagal mengajukan peminjaman ruangan";
+        }
     }
 }
+
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php', 'lihatBarang.php', 'lihatRuangan.php'];
+$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
+
 ?>
 
 <!DOCTYPE html>
@@ -247,16 +235,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                        <a href="../../Menu Peminjam/dashboardPeminjam.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
                             <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4" id="peminjamanSubmenu">
-                            <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                            <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="../../Menu Peminjam/cekBarang.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -295,8 +283,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-                                    <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+                                    <a href="../../Menu Peminjam/cekBarang.php" class="nav-link">Barang</a>
+                                    <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -332,24 +320,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </nav>
                 </div>
 
-                <!-- Tambah Ruangan -->
+                <!-- Pengajuan Peminjaman Ruangan -->
                 <div class="container mt-4">
-                    <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <?php echo $error; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
-
-
                     <div class="row justify-content-center">
                         <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                             <div class="card border border-dark">
                                 <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
+                                    <span class="fw-semibold">PengajuanPeminjaman Ruangan</span>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST">
+
                                         <div class="row">
                                             <!-- ID Peminjaman & ID Ruangan (Auto Increment, Disabled Input) -->
                                             <div class="col-md-6">
@@ -361,6 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="mb-2" style="max-width: 400px;">
                                                     <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                                    <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
                                                     <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>" disabled>
                                                 </div>
                                             </div>
@@ -439,7 +421,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                         <div class="d-flex justify-content-between mt-4">
                                             <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
-                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                            <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                         </div>
                                     </form>
                                 </div>
@@ -457,7 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <a href="../../Menu Peminjam/lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Peminjaman ruangan berhasil dibuat dengan ID: <?php echo htmlspecialchars($idPeminjamanRuangan); ?></p>
+                                    <p>Peminjaman dengan ID <?= $idPeminjamanRuangan ?> berhasil.</p>
                                 </div>
                                 <div class="modal-footer">
                                     <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-primary">OK</a>
@@ -469,26 +451,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <!-- End Tambah Ruangan -->
 
-                <!-- Success Modal -->
-                <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Peminjaman Berhasil</h5>
-                                <a href="../../Menu Peminjam/lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                            </div>
-                            <div class="modal-body">
-                                Peminjaman ruangan berhasil dibuat dengan ID: <?php echo htmlspecialchars($idPeminjamanRuangan); ?>
-                            </div>
-                            <div class="modal-footer">
-                                <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-primary">Lihat Peminjaman</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </main>
-            <!-- End Content Area -->
         </div>
     </div>
     <!-- End Container -->
@@ -516,12 +479,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <?php if (isset($showModal) && $showModal): ?>
+    <?php if ($showModal) : ?>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            });
+            var modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
         </script>
     <?php endif; ?>
 </body>

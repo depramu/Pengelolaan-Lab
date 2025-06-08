@@ -13,7 +13,7 @@
         $idPeminjamanBrg = 'PJB' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
     }
     // ID Barang
-    $idBarang = $_GET['id'] ?? null;
+    $idBarang = $_GET['idBarang'] ?? null;
     if (empty($idBarang)) {
         die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
     }
@@ -35,22 +35,10 @@
         die("Error: Data untuk ID Barang '" . htmlspecialchars($idBarang) . "' tidak ditemukan di database.");
     }
 
-
-    // Auto-generate id Peminjaman
-    $idPeminjamanBrg = 'PJB001';
-    $sqlId = "SELECT TOP 1 idPeminjamanBrg FROM Peminjaman_Barang ORDER BY idPeminjamanBrg DESC";
-    $stmtId = sqlsrv_query($conn, $sqlId);
-    if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-        $lastId = $rowId['idPeminjamanBrg'];
-        $num = intval(substr($lastId, 3));
-        $newNum = $num + 1;
-        $idPeminjamanBrg = 'PJB' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
-    }
-
     // Data sesi dan tanggal
     $nim = $_SESSION['nim'] ?? null;
     $npk = $_SESSION['npk'] ?? null;
-    $tglPeminjamanBrg = date('Y-m-d'); // [PERBAIKAN] Gunakan format Y-m-d untuk database
+    $tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? null;
 
     // Inisialisasi variabel
     $error = null;
@@ -71,9 +59,9 @@
         if ($jumlahBrg <= 0) {
             $error = "Jumlah peminjaman harus lebih dari 0.";
         } elseif ($jumlahBrg > $stokTersedia) {
-            $error = "Jumlah peminjaman melebihi stok yang tersedia.";
+            $error = "*Jumlah peminjaman melebihi stok yang tersedia.";
         } else {
-            // 1. Insert data peminjaman
+            // 1. Insert data peminjaman    
             $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrg, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg];
             $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
@@ -85,7 +73,7 @@
                 $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
 
                 if ($stmtUpdate) {
-                    $showModal = true; // Tampilkan modal sukses hanya jika semua berhasil
+                    $showModal = true;
                 } else {
                     $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
                 }
@@ -93,7 +81,15 @@
                 $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
             }
         }
+
+        $statusPeminjaman = "UPDATE Peminjaman_Barang SET statusPeminjaman = 'Menunggu Persetujuan' WHERE idPeminjamanBrg = '$idPeminjamanBrg'";
+        $stmtStatusPeminjaman = sqlsrv_query($conn, $statusPeminjaman);
+        $dataStatusPeminjaman = sqlsrv_fetch_array($stmtStatusPeminjaman, SQLSRV_FETCH_ASSOC);
     }
+
+    $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+    $peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'lihatBarang.php', 'lihatRuangan.php'];
+    $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
     ?>
 
 
@@ -279,16 +275,16 @@
                 <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                     <ul class="nav nav-pills flex-column mb-auto">
                         <li class="nav-item mb-2">
-                            <a href="../../Menu Peminjam/dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                            <a href="../../Menu Peminjam/dashboardPeminjam.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                         </li>
                         <li class="nav-item mb-2">
                             <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
                                 <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                             </a>
-                            <div class="collapse ps-4" id="peminjamanSubmenu">
-                                <a href="../../Menu Peminjam/cekBarang.php" class="nav-link">Barang</a>
-                                <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link">Ruangan</a>
+                            <div class="collapse ps-4 <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                                <a href="../../Menu Peminjam/cekBarang.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'active-submenu'; ?>">Barang</a>
+                                <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                             </div>
                         </li>
                         <li class="nav-item mb-2">
@@ -319,16 +315,16 @@
                         <nav class="sidebar flex-column p-4 h-100">
                             <ul class="nav nav-pills flex-column mb-auto">
                                 <li class="nav-item mb-2">
-                                    <a href="dashboardPeminjam.php" class="nav-link active"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                                    <a href="dashboardPeminjam.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
                                 </li>
                                 <li class="nav-item mb-2">
                                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="false" aria-controls="peminjamanSubmenuMobile">
                                         <span><img src="../../icon/peminjaman.svg">Peminjaman</span>
                                         <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                     </a>
-                                    <div class="collapse ps-4" id="peminjamanSubmenuMobile">
-                                        <a href="../../Menu Peminjam/cekBarang.php" class="nav-link">Barang</a>
-                                        <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link">Ruangan</a>
+                                    <div class="collapse ps-4 <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                        <a href="../../Menu Peminjam/cekBarang.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'active-submenu'; ?>">Barang</a>
+                                        <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                     </div>
                                 </li>
                                 <li class="nav-item mb-2">
@@ -432,7 +428,6 @@
 
                                         <form method="POST">
                                             <!-- Add hidden field for date -->
-                                            <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
 
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -469,7 +464,9 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="mb-2" style="max-width: 400px;">
-                                                        <label for="alasanPeminjamanBrg" class="form-label">Alasan Peminjaman</label>
+                                                        <label for="alasanPeminjamanBrg" class="form-label">
+                                                            Alasan Peminjaman <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
+                                                        </label>
                                                         <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="3" required></textarea>
                                                     </div>
                                                 </div>
@@ -483,7 +480,9 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <label for="jumlahBrg" class="form-label w-100">Jumlah Peminjaman</label>
+                                                    <label for="jumlahBrg" class="form-label w-100">
+                                                        Jumlah Peminjaman <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
+                                                    </label>
                                                     <div class="input-group" style="max-width: 140px;">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
                                                         <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" required style="max-width: 70px;">
@@ -491,16 +490,60 @@
                                                     </div>
                                                     <small class="text-muted">Stok tersedia: <?= $stokBarang ?></small>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <?php if (isset($error)) : ?>
+                                                        <div class="alert alert-danger" role="alert" style="margin-right: 2rem; margin-top: 1rem;">
+                                                            <?php echo $error; ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
                                             <div class="d-flex justify-content-between mt-4">
                                                 <a href="../../Menu Peminjam/lihatBarang.php" class="btn btn-secondary">Kembali</a>
-                                                <button type="submit" class="btn btn-primary">Kirim</button>
+                                                <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                             </div>
                                         </form>
+                                        <!--validasi kolom harus diisi -->
+                                        <script>
+                                            document.getElementById('alasanPeminjamanBrg').addEventListener('input', function() {
+                                                var alasanPeminjamanBrg = document.getElementById('alasanPeminjamanBrg').value;
+                                                var jumlahBrg = document.getElementById('jumlahBrg').value;
+                                                var errorMessage = document.getElementById('error-message');
+
+                                                if (alasanPeminjamanBrg.trim() === '') {
+                                                    errorMessage.style.display = 'inline';
+                                                } else {
+                                                    errorMessage.style.display = 'inline';
+                                                }
+
+                                                if (jumlahBrg.trim() === '' || parseInt(jumlahBrg) <= 0) {
+                                                    errorMessage.style.display = 'inline';
+                                                } else {
+                                                    errorMessage.style.display = 'inline';
+                                                }
+                                            });
+
+                                            document.querySelector('form').addEventListener('submit', function(event) {
+                                                var alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
+                                                var jumlahBrg = document.getElementById('jumlahBrg').value;
+                                                var errorMessage = document.getElementById('error-message');
+
+                                                if (alasanPeminjamanRuangan.trim() === '') {
+                                                    errorMessage.style.display = 'inline';
+                                                    event.preventDefault(); // Mencegah form dikirim jika input kosong
+                                                }
+
+                                                if (jumlahBrg.trim() === '' || parseInt(jumlahBrg) <= 0) {
+                                                    errorMessage.style.display = 'inline';
+                                                    event.preventDefault(); // Mencegah form dikirim jika input kosong
+                                                }
+                                            });
+                                        </script>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Modal Berhasil -->
                         <div class="modal fade" id="successModal" tabindex="-1">
@@ -511,7 +554,7 @@
                                         <a href="../../Menu Peminjam/lihatBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Peminjaman barang <?= $namaBarang ?> berhasil.</p>
+                                        <p>Peminjaman dengan ID <?= $idPeminjamanBrg ?> berhasil.</p>
                                     </div>
                                     <div class="modal-footer">
                                         <a href="../../Menu Peminjam/lihatBarang.php" class="btn btn-primary">OK</a>
@@ -561,12 +604,12 @@
                 }
             </script>
 
-            <?php if ($showModal) : ?>
-                <script>
-                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
-                    modal.show();
-                </script>
-            <?php endif; ?>
+                <?php if ($showModal) : ?>
+                    <script>
+                        var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                        modal.show();
+                    </script>
+                <?php endif; ?>
 
     </body>
 
