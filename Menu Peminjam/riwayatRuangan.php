@@ -397,7 +397,7 @@ function isCurrentPage($page)
                                         echo "<span title=\"" . htmlspecialchars($iconTitle) . "\" style=\"cursor: help; vertical-align: middle;\"><i class=\"bi " . $iconClass . " me-3\" style=\"font-size: 1.3rem;\"></i></span>";
 
                                         // Detail Icon
-                                        echo "<a href='detailRiwayatRuangan.php?id=" . urlencode($row['idPeminjamanRuangan']) . "' class='text-info' title='Detail Peminjaman' style='text-decoration: none;'><i class='bi bi-list-ul' style='font-size: 1.3rem;'></i></a>";
+                                        echo "<a href='detailPenolakanRuangan.php?id=" . urlencode($row['idPeminjamanRuangan']) . "' class='text-info' title='Detail Peminjaman' style='text-decoration: none;'><i class='bi bi-list-ul' style='font-size: 1.3rem;'></i></a>";
                                         echo "</td>";
                                         echo "</tr>";
                                     }
