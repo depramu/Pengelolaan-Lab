@@ -485,7 +485,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
     </script>
     <?php if ($showModal) : ?>
         <script>
-            var modal = new bootstrap.Modal(document.getElementById('successModal'));
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
             modal.show();
         </script>
     <?php endif; ?>

@@ -405,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if ($showModal): ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                 modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>

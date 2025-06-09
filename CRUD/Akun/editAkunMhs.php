@@ -442,27 +442,17 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- <script>
-            function changeStok(val) {
-                var stokInput = document.getElementById('namaKry');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
-                if (next < 0) next = 0;
-                stokInput.value = next;
-            }
-        </script> -->
-
         <script>
             document.querySelector('form').addEventListener('submit', function(e) {
-                var pass = document.getElementById('kataSandi').value;
-                var conf = document.getElementById('konfirmasiSandi').value;
+                let pass = document.getElementById('kataSandi').value;
+                let conf = document.getElementById('konfirmasiSandi').value;
 
-                var passError = document.getElementById('passError');
-                var passMatchError = document.getElementById('passMatchError');
-                var confPassError = document.getElementById('confPassError');
-                var passLengthError = document.getElementById('passLengthError');
+                let passError = document.getElementById('passError');
+                let passMatchError = document.getElementById('passMatchError');
+                let confPassError = document.getElementById('confPassError');
+                let passLengthError = document.getElementById('passLengthError');
 
-                var valid = true;
+                let valid = true;
 
                 // Reset error
                 passError.style.display = 'none';
@@ -493,7 +483,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
         <?php if ($showModal) : ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>
