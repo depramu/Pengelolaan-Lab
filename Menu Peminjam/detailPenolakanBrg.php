@@ -3,7 +3,6 @@ session_start();
 include '../koneksi.php';
 
 // Langkah 1: Ambil ID unik peminjaman dari URL
-// Misalnya, halaman ini diakses dari link: riwayatDetail.php?id=PB001
 $idPeminjamanBrg = $_GET['id'] ?? '';
 
 // Jika tidak ada ID di URL, hentikan eksekusi
@@ -11,58 +10,67 @@ if (empty($idPeminjamanBrg)) {
     die("Akses tidak valid. ID Peminjaman tidak ditemukan.");
 }
 
-// Inisialisasi variabel agar tidak error jika data tidak ditemukan
+// Inisialisasi variabel
 $data = [];
+$alasanPenolakan = ''; // Inisialisasi di sini
+
+// =================================================================
+// Ambil alasan penolakan DULU dari tabel Penolakan
+// =================================================================
+$sqlPenolakan = "SELECT alasanPenolakan FROM Penolakan WHERE idPeminjamanBrg = ?";
+// <<< PERBAIKAN 1: Gunakan variabel $idPeminjamanBrg
+$stmtPenolakan = sqlsrv_query($conn, $sqlPenolakan, [$idPeminjamanBrg]);
+
+if ($stmtPenolakan && $rowPenolakan = sqlsrv_fetch_array($stmtPenolakan, SQLSRV_FETCH_ASSOC)) {
+    $alasanPenolakan = $rowPenolakan['alasanPenolakan'];
+}
+// Variabel $alasanPenolakan sekarang sudah berisi data yang benar (jika ada)
+
+
+// =================================================================
+// Ambil data peminjaman utama
+// =================================================================
+$query = "SELECT * FROM Peminjaman_Barang WHERE idPeminjamanBrg = ? AND (nim = ? OR npk = ?)";
+$params = [
+    $idPeminjamanBrg,
+    $_SESSION['nim'] ?? null,
+    $_SESSION['npk'] ?? null
+];
+$stmt = sqlsrv_query($conn, $query, $params);
+
+// Inisialisasi variabel lain
 $idBarang = '';
 $nim = '';
 $npk = '';
 $tglPeminjamanBrg = '';
 $jumlahBrg = '';
 $alasanPeminjamanBrg = '';
-$alasanPenolakan = '';
 
-// Langkah 2: Buat query yang AMAN (menggunakan parameter) untuk mengambil SATU data spesifik
-// Query ini juga memastikan pengguna hanya bisa melihat riwayat miliknya sendiri
-$query = "SELECT * FROM Peminjaman_Barang WHERE idPeminjamanBrg = ? AND (nim = ? OR npk = ?)";
-
-// Siapkan parameter untuk query
-$params = [
-    $idPeminjamanBrg,
-    $_SESSION['nim'] ?? null,  // nim dari session
-    $_SESSION['npk'] ?? null   // npk dari session
-];
-
-// Eksekusi query
-$stmt = sqlsrv_query($conn, $query, $params);
-
-// Langkah 3: Ambil hasil query jika data ditemukan
 if ($stmt && sqlsrv_has_rows($stmt)) {
     $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-    // Langkah 4: Definisikan semua variabel yang dibutuhkan oleh HTML
-    // Gunakan '??' untuk memberikan nilai default jika kolomnya NULL di database
+    // Definisikan semua variabel yang dibutuhkan oleh HTML dari tabel Peminjaman_Barang
     $idBarang = $data['idBarang'] ?? 'Data tidak ada';
     $nim = $data['nim'] ?? 'Data tidak ada';
     $npk = $data['npk'] ?? 'Data tidak ada';
 
-    // Format tanggal dengan benar
     if (isset($data['tglPeminjamanBrg']) && $data['tglPeminjamanBrg'] instanceof DateTimeInterface) {
-        $tglPeminjamanBrg = $data['tglPeminjamanBrg']->format('d F Y'); // Contoh format: 09 June 2025
+        $tglPeminjamanBrg = $data['tglPeminjamanBrg']->format('d F Y');
     } else {
         $tglPeminjamanBrg = 'Tanggal tidak valid';
     }
 
     $jumlahBrg = $data['jumlahBrg'] ?? '0';
     $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? 'Tidak ada alasan.';
-    $alasanPenolakan = $data['alasanPenolakan'] ?? 'Tidak ada alasan penolakan.';
+
+    // <<< PERBAIKAN 2: Hapus baris di bawah ini karena sudah tidak diperlukan
+    // $alasanPenolakan = $data['alasanPenolakan'] ?? 'Tidak ada alasan penolakan.';
+
 } else {
     die("Data peminjaman tidak ditemukan atau Anda tidak memiliki hak akses.");
 }
 
 $currentPage = basename($_SERVER['PHP_SELF']);
-
-
-
 ?>
 
 

@@ -1,12 +1,31 @@
 <?php
-session_start(); // Start the session, common for user-specific pages
-include '../koneksi.php'; // Include your database connection file, adjust path if needed
+session_start();
+include '../koneksi.php';
 
-function isCurrentPage($page)
-{
-    return basename($_SERVER['PHP_SELF']) === $page;
+
+if ($_SESSION['peminjam_role'] == 'Mahasiswa') {
+    $countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Ruangan WHERE nim = '$_SESSION[nim]'";
+} else {
+    $countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Ruangan WHERE npk = '$_SESSION[npk]'";
 }
+$countResult = sqlsrv_query($conn, $countQuery);
+$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
+$totalData = $countRow['total'];
+
+if ($_SESSION['peminjam_role'] == 'Mahasiswa') {
+    $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE nim = '$_SESSION[nim]' ORDER BY idPeminjamanRuangan";
+} else {
+    $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE npk = '$_SESSION[npk]' ORDER BY idPeminjamanRuangan";
+}
+
+$result = sqlsrv_query($conn, $query);
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +59,6 @@ function isCurrentPage($page)
             width: 278px;
         }
 
-
         @media (max-width: 991.98px) {
             .sidebar {
                 border-radius: 0;
@@ -59,12 +77,6 @@ function isCurrentPage($page)
             color: #fff;
         }
 
-        /* Specific active state for main menu item when a submenu item is active */
-        .sidebar .nav-link.parent-active {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-
         .sidebar .nav-link img {
             width: 30px;
             margin-right: 10px;
@@ -78,47 +90,37 @@ function isCurrentPage($page)
             margin-left: 10px;
         }
 
-        .atoy-img {
-            width: clamp(100px, 15vw, 160px);
-            height: auto;
-            position: absolute;
-            right: clamp(30px, 5vw, 60px);
-            bottom: clamp(15px, 3vh, 30px);
-        }
-
-        @media (max-width: 991.98px) {
-            .atoy-img {
-                display: none !important;
-            }
-        }
-
         main {
             margin-left: 3vh;
             margin-right: 3vh;
             border-radius: 12px;
             height: 82vh;
-            /* Consider making this min-height or auto if content overflows */
-            overflow-y: auto;
-            /* Add scroll for main content if it overflows */
         }
 
+        /* === Styling for SUBMENU items (e.g., Barang, Ruangan) === */
         .sidebar .collapse .nav-link {
             color: #ffffff !important;
+            /* White text for submenu items */
             background-color: transparent !important;
         }
 
         .sidebar .collapse .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.15) !important;
+            /* Subtle hover for submenu items */
             color: #ffffff !important;
         }
 
-        .sidebar .collapse .nav-link.active {
-            /* Style for active submenu item */
+        /* Optional: If a submenu item itself can be marked 'active' (e.g. current page is 'Barang') */
+        /* You would need to add class="active-submenu" to the link via PHP/JS */
+        .sidebar .collapse .nav-link.active-submenu {
             background-color: rgba(255, 255, 255, 0.2) !important;
+            /* Slightly more prominent for active submenu */
             font-weight: 500;
+            /* Or bold, as you prefer */
             color: #ffffff !important;
         }
 
+        /* Header kecil di layar kecil */
         @media (max-width: 767.98px) {
             header.d-flex {
                 padding-left: 0.5rem !important;
@@ -149,13 +151,21 @@ function isCurrentPage($page)
             }
 
             main {
-                height: auto;
-                /* Adjust height for mobile */
-                min-height: 90vh;
+                height: 90vh;
             }
 
             main nav {
                 font-size: 0.8rem;
+            }
+
+            .modal-header {
+                padding: 0.5rem 1rem;
+            }
+
+            .fixed-pagination {
+                position: fixed;
+                bottom: 30px;
+                right: 40px;
             }
         }
     </style>
@@ -186,8 +196,9 @@ function isCurrentPage($page)
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="notifPeminjam.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="profilPeminjam.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <!-- Sidebar toggle button for mobile -->
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -198,31 +209,32 @@ function isCurrentPage($page)
         <!-- Content -->
         <div class="row flex-grow-1 g-0">
             <!-- Sidebar for large screens -->
-            <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
+            <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3  ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="dashboardPeminjam.php" class="nav-link<?php if (isCurrentPage('dashboardPeminjam.php')) echo ' active'; ?>"><img src="../icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPeminjam.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center<?php if (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) echo ' active'; ?>" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="<?php echo (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) ? 'true' : 'false'; ?>" aria-controls="peminjamanSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
                             <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4<?php if (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) echo ' show'; ?>" id="peminjamanSubmenu">
-                            <a href="peminjamanBarang.php" class="nav-link<?php if (isCurrentPage('peminjamanBarang.php')) echo ' active-submenu'; ?>">Barang</a>
-                            <a href="peminjamanRuangan.php" class="nav-link<?php if (isCurrentPage('peminjamanRuangan.php')) echo ' active-submenu'; ?>">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'cekBarang.php') echo 'show'; ?>" id="peminjamanSubmenu">
+                            <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link d-flex justify-content-between align-items-center<?php if (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) echo ' active'; ?>" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="<?php echo (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) ? 'true' : 'false'; ?>" aria-controls="riwayatSubmenu">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenu" role="button" aria-expanded="false" aria-controls="riwayatSubmenu">
                             <span><img src="../icon/riwayat.svg" style="width: 28px; height: 28px; object-fit: contain;">Riwayat</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
-                        <div class="collapse ps-4<?php if (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) echo ' show'; ?>" id="riwayatSubmenu">
-                            <a href="riwayatBarang.php" class="nav-link<?php if (isCurrentPage('riwayatBarang.php')) echo ' active-submenu'; ?>">Barang</a>
-                            <a href="riwayatRuangan.php" class="nav-link<?php if (isCurrentPage('riwayatRuangan.php')) echo ' active-submenu'; ?>">Ruangan</a>
+                        <div class="collapse ps-4 <?php if ($currentPage === 'riwayatBarang.php') echo 'show'; ?>" id="riwayatSubmenu">
+                            <a href="riwayatBarang.php" class="nav-link <?php if ($currentPage === 'riwayatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="riwayatRuangan.php" class="nav-link <?php if ($currentPage === 'riwayatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
+
                     <li class="nav-item mt-0">
                         <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                     </li>
@@ -240,26 +252,26 @@ function isCurrentPage($page)
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="dashboardPeminjam.php" class="nav-link<?php if (isCurrentPage('dashboardPeminjam.php')) echo ' active'; ?>"><img src="../icon/dashboard0.svg">Dashboard</a>
+                                <a href="dashboardPeminjam.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center<?php if (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) echo ' active'; ?>" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="<?php echo (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) ? 'true' : 'false'; ?>" aria-controls="peminjamanSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#peminjamanSubmenuMobile" role="button" aria-expanded="false" aria-controls="peminjamanSubmenuMobile">
                                     <span><img src="../icon/peminjaman.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4<?php if (isCurrentPage('peminjamanBarang.php') || isCurrentPage('peminjamanRuangan.php')) echo ' show'; ?>" id="peminjamanSubmenuMobile">
-                                    <a href="peminjamanBarang.php" class="nav-link<?php if (isCurrentPage('peminjamanBarang.php')) echo ' active-submenu'; ?>">Barang</a>
-                                    <a href="peminjamanRuangan.php" class="nav-link<?php if (isCurrentPage('peminjamanRuangan.php')) echo ' active-submenu'; ?>">Ruangan</a>
+                                <div class="collapse ps-4 <?php if ($currentPage === 'cekBarang.php') echo 'show'; ?>" id="peminjamanSubmenuMobile">
+                                    <a href="cekBarang.php" class="nav-link <?php if ($currentPage === 'cekBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="cekRuangan.php" class="nav-link <?php if ($currentPage === 'cekRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a class="nav-link d-flex justify-content-between align-items-center<?php if (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) echo ' active'; ?>" data-bs-toggle="collapse" href="#riwayatSubmenuMobile" role="button" aria-expanded="<?php echo (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) ? 'true' : 'false'; ?>" aria-controls="riwayatSubmenuMobile">
+                                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#riwayatSubmenuMobile" role="button" aria-expanded="false" aria-controls="riwayatSubmenuMobile">
                                     <span><img src="../icon/riwayat.svg">Riwayat</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
-                                <div class="collapse ps-4<?php if (isCurrentPage('riwayatBarang.php') || isCurrentPage('riwayatRuangan.php')) echo ' show'; ?>" id="riwayatSubmenuMobile">
-                                    <a href="riwayatBarang.php" class="nav-link<?php if (isCurrentPage('riwayatBarang.php')) echo ' active-submenu'; ?>">Barang</a>
-                                    <a href="riwayatRuangan.php" class="nav-link<?php if (isCurrentPage('riwayatRuangan.php')) echo ' active-submenu'; ?>">Ruangan</a>
+                                <div class="collapse ps-4" id="riwayatSubmenuMobile">
+                                    <a href="#" class="nav-link <?php if ($currentPage === 'riwayatBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="#" class="nav-link <?php if ($currentPage === 'riwayatRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mt-0">
@@ -276,148 +288,134 @@ function isCurrentPage($page)
                 <div class="mb-4">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Riwayat Peminjaman Ruangan</li>
+                            <li class="breadcrumb-item"><a href="#">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Riwayat Peminjaman Barang</li>
                         </ol>
                     </nav>
                 </div>
-
+                <!-- Table Peminjaman Barang -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle table-bordered">
                         <thead class="table-light">
                             <tr>
                                 <th>ID Peminjaman</th>
-                                <th>ID Ruangan</th>
+                                <th>ID Barang</th>
                                 <th>Tanggal Peminjaman</th>
-                                <th>Waktu Mulai</th>
-                                <th>Waktu Selesai</th>
-                                <th>Aksi</th>
+                                <th>Waktu Mulai </th>
+                                <th>Waktu Selesai </th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            // Helper function for Indonesian Date Formatting
-                            if (!function_exists('formatIndonesianDate')) {
-                                function formatIndonesianDate($dateInput)
-                                {
-                                    if (!$dateInput) return 'N/A';
-
-                                    try {
-                                        if ($dateInput instanceof DateTimeInterface) {
-                                            $date = $dateInput;
+                            $hasData = false;
+                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                $hasData = true;
+                            ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
+                                    <td><?= htmlspecialchars($row['idRuangan']) ?></td>
+                                    <td>
+                                        <?= ($row['tglPeminjamanRuangan'] instanceof DateTimeInterface) ? $row['tglPeminjamanRuangan']->format('D, d M Y') : 'N/A'; ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if ($row['waktuMulai'] instanceof DateTimeInterface) {
+                                            echo $row['waktuMulai']->format('H:i');
                                         } else {
-                                            $date = new DateTime($dateInput);
+                                            echo date('H:i', strtotime($row['waktuMulai']));
                                         }
-                                    } catch (Exception $e) {
-                                        return htmlspecialchars((string)$dateInput);
-                                    }
-
-                                    $days = array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu');
-                                    $months = array(
-                                        1 => 'Januari',
-                                        2 => 'Februari',
-                                        3 => 'Maret',
-                                        4 => 'April',
-                                        5 => 'Mei',
-                                        6 => 'Juni',
-                                        7 => 'Juli',
-                                        8 => 'Agustus',
-                                        9 => 'September',
-                                        10 => 'Oktober',
-                                        11 => 'November',
-                                        12 => 'Desember'
-                                    );
-
-                                    $dayName = $days[(int)$date->format('w')];
-                                    $dayOfMonth = $date->format('d');
-                                    $monthName = $months[(int)$date->format('n')];
-                                    $year = $date->format('Y');
-
-                                    return "$dayName, $dayOfMonth $monthName $year";
-                                }
-                            }
-
-                            // User-specific filtering placeholder (same as before)
-                            $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan ORDER BY idPeminjamanRuangan ASC";
-                            $params = array();
-
-                            $stmt = sqlsrv_query($conn, $query, $params);
-
-                            if ($stmt === false) {
-                                echo "<tr><td colspan='5' class='text-center text-danger'>Error fetching data: " . htmlspecialchars(print_r(sqlsrv_errors(), true)) . "</td></tr>";
-                            } else {
-                                if (sqlsrv_has_rows($stmt)) {
-                                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-                                        echo "<tr>";
-                                        echo "<td>" . htmlspecialchars($row['idPeminjamanRuangan']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($row['idRuangan']) . "</td>";
-
-                                        // Tanggal Peminjaman (using formatIndonesianDate function)
-                                        $tglPeminjaman = $row['tglPeminjamanRuangan'];
-                                        echo "<td>" . formatIndonesianDate($tglPeminjaman) . "</td>";
-
-                                        // Waktu Mulai (using H:i format if DateTime, else as is)
-                                        $waktuMulai = $row['waktuMulai'];
-                                        echo "<td>" . (isset($waktuMulai) ? ($waktuMulai instanceof DateTimeInterface ? $waktuMulai->format('H:i') : htmlspecialchars((string)$waktuMulai)) : 'N/A') . "</td>";
-
-                                        // Waktu Selesai (using H:i format if DateTime, else as is)
-                                        $waktuSelesai = $row['waktuSelesai'];
-                                        echo "<td>" . (isset($waktuSelesai) ? ($waktuSelesai instanceof DateTimeInterface ? $waktuSelesai->format('H:i') : htmlspecialchars((string)$waktuSelesai)) : 'N/A') . "</td>";
-
-                                        // Aksi Column (Status Icon + Detail Icon)
-                                        echo "<td>";
-
-                                        // Status Icon Logic
-                                        $statusText = $row['statusPeminjaman'] ?? 'Unknown';
-                                        $iconClass = 'bi-question-circle-fill text-secondary'; // Default for unknown
-                                        $iconTitle = 'Status: ' . htmlspecialchars($statusText); // Default title
-
-                                        // User-defined status mapping
-                                        if (stripos($statusText, 'Menunggu Approval') !== false) {
-                                            $iconClass = 'bi-clock-history text-warning';
-                                            $iconTitle = 'Menunggu Approval';
-                                        } elseif (stripos($statusText, 'Sedang dipinjam') !== false) {
-                                            $iconClass = 'bi-clock-fill text-success';
-                                            $iconTitle = 'Sedang dipinjam';
-                                        } elseif (stripos($statusText, 'Selesai') !== false || stripos($statusText, 'Completed') !== false) {
-                                            $iconClass = 'bi-check-circle-fill text-success';
-                                            $iconTitle = 'Selesai';
-                                        } elseif (stripos($statusText, 'Ditolak') !== false) {
-                                            $iconClass = 'bi-x-circle-fill text-danger';
-                                            $iconTitle = 'Ditolak';
-                                        } elseif (stripos($statusText, 'Disetujui') !== false) { // This will be caught if 'Menunggu Approval' or 'Sedang dipinjam' aren't matched first.
-                                            $iconClass = 'bi-check-lg text-primary';             // Consider if 'Disetujui' is a distinct, earlier phase.
-                                            $iconTitle = 'Disetujui';
-                                        } elseif (stripos($statusText, 'Dibatalkan') !== false || stripos($statusText, 'Cancelled') !== false) {
-                                            $iconClass = 'bi-slash-circle-fill text-dark';
-                                            $iconTitle = 'Dibatalkan';
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if ($row['waktuSelesai'] instanceof DateTimeInterface) {
+                                            echo $row['waktuSelesai']->format('H:i');
+                                        } else {
+                                            echo date('H:i', strtotime($row['waktuSelesai']));
                                         }
-                                        // Note: The order of these elseif conditions matters if a status string could potentially match multiple conditions.
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php
+                                        $statusFromDB = $row['statusPeminjaman'] ?? 'Menunggu Persetujuan';
 
-                                        echo "<span title=\"" . htmlspecialchars($iconTitle) . "\" style=\"cursor: help; vertical-align: middle;\"><i class=\"bi " . $iconClass . " me-3\" style=\"font-size: 1.3rem;\"></i></span>";
+                                        $iconSource = 'bi-hourglass-split text-info';
+                                        $statusText = 'Status Tidak Diketahui';
 
-                                        // Detail Icon
-                                        echo "<a href='detailPenolakanRuangan.php?id=" . urlencode($row['idPeminjamanRuangan']) . "' class='text-info' title='Detail Peminjaman' style='text-decoration: none;'><i class='bi bi-list-ul' style='font-size: 1.3rem;'></i></a>";
-                                        echo "</td>";
-                                        echo "</tr>";
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='5' class='text-center'>No room loan history found.</td></tr>";
-                                }
-                                sqlsrv_free_stmt($stmt);
+                                        switch ($statusFromDB) {
+                                            case 'Menunggu Persetujuan':
+                                                $iconSource = '../icon/jamkuning.svg';
+                                                $statusText = 'Menunggu Persetujuan';
+                                                break;
+                                            case 'Sedang Dipinjam':
+                                                $iconSource = '../icon/jamhijau.svg';
+                                                $statusText = 'Sedang Dipinjam';
+                                                break;
+                                            case 'Ditolak':
+                                                $iconSource = '../icon/silang.svg';
+                                                $statusText = 'Ditolak';
+                                                break;
+                                            case 'Telah Dikembalikan':
+                                                $iconSource = '../icon/ceklis.svg';
+                                                $statusText = 'Telah Dikembalikan';
+                                                break;
+                                        }
+                                        ?>
+
+                                        <span title="<?= htmlspecialchars($statusText); ?>" style="cursor: help; vertical-align: middle;">
+                                            <?php
+                                            // Cek apakah $iconSource berisi ekstensi file gambar
+                                            if (str_contains($iconSource, '.svg') || str_contains($iconSource, '.png')) {
+                                                // JIKA YA: Tampilkan sebagai gambar <img>
+                                                echo '<img src="' . htmlspecialchars($iconSource) . '" 
+                                                alt="' . htmlspecialchars($statusText) . '" 
+                                                style="width: 30px; height: 30px;" 
+                                                class="me-2 mb-2">';
+                                            } else {
+                                                // JIKA TIDAK: Tampilkan sebagai font icon <i> (cara lama)
+                                                echo '<i class="bi ' . htmlspecialchars($iconSource) . ' me-3" 
+                     style="font-size: 1.2rem;"></i>';
+                                            }
+                                            ?>
+                                        </span>
+                                        <?php if ($statusFromDB == 'Menunggu Persetujuan') { ?>
+                                            <a href="pengajuanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                                                <i><img src="../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                                            </a>
+                                        <?php } else if ($statusFromDB == 'Sedang Dipinjam') { ?>
+                                            <a href="pengembalianRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                                                <i><img src="../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                                            </a>
+                                        <?php } else if ($statusFromDB == 'Ditolak') { ?>
+                                            <a href="detailPenolakanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                                                <i><img src="../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                                            </a>
+                                        <?php } else if ($statusFromDB == 'Telah Dikembalikan') { ?>
+                                            <a href="DetailPeminjamanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                                                <i><img src="../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                                            </a>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            <?php }
+
+                            if (!$hasData) {
+                                echo '<tr><td colspan="5" class="text-center">Tidak ada data peminjaman</td></tr>';
                             }
-                            // sqlsrv_close($conn); // Not strictly necessary here as script ends
                             ?>
                         </tbody>
                     </table>
                 </div>
-                <!-- Atoy image, if needed on this page -->
-                <!-- <img src="../icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" /> -->
             </main>
             <!-- End Content Area -->
         </div>
+        <!-- End Content -->
     </div>
     <!-- End Container -->
+
+
+
 
     <!-- Logout Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -432,7 +430,7 @@ function isCurrentPage($page)
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                    <button type="button" class="btn btn-primary ps-4 pe-4" onclick="window.location.href='../logout.php';">Ya</button> <!-- Assuming logout.php is in root -->
+                    <a href="../index.php" class="btn btn-primary ps-4 pe-4">Ya</a>
                 </div>
             </div>
         </div>
@@ -442,5 +440,3 @@ function isCurrentPage($page)
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>

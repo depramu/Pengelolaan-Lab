@@ -404,15 +404,15 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <div class="mb-0">
+                                                <div class="mb-2">
                                                     <label class="form-label">Waktu Selesai</label>
                                                     <input type="text" class="form-control" value="<?= htmlspecialchars($waktuSelesai) ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="mb-0">
+                                                <div class="mb-2">
                                                     <label class="form-label">Alasan Penolakan</label>
-                                                    <textarea class="form-control" rows="2" disabled><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                                    <textarea class="form-control" rows="1" disabled><?= htmlspecialchars($alasanPenolakan) ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -420,11 +420,11 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                             <div class="col-md-12">
                                                 <div class="mb-2">
                                                     <label class="form-label">Alasan Peminjaman</label>
-                                                    <textarea class="form-control" rows="2" disabled><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
+                                                    <textarea class="form-control" rows="1" disabled><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex justify-content-start mt-4">
+                                        <div class="d-flex justify-content-start mt-3">
                                             <a href="../Menu Peminjam/riwayatRuangan.php" class="btn btn-secondary">Kembali</a>
                                         </div>
                                     </form>
