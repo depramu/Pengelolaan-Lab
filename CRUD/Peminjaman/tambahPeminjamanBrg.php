@@ -62,8 +62,8 @@
             $error = "*Jumlah peminjaman melebihi stok yang tersedia.";
         } else {
             // 1. Insert data peminjaman    
-            $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrg, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg];
+            $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrg, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
             $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
             if ($stmtInsert) {
@@ -81,10 +81,6 @@
                 $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
             }
         }
-
-        $statusPeminjaman = "UPDATE Peminjaman_Barang SET statusPeminjaman = 'Menunggu Persetujuan' WHERE idPeminjamanBrg = '$idPeminjamanBrg'";
-        $stmtStatusPeminjaman = sqlsrv_query($conn, $statusPeminjaman);
-        $dataStatusPeminjaman = sqlsrv_fetch_array($stmtStatusPeminjaman, SQLSRV_FETCH_ASSOC);
     }
 
     $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
@@ -604,12 +600,12 @@
                 }
             </script>
 
-                <?php if ($showModal) : ?>
-                    <script>
-                        var modal = new bootstrap.Modal(document.getElementById('successModal'));
-                        modal.show();
-                    </script>
-                <?php endif; ?>
+            <?php if ($showModal) : ?>
+                <script>
+                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    modal.show();
+                </script>
+            <?php endif; ?>
 
     </body>
 

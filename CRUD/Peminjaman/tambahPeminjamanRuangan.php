@@ -32,16 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($alasanPeminjamanRuangan)) {
         $error = "Alasan peminjaman ruangan tidak boleh kosong";
     } else {
-        $sqlPeminjamanRuangan = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, nim, npk, tglPeminjamanRuangan, waktuMulai, waktuSelesai, alasanPeminjamanRuangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $params = [$idPeminjamanRuangan, $idRuangan, $nim, $npk, $tglPeminjamanRuangan, $waktuMulai, $waktuSelesai, $alasanPeminjamanRuangan];
+        $sqlPeminjamanRuangan = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, nim, npk, tglPeminjamanRuangan, waktuMulai, waktuSelesai, alasanPeminjamanRuangan, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $params = [$idPeminjamanRuangan, $idRuangan, $nim, $npk, $tglPeminjamanRuangan, $waktuMulai, $waktuSelesai, $alasanPeminjamanRuangan, 'Menunggu Persetujuan'];
         $stmtPeminjamanRuangan = sqlsrv_query($conn, $sqlPeminjamanRuangan, $params);
 
         $ketersediaan = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = '$idRuangan'";
         $stmtKetersediaan = sqlsrv_query($conn, $ketersediaan);
-        $statusPeminjaman = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = 'Menunggu Persetujuan' WHERE idPeminjamanRuangan = '$idPeminjamanRuangan'";
-        $stmtStatusPeminjaman = sqlsrv_query($conn, $statusPeminjaman);
 
-        if ($stmtStatusPeminjaman) {
+        if ($stmtPeminjamanRuangan) {
             $showModal = true;
         } else {
             $error = "Gagal mengajukan peminjaman ruangan";

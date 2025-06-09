@@ -38,14 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($cekNamaRow['jumlah'] > 0) {
         $error = "Nama barang sudah terdaftar, silakan gunakan nama lain.";
     } else {
-        $query = "INSERT INTO Barang (namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?)";
-        $params = [$namaBarang, $stokBarang, $lokasiBarang];
+        $query = "INSERT INTO Barang (idBarang, namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?, ?)";
+        $params = [$idBarang, $namaBarang, $stokBarang, $lokasiBarang];
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
             $showModal = true;
         } else {
             $error = "Gagal menambahkan barang.";
+            
         }
     }
 }
@@ -384,8 +385,8 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                             </label>
                                             <select class="form-select" id="lokasiBarang" name="lokasiBarang">
                                                 <option value="" disabled selected>Pilih Lokasi</option>
-                                                <?php foreach ($lokasiList as $lokasi) : ?>
-                                                    <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
+                                                <?php foreach ($lokasiList as $lokasiBarang) : ?>
+                                                    <option value="<?= htmlspecialchars($lokasiBarang) ?>"><?= htmlspecialchars($lokasiBarang) ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>

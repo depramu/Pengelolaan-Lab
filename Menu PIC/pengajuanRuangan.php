@@ -1,42 +1,49 @@
 <?php
+include '../koneksi.php';
+session_start();
 
-include '../../koneksi.php';
+// Perbaikan: Ambil data dari tabel Peminjaman_Barang
+$idPeminjamanRuangan = $_GET['id'] ?? '';
+$data = [];
 
+$showRejectedModal = false;
 $showModal = false;
 
-// Auto-generate idRuangan dari database SQL Server
-$idRuangan = 'CB001';
-$sqlId = "SELECT TOP 1 idRuangan FROM Ruangan WHERE idRuangan LIKE 'CB%' ORDER BY idRuangan DESC";
-$stmtId = sqlsrv_query($conn, $sqlId);
-if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['idRuangan']; // contoh: CB012
-    $num = intval(substr($lastId, 3));
-    $newNum = $num + 1;
-    $idRuangan = 'CB' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
+if (!empty($idPeminjamanRuangan)) {
+    $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
+
+    $query = "SELECT * FROM Peminjaman_Ruangan WHERE idPeminjamanRuangan = ?";
+    $params = array($idPeminjamanRuangan);
+    $stmt = sqlsrv_query($conn, $query, $params);
+
+    if ($stmt && sqlsrv_has_rows($stmt)) {
+        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+    }
 }
 
-$kondisiRuanganList = ['Baik', 'Rusak'];
-$ketersediaanList = ['Tersedia', 'Tidak Tersedia'];
+// Ekstrak data 
+$idRuangan = $data['idRuangan'] ?? '';
+$nim = $data['nim'] ?? '';
+$npk = $data['npk'] ?? '';
+$tglPeminjamanRuangan = isset($data['tglPeminjamanRuangan']) ? $data['tglPeminjamanRuangan']->format('Y-m-d') : '';
+$alasanPeminjamanRuangan = $data['alasanPeminjamanRuangan'] ?? '';
+$currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaRuangan = $_POST['namaRuangan'];
-    $kondisiRuangan = $_POST['kondisiRuangan']; // ganti jadi kondisiRuangan
-    $ketersediaan = $_POST['ketersediaan'];
-
-    $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
-    $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
+// Perbaikan: Proses persetujuan
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $query = "UPDATE Peminjaman_Ruangan 
+                  SET statusPeminjaman = 'Sedang Dipinjam'
+                  WHERE idPeminjamanRuangan = ?";
+    $params = array($idPeminjamanRuangan);
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt) {
         $showModal = true;
     } else {
-        $error = "Gagal menambahkan Ruangan.";
+        $error = "Gagal melakukan pengajuan ruangan.";
+        exit;
     }
 }
-
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-$manajemenAsetPages = ['../../Menu PIC/manajemenRuangan.php', 'manajemenRuangan.php', 'tambahRuangan.php', 'editRuangan.php'];
-$isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +53,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Pengelolaan Laboratorium</title>
+    <title>Pengajuan Ruangan - Sistem Pengelolaan Laboratorium</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -176,6 +183,13 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 font-size: 0.8rem;
             }
         }
+
+        .form-control[disabled] {
+            color: #444;
+            font-weight: 400;
+            border: 2px solid #e0e0e0;
+            background: #f5f5f5;
+        }
     </style>
 </head>
 
@@ -184,7 +198,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
         <!-- Header -->
         <header class="d-flex align-items-center justify-content-between px-3 px-md-5 py-3">
             <div class="d-flex align-items-center">
-                <img src="../../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
+                <img src="../icon/logo0.png" class="sidebar-logo img-fluid" alt="Logo" />
                 <div class="d-none d-md-block ps-3 ps-md-4" style="margin-left: 5vw;">
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">
@@ -200,8 +214,8 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="../../notif.php" class="me-0"><img src="../../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
-                <a href="../../profil.php"><img src="../../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="notif.php" class="me-0"><img src="../icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="profil.php"><img src="../icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>
@@ -213,21 +227,21 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
             <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item mb-2">
-                        <a href="../../Menu PIC/dashboardPIC.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                        <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manajemenAsetSubmenu" role="button" aria-expanded="false" aria-controls="manajemenAsetSubmenu">
-                            <span><img src="../../icon/layers0.png">Manajemen Aset</span>
+                            <span><img src="../icon/layers0.png">Manajemen Aset</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4 <?php if ($isManajemenAsetActive) echo 'show'; ?>" id="manajemenAsetSubmenu">
-                            <a href="../../Menu PIC/manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php')  echo 'active-submenu'; ?>">Barang</a>
-                            <a href="../../Menu PIC/manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php' || $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
+                            <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenu" role="button" aria-expanded="false" aria-controls="akunSubmenu">
-                            <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                            <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="akunSubmenu">
@@ -237,19 +251,19 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                            <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                            <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="pinjamSubmenuMobile">
-                            <a href="#" class="nav-link">Barang</a>
+                            <a href="peminjamanBarang.php" class="nav-link">Barang</a>
                             <a href="peminjamanRuangan.php" class="nav-link">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
-                        <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                        <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                     </li>
                     <li class="nav-item mt-0">
-                        <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
+                        <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                     </li>
                 </ul>
             </nav>
@@ -265,43 +279,43 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                     <nav class="sidebar flex-column p-4 h-100">
                         <ul class="nav nav-pills flex-column mb-auto">
                             <li class="nav-item mb-2">
-                                <a href="../../index.php" class="nav-link"><img src="../../icon/dashboard0.svg">Dashboard</a>
+                                <a href="dashboardPIC.php" class="nav-link"><img src="../icon/dashboard0.svg">Dashboard</a>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#asetSubmenuMobile" role="button" aria-expanded="false" aria-controls="asetSubmenuMobile">
-                                    <span><img src="../../icon/layers0.png">Manajemen Aset</span>
+                                    <span><img src="../icon/layers0.png">Manajemen Aset</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="asetSubmenuMobile">
-                                    <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php') echo 'active-submenu'; ?>">Barang</a>
-                                    <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php'|| $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php')  echo 'active-submenu'; ?>">Ruangan</a>
+                                    <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php' || $currentPage === 'tambahBarang.php' || $currentPage === 'editBarang.php') echo 'active-submenu'; ?>">Barang</a>
+                                    <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#akunSubmenuMobile" role="button" aria-expanded="false" aria-controls="akunSubmenuMobile">
-                                    <span><img src="../../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
+                                    <span><img src="../icon/iconamoon-profile-fill0.svg">Manajemen Akun</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="akunSubmenuMobile">
-                                    <a href="#" class="nav-link">Mahasiswa</a>
-                                    <a href="#" class="nav-link">Karyawan</a>
+                                    <a href="manajemenAkunMhs.php" class="nav-link">Mahasiswa</a>
+                                    <a href="manajemenAkunKry.php" class="nav-link">Karyawan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
                                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#pinjamSubmenuMobile" role="button" aria-expanded="false" aria-controls="pinjamSubmenuMobile">
-                                    <span><img src="../../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
+                                    <span><img src="../icon/ic-twotone-sync-alt0.svg">Peminjaman</span>
                                     <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                                 </a>
                                 <div class="collapse ps-4" id="pinjamSubmenuMobile">
+                                    <a href="peminjamanBarang.php" class="nav-link">Barang</a>
                                     <a href="peminjamanRuangan.php" class="nav-link">Ruangan</a>
-                                    <a href="#" class="nav-link">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
-                                <a href="#" class="nav-link"><img src="../../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
+                                <a href="#" class="nav-link"><img src="../icon/graph-report0.png" class="sidebar-icon-report">Laporan</a>
                             </li>
                             <li class="nav-item mt-0">
-                                <a href="#" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../../icon/exit.png">Log Out</a>
+                                <a href="../index.php" class="nav-link logout" data-bs-toggle="modal" data-bs-target="#logoutModal"><img src="../icon/exit.png">Log Out</a>
                             </li>
                         </ul>
                     </nav>
@@ -314,94 +328,109 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 <div class="mb-3">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenRuangan.php">Manajemen Ruangan</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Tambah Ruangan</li>
+                            <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item"><a href="peminjamanRuangan.php">Peminjaman Ruangan</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Pengajuan Ruangan</li>
                         </ol>
                     </nav>
                 </div>
 
 
-                <!-- Tambah Ruangan -->
+                <!-- Pengajuan Peminjaman Barang -->
                 <div class="container mt-4">
-                    <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <?php echo $error; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
-
                     <div class="row justify-content-center">
-                        <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
+                        <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                             <div class="card border border-dark">
                                 <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Tambah Ruangan</span>
+                                    <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST">
-                                        <div class="mb-2">
-                                             <label for="idRuangan" class="form-label">ID Ruangan</label>
-                                            <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled>
+                                        <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+
+                                        <div class="row">
+                                            <!-- Kolom Kiri -->
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                                    <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled style="background: #f5f5f5;">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="tglPeminjamanRuangan" class="form-label">Tanggal Peminjaman</label>
+                                                    <input type="text" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" disabled style="background: #f5f5f5;">
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="nim" class="form-label">NIM</label>
+                                                    <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled style="background: #f5f5f5;">
+                                                </div>
+
+                                            </div>
+                                            <!-- Kolom Kanan -->
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label for="idPeminjamanRuangan" class="form-label">ID Peminjaman Ruangan</label>
+                                                    <input type="text" class="form-control" id="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" disabled style="background: #f5f5f5;">
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label for="waktuMulai" class="form-label">Waktu Mulai</label>
+                                                        <input type="text" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai ?? '08.00') ?>" disabled style="background: #f5f5f5;">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="waktuSelesai" class="form-label">Waktu Selesai</label>
+                                                        <input type="text" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai ?? '10.00') ?>" disabled style="background: #f5f5f5;">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label for="npk" class="form-label">NPK</label>
+                                                    <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled style="background: #f5f5f5;">
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label for="alasanPeminjaman" class="form-label">Alasan Peminjaman</label>
+                                                <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" rows="3" disabled style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
+                                            </div>
                                         </div>
-                                        <div class="mb-2">
-                                            <label for="namaRuangan" class="form-label">Nama Ruangan
-                                                <span id="namaError" class="text-danger ms-2" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="namaRuangan" name="namaRuangan">
+
+                                        <div class="d-flex justify-content-end gap-2 mt-4">
+                                            <!-- TOMBOL AKSI -->
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <!-- Link untuk Tolak -->
+                                                <a href="penolakanRuangan.php?id=<?= htmlspecialchars($idPeminjamanRuangan) ?>" class="btn btn-danger">Tolak</a>
+                                                <!-- Form untuk Setuju -->
+                                                <button type="submit" name="submit" class="btn btn-primary">Setuju</button>
+                                            </div>
                                         </div>
-                                        <div class="mb-2">
-                                            <label for="kondisiRuangan" class="form-label">Kondisi Ruangan
-                                                <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                            </label>
-                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan" required>
-                                                <option disabled selected>Pilih Kondisi</option>
-                                                <option value="Baik">Baik</option>
-                                                <option value="Rusak">Rusak</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="ketersediaan" class="form-label">Ketersediaan Ruangan
-                                                <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                            </label>
-                                            <select class="form-select" id="ketersediaan" name="ketersediaan" required>
-                                                <option disabled selected>Pilih Ketersediaan</option>
-                                                <option value="Tersedia">Tersedia</option>
-                                                <option value="Tidak Tersedia">Tidak Tersedia</option>
-                                            </select>
-                                        </div>
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
-                                            <button type="submit" class="btn btn-primary">Tambah</button>   
-                                        </div>
+
+
+
+
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </main>
 
-                    <!-- Modal Berhasil -->
-                    <div class="modal fade" id="successModal" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="../../Menu PIC/manajemenRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>   
-                                </div>
-                                <div class="modal-body">
-                                    <p>Data Ruangan berhasil ditambahkan.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-primary">OK</a>
-                                </div>
-                            </div>
+
+            <!-- Modal Berhasil -->
+            <div class="modal fade" id="successModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                            <a href="peminjamanRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Setuju"></button></a>
+                        </div>
+                        <div class="modal-body">
+                            <p>PIC Menyetujui Peminjaman Ruangan <?= htmlspecialchars($idPeminjamanRuangan) ?>.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="peminjamanRuangan.php" class="btn btn-primary">OK</a>
                         </div>
                     </div>
-
                 </div>
-                <!-- End Tambah Ruangan -->
-
-
-            </main>
+            </div>
 
         </div>
 
@@ -428,58 +457,13 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
-            function changeStok(val) {
-                var stokInput = document.getElementById('stokRuangan');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
-                if (next < 0) next = 0;
-                stokInput.value = next;
-            }
-        </script>
-    </div>
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    let valid = true;
-
-    // Nama Ruangan
-    const nama = document.getElementById('namaRuangan');
-    const namaError = document.getElementById('namaError');
-    if (nama && nama.value.trim() === '') {
-        namaError.style.display = 'inline';
-        valid = false;
-    } else if (namaError) {
-        namaError.style.display = 'none';
-    }
-
-    // Kondisi Ruangan
-    const kondisi = document.getElementById('kondisiRuangan');
-    const kondisiError = document.getElementById('kondisiError');
-    if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
-        kondisiError.style.display = 'inline';
-        valid = false;
-    } else if (kondisiError) {
-        kondisiError.style.display = 'none';
-    }
-
-    // Ketersediaan Ruangan
-    const ketersediaan = document.getElementById('ketersediaan');
-    const ketersediaanError = document.getElementById('ketersediaanError');
-    if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
-        ketersediaanError.style.display = 'inline';
-        valid = false;
-    } else if (ketersediaanError) {
-        ketersediaanError.style.display = 'none';
-    }
-
-    if (!valid) e.preventDefault();
-});
-</script>
-        <?php if ($showModal) : ?>
+        <!-- Modal Setuju -->
+        <?php if ($showModal): ?>
             <script>
                 var modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>
+
+
 </body>
-</html>
