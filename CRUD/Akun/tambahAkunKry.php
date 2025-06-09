@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Karyawan   (namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?)";
-    $params = [$namaKry, $noHP, $jenisRole, $kataSandi];
+    $query = "INSERT INTO Karyawan (npk, namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+    $params = [$npk, $namaKry, $noHP, $jenisRole, $kataSandi];
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt) {
