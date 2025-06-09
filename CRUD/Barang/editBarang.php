@@ -462,9 +462,9 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
         <script>
             function changeStok(val) {
-                var stokInput = document.getElementById('stokBarang');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
+                let stokInput = document.getElementById('stokBarang');
+                let current = parseInt(stokInput.value) || 0;
+                let next = current + val;
                 if (next < 0) next = 0;
                 stokInput.value = next;
             }

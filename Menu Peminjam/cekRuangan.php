@@ -344,15 +344,15 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                     <!-- script untuk validasi kolom harus diisi input -->
                                     <script>
                                         document.querySelector('form').addEventListener('submit', function(event) {
-                                            var tglPeminjamanRuangan = document.getElementById('tglPeminjamanRuangan').value;
-                                            var waktuMulai = document.getElementById('waktuMulai').value;
-                                            var waktuSelesai = document.getElementById('waktuSelesai').value;
+                                            let tglPeminjamanRuangan = document.getElementById('tglPeminjamanRuangan').value;
+                                            let waktuMulai = document.getElementById('waktuMulai').value;
+                                            let waktuSelesai = document.getElementById('waktuSelesai').value;
 
-                                            var errorTanggal = document.getElementById('error-tanggal');
-                                            var errorWaktuDari = document.getElementById('error-waktu-dari');
-                                            var errorWaktuSampai = document.getElementById('error-waktu-sampai');
+                                            let errorTanggal = document.getElementById('error-tanggal');
+                                            let errorWaktuDari = document.getElementById('error-waktu-dari');
+                                            let errorWaktuSampai = document.getElementById('error-waktu-sampai');
 
-                                            var isValid = true;
+                                            let isValid = true;
 
                                             if (tglPeminjamanRuangan.trim() === '') {
                                                 errorTanggal.style.display = 'inline';
