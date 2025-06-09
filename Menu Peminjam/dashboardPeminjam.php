@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php session_start(); 
+
+$currentPage = basename($_SERVER['PHP_SELF']);
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -215,8 +220,8 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="riwayatSubmenu">
-              <a href="cekBarang.php" class="nav-link">Barang</a>
-              <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+              <a href="riwayatBarang.php" class="nav-link">Barang</a>
+              <a href="riwayatRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
 
@@ -255,7 +260,7 @@
                   <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                 </a>
                 <div class="collapse ps-4" id="riwayatSubmenuMobile">
-                  <a href="cekBarang.php" class="nav-link">Barang</a>
+                  <a href="riwayatBarang.php" class="nav-link">Barang</a>
                   <a href="cekRuangan.php" class="nav-link">Ruangan</a>
                 </div>
               </li>
