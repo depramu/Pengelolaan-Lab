@@ -442,16 +442,6 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- <script>
-            function changeStok(val) {
-                var stokInput = document.getElementById('namaKry');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
-                if (next < 0) next = 0;
-                stokInput.value = next;
-            }
-        </script> -->
-
         <script>
             document.querySelector('form').addEventListener('submit', function(e) {
                 var pass = document.getElementById('kataSandi').value;

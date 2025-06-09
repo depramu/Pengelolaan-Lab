@@ -329,7 +329,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                                 $iconSource = '../icon/jamkuning.svg';
                                                 $statusText = 'Menunggu Persetujuan';
                                                 break;
-                                            case 'Sedang dipinjam':
+                                            case 'Sedang Dipinjam':
                                                 $iconSource = '../icon/jamhijau.svg';
                                                 $statusText = 'Sedang Dipinjam';
                                                 break;
@@ -337,7 +337,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                                 $iconSource = '../icon/silang.svg';
                                                 $statusText = 'Ditolak';
                                                 break;
-                                            case 'Selesai':
+                                            case 'Telah DIkembalikan':
                                                 $iconSource = '../icon/ceklis.svg';
                                                 $statusText = 'Telah Dikembalikan';
                                                 break;
@@ -360,8 +360,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                                             }
                                             ?>
                                         </span>
-                                        <?php if ($row['statusPeminjaman'] == 'Sedang dipinjam' || $row['statusPeminjaman'] == 'Ditolak' || $row['statusPeminjaman'] == 'Selesai') { ?>
-                                            <a href="DetailPeminjamanBrg.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                                        <?php if ($row['statusPeminjaman'] == 'Sedang Dipinjam' || $row['statusPeminjaman'] == 'Ditolak' || $row['statusPeminjaman'] == 'Telah Dikembalikan') { ?>
+                                            <a href="detailPenolakanBrg.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
                                                 <i><img src="../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                                             </a>
                                         <?php } ?>
