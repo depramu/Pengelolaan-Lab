@@ -353,7 +353,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                             <label for="kondisiRuangan" class="form-label">Kondisi Ruangan
                                                 <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                             </label>
-                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan" required>
+                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
                                                 <option disabled selected>Pilih Kondisi</option>
                                                 <option value="Baik">Baik</option>
                                                 <option value="Rusak">Rusak</option>
@@ -363,7 +363,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                             <label for="ketersediaan" class="form-label">Ketersediaan Ruangan
                                                 <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                             </label>
-                                            <select class="form-select" id="ketersediaan" name="ketersediaan" required>
+                                            <select class="form-select" id="ketersediaan" name="ketersediaan">
                                                 <option disabled selected>Pilih Ketersediaan</option>
                                                 <option value="Tersedia">Tersedia</option>
                                                 <option value="Tidak Tersedia">Tidak Tersedia</option>
