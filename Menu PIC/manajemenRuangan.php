@@ -331,7 +331,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $hasData = false;
                             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                                 $hasData = true;

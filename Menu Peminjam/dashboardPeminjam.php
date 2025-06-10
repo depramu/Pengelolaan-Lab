@@ -1,4 +1,11 @@
-<?php session_start(); 
+<?php session_start();
+include '../koneksi.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['peminjam_id'])) {
+  header('Location: ../Login/loginPeminjam.php');
+  exit;
+}
 
 $currentPage = basename($_SERVER['PHP_SELF']);
 
@@ -174,12 +181,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             if (isset($_SESSION['peminjam_nama'])) {
               echo htmlspecialchars($_SESSION['peminjam_nama']);
             } else {
-              echo "Peminjam"; 
+              echo "Peminjam";
             }
             if (isset($_SESSION['peminjam_role'])) {
               echo " (" . htmlspecialchars($_SESSION['peminjam_role']) . ")";
             } else {
-              echo " (Peminjam)"; 
+              echo " (Peminjam)";
             }
             ?>
           </span>
@@ -210,8 +217,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
-              <a href="cekBarang.php" class="nav-link">Barang</a>
-              <a href="cekRuangan.php" class="nav-link">Ruangan</a>
+              <a href="Peminjaman Barang/cekBarang.php" class="nav-link">Barang</a>
+              <a href="Peminjaman Ruangan/cekRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">
@@ -220,8 +227,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="riwayatSubmenu">
-              <a href="riwayatBarang.php" class="nav-link">Barang</a>
-              <a href="riwayatRuangan.php" class="nav-link">Ruangan</a>
+              <a href="Riwayat Barang/riwayatBarang.php" class="nav-link">Barang</a>
+              <a href="Riwayat Ruangan/riwayatRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
 

@@ -553,7 +553,7 @@
                                         <p>Peminjaman dengan ID <?= $idPeminjamanBrg ?> berhasil.</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="../../Menu Peminjam/lihatBarang.php" class="btn btn-primary">OK</a>
+                                        <a href="../../Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-primary">OK</a>
                                     </div>
                                 </div>
                             </div>
