@@ -463,7 +463,7 @@
                                                         <label for="alasanPeminjamanBrg" class="form-label">
                                                             Alasan Peminjaman <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                                         </label>
-                                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="3" required></textarea>
+                                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="3"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
