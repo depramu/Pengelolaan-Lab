@@ -274,7 +274,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                 </a>
                                 <div class="collapse ps-4" id="asetSubmenuMobile">
                                     <a href="manajemenBarang.php" class="nav-link <?php if ($currentPage === 'manajemenBarang.php') echo 'active-submenu'; ?>">Barang</a>
-                                    <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php'|| $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php')  echo 'active-submenu'; ?>">Ruangan</a>
+                                    <a href="manajemenRuangan.php" class="nav-link <?php if ($currentPage === 'manajemenRuangan.php' || $currentPage === 'tambahRuangan.php' || $currentPage === 'editRuangan.php')  echo 'active-submenu'; ?>">Ruangan</a>
                                 </div>
                             </li>
                             <li class="nav-item mb-2">
@@ -340,7 +340,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                 <div class="card-body">
                                     <form method="POST">
                                         <div class="mb-2">
-                                             <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                            <label for="idRuangan" class="form-label">ID Ruangan</label>
                                             <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled>
                                         </div>
                                         <div class="mb-2">
@@ -371,7 +371,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                                         </div>
                                         <div class="d-flex justify-content-between mt-4">
                                             <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
-                                            <button type="submit" class="btn btn-primary">Tambah</button>   
+                                            <button type="submit" class="btn btn-primary">Tambah</button>
                                         </div>
                                     </form>
                                 </div>
@@ -385,7 +385,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="../../Menu PIC/manajemenRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>   
+                                    <a href="../../Menu PIC/manajemenRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                                 </div>
                                 <div class="modal-body">
                                     <p>Data Ruangan berhasil ditambahkan.</p>
@@ -437,49 +437,50 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
                 stokInput.value = next;
             }
         </script>
-    </div>
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    let valid = true;
 
-    // Nama Ruangan
-    const nama = document.getElementById('namaRuangan');
-    const namaError = document.getElementById('namaError');
-    if (nama && nama.value.trim() === '') {
-        namaError.style.display = 'inline';
-        valid = false;
-    } else if (namaError) {
-        namaError.style.display = 'none';
-    }
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            let valid = true;
 
-    // Kondisi Ruangan
-    const kondisi = document.getElementById('kondisiRuangan');
-    const kondisiError = document.getElementById('kondisiError');
-    if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
-        kondisiError.style.display = 'inline';
-        valid = false;
-    } else if (kondisiError) {
-        kondisiError.style.display = 'none';
-    }
+            // Nama Ruangan
+            const nama = document.getElementById('namaRuangan');
+            const namaError = document.getElementById('namaError');
+            if (nama && nama.value.trim() === '') {
+                namaError.style.display = 'inline';
+                valid = false;
+            } else if (namaError) {
+                namaError.style.display = 'none';
+            }
 
-    // Ketersediaan Ruangan
-    const ketersediaan = document.getElementById('ketersediaan');
-    const ketersediaanError = document.getElementById('ketersediaanError');
-    if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
-        ketersediaanError.style.display = 'inline';
-        valid = false;
-    } else if (ketersediaanError) {
-        ketersediaanError.style.display = 'none';
-    }
+            // Kondisi Ruangan
+            const kondisi = document.getElementById('kondisiRuangan');
+            const kondisiError = document.getElementById('kondisiError');
+            if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+                kondisiError.style.display = 'inline';
+                valid = false;
+            } else if (kondisiError) {
+                kondisiError.style.display = 'none';
+            }
 
-    if (!valid) e.preventDefault();
-});
-</script>
-        <?php if ($showModal) : ?>
-            <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            </script>
-        <?php endif; ?>
+            // Ketersediaan Ruangan
+            const ketersediaan = document.getElementById('ketersediaan');
+            const ketersediaanError = document.getElementById('ketersediaanError');
+            if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+                ketersediaanError.style.display = 'inline';
+                valid = false;
+            } else if (ketersediaanError) {
+                ketersediaanError.style.display = 'none';
+            }
+
+            if (!valid) e.preventDefault();
+        });
+    </script>
+    <?php if ($showModal) : ?>
+        <script>
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        </script>
+    <?php endif; ?>
 </body>
+
 </html>

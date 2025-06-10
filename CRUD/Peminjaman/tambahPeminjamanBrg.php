@@ -502,9 +502,9 @@
                                         <!--validasi kolom harus diisi -->
                                         <script>
                                             document.getElementById('alasanPeminjamanBrg').addEventListener('input', function() {
-                                                var alasanPeminjamanBrg = document.getElementById('alasanPeminjamanBrg').value;
-                                                var jumlahBrg = document.getElementById('jumlahBrg').value;
-                                                var errorMessage = document.getElementById('error-message');
+                                                let alasanPeminjamanBrg = document.getElementById('alasanPeminjamanBrg').value;
+                                                let jumlahBrg = document.getElementById('jumlahBrg').value;
+                                                let errorMessage = document.getElementById('error-message');
 
                                                 if (alasanPeminjamanBrg.trim() === '') {
                                                     errorMessage.style.display = 'inline';
@@ -520,9 +520,9 @@
                                             });
 
                                             document.querySelector('form').addEventListener('submit', function(event) {
-                                                var alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
-                                                var jumlahBrg = document.getElementById('jumlahBrg').value;
-                                                var errorMessage = document.getElementById('error-message');
+                                                let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
+                                                let jumlahBrg = document.getElementById('jumlahBrg').value;
+                                                let errorMessage = document.getElementById('error-message');
 
                                                 if (alasanPeminjamanRuangan.trim() === '') {
                                                     errorMessage.style.display = 'inline';
@@ -592,9 +592,9 @@
 
             <script>
                 function changeStok(val) {
-                    var stokInput = document.getElementById('jumlahBrg');
-                    var current = parseInt(stokInput.value) || 0;
-                    var next = current + val;
+                    let stokInput = document.getElementById('jumlahBrg');
+                    let current = parseInt(stokInput.value) || 0;
+                    let next = current + val;
                     if (next < 0) next = 0;
                     stokInput.value = next;
                 }
@@ -602,7 +602,7 @@
 
             <?php if ($showModal) : ?>
                 <script>
-                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    let modal = new bootstrap.Modal(document.getElementById('successModal'));
                     modal.show();
                 </script>
             <?php endif; ?>

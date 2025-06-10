@@ -323,11 +323,11 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                     <!-- script untuk validasi kolom harus diisi input -->
                                     <script>
                                         document.querySelector('form').addEventListener('submit', function(event) {
-                                            var tglPeminjamanBrg = document.getElementById('tglPeminjamanBrg').value;
+                                            let tglPeminjamanBrg = document.getElementById('tglPeminjamanBrg').value;
 
-                                            var errorTanggal = document.getElementById('error-message');
+                                            let errorTanggal = document.getElementById('error-message');
 
-                                            var isValid = true;
+                                            let isValid = true;
 
                                             if (tglPeminjamanBrg.trim() === '') {
                                                 errorTanggal.style.display = 'inline';

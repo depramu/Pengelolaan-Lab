@@ -334,11 +334,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             var waktuDari = document.getElementById('waktu_dari').value;
                                             var waktuSampai = document.getElementById('waktu_sampai').value;
 
-                                            var errorTanggal = document.getElementById('error-tanggal');
-                                            var errorWaktuDari = document.getElementById('error-waktu-dari');
-                                            var errorWaktuSampai = document.getElementById('error-waktu-sampai');
+                                            let errorTanggal = document.getElementById('error-tanggal');
+                                            let errorWaktuDari = document.getElementById('error-waktu-dari');
+                                            let errorWaktuSampai = document.getElementById('error-waktu-sampai');
 
-                                            var isValid = true;
+                                            let isValid = true;
 
                                             if (tanggal.trim() === '') {
                                                 errorTanggal.style.display = 'inline';

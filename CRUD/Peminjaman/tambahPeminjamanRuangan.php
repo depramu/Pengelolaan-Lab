@@ -392,8 +392,8 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                                 <!--validasi kolom harus diisi -->
                                                 <script>
                                                     document.getElementById('alasanPeminjamanRuangan').addEventListener('input', function() {
-                                                        var alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
-                                                        var errorMessage = document.getElementById('error-message');
+                                                        let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
+                                                        let errorMessage = document.getElementById('error-message');
 
                                                         if (alasanPeminjamanRuangan.trim() === '') {
                                                             errorMessage.style.display = 'inline';
@@ -403,8 +403,8 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                                     });
 
                                                     document.querySelector('form').addEventListener('submit', function(event) {
-                                                        var alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
-                                                        var errorMessage = document.getElementById('error-message');
+                                                        let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
+                                                        let errorMessage = document.getElementById('error-message');
 
                                                         if (alasanPeminjamanRuangan.trim() === '') {
                                                             errorMessage.style.display = 'inline';
@@ -479,7 +479,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <?php if ($showModal) : ?>
         <script>
-            var modal = new bootstrap.Modal(document.getElementById('successModal'));
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
             modal.show();
         </script>
     <?php endif; ?>
