@@ -469,10 +469,10 @@
                 // Fungsi stepper untuk tombol +/-
                 function changeStok(val) {
                     // Targetkan ID yang benar: 'jumlahPengembalian'
-                    var stokInput = document.getElementById('jumlahPengembalian');
-                    var maxStok = parseInt(document.getElementById('jumlahBrg').value) || 0;
-                    var current = parseInt(stokInput.value) || 0;
-                    var next = current + val;
+                    let stokInput = document.getElementById('jumlahPengembalian');
+                    let maxStok = parseInt(document.getElementById('jumlahBrg').value) || 0;
+                    let current = parseInt(stokInput.value) || 0;
+                    let next = current + val;
 
                     if (next < 0) next = 0;
                     if (next > maxStok) next = maxStok; // Batasi agar tidak lebih dari jumlah pinjaman
@@ -533,7 +533,7 @@
 
             <?php if ($showModal) : ?>
                 <script>
-                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    let modal = new bootstrap.Modal(document.getElementById('successModal'));
                     modal.show();
                 </script>
             <?php endif; ?>

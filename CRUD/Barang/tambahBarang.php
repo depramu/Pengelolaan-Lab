@@ -451,9 +451,9 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
 
         <script>
             function changeStok(val) {
-                var stokInput = document.getElementById('stokBarang');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
+                let stokInput = document.getElementById('stokBarang');
+                let current = parseInt(stokInput.value) || 0;
+                let next = current + val;
                 if (next < 0) next = 0;
                 stokInput.value = next;
             }
@@ -498,7 +498,7 @@ $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
 
         <?php if ($showModal) : ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>

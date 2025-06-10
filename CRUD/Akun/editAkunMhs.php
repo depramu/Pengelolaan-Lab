@@ -444,15 +444,15 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
         <script>
             document.querySelector('form').addEventListener('submit', function(e) {
-                var pass = document.getElementById('kataSandi').value;
-                var conf = document.getElementById('konfirmasiSandi').value;
+                let pass = document.getElementById('kataSandi').value;
+                let conf = document.getElementById('konfirmasiSandi').value;
 
-                var passError = document.getElementById('passError');
-                var passMatchError = document.getElementById('passMatchError');
-                var confPassError = document.getElementById('confPassError');
-                var passLengthError = document.getElementById('passLengthError');
+                let passError = document.getElementById('passError');
+                let passMatchError = document.getElementById('passMatchError');
+                let confPassError = document.getElementById('confPassError');
+                let passLengthError = document.getElementById('passLengthError');
 
-                var valid = true;
+                let valid = true;
 
                 // Reset error
                 passError.style.display = 'none';
@@ -483,7 +483,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
         <?php if ($showModal) : ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>

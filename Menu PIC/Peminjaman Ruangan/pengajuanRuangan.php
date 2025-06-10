@@ -471,7 +471,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Modal Setuju -->
         <?php if ($showModal): ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>

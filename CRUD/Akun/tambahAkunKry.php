@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Karyawan   (namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?)";
-    $params = [$namaKry, $noHP, $jenisRole, $kataSandi];
+    $query = "INSERT INTO Karyawan (npk, namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+    $params = [$npk, $namaKry, $noHP, $jenisRole, $kataSandi];
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt) {
@@ -462,31 +462,21 @@ $isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- <script>
-            function changeStok(val) {
-                var stokInput = document.getElementById('noHP');
-                var current = parseInt(stokInput.value) || 0;
-                var next = current + val;
-                if (next < 0) next = 0;
-                stokInput.value = next;
-            }
-        </script> -->
-
         <script>
             document.querySelector('form').addEventListener('submit', function(e) {
-                var nama = document.getElementById('namaKry').value.trim();
-                var nohp = document.getElementById('noHP').value.trim();
-                var pass = document.getElementById('kataSandi').value;
-                var conf = document.getElementById('konfirmasiSandi').value;
+                let nama = document.getElementById('namaKry').value.trim();
+                let nohp = document.getElementById('noHP').value.trim();
+                let pass = document.getElementById('kataSandi').value;
+                let conf = document.getElementById('konfirmasiSandi').value;
 
-                var namaError = document.getElementById('namaError');
-                var nohpError = document.getElementById('noHPError');
-                var passError = document.getElementById('passError');
-                var passMatchError = document.getElementById('passMatchError');
-                var confPassError = document.getElementById('confPassError');
-                var passLengthError = document.getElementById('passLengthError');
+                let namaError = document.getElementById('namaError');
+                let nohpError = document.getElementById('noHPError');
+                let passError = document.getElementById('passError');
+                let passMatchError = document.getElementById('passMatchError');
+                let confPassError = document.getElementById('confPassError');
+                let passLengthError = document.getElementById('passLengthError');
 
-                var valid = true;
+                let valid = true;
 
                 // Reset error
                 namaError.style.display = 'none';
@@ -527,7 +517,7 @@ $isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
 
         <?php if ($showModal) : ?>
             <script>
-                var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
                 modal.show();
             </script>
         <?php endif; ?>

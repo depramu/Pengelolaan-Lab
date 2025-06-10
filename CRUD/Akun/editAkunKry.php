@@ -438,7 +438,7 @@ $isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
                                     <p>Data akun berhasil diubah.</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="../../manajemenAkunKry.php" class="btn btn-primary">OK</a>
+                                    <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-primary">OK</a>
                                 </div>
                             </div>
                         </div>
