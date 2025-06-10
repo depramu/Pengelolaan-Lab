@@ -219,8 +219,8 @@
               <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="pinjamSubmenu">
-              <a href="peminjamanBarang.php" class="nav-link">Barang</a>
-              <a href="peminjamanRuangan.php" class="nav-link">Ruangan</a>
+              <a href="Peminjaman Barang/peminjamanBarang.php" class="nav-link">Barang</a>
+              <a href="Peminjaman Ruangan/peminjamanRuangan.php" class="nav-link">Ruangan</a>
             </div>
           </li>
           <li class="nav-item mb-2">

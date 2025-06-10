@@ -241,8 +241,8 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4 <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'show'; ?>" id="peminjamanSubmenu">
-                            <a href="../../Menu Peminjam/cekBarang.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'active-submenu'; ?>">Barang</a>
-                            <a href="../../Menu Peminjam/cekRuangan.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
+                            <a href="../../Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanBrg.php') echo 'active-submenu'; ?>">Barang</a>
+                            <a href="../../Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?php if ($currentPage === 'tambahPeminjamanRuangan.php') echo 'active-submenu'; ?>">Ruangan</a>
                         </div>
                     </li>
                     <li class="nav-item mb-2">
@@ -251,8 +251,8 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                             <i class="bi bi-chevron-down transition-chevron ps-3"></i>
                         </a>
                         <div class="collapse ps-4" id="riwayatSubmenu">
-                            <a href="#" class="nav-link">Barang</a>
-                            <a href="#" class="nav-link">Ruangan</a>
+                            <a href="../../Menu Peminjam/Riwayat Barang/riwayatBarang.php" class="nav-link">Barang</a>
+                            <a href="../../Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="nav-link">Ruangan</a>
                         </div>
                     </li>
 
@@ -311,8 +311,8 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="../../Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/cekRuangan.php">Cek Ruangan</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/lihatRuangan.php">Lihat Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/Peminjaman Ruangan/cekRuangan.php">Cek Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="../../Menu Peminjam/Peminjaman Ruangan/FlihatRuangan.php">Lihat Ruangan</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Ruangan</li>
                         </ol>
                     </nav>
@@ -440,7 +440,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                     <p>Peminjaman dengan ID <?= $idPeminjamanRuangan ?> berhasil.</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-primary">OK</a>
+                                    <a href="../../Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-primary">OK</a>
                                 </div>
                             </div>
                         </div>
