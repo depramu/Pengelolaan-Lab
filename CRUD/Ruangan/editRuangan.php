@@ -359,19 +359,22 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                 <div class="card-body">
                                     <form method="POST">
                                         <div class="mb-2">
-                                            <label for="idRuangan" class="form-label">ID Ruangan</label>
-                                            <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled>
+                                            <label class="form-label">ID Ruangan</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
+                                            <input type="hidden" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="namaRuangan" class="form-label">Nama Ruangan</label>
-                                            <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= htmlspecialchars($data['namaRuangan']) ?>" disabled>
-                                            <input type="hidden" name="namaRuangan" value="<?= htmlspecialchars($data['namaRuangan']) ?>">
+                                            <label class="form-label">Nama Ruangan
+                                                <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                            </label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaRuangan']) ?></div>
+                                            <input type="hidden" id="namaRuangan" name="namaRuangan" value="<?= htmlspecialchars($data['namaRuangan']) ?>">
                                         </div>
                                         <div class="mb-2">
                                             <label for="kondisiRuangan" class="form-label">Kondisi Ruangan
                                                 <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                             </label>
-                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan" required>
+                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
                                                 <option disabled selected>Pilih Kondisi</option>
                                                 <option value="Baik" <?php if (isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == 'Baik') echo 'selected'; ?>>Baik</option>
                                                 <option value="Rusak" <?php if (isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == 'Rusak') echo 'selected'; ?>>Rusak</option>
@@ -381,7 +384,7 @@ $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
                                             <label for="ketersediaan" class="form-label">Ketersediaan Ruangan
                                                 <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                             </label>
-                                            <select class="form-select" id="ketersediaan" name="ketersediaan" required>
+                                            <select class="form-select" id="ketersediaan" name="ketersediaan">
                                                 <option disabled selected>Pilih Ketersediaan</option>
                                                 <option value="Tersedia" <?php if (isset($data['ketersediaan']) && $data['ketersediaan'] == 'Tersedia') echo 'selected'; ?>>Tersedia</option>
                                                 <option value="Tidak Tersedia" <?php if (isset($data['ketersediaan']) && $data['ketersediaan'] == 'Tidak Tersedia') echo 'selected'; ?>>Tidak Tersedia</option>
