@@ -77,8 +77,6 @@ include '../../templates/sidebar.php';
     });
 </script>
 
-
-
 <?php
 // Panggil template footer di paling akhir
 include '../../templates/footer.php';
