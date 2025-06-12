@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../templates/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $npk = $_POST['npk'] ?? null;
