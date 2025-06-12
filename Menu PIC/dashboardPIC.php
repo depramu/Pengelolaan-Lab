@@ -1,10 +1,9 @@
 <?php
-// Memanggil header.php. Ini sudah termasuk session_start(), koneksi.php, dan validasi login
-include '../template/header.php';
+include '../templates/header.php';
 
-// Memanggil sidebar.php
-include '../template/sidebar.php';
+include '../templates/sidebar.php';
 ?>
+
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
   <div class="mb-5">
@@ -22,6 +21,8 @@ include '../template/sidebar.php';
   <img src="../icon/atoy0.png" class="atoy-img d-none d-md-block img-fluid" alt="Atoy" />
 </main>
 
+
 <?php
-include 'templates/footer.php';
+
+include '../templates/footer.php';
 ?>

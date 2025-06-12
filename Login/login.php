@@ -1,9 +1,10 @@
-<?php
+    <?php
 session_start();
 include '../koneksi.php';
 
 $error_message = '';
-$role = $_GET['jenisRole'] ?? 'Peminjam'; // Ambil role dari URL, defaultnya 'Peminjam'
+// Ambil role dari $_GET['role'] (bukan 'jenisRole'), default 'Peminjam'
+$role = $_GET['role'] ?? 'Peminjam';
 
 // Tentukan judul dan label form berdasarkan peran
 $pageTitle = "Login";
@@ -25,6 +26,9 @@ if ($role === 'PIC Aset') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identifier = $_POST['identifier'];
     $kataSandi = $_POST['kataSandi'];
+
+    // Ambil role dari $_GET['role'] pada saat POST juga
+    $role = $_GET['role'] ?? 'Peminjam';
 
     if (empty($identifier) || empty($kataSandi)) {
         $error_message = 'Kolom tidak boleh kosong.';
@@ -48,17 +52,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 // Jika gagal, coba login sebagai Karyawan (Peminjam)
-                $query_kry = "SELECT npk, kataSandi, namaKry FROM Karyawan WHERE npk = ?";
+                $query_kry = "SELECT npk, kataSandi, namaKry, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt_kry = sqlsrv_query($conn, $query_kry, [$identifier]);
                 $row_kry = sqlsrv_fetch_array($stmt_kry, SQLSRV_FETCH_ASSOC);
 
+                // Untuk login sebagai peminjam, semua karyawan (termasuk PIC Aset dan Ka UPT) boleh login sebagai peminjam
                 if ($row_kry && $kataSandi === $row_kry['kataSandi']) {
                     // Login Karyawan berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_kry['npk'];
                     $_SESSION['user_nama'] = $row_kry['namaKry'];
                     $_SESSION['user_role'] = 'Karyawan';
                     $_SESSION['npk'] = $row_kry['npk']; // Tetap simpan untuk query spesifik jika perlu
-                    header(header: 'Location: ../Menu Peminjam/dashboardPeminjam.php');
+                    header('Location: ../Menu Peminjam/dashboardPeminjam.php');
                     exit;
                 }
 
@@ -71,22 +76,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $expectedRole = ($role === 'PIC Aset') ? 'PIC Aset' : 'Ka UPT';
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
+                // Ambil user berdasarkan NPK
                 $query = "SELECT npk, kataSandi, namaKry, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt = sqlsrv_query($conn, $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-                if ($row && $kataSandi === $row['kataSandi']) {
-                    if (isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
+                if ($row) {
+                    // Cek password dan role HARUS sesuai
+                    if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
                         // Login berhasil -> STANDARISASI SESSION
                         $_SESSION['user_id'] = $row['npk'];
                         $_SESSION['user_nama'] = $row['namaKry'];
                         $_SESSION['user_role'] = $row['jenisRole'];
-                        header($redirectPath);
+                        $_SESSION['npk'] = $row['npk'];
+                        header('Location: ' . $redirectPath);
                         exit;
-                    } else {
+                    } elseif ($kataSandi === $row['kataSandi']) {
+                        // Password benar tapi role salah
                         $error_message = "Anda tidak memiliki hak akses sebagai $expectedRole.";
+                    } else {
+                        // Password salah
+                        $error_message = 'NPK atau Kata Sandi salah.';
                     }
                 } else {
+                    // NPK tidak ditemukan
                     $error_message = 'NPK atau Kata Sandi salah.';
                 }
                 break;
