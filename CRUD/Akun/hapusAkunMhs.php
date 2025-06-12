@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../templates/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nim = $_POST['nim'] ?? null;
