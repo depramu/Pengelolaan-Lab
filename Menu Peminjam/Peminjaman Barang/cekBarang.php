@@ -1,31 +1,32 @@
 <?php
-include '../../templates/header.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../koneksi.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (isset($_POST['submit'])) {
-    $tglPeminjamanBrg = $_POST['tglPeminjamanBrg'];
-    $_SESSION['tglPeminjamanBrg'] = $tglPeminjamanBrg;
-    header('Location: lihatBarang.php');
-    exit();
-}
+    // Pastikan tanggal tidak kosong sebelum redirect
+    if (!empty($_POST['tglPeminjamanBrg'])) {
+        $_SESSION['tglPeminjamanBrg'] = $_POST['tglPeminjamanBrg'];
 
-$tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? $_POST['tglPeminjamanBrg'] ?? '';
+        header('Location: lihatBarang.php');
+        exit(); 
+    }
+}
+include __DIR__ . '/../../templates/header.php';
+include __DIR__ . '/../../templates/sidebar.php';
+$tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? '';
 $query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
-if ($tglPeminjamanBrg) {
-    $query .= " AND tglPeminjamanBrg = ?";
-    $params = array($tglPeminjamanBrg);
-    $stmt = sqlsrv_query($conn, $query, $params);
-} else {
-    $stmt = sqlsrv_query($conn, $query);
-}
+$stmt = sqlsrv_query($conn, $query); 
 
-include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Cek Barang</li>
             </ol>
         </nav>
@@ -39,7 +40,7 @@ include '../../templates/sidebar.php';
                         <span class="fw-semibold">Cek Barang</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" action="">
                             <div class="mb-2">
                                 <label for="tglPeminjamanBrg" class="form-label">
                                     Pilih Tanggal Peminjaman <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
@@ -58,7 +59,6 @@ include '../../templates/sidebar.php';
 </main>
 
 <script>
-    // Script validasi HANYA untuk form di halaman ini
     document.querySelector('form').addEventListener('submit', function(event) {
         let tglPeminjamanBrg = document.getElementById('tglPeminjamanBrg').value;
         let errorTanggal = document.getElementById('error-message');
@@ -68,16 +68,15 @@ include '../../templates/sidebar.php';
             errorTanggal.style.display = 'inline';
             isValid = false;
         } else {
-            errorTanggal.style.display = 'none'; // Sebaiknya disembunyikan jika valid
+            errorTanggal.style.display = 'none';
         }
 
         if (!isValid) {
-            event.preventDefault(); // Mencegah submit jika ada input kosong
+            event.preventDefault();
         }
     });
 </script>
 
 <?php
-// Panggil template footer di paling akhir
-include '../../templates/footer.php';
+include __DIR__ . '/../../templates/footer.php';
 ?>

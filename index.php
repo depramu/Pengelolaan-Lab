@@ -138,9 +138,9 @@
             </div>
             <div class="role-right">
                 <h3>Login Sebagai</h3>
-                <a href="Login/login.php?jenisRole=Peminjam" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Peminjam</a>
-                <a href="Login/login.php?jenisRole=PIC Aset" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">PIC Aset</a>
-                <a href="Login/login.php?jenisRole=Ka UPT" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Ka UPT</a>
+                <a href="Login/login.php?role=Peminjam" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Peminjam</a>
+                <a href="Login/login.php?role=PIC Aset" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">PIC Aset</a>
+                <a href="Login/login.php?role=Ka UPT" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Ka UPT</a>
             </div>
         </div>
     </div>

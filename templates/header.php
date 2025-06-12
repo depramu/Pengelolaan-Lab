@@ -159,7 +159,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span class="fw-semibold fs-3">Hello,</span><br>
                     <span class="fw-normal fs-6">
                         <?php
-                        // Menggunakan variabel session yang sudah distandarisasi
                         if (isset($_SESSION['user_nama'])) {
                             echo htmlspecialchars($_SESSION['user_nama']);
                         } else {
