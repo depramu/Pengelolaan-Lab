@@ -124,23 +124,23 @@
 <body>
     <div class="role-container ">
         <div class="role-card">
-                <div class="role-left w-100">
-                    <div class="w-100 mb-4">
-                        <img src="icon/logo-astratech.png" alt="Logo Astra" style="width:60px; margin-bottom:12px; display:block;">
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center w-100 mb-2" style="gap: 32px;">
-                        <img src="icon/atoyRole.png" alt="Ilustrasi" class="role-illustration">
-                        <div class="d-flex flex-column align-items-start">
-                            <div class="role-title text-start">Sistem<br>Pengelolaan<br>Laboratorium</div>
-                            <img src="icon/iconRole.png" alt="Icon Role" class="icon-role-img">
-                        </div>
+            <div class="role-left w-100">
+                <div class="w-100 mb-4">
+                    <img src="icon/logo-astratech.png" alt="Logo Astra" style="width:60px; margin-bottom:12px; display:block;">
+                </div>
+                <div class="d-flex align-items-center justify-content-center w-100 mb-2" style="gap: 32px;">
+                    <img src="icon/atoyRole.png" alt="Ilustrasi" class="role-illustration">
+                    <div class="d-flex flex-column align-items-start">
+                        <div class="role-title text-start">Sistem<br>Pengelolaan<br>Laboratorium</div>
+                        <img src="icon/iconRole.png" alt="Icon Role" class="icon-role-img">
                     </div>
                 </div>
+            </div>
             <div class="role-right">
                 <h3>Login Sebagai</h3>
-                <a href="Login/loginPeminjam.php" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Peminjam</a>
-                <a href="Login/loginPIC.php" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">PIC Aset</a>
-                <a href="Login/loginKaUPT.php" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Ka UPT</a>
+                <a href="Login/login.php?jenisRole=Peminjam" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Peminjam</a>
+                <a href="Login/login.php?jenisRole=PIC Aset" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">PIC Aset</a>
+                <a href="Login/login.php?jenisRole=Ka UPT" class="btn btn-light role-btn fw-bold" style="color: #065ba6;">Ka UPT</a>
             </div>
         </div>
     </div>
