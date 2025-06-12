@@ -1,5 +1,5 @@
     <?php
-    include '../../template/header.php';
+    include '../../templates/header.php';
 
     $showModal = false;
     $idPeminjamanBrg = $_GET['id'] ?? '';
@@ -76,172 +76,172 @@
             // --- AKHIR TRANSAKSI DATABASE ---
         }
     }
-    include '../../template/sidebar.php';
+    include '../../templates/sidebar.php';
     ?>
 
-                <!-- Content Area -->
-                <main class="col bg-white px-4 py-3 position-relative">
-                    <div class="mb-3">
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                                <li class="breadcrumb-item"><a href="peminjamanBarang.php">Peminjaman Barang</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Pengembalian Barang</li>
-                            </ol>
-                        </nav>
-                    </div>
+    <!-- Content Area -->
+    <main class="col bg-white px-4 py-3 position-relative">
+        <div class="mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                    <li class="breadcrumb-item"><a href="peminjamanBarang.php">Peminjaman Barang</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Pengembalian Barang</li>
+                </ol>
+            </nav>
+        </div>
 
 
-                    <!-- Pengembalian Barang -->
-                    <div class="container mt-4">
-                        <?php if (isset($error)) : ?>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <?php echo $error; ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        <?php endif; ?>
+        <!-- Pengembalian Barang -->
+        <div class="container mt-4">
+            <?php if (isset($error)) : ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo $error; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
 
-                        <div class="row justify-content-center">
-                            <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
-                                <div class="card border border-dark">
-                                    <div class="card-header bg-white border-bottom border-dark">
-                                        <span class="fw-semibold">Pengembalian Peminjaman Barang</span>
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
+                    <div class="card border border-dark">
+                        <div class="card-header bg-white border-bottom border-dark">
+                            <span class="fw-semibold">Pengembalian Peminjaman Barang</span>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="mb-2">
+                                    <label for="idPeminjamanBrg" class="form-label">ID Peminjaman Barang</label>
+                                    <input type="text" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= isset($idPeminjamanBrg) ? htmlspecialchars($idPeminjamanBrg) : '' ?>" disabled>
+                                </div>
+                                <div class="mb-2 row">
+                                    <div class="col-md-3">
+                                        <label for="jumlahBrg" class="form-label">Jumlah Peminjaman</label>
+                                        <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>" disabled>
                                     </div>
-                                    <div class="card-body">
-                                        <form method="POST">
-                                            <div class="mb-2">
-                                                <label for="idPeminjamanBrg" class="form-label">ID Peminjaman Barang</label>
-                                                <input type="text" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= isset($idPeminjamanBrg) ? htmlspecialchars($idPeminjamanBrg) : '' ?>" disabled>
-                                            </div>
-                                            <div class="mb-2 row">
-                                                <div class="col-md-3">
-                                                    <label for="jumlahBrg" class="form-label">Jumlah Peminjaman</label>
-                                                    <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>" disabled>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="jumlahPengembalian" class="form-label w-100 text-center">Jumlah Pengembalian
-                                                        <span id="jumlahError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Diisi</span>
-                                                    </label>
-                                                    <div class="input-group mx-auto" style="max-width: 140px;">
-                                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                                        <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" required style="max-width: 70px;">
-                                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <label for="txtKondisi" class="form-label">Kondisi Barang
-                                                        <span id="kondisiError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Dipilih</span>
-                                                    </label>
-                                                    <select class="form-select" id="txtKondisi" name="kondisiBrg">
-                                                        <option selected>Pilih Kondisi Barang</option>
-                                                        <option value="Baik" <?= (isset($data['kondisiBrg']) && $data['kondisiBrg'] == 'Baik') ? 'selected' : '' ?>>Baik</option>
-                                                        <option value="Rusak" <?= (isset($data['kondisiBrg']) && $data['kondisiBrg'] == 'Rusak') ? 'selected' : '' ?>>Rusak</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label for="catatanPengembalianBarang" class="form-label">Catatan Pengembalian
-                                                    <span id="catatanError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Diisi</span>
-                                                </label>
-                                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"><?= isset($data['catatanPengembalianBarang']) ? htmlspecialchars($data['catatanPengembalianBarang']) : '' ?></textarea>
-                                            </div>
-                                            <div class="d-flex justify-content-between mt-4">
-                                                <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
-                                                <button type="submit" class="btn btn-primary">Kirim</button>
-                                            </div>
-                                        </form>
+                                    <div class="col-md-4">
+                                        <label for="jumlahPengembalian" class="form-label w-100 text-center">Jumlah Pengembalian
+                                            <span id="jumlahError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Diisi</span>
+                                        </label>
+                                        <div class="input-group mx-auto" style="max-width: 140px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                            <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" required style="max-width: 70px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="txtKondisi" class="form-label">Kondisi Barang
+                                            <span id="kondisiError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Dipilih</span>
+                                        </label>
+                                        <select class="form-select" id="txtKondisi" name="kondisiBrg">
+                                            <option selected>Pilih Kondisi Barang</option>
+                                            <option value="Baik" <?= (isset($data['kondisiBrg']) && $data['kondisiBrg'] == 'Baik') ? 'selected' : '' ?>>Baik</option>
+                                            <option value="Rusak" <?= (isset($data['kondisiBrg']) && $data['kondisiBrg'] == 'Rusak') ? 'selected' : '' ?>>Rusak</option>
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Modal Berhasil -->
-                        <div class="modal fade" id="successModal" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Peminjaman berhasil Dikembalikan.</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a href="peminjamanBarang.php" class="btn btn-primary">OK</a>
-                                    </div>
+                                <div class="mb-2">
+                                    <label for="catatanPengembalianBarang" class="form-label">Catatan Pengembalian
+                                        <span id="catatanError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Diisi</span>
+                                    </label>
+                                    <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"><?= isset($data['catatanPengembalianBarang']) ? htmlspecialchars($data['catatanPengembalianBarang']) : '' ?></textarea>
                                 </div>
-                            </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Kirim</button>
+                                </div>
+                            </form>
                         </div>
-
                     </div>
-                    <!-- End Edit Barang -->
+                </div>
+            </div>
+
+            <!-- Modal Berhasil -->
+            <div class="modal fade" id="successModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Peminjaman berhasil Dikembalikan.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="peminjamanBarang.php" class="btn btn-primary">OK</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- End Edit Barang -->
+    </main>
 
 
-                </main>
-            <script>
-                // Fungsi stepper untuk tombol +/-
-                function changeStok(val) {
-                    // Targetkan ID yang benar: 'jumlahPengembalian'
-                    let stokInput = document.getElementById('jumlahPengembalian');
-                    let maxStok = parseInt(document.getElementById('jumlahBrg').value) || 0;
-                    let current = parseInt(stokInput.value) || 0;
-                    let next = current + val;
+    <script>
+        // Fungsi stepper untuk tombol +/-
+        function changeStok(val) {
+            // Targetkan ID yang benar: 'jumlahPengembalian'
+            let stokInput = document.getElementById('jumlahPengembalian');
+            let maxStok = parseInt(document.getElementById('jumlahBrg').value) || 0;
+            let current = parseInt(stokInput.value) || 0;
+            let next = current + val;
 
-                    if (next < 0) next = 0;
-                    if (next > maxStok) next = maxStok; // Batasi agar tidak lebih dari jumlah pinjaman
-                    stokInput.value = next;
-                }
-            </script>
+            if (next < 0) next = 0;
+            if (next > maxStok) next = maxStok; // Batasi agar tidak lebih dari jumlah pinjaman
+            stokInput.value = next;
+        }
+    </script>
 
 
-            <script>
-                // Fungsi validasi form sebelum submit
-                document.querySelector('form').addEventListener('submit', function(e) {
-                    let valid = true;
+    <script>
+        // Fungsi validasi form sebelum submit
+        document.querySelector('form').addEventListener('submit', function(e) {
+            let valid = true;
 
-                    // Validasi Jumlah Pengembalian
-                    // Targetkan ID yang benar: 'jumlahPengembalian'
-                    const jumlahInput = document.getElementById('jumlahPengembalian');
-                    const jumlahError = document.getElementById('jumlahError');
-                    const jumlahPinjam = parseInt(document.getElementById('jumlahBrg').value) || 0;
+            // Validasi Jumlah Pengembalian
+            // Targetkan ID yang benar: 'jumlahPengembalian'
+            const jumlahInput = document.getElementById('jumlahPengembalian');
+            const jumlahError = document.getElementById('jumlahError');
+            const jumlahPinjam = parseInt(document.getElementById('jumlahBrg').value) || 0;
 
-                    if (parseInt(jumlahInput.value) <= 0) {
-                        jumlahError.textContent = '*Jumlah harus lebih dari 0.';
-                        jumlahError.style.display = 'block';
-                        valid = false;
-                    } else if (parseInt(jumlahInput.value) > jumlahPinjam) {
-                        jumlahError.textContent = '*Jumlah melebihi yang dipinjam.';
-                        jumlahError.style.display = 'block';
-                        valid = false;
-                    } else {
-                        jumlahError.style.display = 'none';
-                    }
+            if (parseInt(jumlahInput.value) <= 0) {
+                jumlahError.textContent = '*Jumlah harus lebih dari 0.';
+                jumlahError.style.display = 'block';
+                valid = false;
+            } else if (parseInt(jumlahInput.value) > jumlahPinjam) {
+                jumlahError.textContent = '*Jumlah melebihi yang dipinjam.';
+                jumlahError.style.display = 'block';
+                valid = false;
+            } else {
+                jumlahError.style.display = 'none';
+            }
 
-                    // Validasi Kondisi Barang
-                    const kondisiSelect = document.getElementById('txtKondisi');
-                    const kondisiError = document.getElementById('kondisiError');
-                    if (kondisiSelect.value === 'Pilih Kondisi Barang') {
-                        kondisiError.style.display = 'block';
-                        valid = false;
-                    } else {
-                        kondisiError.style.display = 'none';
-                    }
+            // Validasi Kondisi Barang
+            const kondisiSelect = document.getElementById('txtKondisi');
+            const kondisiError = document.getElementById('kondisiError');
+            if (kondisiSelect.value === 'Pilih Kondisi Barang') {
+                kondisiError.style.display = 'block';
+                valid = false;
+            } else {
+                kondisiError.style.display = 'none';
+            }
 
-                    // Validasi Catatan Pengembalian
-                    // Targetkan ID yang benar: 'catatanPengembalianBarang'
-                    const catatanInput = document.getElementById('catatanPengembalianBarang');
-                    const catatanError = document.getElementById('catatanError');
-                    if (catatanInput.value.trim() === '') {
-                        catatanError.style.display = 'block';
-                        valid = false;
-                    } else {
-                        catatanError.style.display = 'none';
-                    }
+            // Validasi Catatan Pengembalian
+            // Targetkan ID yang benar: 'catatanPengembalianBarang'
+            const catatanInput = document.getElementById('catatanPengembalianBarang');
+            const catatanError = document.getElementById('catatanError');
+            if (catatanInput.value.trim() === '') {
+                catatanError.style.display = 'block';
+                valid = false;
+            } else {
+                catatanError.style.display = 'none';
+            }
 
-                    if (!valid) {
-                        e.preventDefault(); // Hentikan pengiriman form jika tidak valid
-                    }
-                });
-            </script>
+            if (!valid) {
+                e.preventDefault(); // Hentikan pengiriman form jika tidak valid
+            }
+        });
+    </script>
 
-<?php include '../../template/footer.php'; ?>
+    <?php include '../../templates/footer.php'; ?>

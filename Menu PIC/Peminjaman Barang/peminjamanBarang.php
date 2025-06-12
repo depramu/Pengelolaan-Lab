@@ -1,5 +1,5 @@
 <?php
-include '../../template/header.php';
+include '../../templates/header.php';
 
 
 // Pagination setup
@@ -30,7 +30,7 @@ $offset = ($page - 1) * $perPage;
 $query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg, statusPeminjaman FROM Peminjaman_Barang ORDER BY idPeminjamanBrg OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 
-include '../../template/sidebar.php';
+include '../../templates/sidebar.php';
 ?>
 
       <!-- Content Area -->
@@ -111,20 +111,20 @@ include '../../template/sidebar.php';
                       ?>
                     </span>
                     <?php if ($statusFromDB == 'Menunggu Persetujuan') { ?>
-                      <a href="pengajuanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                      <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/pengajuanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                        <i><img src="<?= BASE_URL ?>/icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                       </a>
                     <?php } else if ($statusFromDB == 'Sedang Dipinjam') { ?>
-                      <a href="pengembalianBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                      <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                        <i><img src="<?= BASE_URL ?>/icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                       </a>
                     <?php } else if ($statusFromDB == 'Ditolak') { ?>
-                      <a href="detailPenolakanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                      <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/detailPenolakanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                        <i><img src="<?= BASE_URL ?>/icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                       </a>
                     <?php } else if ($statusFromDB == 'Telah Dikembalikan') { ?>
-                      <a href="detailPeminjamanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
+                      <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/detailPeminjamanBarang.php?id=<?= htmlspecialchars($row['idPeminjamanBrg']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
+                        <i><img src="<?= BASE_URL ?>/icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
                       </a>
                     <?php } ?>
                   </td>
@@ -140,4 +140,4 @@ include '../../template/sidebar.php';
         </div>
       </main>
 
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

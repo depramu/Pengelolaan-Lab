@@ -1,13 +1,12 @@
 <?php
-include '../../template/header.php';
+include '../../templates/header.php';
 $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan";
 $result = sqlsrv_query($conn, $query);
 if ($result === false) {
   echo "Error executing query: <br>";
   die(print_r(sqlsrv_errors(), true));
 }
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-include '../../template/sidebar.php';
+include '../../templates/sidebar.php';
 ?>
       <!-- Content Area -->
       <main class="col bg-white px-4 py-3 position-relative">
@@ -118,4 +117,4 @@ include '../../template/sidebar.php';
         </div>
       </main>
 
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

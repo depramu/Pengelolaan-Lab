@@ -1,6 +1,5 @@
 <?php
 include '../templates/header.php';
-
 include '../templates/sidebar.php';
 ?>
 

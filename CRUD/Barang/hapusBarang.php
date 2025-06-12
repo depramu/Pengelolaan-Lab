@@ -1,6 +1,5 @@
 <?php
-include '../../templates/header.php';
-
+include '../../koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idBarang = $_POST['idBarang'] ?? null;
 
@@ -13,15 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } else {
             echo "<script>
-        alert ('Gagal menghapus Barang. Silahkan coba lagi.');
-        window.location.href = '../../Menu PIC/manajemenBarang.php'
-        </script>";
-        exit;
+            alert('Gagal menghapus Barang. Silahkan coba lagi.');
+            window.location.href = /Menu PIC/manajemenBarang.php';
+            </script>";
+            exit;
         }
     }
 }
 
-
-header("Location: ../../Menu PIC/manajemenBarang.php");
+include '../../templates/header.php';
 exit;
-?>
