@@ -1,6 +1,5 @@
 <?php
-include '../../templates/header.php';
-
+include '../../koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idRuangan = $_POST['idRuangan'] ?? null;
 
@@ -22,5 +21,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 header("Location: ../../Menu PIC/manajemenRuangan.php");
+include '../../templates/header.php';
 exit;
-?>

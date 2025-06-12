@@ -62,8 +62,8 @@ include '../templates/sidebar.php';
                         <td><?= $row['stokBarang'] ?></td>
                         <td><?= $row['lokasiBarang'] ?></td>
                         <td class="text-center">
-                            <a href="../CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Barang/hapusBarang.php?id" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
 
                             <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
@@ -87,6 +87,8 @@ include '../templates/sidebar.php';
                                     </form>
                                 </div>
                             </div>
+
+                            
                         </td>
                     </tr>
                 <?php

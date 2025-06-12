@@ -181,4 +181,4 @@ include '../../templates/sidebar.php';
             if (!valid) e.preventDefault();
         });
     </script>
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

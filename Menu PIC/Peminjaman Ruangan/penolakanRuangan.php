@@ -1,5 +1,5 @@
 <?php
-include '../../template/header.php';
+include '../../templates/header.php';
 
 // Perbaikan: Gunakan parameter GET untuk menerima ID
 $idPeminjamanRuangan = $_GET['id'] ?? '';
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Form tidak boleh kosong.";
     }
 }
-include '../../template/sidebar.php';
+include '../../templates/sidebar.php';
 ?>
             <!-- Content Area -->
 
@@ -38,9 +38,9 @@ include '../../template/sidebar.php';
                 <div class="mb-3">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="peminjamanRuangan.php">Peminjaman Ruangan</a></li>
-                            <li class="breadcrumb-item"><a href="pengajuanRuangan.php">Pengajuan Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php">Peminjaman Ruangan</a></li>
+                            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php">Pengajuan Ruangan</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Penolakan Ruangan</li>
                         </ol>
                     </nav>
@@ -103,4 +103,4 @@ include '../../template/sidebar.php';
             });
         </script>
 
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

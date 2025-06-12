@@ -1,10 +1,10 @@
 <?php
-include '../../template/header.php';
+include '../../templates/header.php';
 
 $showModal = false;
 $idPeminjamanRuangan = $_GET['id'] ?? '';
 
-include '../../template/sidebar.php';
+include '../../templates/sidebar.php';
 ?>
 
             <!-- Content Area -->
@@ -167,4 +167,4 @@ include '../../template/sidebar.php';
             });
         </script>
 
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>

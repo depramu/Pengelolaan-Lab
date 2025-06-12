@@ -1,5 +1,5 @@
     <?php
-    include 'templates/header.php';
+    include '../templates/header.php';
 
     // Auto-generate id Peminjaman Ruangan dari database SQL Server
     $idPeminjamanBrg = 'PJB001';

@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 $manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
 $isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
-include '../../template/sidebar.php';
+include '../../templates/sidebar.php';
 ?>
             <!-- Content Area -->
             <main class="col bg-white px-4 py-3 position-relative">
@@ -199,4 +199,4 @@ include '../../template/sidebar.php';
         </script>
 
 
-<?php include '../../template/footer.php'; ?>
+<?php include '../../templates/footer.php'; ?>
