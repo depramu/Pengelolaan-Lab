@@ -3,7 +3,6 @@ include '../../templates/header.php';
 
 $showModal = false;
 
-// Auto-generate nim dari database SQL Server
 $nim = '0920240001';
 $sqlId = "SELECT TOP 1 nim FROM Mahasiswa WHERE nim LIKE '092024%' ORDER BY nim DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);

@@ -3,7 +3,6 @@ include '../../templates/header.php';
 
 $showModal = false;
 
-// Auto-generate npk dari database SQL Server
 $npk = '51001';
 $sqlId = "SELECT TOP 1 npk FROM Karyawan WHERE npk LIKE '51%' ORDER BY npk DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -32,25 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Gagal menambahkan akun.";
     }
 }
-
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-
-// Variabel untuk Manajemen Aset (dibiarkan jika masih ada kemungkinan digunakan atau untuk konsistensi struktur)
-$manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
-$isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
-
-// Variabel untuk Manajemen Akun
-$manajemenAkunPages = [
-    'manajemenAkunKry.php',
-    'tambahAkunKry.php',
-    'editAkunKry.php',
-    'manajemenAkunMhs.php',
-    'tambahAkunMhs.php',
-    'editAkunMhs.php'
-];
-$isManajemenAkunActive = in_array($currentPage, $manajemenAkunPages);
 include '../../templates/sidebar.php';
-
 ?>
 
 <!-- Content Area -->

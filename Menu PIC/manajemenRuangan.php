@@ -60,9 +60,9 @@ include '../templates/sidebar.php';
                         <td><?= $row['kondisiRuangan'] ?></td>
                         <td><?= $row['ketersediaan'] ?></td>
                         <td class="text-center">
-                            <a href="../CRUD/Ruangan/editRuangan.php?id=<?= $row['idRuangan'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Ruangan/editRuangan.php?id=<?= $row['idRuangan'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
                             <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idRuangan'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-
+                    
                             <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['idRuangan'] ?>"
                                 tabindex="-1" aria-labelledby="modalLabel<?= $row['idRuangan'] ?>" aria-hidden="true">
