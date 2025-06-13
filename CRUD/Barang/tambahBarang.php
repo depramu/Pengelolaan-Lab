@@ -2,8 +2,6 @@
 include '../../templates/header.php';
 
 $showModal = false;
-
-// Auto-generate idBarang dari database SQL Server
 $idBarang = 'BRG001';
 $sqlId = "SELECT TOP 1 idBarang FROM Barang WHERE idBarang LIKE 'BRG%' ORDER BY idBarang DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -45,158 +43,149 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $showModal = true;
         } else {
             $error = "Gagal menambahkan barang.";
-            
         }
     }
 }
-
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-$manajemenAsetPages = ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php'];
-$isManajemenAsetActive = in_array($currentPage, $manajemenAsetPages);
 include '../../templates/sidebar.php';
 ?>
-            <!-- Content Area -->
-            <main class="col bg-white px-4 py-3 position-relative">
-                <div class="mb-3">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                            <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Tambah Barang</li>
-                        </ol>
-                    </nav>
-                </div>
+<main class="col bg-white px-4 py-3 position-relative">
+    <div class="mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Barang</li>
+            </ol>
+        </nav>
+    </div>
 
 
-                <!-- Tambah Barang -->
-                <div class="container mt-4">
-                    <?php if (isset($error)) : ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
-                            <?php echo $error; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
+    <!-- Tambah Barang -->
+    <div class="container mt-4">
+        <?php if (isset($error)) : ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
+                <?php echo $error; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-                    <div class="row justify-content-center">
-                        <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
-                            <div class="card border border-dark">
-                                <div class="card-header bg-white border-bottom border-dark">
-                                    <span class="fw-semibold">Tambah Barang</span>
-                                </div>
-                                <div class="card-body">
-                                    <form method="POST">
-                                        <div class="mb-2">
-                                            <label for="idBarang" class="form-label">ID Barang</label>
-                                            <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="namaBarang" class="form-label">
-                                                Nama Barang
-                                                <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="namaBarang" name="namaBarang">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="stokBarang" class="form-label">
-                                                Stok Barang
-                                                <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <div class="input-group" style="max-width: 180px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                                <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
-                                            </div>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label for="lokasiBarang" class="form-label">
-                                                Lokasi Barang
-                                                <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                            </label>
-                                            <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                                <option value="" disabled selected>Pilih Lokasi</option>
-                                                <?php foreach ($lokasiList as $lokasiBarang) : ?>
-                                                    <option value="<?= htmlspecialchars($lokasiBarang) ?>"><?= htmlspecialchars($lokasiBarang) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        <div class="d-flex justify-content-between mt-4">
-                                            <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
-                                            <button type="submit" class="btn btn-primary">Tambah</button>
-                                        </div>
-                                    </form>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
+                <div class="card border border-dark">
+                    <div class="card-header bg-white border-bottom border-dark">
+                        <span class="fw-semibold">Tambah Barang</span>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="mb-2">
+                                <label for="idBarang" class="form-label">ID Barang</label>
+                                <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                            </div>
+                            <div class="mb-2">
+                                <label for="namaBarang" class="form-label">
+                                    Nama Barang
+                                    <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                </label>
+                                <input type="text" class="form-control" id="namaBarang" name="namaBarang">
+                            </div>
+                            <div class="mb-2">
+                                <label for="stokBarang" class="form-label">
+                                    Stok Barang
+                                    <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                </label>
+                                <div class="input-group" style="max-width: 180px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                    <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal Berhasil -->
-                    <div class="modal fade" id="successModal" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <a href="../../Menu PIC/manajemenBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Data barang berhasil ditambahkan.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-primary">OK</a>
-                                </div>
+                            <div class="mb-2">
+                                <label for="lokasiBarang" class="form-label">
+                                    Lokasi Barang
+                                    <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                </label>
+                                <select class="form-select" id="lokasiBarang" name="lokasiBarang">
+                                    <option value="" disabled selected>Pilih Lokasi</option>
+                                    <?php foreach ($lokasiList as $lokasiBarang) : ?>
+                                        <option value="<?= htmlspecialchars($lokasiBarang) ?>"><?= htmlspecialchars($lokasiBarang) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
-                        </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
+                        </form>
                     </div>
-
                 </div>
-                <!-- End Tambah Barang -->
+            </div>
+        </div>
 
+        <!-- Modal Berhasil -->
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                        <a href="../../Menu PIC/manajemenBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                    </div>
+                    <div class="modal-body">
+                        <p>Data barang berhasil ditambahkan.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            </main>
-        <script>
-            function changeStok(val) {
-                let stokInput = document.getElementById('stokBarang');
-                let current = parseInt(stokInput.value) || 0;
-                let next = current + val;
-                if (next < 0) next = 0;
-                stokInput.value = next;
-            }
+    </div>
+</main>
+<script>
+    function changeStok(val) {
+        let stokInput = document.getElementById('stokBarang');
+        let current = parseInt(stokInput.value) || 0;
+        let next = current + val;
+        if (next < 0) next = 0;
+        stokInput.value = next;
+    }
 
-            document.querySelector('form').addEventListener('submit', function(e) {
-                let valid = true;
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
 
-                // Nama Barang
-                const namaBarang = document.getElementById('namaBarang');
-                const errorNamaBarang = document.getElementById('errorNamaBarang');
-                if (namaBarang.value.trim() === '') {
-                    errorNamaBarang.style.display = 'inline';
-                    valid = false;
-                } else {
-                    errorNamaBarang.style.display = 'none';
-                }
+        // Nama Barang
+        const namaBarang = document.getElementById('namaBarang');
+        const errorNamaBarang = document.getElementById('errorNamaBarang');
+        if (namaBarang.value.trim() === '') {
+            errorNamaBarang.style.display = 'inline';
+            valid = false;
+        } else {
+            errorNamaBarang.style.display = 'none';
+        }
 
-                // Stok Barang
-                const stokBarang = document.getElementById('stokBarang');
-                const errorStokBarang = document.getElementById('errorStokBarang');
-                if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
-                    errorStokBarang.style.display = 'inline';
-                    valid = false;
-                } else {
-                    errorStokBarang.style.display = 'none';
-                }
+        // Stok Barang
+        const stokBarang = document.getElementById('stokBarang');
+        const errorStokBarang = document.getElementById('errorStokBarang');
+        if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
+            errorStokBarang.style.display = 'inline';
+            valid = false;
+        } else {
+            errorStokBarang.style.display = 'none';
+        }
 
-                // Lokasi Barang
-                const lokasiBarang = document.getElementById('lokasiBarang');
-                const errorLokasiBarang = document.getElementById('errorLokasiBarang');
-                if (!lokasiBarang.value) {
-                    errorLokasiBarang.style.display = 'inline';
-                    valid = false;
-                } else {
-                    errorLokasiBarang.style.display = 'none';
-                }
+        // Lokasi Barang
+        const lokasiBarang = document.getElementById('lokasiBarang');
+        const errorLokasiBarang = document.getElementById('errorLokasiBarang');
+        if (!lokasiBarang.value) {
+            errorLokasiBarang.style.display = 'inline';
+            valid = false;
+        } else {
+            errorLokasiBarang.style.display = 'none';
+        }
 
-                if (!valid) e.preventDefault();
-            });
-        </script>
+        if (!valid) e.preventDefault();
+    });
+</script>
 
 
 <?php include '../../templates/footer.php'; ?>

@@ -82,6 +82,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             height: 82vh;
         }
 
+
         .sidebar .collapse .nav-link {
             color: #ffffff !important;
             background-color: transparent !important;

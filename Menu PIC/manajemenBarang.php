@@ -17,9 +17,6 @@ $totalPages = ceil($totalData / $perPage);
 $offset = ($page - 1) * $perPage;
 $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-
-
 include '../templates/sidebar.php';
 
 ?>
@@ -36,7 +33,7 @@ include '../templates/sidebar.php';
 
     <!-- Table Manajemen Barang -->
     <div class="d-flex justify-content-start mb-2">
-        <a href="../CRUD/Barang/tambahBarang.php" class="btn btn-primary">
+        <a href="<?= BASE_URL ?>/CRUD/Barang/tambahBarang.php" class="btn btn-primary">
             <img src="../icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
     </div>
     <div class="table-responsive">
@@ -62,8 +59,8 @@ include '../templates/sidebar.php';
                         <td><?= $row['stokBarang'] ?></td>
                         <td><?= $row['lokasiBarang'] ?></td>
                         <td class="text-center">
-                            <a href="<?= BASE_URL ?>CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                            <a href="<?= BASE_URL ?>CRUD/Barang/hapusBarang.php?id" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Barang/hapusBarang.php?id" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
 
                             <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
@@ -87,8 +84,6 @@ include '../templates/sidebar.php';
                                     </form>
                                 </div>
                             </div>
-
-                            
                         </td>
                     </tr>
                 <?php
@@ -144,6 +139,6 @@ include '../templates/sidebar.php';
 
 <?php
 
-include'../templates/footer.php';
+include '../templates/footer.php';
 
 ?>
