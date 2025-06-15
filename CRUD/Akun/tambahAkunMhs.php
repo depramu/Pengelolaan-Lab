@@ -3,23 +3,16 @@ include '../../templates/header.php';
 
 $showModal = false;
 
-$nim = '0920240001';
-$sqlId = "SELECT TOP 1 nim FROM Mahasiswa WHERE nim LIKE '092024%' ORDER BY nim DESC";
-$stmtId = sqlsrv_query($conn, $sqlId);
-if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['nim'];
-    $num = intval(substr($lastId, -4));
-    $newNum = $num + 1;
-    $nim = '092024' . str_pad($newNum, 4, '0', STR_PAD_LEFT);
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaMhs = $_POST['namaMhs'];
+    $nim = $_POST['nim'];
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $jenisRole = $_POST['jenisRole'];
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Mahasiswa (nim, namaMhs, kataSandi) VALUES (?, ?, ?)";
-    $params = [$nim, $namaMhs, $kataSandi];
+    $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+    $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt) {
@@ -30,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 include '../../templates/sidebar.php';
 ?>
+
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
@@ -43,7 +37,7 @@ include '../../templates/sidebar.php';
     </div>
 
 
-    <!-- Tambah Barang -->
+    <!-- Tambah Akun -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -60,17 +54,38 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <div class="mb-2">
-                                <label for="nim" class="form-label">NIM</label>
-                                <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="nim" class="form-label d-flex align-items-center">NIM
+                                        <span id="nimError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control" id="nim" name="nim">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nama" class="form-label d-flex align-items-center">Nama Lengkap
+                                        <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control" id="nama" name="nama">
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="namaMhs" class="form-label d-flex align-items-center">Nama Lengkap
-                                    <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                </label>
-                                <input type="text" class="form-control" id="namaMhs" name="namaMhs">
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label d-flex align-items-center">Email
+                                        <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control" id="email" name="email">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label for="jenisRole" class="form-label d-flex align-items-center">Role
+                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    </label>
+                                    <select class="form-select" id="jenisRole" name="jenisRole">
+                                        <option value="" disabled>Pilih Role</option>
+                                        <option value="Peminjam">Peminjam</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
                                     <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minimal 8 karakter</span>
                                     <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
@@ -95,13 +110,20 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 
+        <?php if (isset($showModal)) : ?>
+            <script>
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
+
         <!-- Modal Berhasil -->
         <div class="modal fade" id="successModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <a href="../../Menu PIC/manajemenAkunMhs.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
                     </div>
                     <div class="modal-body">
                         <p>Data akun berhasil ditambahkan.</p>
@@ -112,18 +134,25 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
     </div>
-    <!-- End Tambah Akun Mahasiswa -->
 </main>
+<!-- End Tambah Akun -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        let nama = document.getElementById('namaMhs').value.trim();
+        let nim = document.getElementById('nim').value.trim();
+        let nama = document.getElementById('nama').value.trim();
+        let email = document.getElementById('email').value.trim();
+        let jenisRole = document.getElementById('jenisRole').value;
         let pass = document.getElementById('kataSandi').value;
         let conf = document.getElementById('konfirmasiSandi').value;
 
+        let nimError = document.getElementById('nimError');
         let namaError = document.getElementById('namaError');
+        let emailError = document.getElementById('emailError');
+        let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
         let passMatchError = document.getElementById('passMatchError');
         let confPassError = document.getElementById('confPassError');
@@ -132,21 +161,52 @@ include '../../templates/sidebar.php';
         let valid = true;
 
         // Reset error
+        nimError.style.display = 'none';
         namaError.style.display = 'none';
+        emailError.style.display = 'none';
         passError.style.display = 'none';
         confPassError.style.display = 'none';
         passMatchError.style.display = 'none';
         passLengthError.style.display = 'none';
+        roleError.style.display = 'none';
+
+        if (nim === "") {
+            nimError.textContent = '*Harus diisi';
+            nimError.style.display = 'block';
+            valid = false;
+        } else if (!/^\d+$/.test(nim)) {
+            nimError.textContent = '*Harus berupa angka';
+            nimError.style.display = 'block';
+            valid = false;
+        }
 
         if (nama === "") {
+            namaError.textContent = '*Harus diisi';
+            namaError.style.display = 'block';
+            valid = false;
+        } else if (/\d/.test(nama)) {
+            namaError.textContent = '*Harus berupa huruf';
             namaError.style.display = 'block';
             valid = false;
         }
-        if (pass === "") {
-            passError.style.display = 'block';
+
+        if (email === "") {
+            emailError.textContent = '*Harus diisi';
+            emailError.style.display = 'block';
             valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = '*Format email tidak valid';
+            emailError.style.display = 'block';
             valid = false;
         }
+
+        // Role wajib diisi
+        if (jenisRole === "") {
+            roleError.style.display = 'block';
+            valid = false;
+        }
+
+        // Password wajib diisi dan minimal 8 karakter
         if (pass === "") {
             passError.style.display = 'block';
             valid = false;
@@ -155,10 +215,14 @@ include '../../templates/sidebar.php';
             passLengthError.style.display = 'block';
             valid = false;
         }
+
+        // Konfirmasi password wajib diisi
         if (conf === "") {
             confPassError.style.display = 'block';
             valid = false;
         }
+
+        // Password dan konfirmasi harus sama
         if (pass !== "" && conf !== "" && pass !== conf) {
             passMatchError.style.display = 'block';
             valid = false;

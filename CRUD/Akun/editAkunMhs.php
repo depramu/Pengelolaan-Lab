@@ -4,49 +4,50 @@ include '../../templates/header.php';
 $nim = $_GET['id'] ?? null;
 
 if (!$nim) {
-    // Redirect to a more appropriate page if nim is not found, e.g., the main mahasiswa management page
-    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
+    header('Location: ../../manajemenAkunMhs.php');
     exit;
 }
 
-$showModal = false; // Initialize the modal visibility variable
+$showModal = false; 
 
 $query = "SELECT * FROM Mahasiswa WHERE nim = ?";
 $stmt = sqlsrv_query($conn, $query, [$nim]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-if (!$data) {
-    // Handle case where NIM doesn't exist in DB, redirect or show error
-    // For now, redirecting back to management page
-    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // No need to fetch nim from POST if it's from URL and disabled in form, use $nim from GET
-    $namaMhs = $_POST['namaMhs']; // Should also be from $data if disabled, or ensure it's submitted if editable
+    $nim = $_POST['nim']; 
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $jenisRole = $_POST['jenisRole'];
     $kataSandi = $_POST['kataSandi'];
-    // konfirmasiSandi is only for client-side validation, not stored
 
-    // Assuming nim and namaMhs are not changed through this form as they are disabled
-    // If they were changeable, they should be part of the $params array
-    $updateQuery = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
-    $params = [$kataSandi, $nim];
-    $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
+    if (!empty($kataSandi)) {
+        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE nim = ?";
+        $params_update = [$nama, $email, $jenisRole, $kataSandi, $nim]; 
+    } else {
+        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ? WHERE nim = ?";
+        $params_update = [$nama, $email, $jenisRole, $nim]; 
+    }
 
-    if ($updateStmt) {
-        $showModal = true; // Set to true to show the modal
-        // Re-fetch data to show updated values if needed, though kataSandi isn't displayed directly
-        $stmt = sqlsrv_query($conn, $query, [$nim]); // Re-run original query
+    $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
+
+    if ($stmt_update) {
+        $showModal = true;
+        $stmt = sqlsrv_query($conn, $query, [$nim]);
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
-        $error = "Gagal mengubah data akun. Error: " . print_r(sqlsrv_errors(), true); // More detailed error
+        $error = "Gagal mengubah data akun.";
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error_item) {
+                $error .= "<br>SQLSTATE: " . $error_item['SQLSTATE'] . " Code: " . $error_item['code'] . " Message: " . $error_item['message'];
+            }
+        }
     }
 }
 
-
 include '../../templates/sidebar.php';
 ?>
+
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
@@ -54,7 +55,7 @@ include '../../templates/sidebar.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Akun</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Akun Mahasiswa</li>
             </ol>
         </nav>
     </div>
@@ -73,7 +74,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Edit Akun</span>
+                        <span class="fw-semibold">Edit Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -84,33 +85,56 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="namaMhs" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" id="namaMhs" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>" disabled>
-                                    <input type="hidden" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>">
+                                    <label for="nama" class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>" disabled>
+                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                    <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
-                                    <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
-                                </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                            </div>
-                            <div class="mb-2">
-                                <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
-                                    <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
-                                </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                                <div class="d-flex justify-content-between mt-4">
-                                    <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>" disabled>
+                                    <input type="hidden" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
+                                <div class="col-md-6 mb-2">
+                                    <label for="jenisRole" class="form-label">Jenis Role</label>
+                                    <select class="form-select" id="jenisRole" name="jenisRole" disabled>
+                                        <!-- <option value="" disabled selected>Pilih Role</option> -->
+                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
+                                        <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
+                                        <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
+                                    </select>
+                                    <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                        <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
+                                        <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
+                                    </label>
+                                    <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
+                                        <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
+                                        <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
+                                    </label>
+                                    <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                    </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
+        <?php if (isset($showModal)) : ?>
+            <script>
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
 
         <!-- Modal Berhasil -->
         <div class="modal fade" id="successModal" tabindex="-1">
@@ -118,7 +142,7 @@ include '../../templates/sidebar.php';
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu PIC/manajemenAkunMhs.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>Data akun berhasil diubah.</p>
@@ -129,9 +153,9 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
     </div>
 </main>
+<!-- End Edit Akun Mahasiswa -->
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -173,6 +197,4 @@ include '../../templates/sidebar.php';
 </script>
 
 
-<?php
-
-include '../../templates/footer.php';
+<?php include '../../templates/footer.php'; ?>
