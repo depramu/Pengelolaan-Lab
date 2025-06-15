@@ -3,26 +3,16 @@ include '../../templates/header.php';
 
 $showModal = false;
 
-$npk = '51001';
-$sqlId = "SELECT TOP 1 npk FROM Karyawan WHERE npk LIKE '51%' ORDER BY npk DESC";
-$stmtId = sqlsrv_query($conn, $sqlId);
-if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['npk']; // contoh: 51001
-    $num = intval(substr($lastId, 3));
-    $newNum = $num + 1;
-    $npk = '51' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
-}
-
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaKry = $_POST['namaKry'];
-    $noHP = $_POST['noHP'];
+    $npk = $_POST['npk'];
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Karyawan (npk, namaKry, noHP, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
-    $params = [$npk, $namaKry, $noHP, $jenisRole, $kataSandi];
+    $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+    $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt) {
@@ -47,7 +37,7 @@ include '../../templates/sidebar.php';
     </div>
 
 
-    <!-- Tambah Barang -->
+    <!-- Tambah Akun -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -66,33 +56,38 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="npk" class="form-label">NPK</label>
-                                    <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
+                                    <label for="npk" class="form-label d-flex align-items-center">NPK
+                                        <span id="npkError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control" id="npk" name="npk">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="namaKry" class="form-label d-flex align-items-center">Nama Lengkap
-                                        <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <label for="nama" class="form-label d-flex align-items-center">Nama Lengkap
+                                        <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="namaKry" name="namaKry">
+                                    <input type="text" class="form-control" id="nama" name="nama">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="noHP" class="form-label d-flex align-items-center">Nomor Telepon
-                                        <span id="noHPError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <label for="email" class="form-label d-flex align-items-center">Email
+                                        <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="noHP" name="noHP">
+                                    <input type="text" class="form-control" id="email" name="email">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label">Role</label>
+                                    <label for="jenisRole" class="form-label d-flex align-items-center">Role
+                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    </label>
                                     <select class="form-select" id="jenisRole" name="jenisRole">
-                                        <option value="" selected>Pilih Role</option>
-                                        <option value="PIC Aset">PIC Aset</option>
+                                        <option value="" disabled selected>Pilih Role</option>
                                         <option value="KA UPT">KA UPT</option>
+                                        <option value="PIC Aset">PIC Aset</option>
+                                        <option value="Peminjam">Peminjam</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
                                     <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minimal 8 karakter</span>
                                     <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
@@ -117,6 +112,13 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 
+        <?php if (isset($showModal)) : ?>
+            <script>
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
+
         <!-- Modal Berhasil -->
         <div class="modal fade" id="successModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -134,20 +136,25 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
     </div>
-    <!-- End Tambah Akun -->
 </main>
+<!-- End Tambah Akun -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        let nama = document.getElementById('namaKry').value.trim();
-        let nohp = document.getElementById('noHP').value.trim();
+        let npk = document.getElementById('npk').value.trim();
+        let nama = document.getElementById('nama').value.trim();
+        let email = document.getElementById('email').value.trim();
+        let jenisRole = document.getElementById('jenisRole').value;
         let pass = document.getElementById('kataSandi').value;
         let conf = document.getElementById('konfirmasiSandi').value;
 
+        let npkError = document.getElementById('npkError');
         let namaError = document.getElementById('namaError');
-        let nohpError = document.getElementById('noHPError');
+        let emailError = document.getElementById('emailError');
+        let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
         let passMatchError = document.getElementById('passMatchError');
         let confPassError = document.getElementById('confPassError');
@@ -156,21 +163,52 @@ include '../../templates/sidebar.php';
         let valid = true;
 
         // Reset error
+        npkError.style.display = 'none';
         namaError.style.display = 'none';
-        nohpError.style.display = 'none';
+        emailError.style.display = 'none';
         passError.style.display = 'none';
         confPassError.style.display = 'none';
         passMatchError.style.display = 'none';
         passLengthError.style.display = 'none';
+        roleError.style.display = 'none';
+
+        if (npk === "") {
+            npkError.textContent = '*Harus diisi';
+            npkError.style.display = 'block';
+            valid = false;
+        } else if (!/^\d+$/.test(npk)) {
+            npkError.textContent = '*Harus berupa angka';
+            npkError.style.display = 'block';
+            valid = false;
+        }
 
         if (nama === "") {
+            namaError.textContent = '*Harus diisi';
+            namaError.style.display = 'block';
+            valid = false;
+        } else if (/\d/.test(nama)) {
+            namaError.textContent = '*Harus berupa huruf';
             namaError.style.display = 'block';
             valid = false;
         }
-        if (nohp === "") {
-            nohpError.style.display = 'block';
+
+        if (email === "") {
+            emailError.textContent = '*Harus diisi';
+            emailError.style.display = 'block';
+            valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = '*Format email tidak valid';
+            emailError.style.display = 'block';
             valid = false;
         }
+
+        // Role wajib diisi
+        if (jenisRole === "") {
+            roleError.style.display = 'block';
+            valid = false;
+        }
+
+        // Password wajib diisi dan minimal 8 karakter
         if (pass === "") {
             passError.style.display = 'block';
             valid = false;
@@ -179,10 +217,14 @@ include '../../templates/sidebar.php';
             passLengthError.style.display = 'block';
             valid = false;
         }
+
+        // Konfirmasi password wajib diisi
         if (conf === "") {
             confPassError.style.display = 'block';
             valid = false;
         }
+
+        // Password dan konfirmasi harus sama
         if (pass !== "" && conf !== "" && pass !== conf) {
             passMatchError.style.display = 'block';
             valid = false;
@@ -191,4 +233,5 @@ include '../../templates/sidebar.php';
         if (!valid) e.preventDefault();
     });
 </script>
+
 <?php include '../../templates/footer.php'; ?>
