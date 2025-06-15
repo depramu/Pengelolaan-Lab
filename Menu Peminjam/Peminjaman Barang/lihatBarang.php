@@ -51,7 +51,10 @@ include '../../templates/sidebar.php';
                         <td><?= $row['stokBarang'] ?></td>
                         <td><?= $row['lokasiBarang'] ?></td>
                         <td class="td-aksi text-center">
-                            <a href="../../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= $row['idBarang'] ?>"><img src="../../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button"></a>
+                            <a href="../../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= $row['idBarang'] ?>"
+                                onclick="event.preventDefault(); window.location.href=this.href+'<?= isset($_SESSION['tglPeminjamanBrg']) ? ('&tglPeminjamanBrg=' . urlencode($_SESSION['tglPeminjamanBrg'])) : '' ?>';">
+                                <img src="../../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button">
+                            </a>
                         </td>
 
                     </tr>
