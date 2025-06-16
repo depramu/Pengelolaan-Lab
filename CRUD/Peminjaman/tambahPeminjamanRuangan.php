@@ -39,11 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmtPeminjamanRuangan) {
             $showModal = true;
+            $_SESSION['showModal'] = true;
+            $_SESSION['modalMessage'] = "Pengajuan peminjaman ruangan berhasil!";
+            $_SESSION['modalRedirect'] = BASE_URL . "/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php";
         } else {
             $error = "Gagal mengajukan peminjaman ruangan";
         }
     }
 }
+
+include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="mb-2">
@@ -84,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                             <div class="row">
-                                <!-- Tanggal Peminjaman & NIM (Auto Increment, Disabled Input) -->
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="tglPeminjamanRuangan" class="form-label">Tanggal Peminjaman</label>
@@ -99,7 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                             <div class="row">
-                                <!-- Waktu Peminjaman & NPK (Auto Increment, Disabled Input) -->
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="waktuMulai" class="form-label">Waktu Mulai</label>
@@ -121,13 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <input type="text" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>" disabled>
                                     </div>
                                 </div>
-                                <!-- Alasan Peminjaman -->
                                 <div class="col-md-6">
                                     <label for="alasanPeminjamanRuangan" class="form-label">Alasan Peminjaman</label>
                                     <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                     <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="2" style="max-width: 400px;"></textarea>
 
-                                    <!--validasi kolom harus diisi -->
                                     <script>
                                         document.getElementById('alasanPeminjamanRuangan').addEventListener('input', function() {
                                             let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
@@ -155,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
+                                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                             </div>
                         </form>
