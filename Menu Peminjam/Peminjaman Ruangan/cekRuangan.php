@@ -198,3 +198,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         });
     });
 </script>
+
+<?php
+include '../../templates/footer.php';
+?>

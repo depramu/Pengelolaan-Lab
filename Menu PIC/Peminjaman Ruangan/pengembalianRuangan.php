@@ -40,7 +40,7 @@ include '../../templates/sidebar.php';
                                         <div class="mb-2 row">
                                             <div class="col md-6">
                                                 <label for="idPeminjamanRuangan" class="form-label">ID Peminjaman Barang</label>
-                                                <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>" disabled>
+                                                <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars(  $idPeminjamanRuangan) : '' ?>" disabled>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="txtKondisi" class="form-label">Kondisi Ruangan
@@ -76,33 +76,10 @@ include '../../templates/sidebar.php';
                             </div>
                         </div>
                     </div>
-
-                    <!-- Modal Berhasil -->
-                    <div class="modal fade" id="successModal" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Data barang berhasil diubah.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="peminjamanBarang.php" class="btn btn-primary">OK</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- End Edit Barang -->
-
-
             </main>
 
 
-        <script>
+        <script>    
             // Fungsi stepper untuk tombol +/-
             function changeStok(val) {
                 // Targetkan ID yang benar: 'jumlahPengembalian'

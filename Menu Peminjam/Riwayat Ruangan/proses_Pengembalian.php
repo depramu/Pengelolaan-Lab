@@ -9,12 +9,10 @@ if (isset($_POST['submit_pengembalian'])) {
     $namaFileSebelum = '';
     $namaFileSesudah = '';
 
-    // Proses upload file "dokumentasiSebelum"
     if (isset($_FILES['dokSebelum']) && $_FILES['dokSebelum']['error'] == 0) {
         $target_dir = "../../uploads/dokumentasi/";
-        // Pastikan folder uploads/dokumentasi ada
         if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
+            mkdir($target_dir, 0755, true);
         }
         $namaFileSebelum = $idPeminjaman . "_sebelum_" . time() . "_" . basename($_FILES["dokSebelum"]["name"]);
         $target_file_sebelum = $target_dir . $namaFileSebelum;
@@ -27,12 +25,10 @@ if (isset($_POST['submit_pengembalian'])) {
         $uploadSukses = false;
     }
 
-    // Proses upload file "dokumentasiSesudah"
     if (isset($_FILES['dokSesudah']) && $_FILES['dokSesudah']['error'] == 0) {
         $target_dir = "../../uploads/dokumentasi/";
-        // Pastikan folder uploads/dokumentasi ada
         if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
+            mkdir($target_dir, 0755, true);
         }
         $namaFileSesudah = $idPeminjaman . "_sesudah_" . time() . "_" . basename($_FILES["dokSesudah"]["name"]);
         $target_file_sesudah = $target_dir . $namaFileSesudah;
@@ -46,33 +42,27 @@ if (isset($_POST['submit_pengembalian'])) {
     }
 
     if ($uploadSukses) {
-        // Cek dulu apakah data pengembalian sudah ada, kalau ada kita UPDATE, kalau belum kita INSERT
-        $sql_cek = "SELECT * FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
-        $params_cek = array($idPeminjaman);
+        $sql_cek = "SELECT idPeminjamanRuangan FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
+        $params_cek = [$idPeminjaman];
         $stmt_cek = sqlsrv_query($conn, $sql_cek, $params_cek);
-        
-        if(sqlsrv_has_rows($stmt_cek)){
-            // Jika sudah ada, UPDATE
+
+        if (sqlsrv_has_rows($stmt_cek)) {
             $sql_query_db = "UPDATE Pengembalian_Ruangan SET dokumentasiSebelum = ?, dokumentasiSesudah = ? WHERE idPeminjamanRuangan = ?";
+            $params_db = [$namaFileSebelum, $namaFileSesudah, $idPeminjaman];
         } else {
-            // Jika belum ada, INSERT
             $sql_query_db = "INSERT INTO Pengembalian_Ruangan (idPeminjamanRuangan, dokumentasiSebelum, dokumentasiSesudah) VALUES (?, ?, ?)";
+            $params_db = [$idPeminjaman, $namaFileSebelum, $namaFileSesudah];
         }
-        
-        $params_db = array($idPeminjaman, $namaFileSebelum, $namaFileSesudah);
+
         $stmt_db = sqlsrv_query($conn, $sql_query_db, $params_db);
 
-
         if ($stmt_db) {
-            // --- INI PERUBAHANNYA, JEK! ---
-            // Update status di tabel peminjaman jadi "Menunggu Pengecekan"
             $sql_update_status = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = 'Menunggu Pengecekan' WHERE idPeminjamanRuangan = ?";
-            $params_update = array($idPeminjaman);
+            $params_update = [$idPeminjaman];
             $stmt_update = sqlsrv_query($conn, $sql_update_status, $params_update);
 
             if ($stmt_update) {
-                // Kalau update status berhasil, baru redirect
-                header("Location: dataPeminjaman.php");
+                header("Location: riwayatRuangan.php");
                 exit();
             } else {
                 echo "Data pengembalian berhasil disimpan, TAPI gagal update status peminjaman. Error: <pre>";
@@ -88,4 +78,4 @@ if (isset($_POST['submit_pengembalian'])) {
         echo "Gagal mengupload file. Alasan: " . $pesan_error;
     }
 }
-?> #065ba6  
+?>
