@@ -14,11 +14,9 @@
                             } else if ($currentFile == 'tambahRuangan.php' || $currentFile == 'editRuangan.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenRuangan.php';
                             } else if ($currentFile == 'tambahPeminjamanBrg.php') {
-                                echo BASE_URL . '/Menu Peminjam/Riwayat Barang/riwayatBarang.php';
+                                echo BASE_URL . '/Menu Peminjam/Peminjaman Barang/lihatBarang.php';
                             } else if ($currentFile == 'tambahPeminjamanRuangan.php') {
-                                echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
-                            } else if ($currentFile == 'tambahPengembalian.php' || $currentFile == 'editPengembalian.php') {
-                                echo BASE_URL . '/Menu PIC/manajemenPengembalian.php';
+                                echo BASE_URL . '/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php';
                             } else if ($currentFile == 'tambahAkunKry.php' || $currentFile == 'editAkunKry.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenAkunKry.php';
                             } else if ($currentFile == 'tambahAkunMhs.php' || $currentFile == 'editAkunMhs.php') {
@@ -165,8 +163,10 @@
 
 <?php if ($showModal) : ?>
     <script>
-        let modal = new bootstrap.Modal(document.getElementById('successModal'));
-        modal.show();
+        window.addEventListener('load', function() {
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        });
     </script>
 <?php endif; ?>
 

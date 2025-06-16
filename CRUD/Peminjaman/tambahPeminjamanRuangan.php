@@ -39,9 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmtPeminjamanRuangan) {
             $showModal = true;
-            $_SESSION['showModal'] = true;
-            $_SESSION['modalMessage'] = "Pengajuan peminjaman ruangan berhasil!";
-            $_SESSION['modalRedirect'] = BASE_URL . "/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php";
         } else {
             $error = "Gagal mengajukan peminjaman ruangan";
         }

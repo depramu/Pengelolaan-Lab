@@ -4,7 +4,13 @@ require_once __DIR__ . '/../../koneksi.php';
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-include __DIR__ . '/../../templates/header.php';
+
+// Inisialisasi variabel
+$error = null;
+$showModal = false;
+
+include '../../templates/header.php';
+include '../../templates/sidebar.php';
 
 // Auto-generate id Peminjaman Ruangan dari database SQL Server
 $idPeminjamanBrg = 'PJB001';
@@ -21,7 +27,7 @@ $idBarang = $_GET['idBarang'] ?? null;
 if (empty($idBarang)) {
     die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
 }
-    
+
 $namaBarang = '';
 $stokTersedia = 0;
 
@@ -44,9 +50,6 @@ $nim = $_SESSION['nim'] ?? null;
 $npk = $_SESSION['npk'] ?? null;
 $tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? null;
 
-// Inisialisasi variabel
-$error = null;
-$showModal = false;
 
 //  stok barang
 $sqlStok = "SELECT stokBarang FROM Barang WHERE idBarang = ?";
@@ -86,8 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-
-include '../../templates/sidebar.php';
 ?>
 <style>
     .protect-input {
