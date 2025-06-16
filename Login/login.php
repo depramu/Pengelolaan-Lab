@@ -14,8 +14,8 @@ if ($role === 'PIC Aset') {
     $pageTitle = "Login PIC Aset";
     $identifierLabel = "NPK";
     $identifierPlaceholder = "Masukkan NPK Anda";
-} elseif ($role === 'Ka UPT') {
-    $pageTitle = "Login Ka UPT";
+} elseif ($role === 'KA UPT') {
+    $pageTitle = "Login KA UPT";
     $identifierLabel = "NPK";
     $identifierPlaceholder = "Masukkan NPK Anda";
 } elseif ($role === 'Peminjam') {
@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'PIC Aset':
-            case 'Ka UPT':
-                $expectedRole = ($role === 'PIC Aset') ? 'PIC Aset' : 'Ka UPT';
+            case 'KA UPT':
+                $expectedRole = ($role === 'PIC Aset') ? 'PIC Aset' : 'KA UPT';
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
