@@ -112,7 +112,7 @@ include '../../templates/sidebar.php';
                                 </select>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
                         </form>
