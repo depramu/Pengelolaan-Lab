@@ -210,7 +210,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <img src="../icon/logo-astratech.png" alt="Logo Astra" style="width:60px; margin-bottom:12px; display:block;">
         </div>
         <div class="d-flex align-items-center justify-content-center w-100 mb-2" style="gap: 32px;">
+<<<<<<< HEAD
             <img src="../icon/atoyRole.png" alt="" class="role-illustration">
+=======
+            <img src="../icon/atoyRole.png" alt="Ilustrasi" class="role-illustration">
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
             <div class="d-flex flex-column align-items-start">
                 <div class="role-title text-start">Sistem<br>Pengelolaan<br>Laboratorium</div>
                 <img src="../icon/iconRole.png" alt="Icon Role" class="icon-role-img">
@@ -219,8 +223,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="login-right">
         <div class="login-form-container">
+<<<<<<< HEAD
             <h2 class="text-center fw-bold" style="color: white;">Lupa Kata Sandi</h2>
             <h3 class="login-form-title mt-5">Silahkan Masukkan Email dan Nama Lengkap</h3>
+=======
+            <h3 class="login-form-title">Silahkan Masukkan Email dan Nama Lengkap</h3>
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
             <form method="POST" action="">
                 <?php if (!empty($error_message) && $error_message === 'Kolom tidak boleh kosong.'): ?>
                     <div class="alert alert-danger" role="alert">
@@ -230,12 +238,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="input-group">
                     <span class="input-group-text"><img src="../icon/user-round.svg" alt="Nama Lengkap"></span>
+<<<<<<< HEAD
                     <input type="text" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap">
+=======
+                    <input type="text" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap" required>
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
                 </div>
 
                 <div class="input-group">
                     <span class="input-group-text"><img src="../icon/mail.svg" alt="Email"></span>
+<<<<<<< HEAD
                     <input type="email" name="email" class="form-control" placeholder="Masukkan Email">
+=======
+                    <input type="email" name="email" class="form-control" placeholder="Masukkan Email" required>
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
                 </div>
 
                 <div class="d-flex justify-content-between mt-4 gap-3">

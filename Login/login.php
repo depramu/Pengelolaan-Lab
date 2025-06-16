@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
-                $query = "SELECT npk, kataSandi, namaKry, jenisRole FROM Karyawan WHERE npk = ?";
+                $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt = sqlsrv_query($conn, $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
                         // Login berhasil -> STANDARISASI SESSION
                         $_SESSION['user_id'] = $row['npk'];
-                        $_SESSION['user_nama'] = $row['namaKry'];
+                        $_SESSION['user_nama'] = $row['nama'];
                         $_SESSION['user_role'] = $row['jenisRole'];
                         $_SESSION['npk'] = $row['npk'];
                         header('Location: ' . $redirectPath);
