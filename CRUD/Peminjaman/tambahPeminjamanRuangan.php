@@ -154,7 +154,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
 
-
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="../../Menu Peminjam/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
@@ -164,26 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu Peminjam/lihatRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Peminjaman dengan ID <?= $idPeminjamanRuangan ?> berhasil.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </main>
 

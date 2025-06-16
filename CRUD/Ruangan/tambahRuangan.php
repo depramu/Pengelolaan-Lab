@@ -102,55 +102,9 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu PIC/manajemenRuangan.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data Ruangan berhasil ditambahkan.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- End Tambah Ruangan -->
-
-
 </main>
 
 </div>
-
-<!-- Logout Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="logoutModalLabel"><i><img src="../../icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>PERINGATAN</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Yakin ingin log out?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger ps-4 pe-4" data-bs-dismiss="modal">Tidak</button>
-                <a href="../../logout.php" class="btn btn-primary ps-4 pe-4">Ya</a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- End Logout Modal -->
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     function changeStok(val) {
@@ -199,12 +153,7 @@ include '../../templates/sidebar.php';
         if (!valid) e.preventDefault();
     });
 </script>
-<?php if ($showModal) : ?>
-    <script>
-        let modal = new bootstrap.Modal(document.getElementById('successModal'));
-        modal.show();
-    </script>
-<?php endif; ?>
-</body>
 
-</html>
+<?php
+include '../../templates/footer.php';
+?>

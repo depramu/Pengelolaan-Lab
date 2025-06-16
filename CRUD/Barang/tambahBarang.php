@@ -121,26 +121,12 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu PIC/manajemenBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data barang berhasil ditambahkan.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
 
     </div>
 </main>
+
+
 <script>
     function changeStok(val) {
         let stokInput = document.getElementById('stokBarang');

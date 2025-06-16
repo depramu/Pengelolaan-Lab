@@ -105,3 +105,9 @@ if ($user_id && $user_role) {
     </div>
   </div>
 </main>
+
+<?php 
+
+include 'templates/footer.php';
+
+?>  
