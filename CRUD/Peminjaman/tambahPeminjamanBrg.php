@@ -89,8 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-
-<!-- BUAT DISABLE -->
 <style>
     .protect-input {
         background-color: #e9ecef;
@@ -110,9 +108,6 @@ include '../../templates/sidebar.php';
             </ol>
         </nav>
     </div>
-
-
-    <!-- Peminjaman Barang -->
     <div class="container mt-4">
 
         <div class="row justify-content-center">
@@ -124,7 +119,6 @@ include '../../templates/sidebar.php';
                     <div class="card-body">
 
                         <form method="POST">
-                            <!-- Add hidden field for date -->
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -205,26 +199,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu Peminjam/lihatBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Peminjaman dengan ID <?= $idPeminjamanBrg ?> berhasil.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </main>
 <script>

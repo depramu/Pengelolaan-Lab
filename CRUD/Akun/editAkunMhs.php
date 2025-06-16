@@ -4,7 +4,6 @@ include '../../templates/header.php';
 $nim = $_GET['id'] ?? null;
 
 if (!$nim) {
-    // Redirect to a more appropriate page if nim is not found, e.g., the main mahasiswa management page
     header('Location: ../../Menu PIC/manajemenAkunMhs.php');
     exit;
 }
@@ -16,27 +15,19 @@ $stmt = sqlsrv_query($conn, $query, [$nim]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if (!$data) {
-    // Handle case where NIM doesn't exist in DB, redirect or show error
-    // For now, redirecting back to management page
     header('Location: ../../Menu PIC/manajemenAkunMhs.php');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // No need to fetch nim from POST if it's from URL and disabled in form, use $nim from GET
     $namaMhs = $_POST['namaMhs']; // Should also be from $data if disabled, or ensure it's submitted if editable
     $kataSandi = $_POST['kataSandi'];
-    // konfirmasiSandi is only for client-side validation, not stored
-
-    // Assuming nim and namaMhs are not changed through this form as they are disabled
-    // If they were changeable, they should be part of the $params array
     $updateQuery = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
     $params = [$kataSandi, $nim];
     $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
 
     if ($updateStmt) {
         $showModal = true; // Set to true to show the modal
-        // Re-fetch data to show updated values if needed, though kataSandi isn't displayed directly
         $stmt = sqlsrv_query($conn, $query, [$nim]); // Re-run original query
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
@@ -47,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
@@ -111,25 +101,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu PIC/manajemenAkunMhs.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data akun berhasil diubah.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </main>
 
@@ -176,3 +147,5 @@ include '../../templates/sidebar.php';
 <?php
 
 include '../../templates/footer.php';
+
+?>

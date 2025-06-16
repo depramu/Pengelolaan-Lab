@@ -1,6 +1,65 @@
 </div>
 </div>
 
+<!-- Modal Berhasil -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                <a href="<?php 
+                    $currentFile = basename($_SERVER['PHP_SELF']);
+                    if ($currentFile == 'tambahBarang.php' || $currentFile == 'editBarang.php') {
+                        echo '../../Menu PIC/manajemenBarang.php';
+                    } else if ($currentFile == 'tambahRuangan.php' || $currentFile == 'editRuangan.php') {
+                        echo '../../Menu PIC/manajemenRuangan.php';
+                    } else if ($currentFile == 'tambahPeminjaman.php' || $currentFile == 'editPeminjaman.php') {
+                        echo '../../Menu PIC/manajemenPeminjaman.php';
+                    } else if ($currentFile == 'tambahPengembalian.php' || $currentFile == 'editPengembalian.php') {
+                        echo '../../Menu PIC/manajemenPengembalian.php';
+                    }
+                ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+            </div>
+            <div class="modal-body">
+                <p><?php 
+                    $currentFile = basename($_SERVER['PHP_SELF']);
+                    if ($currentFile == 'tambahBarang.php') {
+                        echo 'Data barang berhasil ditambahkan.';
+                    } else if ($currentFile == 'editBarang.php') {
+                        echo 'Data barang berhasil diperbarui.';
+                    } else if ($currentFile == 'tambahRuangan.php') {
+                        echo 'Data ruangan berhasil ditambahkan.';
+                    } else if ($currentFile == 'editRuangan.php') {
+                        echo 'Data ruangan berhasil diperbarui.';
+                    } else if ($currentFile == 'tambahPeminjaman.php') {
+                        echo 'Data peminjaman berhasil ditambahkan.';
+                    } else if ($currentFile == 'editPeminjaman.php') {
+                        echo 'Data peminjaman berhasil diperbarui.';
+                    } else if ($currentFile == 'tambahPengembalian.php') {
+                        echo 'Data pengembalian berhasil ditambahkan.';
+                    } else if ($currentFile == 'editPengembalian.php') {
+                        echo 'Data pengembalian berhasil diperbarui.';
+                    }
+                ?></p>
+            </div>
+            <div class="modal-footer">
+                <a href="<?php 
+                    $currentFile = basename($_SERVER['PHP_SELF']);
+                    if ($currentFile == 'tambahBarang.php' || $currentFile == 'editBarang.php') {
+                        echo '../../Menu PIC/manajemenBarang.php';
+                    } else if ($currentFile == 'tambahRuangan.php' || $currentFile == 'editRuangan.php') {
+                        echo '../../Menu PIC/manajemenRuangan.php';
+                    } else if ($currentFile == 'tambahPeminjaman.php' || $currentFile == 'editPeminjaman.php') {
+                        echo '../../Menu PIC/manajemenPeminjaman.php';
+                    } else if ($currentFile == 'tambahPengembalian.php' || $currentFile == 'editPengembalian.php') {
+                        echo '../../Menu PIC/manajemenPengembalian.php';
+                    }
+                ?>" class="btn btn-primary">OK</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- modal -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -21,12 +80,6 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<?php if (isset($showModal)) : ?>
-    <script>
-        let modal = new bootstrap.Modal(document.getElementById('successModal'));
-        modal.show();
-    </script>
-<?php endif; ?>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -87,6 +140,13 @@
         });
     });
 </script>
+
+<?php if ($showModal) : ?>
+    <script>
+        let modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
+    </script>
+<?php endif; ?>
 
 </body>
 
