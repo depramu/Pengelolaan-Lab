@@ -5,15 +5,17 @@ include '../templates/header.php';
 $perPage = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
+
 // Hitung total data
 $countQuery = "SELECT COUNT(*) AS total FROM Karyawan";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
+
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT npk, namaKry, noHP, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT npk, nama, email, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
@@ -42,7 +44,7 @@ include '../templates/sidebar.php';
                 <tr>
                     <th>NPK</th>
                     <th>Nama Lengkap</th>
-                    <th>Nomor Telepon</th>
+                    <th>Email</th>
                     <th>Role</th>
                     <th class="text-center">Aksi</th>
                 </tr>
@@ -55,8 +57,8 @@ include '../templates/sidebar.php';
                 ?>
                     <tr>
                         <td><?= $row['npk'] ?></td>
-                        <td><?= $row['namaKry'] ?></td>
-                        <td><?= $row['noHP'] ?></td>
+                        <td><?= $row['nama'] ?></td>
+                        <td><?= $row['email'] ?></td>
                         <td><?= $row['jenisRole'] ?></td>
                         <td class="text-center">
                             <a href="../CRUD/Akun/editAkunKry.php?id=<?= $row['npk'] ?>"><img src="../icon/edit.svg" alt="" style=" width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
@@ -74,7 +76,7 @@ include '../templates/sidebar.php';
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['namaKry']) ?></strong>"?
+                                                Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

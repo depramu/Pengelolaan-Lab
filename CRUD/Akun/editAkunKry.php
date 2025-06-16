@@ -8,35 +8,31 @@ if (!$npk) {
     exit;
 }
 
-$showModal = false; // Initialize the modal visibility variable
+$showModal = false; 
 
 $query = "SELECT * FROM Karyawan WHERE npk = ?";
 $stmt = sqlsrv_query($conn, $query, [$npk]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $npk_post = $_POST['npk']; // Menggunakan nama variabel berbeda untuk npk dari POST
-    $namaKry = $_POST['namaKry'];
-    $noHP = $_POST['noHP'];
+    $npk = $_POST['npk']; 
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
     $kataSandi = $_POST['kataSandi'];
-    // $konfirmasiSandi = $_POST['konfirmasiSandi']; //Tidak digunakan di UPDATE jika hanya update kataSandi
 
-    // Logika untuk update password: jika kataSandi diisi, maka update. Jika tidak, jangan update password.
     if (!empty($kataSandi)) {
-        $query_update = "UPDATE Karyawan SET namaKry = ?, noHP = ?, jenisRole = ?, kataSandi = ? WHERE npk = ?";
-        $params_update = [$namaKry, $noHP, $jenisRole, $kataSandi, $npk]; // $npk dari GET digunakan untuk WHERE clause
+        $query_update = "UPDATE Karyawan SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE npk = ?";
+        $params_update = [$nama, $email, $jenisRole, $kataSandi, $npk]; 
     } else {
-        // Jika kataSandi tidak diisi, update data lain tanpa mengubah password
-        $query_update = "UPDATE Karyawan SET namaKry = ?, noHP = ?, jenisRole = ? WHERE npk = ?";
-        $params_update = [$namaKry, $noHP, $jenisRole, $npk]; // $npk dari GET digunakan untuk WHERE clause
+        $query_update = "UPDATE Karyawan SET nama = ?, email = ?, jenisRole = ? WHERE npk = ?";
+        $params_update = [$nama, $email, $jenisRole, $npk]; 
     }
 
     $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
 
     if ($stmt_update) {
-        $showModal = true; // Set to true to show the modal
-        // Re-fetch data to show updated values if staying on page, or remove if always redirecting
+        $showModal = true;
         $stmt = sqlsrv_query($conn, $query, [$npk]);
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
@@ -89,23 +85,24 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="namaKry" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" id="namaKry" name="namaKry" value="<?= htmlspecialchars($data['namaKry']) ?>" disabled>
-                                    <input type="hidden" name="namaKry" value="<?= htmlspecialchars($data['namaKry']) ?>">
+                                    <label for="nama" class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>" disabled>
+                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="noHP" class="form-label">No HP</label>
-                                    <input type="text" class="form-control" id="noHP" name="noHP" value="<?= htmlspecialchars($data['noHP']) ?>" disabled>
-                                    <input type="hidden" name="noHP" value="<?= htmlspecialchars($data['noHP']) ?>">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>" disabled>
+                                    <input type="hidden" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label">Jenis Role</label>
                                     <select class="form-select" id="jenisRole" name="jenisRole" disabled>
                                         <!-- <option value="" disabled selected>Pilih Role</option> -->
+                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
                                         <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
-                                        <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
+                                        <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
                                     </select>
                                     <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                 </div>
@@ -132,6 +129,34 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 
+<<<<<<< HEAD
+=======
+        <?php if (isset($showModal)) : ?>
+            <script>
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
+
+        <!-- Modal Berhasil -->
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Data akun berhasil diubah.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 
 </main>

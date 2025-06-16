@@ -4,16 +4,21 @@ include '../../templates/header.php';
 $nim = $_GET['id'] ?? null;
 
 if (!$nim) {
+<<<<<<< HEAD
     header('Location: ../../Menu PIC/manajemenAkunMhs.php');
+=======
+    header('Location: ../../manajemenAkunMhs.php');
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     exit;
 }
 
-$showModal = false; // Initialize the modal visibility variable
+$showModal = false; 
 
 $query = "SELECT * FROM Mahasiswa WHERE nim = ?";
 $stmt = sqlsrv_query($conn, $query, [$nim]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
+<<<<<<< HEAD
 if (!$data) {
     header('Location: ../../Menu PIC/manajemenAkunMhs.php');
     exit;
@@ -29,22 +34,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($updateStmt) {
         $showModal = true; // Set to true to show the modal
         $stmt = sqlsrv_query($conn, $query, [$nim]); // Re-run original query
+=======
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nim = $_POST['nim']; 
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $jenisRole = $_POST['jenisRole'];
+    $kataSandi = $_POST['kataSandi'];
+
+    if (!empty($kataSandi)) {
+        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE nim = ?";
+        $params_update = [$nama, $email, $jenisRole, $kataSandi, $nim]; 
+    } else {
+        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ? WHERE nim = ?";
+        $params_update = [$nama, $email, $jenisRole, $nim]; 
+    }
+
+    $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
+
+    if ($stmt_update) {
+        $showModal = true;
+        $stmt = sqlsrv_query($conn, $query, [$nim]);
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
-        $error = "Gagal mengubah data akun. Error: " . print_r(sqlsrv_errors(), true); // More detailed error
+        $error = "Gagal mengubah data akun.";
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error_item) {
+                $error .= "<br>SQLSTATE: " . $error_item['SQLSTATE'] . " Code: " . $error_item['code'] . " Message: " . $error_item['message'];
+            }
+        }
     }
 }
 
-
 include '../../templates/sidebar.php';
 ?>
+<<<<<<< HEAD
+=======
+
+<!-- Content Area -->
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Akun</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Akun Mahasiswa</li>
             </ol>
         </nav>
     </div>
@@ -63,7 +99,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Edit Akun</span>
+                        <span class="fw-semibold">Edit Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -74,35 +110,80 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="namaMhs" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" id="namaMhs" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>" disabled>
-                                    <input type="hidden" name="namaMhs" value="<?= htmlspecialchars($data['namaMhs']) ?>">
+                                    <label for="nama" class="form-label">Nama Lengkap</label>
+                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>" disabled>
+                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                    <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
-                                    <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
-                                </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                            </div>
-                            <div class="mb-2">
-                                <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
-                                    <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
-                                </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                                <div class="d-flex justify-content-between mt-4">
-                                    <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>" disabled>
+                                    <input type="hidden" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
+                                <div class="col-md-6 mb-2">
+                                    <label for="jenisRole" class="form-label">Jenis Role</label>
+                                    <select class="form-select" id="jenisRole" name="jenisRole" disabled>
+                                        <!-- <option value="" disabled selected>Pilih Role</option> -->
+                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
+                                        <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
+                                        <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
+                                    </select>
+                                    <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                        <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
+                                        <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
+                                    </label>
+                                    <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
+                                        <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
+                                        <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
+                                    </label>
+                                    <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                    </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
+=======
+
+        <?php if (isset($showModal)) : ?>
+            <script>
+                let modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+            </script>
+        <?php endif; ?>
+
+        <!-- Modal Berhasil -->
+        <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Data akun berhasil diubah.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 </main>
+<!-- End Edit Akun Mahasiswa -->
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -144,8 +225,12 @@ include '../../templates/sidebar.php';
 </script>
 
 
+<<<<<<< HEAD
 <?php
 
 include '../../templates/footer.php';
 
 ?>
+=======
+<?php include '../../templates/footer.php'; ?>
+>>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
