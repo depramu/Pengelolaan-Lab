@@ -66,13 +66,13 @@ include '../../templates/sidebar.php';
                         if ($statusPeminjaman == 'Selesai') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
-                        } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
+                        } elseif ($statusPeminjaman == 'Sedang dipinjam') {
                             $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Sedang Dipinjam';
                         } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Menunggu Pengecekan oleh PIC';
-                        } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
+                        } elseif ($statusPeminjaman == 'Menunggu approval') {
                             $iconSrc = BASE_URL . '/icon/jamAbu.svg';
                             $altText = 'Menunggu Persetujuan';
                         } elseif ($statusPeminjaman == 'Ditolak') {
