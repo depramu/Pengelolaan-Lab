@@ -76,11 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             case 'PIC Aset':
             case 'KA UPT':
-<<<<<<< HEAD
-                $expectedRole = ($role === 'kA') ? 'PIC Aset' : 'KA UPT';
-=======
                 $expectedRole = ($role === 'PIC Aset') ? 'PIC Aset' : 'KA UPT';
->>>>>>> 06d633caaa777a2428915f2360896e289b39ac94
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
