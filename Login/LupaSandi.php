@@ -1,85 +1,37 @@
 <?php
 session_start();
-include '../koneksi.php';
-
 $error_message = '';
 
-$_SESSION['noHP'] = "Nomor tidak tersedia";
-
-if (isset($conn)) {
-    $query_pic_details = "SELECT TOP 1 noHP FROM Karyawan WHERE jenisRole = 'PIC Aset' ORDER BY npk ASC";
-    $stmt_pic_details = sqlsrv_query($conn, $query_pic_details);
-
-    if ($stmt_pic_details) {
-        $row_pic_details = sqlsrv_fetch_array($stmt_pic_details, SQLSRV_FETCH_ASSOC);
-        if ($row_pic_details && !empty($row_pic_details['noHP'])) {
-            $_SESSION['noHP'] = htmlspecialchars($row_pic_details['noHP']);
-        }
-        sqlsrv_free_stmt($stmt_pic_details);
-    } else {
-        $error_message = 'Terjadi kesalahan pada sistem. Coba lagi nanti.';
-    }
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $npk = $_POST['npk'];
-    $kataSandi = $_POST['kataSandi'];
+    $email = $_POST['email'] ?? '';
+    $namaLengkap = $_POST['namaLengkap'] ?? '';
 
-    if (empty($npk) || empty($kataSandi)) {
-        $error_message = 'NPK dan Kata Sandi tidak boleh kosong.';
+    if (empty($email) || empty($namaLengkap)) {
+        // Changed error message to match the screenshot
+        $error_message = 'Kolom tidak boleh kosong.';
     } else {
-        $query = "SELECT npk, kataSandi, namaKry, jenisRole FROM Karyawan WHERE npk = ?";
-        $params = [$npk];
-        $stmt = sqlsrv_query($conn, $query, $params);
-
-        if ($stmt === false) {
-            $error_message = 'Terjadi kesalahan pada sistem. Coba lagi nanti.';
-        } else {
-            $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-
-            if ($row) {
-                if ($kataSandi === $row['kataSandi']) {
-                    if (isset($row['jenisRole']) && $row['jenisRole'] === 'PIC Aset') {
-                        $_SESSION['user_npk'] = $row['npk'];
-                        $_SESSION['user_nama'] = $row['namaKry'];
-                        $_SESSION['user_role'] = $row['jenisRole'];
-
-                        header('Location: ../Menu PIC/dashboardPIC.php');
-                        exit;
-                    } else {
-                        $error_message = 'Anda tidak memiliki hak akses sebagai PIC Aset.';
-                    }
-                } else {
-                    $error_message = 'NPK atau Kata Sandi salah.';
-                }
-            } else {
-                $error_message = 'NPK atau Kata Sandi salah.';
-            }
-        }
-        if (isset($stmt)) {
-            sqlsrv_free_stmt($stmt);
-        }
+        $_SESSION['reset_email'] = $email;
+        $_SESSION['reset_nama'] = $namaLengkap;
+        // This message will not be shown if validation fails, but keeping it for successful submission logic
+        $error_message = 'Permintaan reset kata sandi telah dikirim.';
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
+<!DOCTYPE html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupa Kata Sandi - Sistem Pengelolaan Laboratorium</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body,
-        html {
+        body, html {
             height: 100%;
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: #f0f2f5;
-            /* Latar belakang abu-abu muda seperti umum */
         }
 
         .container-login {
@@ -124,7 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         .login-right {
             background: #065ba6;
-            /* Biru yang lebih mendekati gambar */
             flex-basis: 50%;
             display: flex;
             align-items: center;
@@ -136,25 +87,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .login-form-container {
             width: 100%;
             max-width: 380px;
-            /* Lebar form */
         }
 
         .login-form-title {
             color: #fff;
-            font-size: 2.2rem;
-            /* Ukuran font "Login" */
-            font-weight: 600;
-            margin-bottom: 35px;
+            font-size: 1.2rem; /* Ukuran lebih kecil */
+            font-weight: 500;
+            margin-bottom: 20px;
             text-align: center;
         }
 
         .form-label {
             color: #e0e0e0;
-            /* Warna label NPK dan Kata Sandi */
             font-size: 0.9rem;
             margin-bottom: 8px;
             display: block;
-            /* Agar margin-bottom bekerja */
         }
 
         .input-group {
@@ -165,20 +112,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #fff;
             border: none;
             border-radius: 8px 0 0 8px;
-            /* Sudut kiri ikon */
             padding: 0 15px;
             color: #6c757d;
         }
 
-        .input-group-text i {
-            font-size: 1.2rem;
+        .input-group-text img {
+            width: 20px;
+            height: 20px;
         }
 
         .form-control {
             background-color: #fff;
             border: none;
             border-radius: 0 8px 8px 0;
-            /* Sudut kanan input */
             height: 50px;
             padding-left: 15px;
             font-size: 1rem;
@@ -187,78 +133,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         .form-control:focus {
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-            /* Shadow biru saat fokus */
             background-color: #fff;
             border: none;
         }
 
-        .forgot-link {
-            color: #bfe4ff;
-            /* Warna link "Lupa Kata Sandi?" */
+        .btn-login-submit, .btn-back {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 0;
             font-size: 0.9rem;
-            text-align: right;
-            display: block;
-            margin-top: -10px;
-            /* Tarik sedikit ke atas */
-            margin-bottom: 30px;
-            text-decoration: none;
-        }
-
-        .forgot-link:hover {
-            color: #fff;
-            text-decoration: underline;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s ease;
         }
 
         .btn-login-submit {
             background-color: #28a745;
-            /* Hijau untuk tombol Masuk */
             color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            width: 180px;
-            /* Lebar tombol tidak penuh */
-            display: block;
-            margin: 0 auto;
-            /* Tombol di tengah */
-            transition: background-color 0.3s ease;
         }
 
         .btn-login-submit:hover {
             background-color: #218838;
-            /* Hijau lebih gelap saat hover */
         }
 
+        .btn-back {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        /* Custom style for the error message to match the screenshot */
         .alert-danger {
             font-size: 0.9rem;
             padding: 10px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 992px) {
-            .login-left {
-                flex-basis: 50%;
-                padding: 30px 40px;
-            }
-
-            .login-right {
-                flex-basis: 50%;
-                padding: 30px;
-            }
-
-            .login-title {
-                font-size: 2.2rem;
-            }
-
-            .login-illustration {
-                width: 320px;
-            }
-
-            .login-form-title {
-                font-size: 2rem;
-            }
+            background-color: #f8d7da; /* Light red background */
+            color: #721c24; /* Dark red text */
+            border-color: #f5c6cb; /* Red border */
+            border-radius: 0; /* Remove border-radius */
+            margin-bottom: 20px; /* Add some margin below */
+            text-align: left; /* Align text to left */
         }
 
         @media (max-width: 768px) {
@@ -266,37 +182,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 flex-direction: column;
             }
 
-            .login-left,
-            .login-right {
-                flex-basis: auto;
-                /* Reset basis */
+            .login-left, .login-right {
                 width: 100%;
+                padding: 20px;
             }
 
             .login-left {
-                padding: 40px 20px;
-                align-items: center;
-                /* Tengahkan item di mobile */
                 text-align: center;
-                /* Judul juga tengah */
                 height: auto;
-                /* Tinggi otomatis */
                 min-height: 300px;
-                /* Minimal tinggi untuk konten */
-            }
-
-            .login-title {
-                text-align: center;
-            }
-
-            .login-illustration {
-                width: 280px;
-                /* Ilustrasi lebih kecil di mobile */
-                margin-top: 20px;
             }
 
             .login-right {
-                padding: 30px 20px;
                 min-height: 350px;
             }
 
@@ -306,54 +203,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
-
 <body>
-    <div class="container-login">
-        <div class="login-left">
-            <div class="w-100 mb-4">
-                <img src="../icon/logo-astratech.png" alt="Logo Astra" style="width:60px; margin-bottom:12px; display:block;">
-            </div>
-            <div class="d-flex align-items-center justify-content-center w-100 mb-2" style="gap: 32px;">
-                <img src="../icon/atoyRole.png" alt="Ilustrasi" class="role-illustration">
-                <div class="d-flex flex-column align-items-start">
-                    <div class="role-title text-start">Sistem<br>Pengelolaan<br>Laboratorium</div>
-                    <img src="../icon/iconRole.png" alt="Icon Role" class="icon-role-img">
-                </div>
-            </div>
+<div class="container-login">
+    <div class="login-left">
+        <div class="w-100 mb-4">
+            <img src="../icon/logo-astratech.png" alt="Logo Astra" style="width:60px; margin-bottom:12px; display:block;">
         </div>
-        <div class="login-right">
-            <div class="login-form-container">
-                <h3 class="login-form-title fs-3">Hubungi PIC Aset untuk mengubah kata sandi</h3>
-                <form action="loginPIC.php" method="POST">
-                    <?php if (!empty($error_message)): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?php echo htmlspecialchars($error_message); ?>
-                        </div>
-                    <?php endif; ?>
-                    <div class="mb-2">
-                        <div class="input-group ">
-                            <span class="input-group-text"><img src="../icon/icon wa.svg" alt="Info Kontak"></span>
-                            <span class="form-control " style="color: #065ba6; background-color:rgb(255, 255, 255); opacity: 1; display: flex; align-items: center; font-size: 1.1rem;"><?php echo $_SESSION['noHP']; ?></span>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <h3 class="text-center fs-5" style="color: #fff;">atau</h3>
-                    </div>
-                    <div class="mb-2">
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/location.svg" alt="Info Kata Sandi"></span>
-                            <span class="form-control text-center" style="color: #065ba6; background-color:rgb(255, 255, 255); opacity: 1; display: flex; align-items: center; font-size: 1rem; line-height: 1">Ruangan Tenaga Pendidik 2,<br>Lantai 1, AstraTech</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center mt-5">
-                        <button type="button" class="btn btn-success w-75 p-2" onclick="window.location.href='../index.php'">Kembali</button>
-                    </div>
-                </form>
+        <div class="d-flex align-items-center justify-content-center w-100 mb-2" style="gap: 32px;">
+            <img src="../icon/atoyRole.png" alt="Ilustrasi" class="role-illustration">
+            <div class="d-flex flex-column align-items-start">
+                <div class="role-title text-start">Sistem<br>Pengelolaan<br>Laboratorium</div>
+                <img src="../icon/iconRole.png" alt="Icon Role" class="icon-role-img">
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <div class="login-right">
+        <div class="login-form-container">
+            <h3 class="login-form-title">Silahkan Masukkan Email dan Nama Lengkap</h3>
+            <form method="POST" action="">
+                <?php if (!empty($error_message) && $error_message === 'Kolom tidak boleh kosong.'): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                <?php endif; ?>
 
+                <div class="input-group">
+                    <span class="input-group-text"><img src="../icon/user-round.svg" alt="Nama Lengkap"></span>
+                    <input type="text" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-text"><img src="../icon/mail.svg" alt="Email"></span>
+                    <input type="email" name="email" class="form-control" placeholder="Masukkan Email" required>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4 gap-3">
+                    <button type="button" class="btn btn-back">Kembali</button>
+                    <button type="submit" class="btn btn-login-submit">Kirim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelector('.btn-back').onclick = function () {
+        window.location.href = '../index.php';
+    };
+</script>
+</body>
 </html>

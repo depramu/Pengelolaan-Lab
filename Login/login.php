@@ -3,7 +3,6 @@ session_start();
 include '../koneksi.php';
 
 $error_message = '';
-// Ambil role dari $_GET['role'] (bukan 'jenisRole'), default 'Peminjam'
 $role = $_GET['role'] ?? 'Peminjam';
 
 // Tentukan judul dan label form berdasarkan peran
