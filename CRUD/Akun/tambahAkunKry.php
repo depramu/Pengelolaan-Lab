@@ -45,7 +45,7 @@ include '../../templates/sidebar.php';
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-
+            
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
@@ -148,59 +148,59 @@ include '../../templates/sidebar.php';
 
         if (npk === "") {
             npkError.textContent = '*Harus diisi';
-            npkError.style.display = 'block';
+            npkError.style.display = 'inline';
             valid = false;
         } else if (!/^\d+$/.test(npk)) {
             npkError.textContent = '*Harus berupa angka';
-            npkError.style.display = 'block';
+            npkError.style.display = 'inline';
             valid = false;
         }
 
         if (nama === "") {
             namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'block';
+            namaError.style.display = 'inline';
             valid = false;
         } else if (/\d/.test(nama)) {
             namaError.textContent = '*Harus berupa huruf';
-            namaError.style.display = 'block';
+            namaError.style.display = 'inline';
             valid = false;
         }
 
         if (email === "") {
             emailError.textContent = '*Harus diisi';
-            emailError.style.display = 'block';
+            emailError.style.display = 'inline';
             valid = false;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             emailError.textContent = '*Format email tidak valid';
-            emailError.style.display = 'block';
+            emailError.style.display = 'inline';
             valid = false;
         }
 
         // Role wajib diisi
         if (jenisRole === "") {
-            roleError.style.display = 'block';
+            roleError.style.display = 'inline';
             valid = false;
         }
 
         // Password wajib diisi dan minimal 8 karakter
         if (pass === "") {
-            passError.style.display = 'block';
+            passError.style.display = 'inline';
             valid = false;
         }
         if (pass.length > 0 && pass.length < 8) {
-            passLengthError.style.display = 'block';
+            passLengthError.style.display = 'inline';
             valid = false;
         }
 
         // Konfirmasi password wajib diisi
         if (conf === "") {
-            confPassError.style.display = 'block';
+            confPassError.style.display = 'inline';
             valid = false;
         }
 
         // Password dan konfirmasi harus sama
         if (pass !== "" && conf !== "" && pass !== conf) {
-            passMatchError.style.display = 'block';
+            passMatchError.style.display = 'inlinex';
             valid = false;
         }
 
