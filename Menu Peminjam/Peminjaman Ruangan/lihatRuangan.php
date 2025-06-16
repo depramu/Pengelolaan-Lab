@@ -55,7 +55,7 @@ include '../../templates/sidebar.php'
                 <?php
                 }
                 if (!$hasData) {
-                    echo '<tr><td colspan="5" class="text-center">Tidak ada barang yang tersedia</td></tr>';
+                    echo '<tr><td colspan="5" class="text-center">Tidak ada ruangan yang tersedia</td></tr>';
                 }
                 ?>
             </tbody>

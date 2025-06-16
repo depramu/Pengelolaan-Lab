@@ -128,35 +128,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-
-<<<<<<< HEAD
-=======
-        <?php if (isset($showModal)) : ?>
-            <script>
-                let modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            </script>
-        <?php endif; ?>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data akun berhasil diubah.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 
 </main>

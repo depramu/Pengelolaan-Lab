@@ -21,7 +21,7 @@ $idBarang = $_GET['idBarang'] ?? null;
 if (empty($idBarang)) {
     die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
 }
-
+    
 $namaBarang = '';
 $stokTersedia = 0;
 
@@ -95,8 +95,6 @@ include '../../templates/sidebar.php';
         color: #6c757d;
     }
 </style>
-
-<!-- Content Area -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
@@ -201,6 +199,7 @@ include '../../templates/sidebar.php';
         </div>
     </div>
 </main>
+
 <script>
     function changeStok(val) {
         let stokInput = document.getElementById('jumlahBrg');
@@ -253,3 +252,8 @@ include '../../templates/sidebar.php';
         }
     });
 </script>
+
+<?php
+include '../../templates/footer.php';
+
+?>
