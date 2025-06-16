@@ -72,15 +72,6 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
             <a href="<?= BASE_URL ?>/Menu PIC/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>"><img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan</a>
         </li>
     <?php
-    elseif ($role === 'KA UPT') :
-    ?>
-        <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php" class="nav-link <?= ($currentPage == 'dashboardKaUPT.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Dashboard</a>
-        </li>
-        <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu Ka UPT/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>"><img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan</a>
-        </li>
-    <?php
     elseif ($isPeminjam) :
         $isPeminjamanActive = in_array($currentPage, $submenuFiles['peminjaman']);
         $isRiwayatActive = in_array($currentPage, $submenuFiles['riwayat']);
@@ -141,6 +132,36 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
     .offcanvas .collapse .nav-link.active {
         background: #1d4ed8 !important;
         color: #fff !important;
+    }
+
+    .aksi-icon {
+        width: 30px; /* Sesuaikan ukuran ikon */
+        height: 30px; /* Sesuaikan ukuran ikon */
+        object-fit: contain; /* Pastikan gambar tidak terdistorsi */
+        vertical-align: middle; /* Pastikan ikon sejajar dengan konten lain jika ada */
+    }
+
+    /* Atur kontainer TD agar ikon bisa diatur dengan Flexbox */
+    .td-aksi {
+        display: flex; /* Menggunakan Flexbox untuk mengatur item di dalamnya */
+        align-items: center; /* Pusatkan ikon secara vertikal */
+        justify-content: center; /* Pusatkan ikon secara horizontal di dalam TD */
+        gap: 8px; /* Memberi jarak antar ikon, sesuaikan nilainya */
+        /* Atau bisa juga pakai padding-right pada elemen ikon */
+    }
+
+    /* Styling tambahan jika kamu ingin linknya jadi tombol atau ada hover effect */
+    .td-aksi a {
+        display: flex; /* Agar link juga bisa diatur flex */
+        align-items: center;
+        text-decoration: none; /* Hapus garis bawah pada link */
+        color: inherit; /* Warisi warna teks dari parent */
+    }
+
+    /* Optional: Hover effect untuk ikon aksi */
+    .td-aksi a:hover .aksi-icon {
+        transform: scale(1.1); /* Sedikit membesar saat di-hover */
+        transition: transform 0.2s ease-in-out; /* Animasi halus */
     }
 
     /* Offcanvas sidebar custom style for small screen */
