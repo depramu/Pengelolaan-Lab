@@ -1,3 +1,7 @@
+<?php 
+$showModal = false;
+?>
+
 </div>
 </div>
 
