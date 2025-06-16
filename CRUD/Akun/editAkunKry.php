@@ -8,14 +8,14 @@ if (!$npk) {
     exit;
 }
 
-$showModal = false; 
+$showModal = false;
 
 $query = "SELECT * FROM Karyawan WHERE npk = ?";
 $stmt = sqlsrv_query($conn, $query, [$npk]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $npk = $_POST['npk']; 
+    $npk = $_POST['npk'];
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
@@ -23,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!empty($kataSandi)) {
         $query_update = "UPDATE Karyawan SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE npk = ?";
-        $params_update = [$nama, $email, $jenisRole, $kataSandi, $npk]; 
+        $params_update = [$nama, $email, $jenisRole, $kataSandi, $npk];
     } else {
         $query_update = "UPDATE Karyawan SET nama = ?, email = ?, jenisRole = ? WHERE npk = ?";
-        $params_update = [$nama, $email, $jenisRole, $npk]; 
+        $params_update = [$nama, $email, $jenisRole, $npk];
     }
 
     $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
@@ -47,8 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-
-<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
@@ -60,8 +58,6 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-
-    <!-- Edit Akun Karyawan -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -81,30 +77,30 @@ include '../../templates/sidebar.php';
                             <div class="mb-2 row">
                                 <div class="col-md-6">
                                     <label for="npk" class="form-label">NPK</label>
-                                    <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
-                                    <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                    <div class="form-control-plaintext"><?= htmlspecialchars($npk) ?></div>
+                                    <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>" disabled>
-                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['nama']) ?></div>
+                                    <input type="hidden" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>" disabled>
-                                    <input type="hidden" name="email" value="<?= htmlspecialchars($data['email']) ?>">
+                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['email']) ?></div>
+                                    <input type="hidden" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label">Jenis Role</label>
-                                    <select class="form-select" id="jenisRole" name="jenisRole" disabled>
+                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['jenisRole']) ?></div>
+                                    <select class="form-select" id="jenisRole" name="jenisRole" hidden>
                                         <!-- <option value="" disabled selected>Pilih Role</option> -->
-                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
+                                        <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
                                         <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
                                         <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
                                     </select>
-                                    <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                 </div>
                                 <div class="mb-2">
                                     <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
