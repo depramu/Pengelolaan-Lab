@@ -111,15 +111,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-=======
-
-        <?php if (isset($showModal)) : ?>
-            <script>
-                let modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            </script>
-        <?php endif; ?>
 
         <!-- Modal Berhasil -->
         <div class="modal fade" id="successModal" tabindex="-1">
@@ -138,7 +129,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 </main>
 <!-- End Tambah Akun -->

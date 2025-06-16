@@ -35,12 +35,6 @@ include '../../templates/sidebar.php';
             </ol>
         </nav>
     </div>
-<<<<<<< HEAD
-=======
-
-
-    <!-- Tambah Akun -->
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -69,6 +63,7 @@ include '../../templates/sidebar.php';
                                         <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="nama" name="nama">
+                                    
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -112,15 +107,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-=======
-
-        <?php if (isset($showModal)) : ?>
-            <script>
-                let modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            </script>
-        <?php endif; ?>
 
         <!-- Modal Berhasil -->
         <div class="modal fade" id="successModal" tabindex="-1">
@@ -139,7 +125,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 </main>
 <!-- End Tambah Akun -->
