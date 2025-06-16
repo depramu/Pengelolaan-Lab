@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
-                $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
+                $query = "SELECT npk, kataSandi, namaKry, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt = sqlsrv_query($conn, $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 

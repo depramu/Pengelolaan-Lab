@@ -15,11 +15,7 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-<<<<<<< HEAD
-$query = "SELECT nim, namaMhs, jenisRole FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
-=======
 $query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
