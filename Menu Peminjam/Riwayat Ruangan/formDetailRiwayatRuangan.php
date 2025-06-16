@@ -1,4 +1,8 @@
 <?php
+$showSuccessModal = false;
+if (isset($_GET['upload']) && $_GET['upload'] == 'sukses') {
+    $showSuccessModal = true;
+}
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 
@@ -169,6 +173,22 @@ if (isset($_GET['idPeminjamanRuangan'])) {
             </div>
         </div>
     </div>
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Dokumentasi berhasil terkirim
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <?php
@@ -181,7 +201,7 @@ include '../../templates/footer.php';
         if (form) {
             form.addEventListener('submit', function(event) {
                 let isValid = true;
-                const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.heic)$/i;
+                const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i;
 
                 const validateFile = (inputId, errorId) => {
                     const fileInput = document.getElementById(inputId);
@@ -193,7 +213,7 @@ include '../../templates/footer.php';
                             errorSpan.textContent = 'File wajib diupload.';
                             isValid = false;
                         } else if (!allowedExtensions.exec(fileInput.value)) {
-                            errorSpan.textContent = 'Format file harus JPG, PNG, GIF, atau HEIC.';
+                            errorSpan.textContent = 'Format file harus JPG, JPEG, PNG, HEIF, atau HEIC.';
                             fileInput.value = '';
                             isValid = false;
                         }
@@ -208,5 +228,11 @@ include '../../templates/footer.php';
                 }
             });
         }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        <?php if ($showSuccessModal) : ?>
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+        <?php endif; ?>
     });
 </script>

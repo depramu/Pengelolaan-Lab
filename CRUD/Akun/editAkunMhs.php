@@ -4,11 +4,7 @@ include '../../templates/header.php';
 $nim = $_GET['id'] ?? null;
 
 if (!$nim) {
-<<<<<<< HEAD
-    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
-=======
     header('Location: ../../manajemenAkunMhs.php');
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     exit;
 }
 
@@ -18,23 +14,6 @@ $query = "SELECT * FROM Mahasiswa WHERE nim = ?";
 $stmt = sqlsrv_query($conn, $query, [$nim]);
 $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-<<<<<<< HEAD
-if (!$data) {
-    header('Location: ../../Menu PIC/manajemenAkunMhs.php');
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaMhs = $_POST['namaMhs']; // Should also be from $data if disabled, or ensure it's submitted if editable
-    $kataSandi = $_POST['kataSandi'];
-    $updateQuery = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
-    $params = [$kataSandi, $nim];
-    $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
-
-    if ($updateStmt) {
-        $showModal = true; // Set to true to show the modal
-        $stmt = sqlsrv_query($conn, $query, [$nim]); // Re-run original query
-=======
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nim = $_POST['nim']; 
     $nama = $_POST['nama'];
@@ -55,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt_update) {
         $showModal = true;
         $stmt = sqlsrv_query($conn, $query, [$nim]);
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
         $error = "Gagal mengubah data akun.";
@@ -69,11 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-<<<<<<< HEAD
-=======
 
 <!-- Content Area -->
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
@@ -153,34 +128,6 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-=======
-
-        <?php if (isset($showModal)) : ?>
-            <script>
-                let modal = new bootstrap.Modal(document.getElementById('successModal'));
-                modal.show();
-            </script>
-        <?php endif; ?>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data akun berhasil diubah.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3
     </div>
 </main>
 <!-- End Edit Akun Mahasiswa -->
@@ -225,12 +172,4 @@ include '../../templates/sidebar.php';
 </script>
 
 
-<<<<<<< HEAD
-<?php
-
-include '../../templates/footer.php';
-
-?>
-=======
 <?php include '../../templates/footer.php'; ?>
->>>>>>> 9bc69401f031569cbc533de5d9a01bb0348554f3

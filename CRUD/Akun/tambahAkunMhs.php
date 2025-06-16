@@ -63,7 +63,7 @@ include '../../templates/sidebar.php';
                                         <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="nama" name="nama">
-                                    
+
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -103,24 +103,6 @@ include '../../templates/sidebar.php';
                                 <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu PIC/manajemenAkunMhs.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Data akun berhasil ditambahkan.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-primary">OK</a>
                     </div>
                 </div>
             </div>
