@@ -15,7 +15,7 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT nim, namaMhs FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
@@ -44,6 +44,8 @@ include '../templates/sidebar.php'
                 <tr>
                     <th>NIM</th>
                     <th>Nama Lengkap</th>
+                    <th>Email</th>
+                    <th>Role</th>
                     <th class="text-center">Aksi</th>
                 </tr>
             </thead>
@@ -55,7 +57,9 @@ include '../templates/sidebar.php'
                 ?>
                     <tr>
                         <td><?= $row['nim'] ?></td>
-                        <td><?= $row['namaMhs'] ?></td>
+                        <td><?= $row['nama'] ?></td>
+                        <td><?= $row['email'] ?></td>
+                        <td><?= $row['jenisRole'] ?></td>
                         <td class="text-center">
                             <a href="../CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="../icon/edit.svg" alt="editAkun" style=" width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
                             <a href="../CRUD/Akun/hapusAkunMhs.php?id=<?= $row['nim'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="../icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
@@ -72,7 +76,7 @@ include '../templates/sidebar.php'
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['namaMhs']) ?></strong>"?
+                                                Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -135,6 +139,6 @@ include '../templates/sidebar.php'
 
 <?php
 
-include'../templates/footer.php';
+include '../templates/footer.php';
 
 ?>
