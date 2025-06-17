@@ -54,7 +54,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php">Riwayat Peminjaman Ruangan</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman</li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman Ruangan</li>
             </ol>
         </nav>
     </div>
@@ -64,7 +64,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Detail Pengajuan Peminjaman Ruangan</span>
+                        <span class="fw-semibold">Detail Peminjaman Ruangan</span>
                     </div>
                     <div class="card-body">
                         <?php if ($error_message) : ?>
@@ -79,35 +79,42 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">ID Peminjaman</label>
-                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">NIM / NPK</label>
-                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Ruangan</label>
-                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Tanggal Peminjaman</label>
-                                            <input type="text" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?></div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Waktu Peminjaman</label>
-                                            <input type="text" class="form-control" value="<?= ($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Status Peminjaman</label>
-                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Alasan Peminjaman</label>
-                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></div>
+                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
                                         </div>
                                     </div>
                                 </div>

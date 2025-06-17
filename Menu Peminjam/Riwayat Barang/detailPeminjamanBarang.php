@@ -3,9 +3,6 @@ include '../../templates/header.php';
 $idPeminjamanBrg = $_GET['id'] ?? '';
 $data = [];
 
-$showRejectedModal = false;
-$showModal = false;
-
 if (!empty($idPeminjamanBrg)) {
     $_SESSION['idPeminjamanBrg'] = $idPeminjamanBrg;
 
@@ -27,21 +24,7 @@ $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
 $currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
 
-// Perbaikan: Proses persetujuan
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $query = "UPDATE Peminjaman_Barang 
-                    SET statusPeminjaman = 'Sedang Dipinjam'
-                    WHERE idPeminjamanBrg = ?";
-    $params = array($idPeminjamanBrg);
-    $stmt = sqlsrv_query($conn, $query, $params);
 
-    if ($stmt) {
-        $showModal = true;
-    } else {
-        $error = "Gagal melakukan pengajuan barang.";
-        exit;
-    }
-}
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
@@ -49,8 +32,8 @@ include '../../templates/sidebar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php">Peminjaman Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Pengajuan Barang</li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php">Riwayat Barang</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman Barang</li>
             </ol>
         </nav>
     </div>
@@ -66,46 +49,50 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idBarang" class="form-label">ID Barang</label>
-                                        <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
+                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="tglPeminjamanBrg" class="form-label">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="jumlahBrg" class="form-label">Jumlah Barang</label>
-                                        <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idPeminjamanBrgDisplay" class="form-label">ID Peminjaman Barang</label>
-                                        <input type="text" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="nim" class="form-label">NIM</label>
-                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
+                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="npk" class="form-label">NPK</label>
-                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
+                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     </div>
                                 </div>
                             </div>
                             <!-- Alasan Peminjaman -->
                             <div class="mb-2">
                                 <label for="alasanPeminjamanBrg" class="form-label">Alasan Peminjaman</label>
-                                <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanBrg) ?></div>
+                                <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" hidden><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
                             </div>
 
                             <div class="d-flex justify-content-start gap-2 mt-4">
-                                <!-- TOMBOL AKSI -->
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php" class="btn btn-secondary">Kembali</a>
                                 </div>

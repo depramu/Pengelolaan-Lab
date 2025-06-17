@@ -173,13 +173,14 @@
     });
 </script>
 
-<?php if ($showModal) : ?>
+<?php if (isset($showModal) && $showModal) : ?>
     <script>
         window.addEventListener('load', function() {
             let modal = new bootstrap.Modal(document.getElementById('successModal'));
             modal.show();
         });
     </script>
+    
 <?php endif; ?>
 
 </body>
