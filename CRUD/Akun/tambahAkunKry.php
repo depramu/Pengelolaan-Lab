@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $cekNpk = sqlsrv_query($conn, "SELECT npk FROM Karyawan WHERE npk = ?", [$npk]);
     if ($cekNpk && sqlsrv_has_rows($cekNpk)) {
-        $npkError = "*npk sudah terdaftar";
+        $npkError = "*NPK sudah terdaftar";
     } else {
         $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
         $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
@@ -40,9 +40,6 @@ include '../../templates/sidebar.php';
             </ol>
         </nav>
     </div>
-
-
-    <!-- Tambah Akun -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -63,14 +60,17 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <label for="npk" class="form-label d-flex align-items-center">NPK
                                         <span id="npkError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($npkError)): ?>
+                                            <span class="text-danger ms-2" style="font-size:0.95em;"><?= $npkError ?></span>
+                                        <?php endif; ?>
                                     </label>
-                                    <input type="text" class="form-control" id="npk" name="npk">
+                                    <input type="text" class="form-control" id="npk" name="npk" value="<?= isset($npk) ? htmlspecialchars($npk) : '' ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label d-flex align-items-center">Nama Lengkap
                                         <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="nama" name="nama">
+                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -78,33 +78,31 @@ include '../../templates/sidebar.php';
                                     <label for="email" class="form-label d-flex align-items-center">Email
                                         <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="email" name="email">
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label d-flex align-items-center">Role
-                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <select class="form-select" id="jenisRole" name="jenisRole">
                                         <option value="" disabled selected>Pilih Role</option>
-                                        <option value="KA UPT">KA UPT</option>
-                                        <option value="PIC Aset">PIC Aset</option>
-                                        <option value="Peminjam">Peminjam</option>
+                                        <option value="KA UPT" <?= (isset($jenisRole) && $jenisRole == "KA UPT") ? "selected" : "" ?>>KA UPT</option>
+                                        <option value="PIC Aset" <?= (isset($jenisRole) && $jenisRole == "PIC Aset") ? "selected" : "" ?>>PIC Aset</option>
+                                        <option value="Peminjam" <?= (isset($jenisRole) && $jenisRole == "Peminjam") ? "selected" : "" ?>>Peminjam</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                    <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minpkal 8 karakter</span>
-                                    <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi">
+                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span id="passMatchError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Tidak sesuai</span>
-                                    <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi">
+                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>">
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
@@ -120,6 +118,7 @@ include '../../templates/sidebar.php';
 </main>
 <!-- End Tambah Akun -->
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -139,6 +138,13 @@ include '../../templates/sidebar.php';
         let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
         let valid = true;
+
+        // Reset error messages
+        npkError.style.display = 'none';
+        namaError.style.display = 'none';
+        emailError.style.display = 'none';
+        roleError.style.display = 'none';
+        passError.style.display = 'none';
 
         if (npk === "") {
             npkError.textContent = '*Harus diisi';
@@ -180,12 +186,12 @@ include '../../templates/sidebar.php';
             passError.textContent = '*Harus diisi';
             passError.style.display = 'inline';
             valid = false;
-        } else if (pass.length > 0 && pass.length < 8) {   
+        } else if (pass.length > 0 && pass.length < 8) {
             passError.textContent = '*Minimal 8 karakter';
             passError.style.display = 'inline';
             valid = false;
         } else if (!passPattern.test(pass)) {
-            passError.textContent = '*Minimal 8 karakter, harus mengandung huruf dan angka';
+            passError.textContent = '*Harus mengandung huruf dan angka';
             passError.style.display = 'inline';
             valid = false;
         }
