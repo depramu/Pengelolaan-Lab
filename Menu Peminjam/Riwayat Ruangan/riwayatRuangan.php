@@ -61,11 +61,11 @@ include '../../templates/sidebar.php';
 
                         $linkDetail = "formDetailRiwayatRuangan.php?idPeminjamanRuangan=" . $idPeminjaman;
 
-                        if ($statusPeminjaman == 'Selesai') {
+                        if ($statusPeminjaman == 'Telah Dikembalikan') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
                         } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+                            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Sedang Dipinjam';
                         } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
