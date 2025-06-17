@@ -11,14 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
-    $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
-    $stmt = sqlsrv_query($conn, $query, $params);
-
-    if ($stmt) {
-        $showModal = true;
+    $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
+    if ($cekNim && sqlsrv_has_rows($cekNim)) {
+        $nimError = "*NIM sudah terdaftar";
     } else {
-        $error = "Gagal menambahkan akun.";
+        $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+        $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
+        $stmt = sqlsrv_query($conn, $query, $params);
+
+        if ($stmt) {
+            $showModal = true;
+        } else {
+            $error = "Gagal menambahkan akun.";
+        }
     }
 }
 include '../../templates/sidebar.php';
@@ -55,15 +60,17 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <label for="nim" class="form-label d-flex align-items-center">NIM
                                         <span id="nimError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($nimError)): ?>
+                                            <span class="text-danger ms-2" style="font-size:0.95em;"><?= $nimError ?></span>
+                                        <?php endif; ?>
                                     </label>
-                                    <input type="text" class="form-control" id="nim" name="nim">
+                                    <input type="text" class="form-control" id="nim" name="nim" value="<?= isset($nim) ? htmlspecialchars($nim) : '' ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label d-flex align-items-center">Nama Lengkap
                                         <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="nama" name="nama">
-
+                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -71,11 +78,11 @@ include '../../templates/sidebar.php';
                                     <label for="email" class="form-label d-flex align-items-center">Email
                                         <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="email" name="email">
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label d-flex align-items-center">Role
-                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <select class="form-select" id="jenisRole" name="jenisRole">
                                         <option value="" disabled>Pilih Role</option>
@@ -85,17 +92,15 @@ include '../../templates/sidebar.php';
                             </div>
                             <div class="mb-3">
                                 <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                    <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minimal 8 karakter</span>
-                                    <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi">
+                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span id="passMatchError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Tidak sesuai</span>
-                                    <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
+                                    <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi">
+                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>">
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
@@ -127,21 +132,10 @@ include '../../templates/sidebar.php';
         let emailError = document.getElementById('emailError');
         let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
-        let passMatchError = document.getElementById('passMatchError');
         let confPassError = document.getElementById('confPassError');
-        let passLengthError = document.getElementById('passLengthError');
+        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
         let valid = true;
-
-        // Reset error
-        nimError.style.display = 'none';
-        namaError.style.display = 'none';
-        emailError.style.display = 'none';
-        passError.style.display = 'none';
-        confPassError.style.display = 'none';
-        passMatchError.style.display = 'none';
-        passLengthError.style.display = 'none';
-        roleError.style.display = 'none';
 
         if (nim === "") {
             nimError.textContent = '*Harus diisi';
@@ -173,31 +167,33 @@ include '../../templates/sidebar.php';
             valid = false;
         }
 
-        // Role wajib diisi
         if (jenisRole === "") {
+            roleError.textContent = '*Harus diisi';
             roleError.style.display = 'inline';
             valid = false;
         }
 
-        // Password wajib diisi dan minimal 8 karakter
         if (pass === "") {
+            passError.textContent = '*Harus diisi';
+            passError.style.display = 'inline';
+            valid = false;
+        } else if (pass.length > 0 && pass.length < 8) {
+            passError.textContent = '*Minimal 8 karakter';
+            passError.style.display = 'inline';
+            valid = false;
+        } else if (!passPattern.test(pass)) {
+            passError.textContent = '*Harus mengandung huruf kapital dan angka';
             passError.style.display = 'inline';
             valid = false;
         }
-        if (pass.length > 0 && pass.length < 8) {
-            passLengthError.style.display = 'inline';
-            valid = false;
-        }
 
-        // Konfirmasi password wajib diisi
         if (conf === "") {
+            confPassError.textContent = '*Harus diisi';
             confPassError.style.display = 'inline';
             valid = false;
-        }
-
-        // Password dan konfirmasi harus sama
-        if (pass !== "" && conf !== "" && pass !== conf) {
-            passMatchError.style.display = 'inline';
+        } else if (pass !== "" && conf !== "" && pass !== conf) {
+            confPassError.textContent = '*Tidak sesuai';
+            confPassError.style.display = 'inline';
             valid = false;
         }
 

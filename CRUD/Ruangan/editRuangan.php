@@ -57,12 +57,12 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-
+ <!-- Edit Ruangan -->
     <div class="container mt-4">
         <?php if (!empty($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php echo htmlspecialchars($error); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
             </div>
         <?php endif; ?>
 
