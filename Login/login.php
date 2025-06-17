@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 // Ambil user berdasarkan NPK
                 $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
-                $stmt = sqlsrv_query($conn, $query, [$identifier]);
+                $stmt = sqlsrv_query($conn,  $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
                 if ($row) {
@@ -319,25 +319,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     <?php endif; ?>
                     <div class="mb-3">
-                        <label for="identifier" class="form-label"><?php echo htmlspecialchars($identifierLabel); ?></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
-                            <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
-                        </div>
+                        <label for="identifier" class="form-label d-flex align-items-start">
+                            <span><?php echo htmlspecialchars($identifierLabel); ?></span>
+                                  <span id="identifier-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
+
+                        </label>
+                    <div class="input-group">
+                    <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
+                    <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
                     </div>
+                    </div>
+
                     <div class="mb-2">
-                        <label for="kataSandi" class="form-label">Kata Sandi</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
-                            <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
-                        </div>
+                    <label for="kataSandi" class="form-label d-flex align-items-start">
+                        <span>Kata Sandi</span>
+                            <span id="password-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
+                        <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
+                         </div>
                     </div>
+
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
                     <button type="submit" class="btn-login-submit w-75">Masuk</button>
                 </form>
             </div>
         </div>
     </div>
-</body>
+    <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const id = document.getElementById('identifier').value.trim();
+        const pass = document.getElementById('kataSandi').value.trim();
+        let valid = true;
 
+        // Reset error messages
+        const idError = document.getElementById('identifier-error');
+        const passError = document.getElementById('password-error');
+        idError.textContent = '';
+        passError.textContent = '';
+
+        if (id === '' && pass === '') {
+            idError.textContent = '*Kolom ini tidak boleh kosong.*';
+            passError.textContent = '*Kolom ini tidak boleh kosong.*';
+            valid = false;
+        } else if (id === '') {
+            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
+            valid = false;
+        } else if (pass === '') {
+            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault(); // Gagalkan submit
+        }
+    });
+</script>
+</body>
+ 
 </html>

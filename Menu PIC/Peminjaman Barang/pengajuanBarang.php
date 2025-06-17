@@ -22,6 +22,22 @@ if (!empty($idPeminjamanBrg)) {
     }
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
+    $query = "UPDATE Peminjaman_Barang 
+                SET statusPeminjaman = 'Disetujui'
+                WHERE idPeminjamanBrg = ?";
+    $params = array($idPeminjamanBrg);
+    $stmt = sqlsrv_query($conn, $query, $params);
+
+    if ($stmt) {
+        $showModal = true; // Tampilkan modal sukses
+    } else {
+        $error = "Gagal menyetujui peminjaman barang.";
+        exit;
+    }
+}
+
+
 
 $idBarang = $data['idBarang'] ?? '';
 $nim = $data['nim'] ?? '';
@@ -30,22 +46,7 @@ $npk = $data['npk'] ?? '';
 $tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
 $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
-$currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $query = "UPDATE Peminjaman_Barang 
-                    SET statusPeminjaman = 'Sedang Dipinjam'
-                    WHERE idPeminjamanBrg = ?";
-    $params = array($idPeminjamanBrg);
-    $stmt = sqlsrv_query($conn, $query, $params);
-
-    if ($stmt) {
-        $showModal = true;
-    } else {
-        $error = "Gagal melakukan pengajuan barang.";
-        exit;
-    }
-}
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
@@ -72,49 +73,50 @@ include '../../templates/sidebar.php';
                             <div class="row">
                                 <!-- Kolom Kiri -->
                                 <div class="col-md-6">
-
                                     <div class="mb-2">
                                         <label class="form-label">ID Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($idBarang) ?></div>
                                         <input type="hidden" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
                                     </div>
                                     <div class="mb-2">
-                                        <label class="form-label">Tanggal Peminjaman Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
+                                        <label class="form-label">Tanggal Peminjaman</label>
                                         <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Jumlah Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($jumlahBrg) ?></div>
                                         <input type="hidden" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Alasan Peminjaman</label>
-                                        <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
+                                        <div class="form-control-plaintext">
+                                            <?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <!-- Kolom Kanan -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label">ID Peminjaman Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                         <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">Nama Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($namaBarang) ?></div>
                                         <input type="hidden" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label">NIM</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($nim) ?></div>
                                         <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
                                     </div>
+
                                     <div class="mb-2">
                                         <label class="form-label">NPK</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($npk) ?></div>
                                         <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($npk) ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -131,6 +133,7 @@ include '../../templates/sidebar.php';
         </div>
     </div>
 </main>
+
 
 <?php
 include '../../templates/footer.php';
