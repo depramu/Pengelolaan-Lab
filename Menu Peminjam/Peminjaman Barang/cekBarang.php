@@ -68,13 +68,13 @@ $stmt = sqlsrv_query($conn, $query);
     }
 
     function updateDays() {
-        const bulan = parseInt(document.getElementById('tglBulan').value);
-        const tahun = parseInt(document.getElementById('tglTahun').value);
+        let bulan = parseInt(document.getElementById('tglBulan').value);
+        let tahun = parseInt(document.getElementById('tglTahun').value);
         let days = 31;
         if ([4, 6, 9, 11].includes(bulan)) days = 30;
         else if (bulan === 2) days = isLeapYear(tahun) ? 29 : 28;
 
-        const hariSelect = document.getElementById('tglHari');
+        let hariSelect = document.getElementById('tglHari');
         hariSelect.innerHTML = '';
         for (let i = 1; i <= days; i++) {
             hariSelect.innerHTML += `<option value="${i.toString().padStart(2, '0')}">${i}</option>`;
@@ -82,10 +82,10 @@ $stmt = sqlsrv_query($conn, $query);
     }
 
     function fillSelects() {
-        const tahunSelect = document.getElementById('tglTahun');
-        const bulanSelect = document.getElementById('tglBulan');
-        const hariSelect = document.getElementById('tglHari');
-        const now = new Date();
+        let tahunSelect = document.getElementById('tglTahun');
+        let bulanSelect = document.getElementById('tglBulan');
+        let hariSelect = document.getElementById('tglHari');
+        let now = new Date();
         for (let y = now.getFullYear(); y <= now.getFullYear() + 5; y++) {
             tahunSelect.innerHTML += `<option value="${y}">${y}</option>`;
         }
@@ -106,16 +106,16 @@ $stmt = sqlsrv_query($conn, $query);
 
         document.querySelector('form').addEventListener('submit', function(event) {
             // validasi tanggal
-            const hari = document.getElementById('tglHari').value;
-            const bulan = document.getElementById('tglBulan').value;
-            const tahun = document.getElementById('tglTahun').value;
-            const errorTanggal = document.getElementById('error-message');
+            let hari = document.getElementById('tglHari').value;
+            let bulan = document.getElementById('tglBulan').value;
+            let tahun = document.getElementById('tglTahun').value;
+            let errorTanggal = document.getElementById('error-message');
             let isValid = hari && bulan && tahun;
             let pesan = '';
             // Validasi tanggal tidak boleh di masa lalu
             if (isValid) {
-                const inputDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
-                const today = new Date();
+                let inputDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
+                let today = new Date();
                 today.setHours(0, 0, 0, 0);
                 if (inputDate < today) {
                     isValid = false;
