@@ -25,7 +25,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         'aset' => ['manajemenBarang.php', 'manajemenRuangan.php'],
         'akun' => ['manajemenAkunMhs.php', 'manajemenAkunKry.php'],
         'pinjam' => ['peminjamanBarang.php', 'peminjamanRuangan.php'],
-        'peminjaman' => ['cekBarang.php', 'cekRuangan.php'],
+        'peminjaman' => ['cekBarang.php', 'cekRuangan.php', 'lihatBarang.php', 'lihatRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php'],
         'riwayat' => ['riwayatBarang.php', 'riwayatRuangan.php']
     ];
 
@@ -73,6 +73,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         </li>
     <?php
     elseif ($role === 'KA UPT') :
+        $isPinjamActive = in_array($currentPage, $submenuFiles['pinjam']);
     ?>
         <li class="nav-item mb-2">
             <a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php" class="nav-link <?= ($currentPage == 'dashboardKaUPT.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Dashboard</a>
@@ -80,6 +81,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         <li class="nav-item mb-2">
             <a href="<?= BASE_URL ?>/Menu Ka UPT/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>"><img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan</a>
         </li>
+    
     <?php
     elseif ($isPeminjam) :
         $isPeminjamanActive = in_array($currentPage, $submenuFiles['peminjaman']);
@@ -94,8 +96,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= ($currentPage == 'cekBarang.php') ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= ($currentPage == 'cekRuangan.php') ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php'])) ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -141,6 +143,36 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
     .offcanvas .collapse .nav-link.active {
         background: #1d4ed8 !important;
         color: #fff !important;
+    }
+
+    .aksi-icon {
+        width: 24px; /* Sesuaikan ukuran ikon */
+        height: 24px; /* Sesuaikan ukuran ikon */
+        object-fit: contain; /* Pastikan gambar tidak terdistorsi */
+        vertical-align: middle; /* Pastikan ikon sejajar dengan konten lain jika ada */
+    }
+
+    /* Atur kontainer TD agar ikon bisa diatur dengan Flexbox */
+    .td-aksi {
+        display: flex; /* Menggunakan Flexbox untuk mengatur item di dalamnya */
+        align-items: center; /* Pusatkan ikon secara vertikal */
+        justify-content: center; /* Pusatkan ikon secara horizontal di dalam TD */
+        gap: 8px; /* Memberi jarak antar ikon, sesuaikan nilainya */
+        /* Atau bisa juga pakai padding-right pada elemen ikon */
+    }
+
+    /* Styling tambahan jika kamu ingin linknya jadi tombol atau ada hover effect */
+    .td-aksi a {
+        display: flex; /* Agar link juga bisa diatur flex */
+        align-items: center;
+        text-decoration: none; /* Hapus garis bawah pada link */
+        color: inherit; /* Warisi warna teks dari parent */
+    }
+
+    /* Optional: Hover effect untuk ikon aksi */
+    .td-aksi a:hover .aksi-icon {
+        transform: scale(1.1); /* Sedikit membesar saat di-hover */
+        transition: transform 0.2s ease-in-out; /* Animasi halus */
     }
 
     /* Offcanvas sidebar custom style for small screen */
@@ -223,7 +255,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
 
 <div class="row flex-grow-1 g-0">
     <!-- Sidebar untuk layar besar (large screen) -->
-    <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
+    <nav class="col-auto sidebar d-none d-lg-flex flex-column p-2 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
             <?= renderSidebarMenu($role, $isPeminjam, $currentPage); ?>
         </ul>

@@ -1,28 +1,31 @@
 <?php
 include '../../templates/header.php';
+
 $idRuangan = $_GET['idRuangan'] ?? null;
 if (empty($idRuangan)) {
     die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
 }
 
-// Auto-generate id Peminjaman Ruangan dari database SQL Server
+// Auto-generate id Peminjaman Ruangan
 $idPeminjamanRuangan = 'PJR001';
-$sqlId = "SELECT TOP 1 idPeminjamanRuangan FROM Peminjaman_Ruangan WHERE idPeminjamanRuangan LIKE 'PJR%' ORDER BY idPeminjamanRuangan DESC";
+$sqlId = "SELECT TOP 1 idPeminjamanRuangan FROM Peminjaman_Ruangan ORDER BY idPeminjamanRuangan DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
 if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['idPeminjamanRuangan']; // contoh: PJR012
+    $lastId = $rowId['idPeminjamanRuangan'];
     $num = intval(substr($lastId, 3));
     $newNum = $num + 1;
     $idPeminjamanRuangan = 'PJR' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
 }
 
 $showModal = false;
+$error = null;
 $nim = $_SESSION['nim'] ?? null;
 $npk = $_SESSION['npk'] ?? null;
 
-$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? null;
-$waktuMulai = $_SESSION['waktuMulai'] ?? null;
-$waktuSelesai = $_SESSION['waktuSelesai'] ?? null;
+// Ambil data dari session
+$tglPeminjamanRuangan = $_SESSION['tglPeminjamanRuangan'] ?? null; // Format: d-m-Y
+$waktuMulai = $_SESSION['waktuMulai'] ?? null; // Format: H:i
+$waktuSelesai = $_SESSION['waktuSelesai'] ?? null; // Format: H:i
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanRuangan = $_POST['alasanPeminjamanRuangan'];
@@ -30,23 +33,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($alasanPeminjamanRuangan)) {
         $error = "Alasan peminjaman ruangan tidak boleh kosong";
     } else {
-        $sqlPeminjamanRuangan = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, nim, npk, tglPeminjamanRuangan, waktuMulai, waktuSelesai, alasanPeminjamanRuangan, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $params = [$idPeminjamanRuangan, $idRuangan, $nim, $npk, $tglPeminjamanRuangan, $waktuMulai, $waktuSelesai, $alasanPeminjamanRuangan, 'Menunggu Persetujuan'];
-        $stmtPeminjamanRuangan = sqlsrv_query($conn, $sqlPeminjamanRuangan, $params);
+        // ======================================================================
+        // FIX #1: Konversi format tanggal dan waktu untuk SQL Server
+        // ======================================================================
+        $tglForSQL = DateTime::createFromFormat('d-m-Y', $tglPeminjamanRuangan)->format('Y-m-d');
+        $waktuMulaiForSQL = DateTime::createFromFormat('H:i', $waktuMulai)->format('H:i:s');
+        $waktuSelesaiForSQL = DateTime::createFromFormat('H:i', $waktuSelesai)->format('H:i:s');
 
-        $ketersediaan = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = '$idRuangan'";
-        $stmtKetersediaan = sqlsrv_query($conn, $ketersediaan);
+        // Query INSERT dengan data yang sudah diformat
+        $query = "INSERT INTO Peminjaman_Ruangan (idPeminjamanRuangan, idRuangan, nim, npk, tglPeminjamanRuangan, waktuMulai, waktuSelesai, alasanPeminjamanRuangan, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $params = [
+            $idPeminjamanRuangan,
+            $idRuangan,
+            $nim,
+            $npk,
+            $tglForSQL, // Gunakan tanggal yang sudah diformat
+            $waktuMulaiForSQL, // Gunakan waktu mulai yang sudah diformat
+            $waktuSelesaiForSQL, // Gunakan waktu selesai yang sudah diformat
+            $alasanPeminjamanRuangan,
+            'Menunggu Persetujuan'
+        ];
+        $stmtPeminjamanRuangan = sqlsrv_query($conn, $query, $params);
 
+        // ======================================================================
+        // FIX #2: Perbaiki alur logika. UPDATE hanya jika INSERT berhasil.
+        // ======================================================================
         if ($stmtPeminjamanRuangan) {
-            $showModal = true;
+            // Jika INSERT peminjaman berhasil, baru UPDATE status ruangan
+            $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
+            $paramsKetersediaan = [$idRuangan];
+            $stmtKetersediaan = sqlsrv_query($conn, $ketersediaanQuery, $paramsKetersediaan);
+
+            if ($stmtKetersediaan) {
+                // Jika UPDATE juga berhasil, tampilkan modal sukses
+                $showModal = true;
+            } else {
+                // Kondisi jarang: Insert berhasil, tapi update gagal. Beri pesan error.
+                $error = "Peminjaman berhasil dicatat, tetapi gagal memperbarui status ruangan. Error: " . print_r(sqlsrv_errors(), true);
+            }
         } else {
-            $error = "Gagal mengajukan peminjaman ruangan";
+            // Jika INSERT gagal, berikan pesan error yang jelas
+            $error = "Gagal mengajukan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);
         }
+    }
+
+    // Tampilkan pesan error jika ada
+    if ($error) {
+        echo "<div class='alert alert-danger'>$error</div>";
     }
 }
 
 include '../../templates/sidebar.php';
 ?>
+
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="mb-2">
         <nav aria-label="breadcrumb">

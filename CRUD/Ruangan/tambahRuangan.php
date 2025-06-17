@@ -2,7 +2,6 @@
 include '../../templates/header.php';
 
 $showModal = false;
-
 $idRuangan = 'CB001';
 $sqlId = "SELECT TOP 1 idRuangan FROM Ruangan WHERE idRuangan LIKE 'CB%' ORDER BY idRuangan DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -21,14 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kondisiRuangan = $_POST['kondisiRuangan']; // ganti jadi kondisiRuangan
     $ketersediaan = $_POST['ketersediaan'];
 
-    $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
-    $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
-    $stmt = sqlsrv_query($conn, $query, $params);
+    // Cek apakah nama ruangan sudah ada
+    $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Ruangan WHERE namaRuangan = ?";
+    $cekNamaParams = [$namaRuangan];
+    $cekNamaStmt = sqlsrv_query($conn, $cekNamaQuery, $cekNamaParams);
+    $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
 
-    if ($stmt) {
-        $showModal = true;
+    if ($cekNamaRow['jumlah'] > 0) {
+        $error = "Nama ruangan sudah terdaftar, silakan gunakan nama lain.";
     } else {
-        $error = "Gagal menambahkan Ruangan.";
+        $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
+        $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
+        $stmt = sqlsrv_query($conn, $query, $params);
+
+        if ($stmt) {
+            $showModal = true;
+        } else {
+            $error = "Gagal menambahkan ruangan.";
+        }
     }
 }
 include '../../templates/sidebar.php';
@@ -105,16 +114,6 @@ include '../../templates/sidebar.php';
 </main>
 
 </div>
-
-<script>
-    function changeStok(val) {
-        var stokInput = document.getElementById('stokRuangan');
-        var current = parseInt(stokInput.value) || 0;
-        var next = current + val;
-        if (next < 0) next = 0;
-        stokInput.value = next;
-    }
-</script>
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {

@@ -60,9 +60,8 @@ include '../templates/sidebar.php';
                         <td><?= $row['kondisiRuangan'] ?></td>
                         <td><?= $row['ketersediaan'] ?></td>
                         <td class="text-center">
-                            <a href="<?= BASE_URL ?>/CRUD/Ruangan/editRuangan.php?id=<?= $row['idRuangan'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idRuangan'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-                    
+                            <a href="<?= BASE_URL ?>/CRUD/Ruangan/editRuangan.php?id=<?= $row['idRuangan'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>CRUD/Ruangan/hapusRuangan.php?id=<?= $row['idRuangan'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idRuangan'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
                             <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['idRuangan'] ?>"
                                 tabindex="-1" aria-labelledby="modalLabel<?= $row['idRuangan'] ?>" aria-hidden="true">
@@ -90,19 +89,51 @@ include '../templates/sidebar.php';
                 <?php
                 }
                 if (!$hasData) {
-                    echo '<tr>
-                                <td colspan="5" class="text-center">Tidak ada data</td>
-                                </tr>';
+                    echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
                 }
                 ?>
             </tbody>
         </table>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="fixed-pagination">
+            <ul class="pagination justify-content-end">
+                <!-- Previous button -->
+                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
+                </li>
+                <!-- Page numbers -->
+                <?php
+                $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
+                $ellipsisShown = false;
+                for ($i = 1; $i <= $totalPages; $i++) {
+                    if (
+                        $i <= $showPages || // always show first 3
+                        $i > $totalPages - $showPages || // always show last 3
+                        abs($i - $page) <= 1 // show current, previous, next
+                    ) {
+                        $ellipsisShown = false;
+                ?>
+                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                <?php
+                    } elseif (!$ellipsisShown) {
+                        // Show ellipsis only once
+                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                        $ellipsisShown = true;
+                    }
+                }
+                ?>
+                <!-- Next button -->
+                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </main>
 
-
 <?php
-
 include '../templates/footer.php';
-
 ?>

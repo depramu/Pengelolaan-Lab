@@ -24,7 +24,7 @@ if ($user_id && $user_role) {
       $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
       if ($profil) {
         $profil['role'] = 'Mahasiswa';
-      } 
+      }
     }
   } elseif ($user_role === 'Karyawan' || $user_role === 'PIC Aset' || $user_role === 'KA UPT') {
     // Ambil data Karyawan
@@ -58,8 +58,8 @@ if ($user_id && $user_role) {
             $base_url = 'Menu PIC/';
             $dashboard_link = $base_url . 'dashboardPIC.php';
           } elseif ($user_role === 'KA UPT') {
-            $base_url = 'Menu Ka UPT/';
-            $dashboard_link = $base_url . 'dashboardKaUPT.php';
+            $base_url = 'Menu KA UPT/';
+            $dashboard_link = $base_url . 'dashboardKAUPT.php';
           }
           
         ?>
@@ -89,9 +89,6 @@ if ($user_id && $user_role) {
             </div>
             <div class="col-12 mb-2">
               <strong><?= isset($profil['nim']) ? 'NIM' : 'NPK' ?>:</strong> <?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?>
-            </div>
-            <div class="col-12 mb-2">
-              <strong>Nama:</strong> <?= htmlspecialchars($profil['nama'] ?? $profil['namaKry'] ?? '') ?>
             </div>
             <div class="col-12 mb-2">
               <strong>Email:</strong> <?= htmlspecialchars($profil['email'] ?? '-') ?>
