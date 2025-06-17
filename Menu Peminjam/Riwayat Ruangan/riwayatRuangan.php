@@ -44,7 +44,8 @@ include '../../templates/sidebar.php';
                     <th>ID Peminjaman</th>
                     <th>ID Ruangan</th>
                     <th>Tanggal Peminjaman</th>
-                    <th>Waktu Peminjaman </th>
+                    <th>Waktu Mulai </th>
+                    <th>Waktu Selesai </th>
                     <th>Aksi</th>
                 </tr>
                 </thead>
@@ -82,9 +83,8 @@ include '../../templates/sidebar.php';
                             <td><?= htmlspecialchars($row['idPeminjamanRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
-                            <td><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?>
-                                -
-                                <?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
+                            <td><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?></td>
+                            <td><?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
