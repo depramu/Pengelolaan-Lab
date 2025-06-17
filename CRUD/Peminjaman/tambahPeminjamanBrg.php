@@ -34,37 +34,45 @@ if ($stmtDetail && $dataBarang = sqlsrv_fetch_array($stmtDetail, SQLSRV_FETCH_AS
     $_SESSION['tglPeminjamanBrg'] ?? null
 ];
 
-// Proses Peminjaman
+/// Inisialisasi variabel
+$error = null;
+$showModal = false;
+
+//  stok barang
+$sqlStok = "SELECT stokBarang FROM Barang WHERE idBarang = ?";
+$paramsStok = [$idBarang];
+$stmtStok = sqlsrv_query($conn, $sqlStok, $paramsStok);
+$stokBarang = sqlsrv_fetch_array($stmtStok, SQLSRV_FETCH_ASSOC)['stokBarang'];
+
+// Proses Peminjaman hanya jika metode POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanBrg = $_POST['alasanPeminjamanBrg'];
-    $jumlahBrg = (int)$_POST['jumlahBrg'];
-
-    // Format tanggal untuk SQL
-    $tglPeminjamanBrgForSQL = $tglPeminjamanBrg ?
-        DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg)?->format('Y-m-d H:i:s') : null;
+    $jumlahBrg = (int)$_POST['jumlahBrg']; // Pastikan integer
 
     // Validasi input
-    if (!$tglPeminjamanBrgForSQL) {
-        $error = "Terjadi kesalahan format tanggal. Silakan coba lagi dari halaman sebelumnya.";
-    } elseif ($jumlahBrg <= 0) {
+    if ($jumlahBrg <= 0) {
         $error = "Jumlah peminjaman harus lebih dari 0.";
     } elseif ($jumlahBrg > $stokTersedia) {
         $error = "*Jumlah peminjaman melebihi stok yang tersedia.";
     } else {
-        // Insert peminjaman
-        $stmtInsert = sqlsrv_query(
-            $conn,
-            "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgForSQL, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan']
-        );
+        // Ubah format tanggal sebelum insert
+        if ($tglPeminjamanBrg) {
+            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
+            $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('Y-m-d') : null;
+        } else {
+            $tglPeminjamanBrgSQL = null;
+        }
+
+        // 1. Insert data peminjaman    
+        $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
+        $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
         if ($stmtInsert) {
-            // Update stok barang
-            $stmtUpdate = sqlsrv_query(
-                $conn,
-                "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?",
-                [$jumlahBrg, $idBarang]
-            );
+            // 2. Jika insert berhasil, update stok barang
+            $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
+            $paramsUpdate = [$jumlahBrg, $idBarang];
+            $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
 
             if ($stmtUpdate) {
                 $showModal = true;
@@ -72,12 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
             }
         } else {
-            $error = "Gagal menambahkan peminjaman barang. Periksa kembali data Anda. Error: " . print_r(sqlsrv_errors(), true);
+            $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
         }
-    }
-
-    if ($error) {
-        echo "<div class='alert alert-danger'>$error</div>";
     }
 }
 ?>
@@ -109,7 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <div class="card-body">
 
+                        <?php if (!empty($error)): ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?= $error ?>
+                            </div>
+                        <?php endif; ?>
+
                         <form method="POST">
+                            <!-- Add hidden field for date -->
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -132,9 +143,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label class="form-label">Tanggal Peminjaman</label>
                                         <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
-                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="<?php
+                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="
+                                        <?php
                                         if (!empty($tglPeminjamanBrg)) {
-                                            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
+                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
                                         }
                                         ?>">
@@ -145,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <label for="nim" class="form-label">NIM</label>
                                         <input type="text" class="form-control protect-input" id="nim" name="nim_display"
                                             value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
-                                        <input type="hidden" name="nim" value="<?= $_SESSION['nim'] ?>">
+                                        <input type="hidden" name="nim" value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +202,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
 <script>
@@ -214,10 +225,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         let valid = true;
 
         // Validasi Jumlah Peminjaman
-        const jumlahInput = document.getElementById('jumlahBrg');
-        const jumlahError = document.getElementById('jumlahError');
-        const stokTersedia = <?= $stokBarang ?>;
-        const jumlahValue = parseInt(jumlahInput.value) || 0;
+        let jumlahInput = document.getElementById('jumlahBrg');
+        let jumlahError = document.getElementById('jumlahError');
+        let stokTersedia = <?= $stokBarang ?>;
+        let jumlahValue = parseInt(jumlahInput.value) || 0;
 
         if (jumlahValue <= 0) {
             jumlahError.textContent = '*Jumlah harus lebih dari 0.';

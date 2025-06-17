@@ -1,6 +1,9 @@
 <?php
+require_once __DIR__ . '/../auth.php'; // Muat fungsi otorisasi
+authorize_role('KA UPT'); // Lindungi halaman ini untuk role 'Peminjam'
 include '../templates/header.php';
 include '../templates/sidebar.php';
+
 ?>
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
   <div class="mb-5">
