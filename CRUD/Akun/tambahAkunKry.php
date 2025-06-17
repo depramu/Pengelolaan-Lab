@@ -11,14 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
-    $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
-    $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
-    $stmt = sqlsrv_query($conn, $query, $params);
-
-    if ($stmt) {
-        $showModal = true;
+    $cekNpk = sqlsrv_query($conn, "SELECT npk FROM Karyawan WHERE npk = ?", [$npk]);
+    if ($cekNpk && sqlsrv_has_rows($cekNpk)) {
+        $npkError = "*npk sudah terdaftar";
     } else {
-        $error = "Gagal menambahkan akun.";
+        $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
+        $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
+        $stmt = sqlsrv_query($conn, $query, $params);
+
+        if ($stmt) {
+            $showModal = true;
+        } else {
+            $error = "Gagal menambahkan akun.";
+        }
     }
 }
 include '../../templates/sidebar.php';
@@ -89,7 +94,7 @@ include '../../templates/sidebar.php';
                             </div>
                             <div class="mb-3">
                                 <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                    <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minimal 8 karakter</span>
+                                    <span id="passLengthError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Minpkal 8 karakter</span>
                                     <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
                                 <input type="password" class="form-control" id="kataSandi" name="kataSandi">
@@ -130,77 +135,68 @@ include '../../templates/sidebar.php';
         let emailError = document.getElementById('emailError');
         let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
-        let passMatchError = document.getElementById('passMatchError');
         let confPassError = document.getElementById('confPassError');
-        let passLengthError = document.getElementById('passLengthError');
+        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
         let valid = true;
 
-        // Reset error
-        npkError.style.display = 'none';
-        namaError.style.display = 'none';
-        emailError.style.display = 'none';
-        passError.style.display = 'none';
-        confPassError.style.display = 'none';
-        passMatchError.style.display = 'none';
-        passLengthError.style.display = 'none';
-        roleError.style.display = 'none';
-
         if (npk === "") {
             npkError.textContent = '*Harus diisi';
-            npkError.style.display = 'block';
+            npkError.style.display = 'inline';
             valid = false;
         } else if (!/^\d+$/.test(npk)) {
             npkError.textContent = '*Harus berupa angka';
-            npkError.style.display = 'block';
+            npkError.style.display = 'inline';
             valid = false;
         }
 
         if (nama === "") {
             namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'block';
+            namaError.style.display = 'inline';
             valid = false;
         } else if (/\d/.test(nama)) {
             namaError.textContent = '*Harus berupa huruf';
-            namaError.style.display = 'block';
+            namaError.style.display = 'inline';
             valid = false;
         }
 
         if (email === "") {
             emailError.textContent = '*Harus diisi';
-            emailError.style.display = 'block';
+            emailError.style.display = 'inline';
             valid = false;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             emailError.textContent = '*Format email tidak valid';
-            emailError.style.display = 'block';
+            emailError.style.display = 'inline';
             valid = false;
         }
 
-        // Role wajib diisi
         if (jenisRole === "") {
-            roleError.style.display = 'block';
+            roleError.textContent = '*Harus diisi';
+            roleError.style.display = 'inline';
             valid = false;
         }
 
-        // Password wajib diisi dan minimal 8 karakter
         if (pass === "") {
-            passError.style.display = 'block';
+            passError.textContent = '*Harus diisi';
+            passError.style.display = 'inline';
             valid = false;
-        }
-        if (pass.length > 0 && pass.length < 8) {
-            passLengthError.style.display = 'block';
+        } else if (pass.length > 0 && pass.length < 8) {   
+            passError.textContent = '*Minimal 8 karakter';
+            passError.style.display = 'inline';
+            valid = false;
+        } else if (!passPattern.test(pass)) {
+            passError.textContent = '*Minimal 8 karakter, harus mengandung huruf dan angka';
+            passError.style.display = 'inline';
             valid = false;
         }
 
-        // Konfirmasi password wajib diisi
         if (conf === "") {
-            confPassError.style.display = 'block';
+            confPassError.textContent = '*Harus diisi';
+            confPassError.style.display = 'inline';
             valid = false;
-        }
-
-        // Password dan konfirmasi harus sama
-        if (pass !== "" && conf !== "" && pass !== conf) {
-            passMatchError.style.display = 'block';
+        } else if (pass !== "" && conf !== "" && pass !== conf) {
+            confPassError.textContent = '*Tidak sesuai';
+            confPassError.style.display = 'inline';
             valid = false;
         }
 

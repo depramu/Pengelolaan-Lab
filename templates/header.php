@@ -105,6 +105,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             bottom: clamp(15px, 3vh, 30px);
         }
 
+        .scrollable-card-content {
+            max-height: 64vh;
+            overflow-y: auto;
+        }
+
         @media (max-width: 991.98px) {
             .sidebar {
                 border-radius: 0;
@@ -173,7 +178,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </div>
             </div>
             <div class="d-flex align-items-center">
-                <a href="<?= BASE_URL ?>/Menu Peminjam/notifPeminjam.php" class="me-0"><img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="<?= BASE_URL ?>/notif.php" class="me-0"><img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
                 <a href="<?= BASE_URL ?>/profil.php"><img src="<?= BASE_URL ?>/icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>

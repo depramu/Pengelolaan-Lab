@@ -2,8 +2,6 @@
 include '../templates/header.php';
 include '../templates/sidebar.php';
 ?>
-
-<!-- Content Area -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
   <div class="mb-5">
     <nav aria-label="breadcrumb">
