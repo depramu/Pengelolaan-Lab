@@ -110,6 +110,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             overflow-y: auto;
         }
 
+        .protect-input {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            color:rgb(41, 42, 44);
+        }
+
         @media (max-width: 991.98px) {
             .sidebar {
                 border-radius: 0;
