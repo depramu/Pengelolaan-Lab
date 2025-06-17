@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         switch ($role) {
             case 'Peminjam':
                 // Coba login sebagai Mahasiswa
-                $query_mhs = "SELECT nim, kataSandi, nama FROM Mahasiswa WHERE nim = ?";
+                $query_mhs = "SELECT nim, kataSandi, namamhs FROM Mahasiswa WHERE nim = ?";
                 $stmt_mhs = sqlsrv_query($conn, $query_mhs, [$identifier]);
                 $row_mhs = sqlsrv_fetch_array($stmt_mhs, SQLSRV_FETCH_ASSOC);
 
                 if ($row_mhs && $kataSandi === $row_mhs['kataSandi']) {
                     // Login Mahasiswa berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_mhs['nim'];
-                    $_SESSION['user_nama'] = $row_mhs['nama'];
+                    $_SESSION['user_nama'] = $row_mhs['namamhs'];
                     $_SESSION['user_role'] = 'Mahasiswa';
                     $_SESSION['nim'] = $row_mhs['nim']; // Tetap simpan untuk query spesifik jika perlu
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 // Jika gagal, coba login sebagai Karyawan (Peminjam)
-                $query_kry = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
+                $query_kry = "SELECT npk, kataSandi, namakry, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt_kry = sqlsrv_query($conn, $query_kry, [$identifier]);
                 $row_kry = sqlsrv_fetch_array($stmt_kry, SQLSRV_FETCH_ASSOC);
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($row_kry && $kataSandi === $row_kry['kataSandi']) {
                     // Login Karyawan berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_kry['npk'];
-                    $_SESSION['user_nama'] = $row_kry['nama'];
+                    $_SESSION['user_nama'] = $row_kry['namakry'];
                     $_SESSION['user_role'] = 'Karyawan';
                     $_SESSION['npk'] = $row_kry['npk']; // Tetap simpan untuk query spesifik jika perlu
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
-                $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
+                $query = "SELECT npk, kataSandi, namakry, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt = sqlsrv_query($conn, $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
                         // Login berhasil -> STANDARISASI SESSION
                         $_SESSION['user_id'] = $row['npk'];
-                        $_SESSION['user_nama'] = $row['nama'];
+                        $_SESSION['user_nama'] = $row['namakry'];
                         $_SESSION['user_role'] = $row['jenisRole'];
                         $_SESSION['npk'] = $row['npk'];
                         header('Location: ' . $redirectPath);
@@ -315,25 +315,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     <?php endif; ?>
                     <div class="mb-3">
-                        <label for="identifier" class="form-label"><?php echo htmlspecialchars($identifierLabel); ?></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
-                            <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
-                        </div>
+                        <label for="identifier" class="form-label d-flex align-items-start">
+                            <span><?php echo htmlspecialchars($identifierLabel); ?></span>
+                                  <span id="identifier-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
+
+                        </label>
+                    <div class="input-group">
+                    <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
+                    <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
                     </div>
+                    </div>
+
                     <div class="mb-2">
-                        <label for="kataSandi" class="form-label">Kata Sandi</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
-                            <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
-                        </div>
+                    <label for="kataSandi" class="form-label d-flex align-items-start">
+                        <span>Kata Sandi</span>
+                            <span id="password-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
+                        <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
+                         </div>
                     </div>
+
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
                     <button type="submit" class="btn-login-submit w-75">Masuk</button>
                 </form>
             </div>
         </div>
     </div>
-</body>
+    <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const id = document.getElementById('identifier').value.trim();
+        const pass = document.getElementById('kataSandi').value.trim();
+        let valid = true;
 
+        // Reset error messages
+        const idError = document.getElementById('identifier-error');
+        const passError = document.getElementById('password-error');
+        idError.textContent = '';
+        passError.textContent = '';
+
+        if (id === '' && pass === '') {
+            idError.textContent = '*Kolom ini tidak boleh kosong.*';
+            passError.textContent = '*Kolom ini tidak boleh kosong.*';
+            valid = false;
+        } else if (id === '') {
+            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
+            valid = false;
+        } else if (pass === '') {
+            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault(); // Gagalkan submit
+        }
+    });
+</script>
+</body>
+ 
 </html>

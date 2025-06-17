@@ -7,12 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $namaLengkap = $_POST['namaLengkap'] ?? '';
 
     if (empty($email) || empty($namaLengkap)) {
-        // Changed error message to match the screenshot
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
         $_SESSION['reset_email'] = $email;
         $_SESSION['reset_nama'] = $namaLengkap;
-        // This message will not be shown if validation fails, but keeping it for successful submission logic
         $error_message = 'Permintaan reset kata sandi telah dikirim.';
     }
 }
