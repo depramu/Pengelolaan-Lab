@@ -97,7 +97,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
                 <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php'])) ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuang.php'])) ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -255,7 +255,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
 
 <div class="row flex-grow-1 g-0">
     <!-- Sidebar untuk layar besar (large screen) -->
-    <nav class="col-auto sidebar d-none d-lg-flex flex-column p-3 ms-lg-4">
+    <nav class="col-auto sidebar d-none d-lg-flex flex-column p-2 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
             <?= renderSidebarMenu($role, $isPeminjam, $currentPage); ?>
         </ul>
