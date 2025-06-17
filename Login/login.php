@@ -40,14 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         switch ($role) {
             case 'Peminjam':
                 // Coba login sebagai Mahasiswa
-                $query_mhs = "SELECT nim, kataSandi, namamhs FROM Mahasiswa WHERE nim = ?";
+                $query_mhs = "SELECT nim, kataSandi, nama FROM Mahasiswa WHERE nim = ?";
                 $stmt_mhs = sqlsrv_query($conn, $query_mhs, [$identifier]);
                 $row_mhs = sqlsrv_fetch_array($stmt_mhs, SQLSRV_FETCH_ASSOC);
 
                 if ($row_mhs && $kataSandi === $row_mhs['kataSandi']) {
                     // Login Mahasiswa berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_mhs['nim'];
-                    $_SESSION['user_nama'] = $row_mhs['namamhs'];
+                    $_SESSION['user_nama'] = $row_mhs['nama'];
                     $_SESSION['user_role'] = 'Mahasiswa';
                     $_SESSION['nim'] = $row_mhs['nim']; // Tetap simpan untuk query spesifik jika perlu
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 // Jika gagal, coba login sebagai Karyawan (Peminjam)
-                $query_kry = "SELECT npk, kataSandi, namakry, jenisRole FROM Karyawan WHERE npk = ?";
+                $query_kry = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt_kry = sqlsrv_query($conn, $query_kry, [$identifier]);
                 $row_kry = sqlsrv_fetch_array($stmt_kry, SQLSRV_FETCH_ASSOC);
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($row_kry && $kataSandi === $row_kry['kataSandi']) {
                     // Login Karyawan berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_kry['npk'];
-                    $_SESSION['user_nama'] = $row_kry['namakry'];
+                    $_SESSION['user_nama'] = $row_kry['nama'];
                     $_SESSION['user_role'] = 'Karyawan';
                     $_SESSION['npk'] = $row_kry['npk']; // Tetap simpan untuk query spesifik jika perlu
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
@@ -80,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
                 // Ambil user berdasarkan NPK
-                $query = "SELECT npk, kataSandi, namakry, jenisRole FROM Karyawan WHERE npk = ?";
-                $stmt = sqlsrv_query($conn, $query, [$identifier]);
+                $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
+                $stmt = sqlsrv_query($conn,  $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
                 if ($row) {
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
                         // Login berhasil -> STANDARISASI SESSION
                         $_SESSION['user_id'] = $row['npk'];
-                        $_SESSION['user_nama'] = $row['namakry'];
+                        $_SESSION['user_nama'] = $row['nama'];
                         $_SESSION['user_role'] = $row['jenisRole'];
                         $_SESSION['npk'] = $row['npk'];
                         header('Location: ' . $redirectPath);
