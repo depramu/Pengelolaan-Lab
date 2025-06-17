@@ -144,6 +144,36 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         color: #fff !important;
     }
 
+    .aksi-icon {
+        width: 24px; /* Sesuaikan ukuran ikon */
+        height: 24px; /* Sesuaikan ukuran ikon */
+        object-fit: contain; /* Pastikan gambar tidak terdistorsi */
+        vertical-align: middle; /* Pastikan ikon sejajar dengan konten lain jika ada */
+    }
+
+    /* Atur kontainer TD agar ikon bisa diatur dengan Flexbox */
+    .td-aksi {
+        display: flex; /* Menggunakan Flexbox untuk mengatur item di dalamnya */
+        align-items: center; /* Pusatkan ikon secara vertikal */
+        justify-content: center; /* Pusatkan ikon secara horizontal di dalam TD */
+        gap: 8px; /* Memberi jarak antar ikon, sesuaikan nilainya */
+        /* Atau bisa juga pakai padding-right pada elemen ikon */
+    }
+
+    /* Styling tambahan jika kamu ingin linknya jadi tombol atau ada hover effect */
+    .td-aksi a {
+        display: flex; /* Agar link juga bisa diatur flex */
+        align-items: center;
+        text-decoration: none; /* Hapus garis bawah pada link */
+        color: inherit; /* Warisi warna teks dari parent */
+    }
+
+    /* Optional: Hover effect untuk ikon aksi */
+    .td-aksi a:hover .aksi-icon {
+        transform: scale(1.1); /* Sedikit membesar saat di-hover */
+        transition: transform 0.2s ease-in-out; /* Animasi halus */
+    }
+
     /* Offcanvas sidebar custom style for small screen */
     @media (max-width: 991.98px) {
         .offcanvas-start {

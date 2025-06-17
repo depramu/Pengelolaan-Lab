@@ -105,6 +105,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             bottom: clamp(15px, 3vh, 30px);
         }
 
+        .scrollable-card-content {
+            max-height: 64vh;
+            overflow-y: auto;
+        }
+
         @media (max-width: 991.98px) {
             .sidebar {
                 border-radius: 0;
