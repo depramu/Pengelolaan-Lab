@@ -62,7 +62,6 @@ include '../templates/sidebar.php';
                             <a href="<?= BASE_URL ?>/CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
                             <a href="<?= BASE_URL ?>CRUD/Barang/hapusBarang.php?id" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
 
-                            <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
                                 tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">

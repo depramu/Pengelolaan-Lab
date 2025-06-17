@@ -16,21 +16,21 @@ include 'templates/sidebar.php';
         </nav>
     </div>
     <div class="container">
-                    <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Waktu</th>
-                                <th>Pesan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>12-06-2025 12:00</td>
-                            <td>Pengingat: Peminjaman alat harus dikembalikan sebelum pukul 17:00.</td>
-                          </tr>
-                        </tbody>
-                    </table>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Pesan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12-06-2025 12:00</td>
+                        <td>Pengingat: Peminjaman alat harus dikembalikan sebelum pukul 17:00.</td>
+                    </tr>
+                </tbody>
+            </table>
 
 </main>
 </div>
