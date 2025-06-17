@@ -9,9 +9,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($email) || empty($namaLengkap)) {
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
-        $_SESSION['reset_email'] = $email;
-        $_SESSION['reset_nama'] = $namaLengkap;
-        $error_message = 'Permintaan reset kata sandi telah dikirim.';
+        require_once __DIR__ . '/../koneksi.php';
+        require_once __DIR__ . '/reset_password_helper.php';
+        [$success, $msg] = resetUserPassword($conn, $email, $namaLengkap);
+        if ($success) {
+            $_SESSION['flash_success'] = $msg;
+            header('Location: LupaSandi.php');
+            exit;
+        } else {
+            $error_message = $msg;
+        }
     }
 }
 ?>
@@ -219,20 +226,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="login-form-container">
             <h3 class="login-form-title">Silahkan Masukkan Email dan Nama Lengkap</h3>
             <form method="POST" action="">
-                <?php if (!empty($error_message) && $error_message === 'Kolom tidak boleh kosong.'): ?>
+                <?php
+                    // Success flash
+                    $success_message = $_SESSION['flash_success'] ?? '';
+                    unset($_SESSION['flash_success']);
+                ?>
+                <?php if ($success_message): ?>
+                    <div class="alert alert-success" role="alert">
+                        <?= htmlspecialchars($success_message); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty($error_message)): ?>
                     <div class="alert alert-danger" role="alert">
-                        <?php echo htmlspecialchars($error_message); ?>
+                        <?= htmlspecialchars($error_message); ?>
                     </div>
                 <?php endif; ?>
 
-                <div class="input-group">
-                    <span class="input-group-text"><img src="../icon/user-round.svg" alt="Nama Lengkap"></span>
-                    <input type="text" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap" required>
+                <div class="input-group flex-column">
+                    <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
+                    <div class="d-flex w-100">
+                        <span class="input-group-text"><img src="../icon/user-round.svg" alt="Nama Lengkap"></span>
+                        <input type="text" id="namaLengkap" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap">
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <span class="input-group-text"><img src="../icon/mail.svg" alt="Email"></span>
-                    <input type="email" name="email" class="form-control" placeholder="Masukkan Email" required>
+                <div class="input-group flex-column">
+                    <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
+                    <div class="d-flex w-100">
+                        <span class="input-group-text"><img src="../icon/mail.svg" alt="Email"></span>
+                        <input type="text" id="email" name="email" class="form-control" placeholder="Masukkan Email">
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4 gap-3">
@@ -247,6 +270,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     document.querySelector('.btn-back').onclick = function () {
         window.location.href = '../index.php';
     };
+
+    document.querySelector('form').addEventListener('submit', function(e){
+        let nama = document.getElementById('namaLengkap').value.trim();
+        let email = document.getElementById('email').value.trim();
+        let namaError = document.getElementById('namaError');
+        let emailError = document.getElementById('emailError');
+        let valid = true;
+        // reset
+        namaError.style.display = 'none';
+        emailError.style.display = 'none';
+
+        if(nama === ''){
+            namaError.textContent = '*Harus diisi';
+            namaError.style.display = 'inline';
+            valid = false;
+        } else if(/\d/.test(nama)){
+            namaError.textContent = '*Harus berupa huruf';
+            namaError.style.display = 'inline';
+            valid = false;
+        }
+
+        if(email === ''){
+            emailError.textContent = '*Harus diisi';
+            emailError.style.display = 'inline';
+            valid = false;
+        } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+            emailError.textContent = '*Format email tidak valid';
+            emailError.style.display = 'inline';
+            valid = false;
+        }
+
+        if(!valid){
+            e.preventDefault();
+        }
+    });
 </script>
 </body>
 </html>

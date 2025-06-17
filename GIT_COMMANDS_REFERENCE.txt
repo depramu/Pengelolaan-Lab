@@ -1,0 +1,70 @@
+GIT COMMANDS REFERENCE
+
+1. BASIC GIT COMMANDS
+----------------------
+- Check status: git status
+- View branch: git branch
+- View log: git log --oneline
+- View recent changes: git diff HEAD~1
+
+2. BRANCH MANAGEMENT
+-------------------
+- Create new branch: git checkout -b feature/your-changes
+- Switch to main: git checkout main
+- Switch to feature: git checkout feature/your-changes
+- List all branches: git branch
+
+3. FETCHING UPDATES
+------------------
+- Fetch remote changes: git fetch origin
+- Pull latest changes: git pull origin main
+- View remote changes: git log --oneline main..origin/main
+
+4. COMMITTING CHANGES
+-------------------
+- Add changes: git add .
+- Commit changes: git commit -m "Your commit message"
+- View changes before commit: git diff
+
+5. MERGING UPDATES
+-----------------
+- Update feature branch:
+  * git checkout main
+  * git pull origin main
+  * git checkout feature/your-changes
+  * git merge main
+
+6. UPDATING BOTH BRANCHES
+------------------------
+- Update main branch: git checkout main && git pull origin main
+- Update feature branch: git checkout feature/your-changes && git merge main
+
+6. BACKUP COMMANDS
+-----------------
+- Create backup: xcopy /E /I /Y /H source destination
+- Example: xcopy /E /I /Y /H c:\xampp\htdocs\PIC-peminjaman-approval c:\xampp\htdocs\PIC-peminjaman-approval-backup
+
+7. CONFIGURATION
+---------------
+- Set git identity:
+  * git config --global user.email "your.email@example.com"
+  * git config --global user.name "Your Name"
+
+8. STASHING CHANGES
+------------------
+- Save changes: git stash
+- Apply changes: git stash pop
+- View stashed changes: git stash list
+
+9. REMOTE MANAGEMENT
+-------------------
+- View remote: git remote -v
+- Fetch remote: git fetch origin
+- Pull remote: git pull origin main
+
+10. WORKING WITH BRANCHES
+------------------------
+- Create new branch: git checkout -b branch-name
+- Switch branch: git checkout branch-name
+- Merge branches: git merge branch-name
+- Delete branch: git branch -d branch-name
