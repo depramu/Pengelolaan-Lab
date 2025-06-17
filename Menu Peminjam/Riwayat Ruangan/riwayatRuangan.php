@@ -13,7 +13,6 @@ if (isset($_SESSION['user_role'])) {
         $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE nim = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
         $params = [$nim_value];
 
-        // Langsung eksekusi query di sini!
         $result = sqlsrv_query($conn, $query, $params);
 
         // Jika role adalah Karyawan dan session 'npk' ada
@@ -22,7 +21,6 @@ if (isset($_SESSION['user_role'])) {
         $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE npk = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
         $params = [$npk_value];
 
-        // Langsung eksekusi query di sini!
         $result = sqlsrv_query($conn, $query, $params);
     }
 }
