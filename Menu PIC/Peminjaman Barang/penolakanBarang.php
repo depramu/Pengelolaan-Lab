@@ -46,8 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
     </div>
 
-
-    <!-- Penolakan -->
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
