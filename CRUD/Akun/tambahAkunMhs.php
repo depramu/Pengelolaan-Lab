@@ -137,6 +137,13 @@ include '../../templates/sidebar.php';
 
         let valid = true;
 
+        // Reset error messages
+        nimError.style.display = 'none';
+        namaError.style.display = 'none';
+        emailError.style.display = 'none';
+        roleError.style.display = 'none';
+        passError.style.display = 'none';   
+
         if (nim === "") {
             nimError.textContent = '*Harus diisi';
             nimError.style.display = 'inline';
@@ -182,7 +189,7 @@ include '../../templates/sidebar.php';
             passError.style.display = 'inline';
             valid = false;
         } else if (!passPattern.test(pass)) {
-            passError.textContent = '*Harus mengandung huruf kapital dan angka';
+            passError.textContent = '*Harus mengandung huruf dan angka';
             passError.style.display = 'inline';
             valid = false;
         }

@@ -4,7 +4,7 @@ include '../../templates/header.php';
 $npk = $_GET['id'] ?? null;
 
 if (!$npk) {
-    header('Location: ../../manajemenAkunKry.php');
+    header('Location: ../../Menu PIC/manajemenAkunKry.php');
     exit;
 }
 
@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
+
+<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
     <div class="mb-3">
         <nav aria-label="breadcrumb">
@@ -58,6 +60,7 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
+    <!-- Edit Akun Karyawan -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -77,95 +80,80 @@ include '../../templates/sidebar.php';
                             <div class="mb-2 row">
                                 <div class="col-md-6">
                                     <label for="npk" class="form-label">NPK</label>
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($npk) ?></div>
-                                    <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                    <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                    <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label">Nama Lengkap</label>
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['nama']) ?></div>
-                                    <input type="hidden" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <input type="text" class="form-control protect-input" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label">Email</label>
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['email']) ?></div>
-                                    <input type="hidden" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>">
+                                    <label for="email" class="form-label">Email
+                                        <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label">Jenis Role</label>
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($data['jenisRole']) ?></div>
-                                    <select class="form-select" id="jenisRole" name="jenisRole" hidden>
-                                        <!-- <option value="" disabled selected>Pilih Role</option> -->
+                                    <select class="form-select protect-input" id="jenisRole" name="jenisRole">
                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
                                         <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
                                         <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
                                     </select>
+                                    <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                 </div>
                                 <div class="mb-2">
-                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
-                                        <span class="text-danger ms-2" id="passError" style="display: none;">*Harus diisi</span>
-                                        <span class="text-danger ms-2" id="passLengthError" style="display: none;">*Minimal 8 karakter</span>
-                                    </label>
-                                    <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi</label>
+                                    <input type="password" class="form-control protect-input" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
                                 </div>
-                                <div class="mb-2">
-                                    <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
-                                        <span class="text-danger ms-2" id="confPassError" style="display: none;">*Harus diisi</span>
-                                        <span class="text-danger ms-2" id="passMatchError" style="display: none;">*Tidak sesuai</span>
-                                    </label>
-                                    <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-secondary">Kembali</a>
-                                        <button type="submit" class="btn btn-primary">Simpan</button>
-                                    </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </main>
+<!-- End Edit Akun Karyawan -->
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        let pass = document.getElementById('kataSandi').value;
-        let conf = document.getElementById('konfirmasiSandi').value;
-
-        let passError = document.getElementById('passError');
-        let passMatchError = document.getElementById('passMatchError');
-        let confPassError = document.getElementById('confPassError');
-        let passLengthError = document.getElementById('passLengthError');
+        let email = document.getElementById('email').value.trim();
+        let emailError = document.getElementById('emailError');
 
         let valid = true;
 
-        // Reset error
-        passError.style.display = 'none';
-        confPassError.style.display = 'none';
-        passMatchError.style.display = 'none';
-        passLengthError.style.display = 'none';
-
-        if (pass === "") {
-            passError.style.display = 'block';
+        if (email === "") {
+            emailError.textContent = '*Harus diisi';
+            emailError.style.display = 'inline';
+            valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = '*Format email tidak valid';
+            emailError.style.display = 'inline';
             valid = false;
         }
-        if (pass.length > 0 && pass.length < 8) {
-            passLengthError.style.display = 'block';
-            valid = false;
-        }
-        if (conf === "") {
-            confPassError.style.display = 'block';
-            valid = false;
-        }
-        if (pass !== "" && conf !== "" && pass !== conf) {
-            passMatchError.style.display = 'block';
-            valid = false;
-        }
-
         if (!valid) e.preventDefault();
     });
-</script>
 
+    document.querySelectorAll('.protect-input').forEach(input => {
+        input.addEventListener('paste', e => e.preventDefault());
+        input.addEventListener('input', e => input.value = input.defaultValue);
+        input.addEventListener('mousedown', e => e.preventDefault());
+    });
+
+    const passInput = document.getElementById('kataSandi');
+    passInput.addEventListener('mouseenter', function() {
+        passInput.type = 'text';
+    });
+    passInput.addEventListener('mouseleave', function() {
+        passInput.type = 'password';
+    });
+</script>
 
 <?php include '../../templates/footer.php'; ?>

@@ -35,13 +35,15 @@ include '../../templates/sidebar.php';
                         <form method="GET">
                             <div class="mb-2">
                                 <label class="form-label">ID Peminjaman Barang</label>
-                                <input type="text" class="form-control" value="<?= htmlspecialchars($idPeminjamanBrg) ?>" disabled>
-                                <input type="hidden" name="id$idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+                                <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
+
+                                <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                             </div>
 
                             <div class="mb-2">
                                 <label for="alasanPenolakan" class="form-label">Alasan Penolakan</label>
-                                <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" style="resize: none;" disabled><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($alasanPenolakan) ?></div>
+                                <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" style="resize: none;" hidden ><?= htmlspecialchars($alasanPenolakan) ?></textarea>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>

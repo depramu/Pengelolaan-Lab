@@ -2,7 +2,6 @@
 include '../../templates/header.php';
 
 $showModal = false;
-
 $idRuangan = 'CB001';
 $sqlId = "SELECT TOP 1 idRuangan FROM Ruangan WHERE idRuangan LIKE 'CB%' ORDER BY idRuangan DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -21,14 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kondisiRuangan = $_POST['kondisiRuangan']; // ganti jadi kondisiRuangan
     $ketersediaan = $_POST['ketersediaan'];
 
-    $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
-    $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
-    $stmt = sqlsrv_query($conn, $query, $params);
+    // Cek apakah nama ruangan sudah ada
+    $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Ruangan WHERE namaRuangan = ?";
+    $cekNamaParams = [$namaRuangan];
+    $cekNamaStmt = sqlsrv_query($conn, $cekNamaQuery, $cekNamaParams);
+    $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
 
-    if ($stmt) {
-        $showModal = true;
+    if ($cekNamaRow['jumlah'] > 0) {
+        $error = "Nama ruangan sudah terdaftar";
     } else {
-        $error = "Gagal menambahkan Ruangan.";
+        $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
+        $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
+        $stmt = sqlsrv_query($conn, $query, $params);
+
+        if ($stmt) {
+            $showModal = true;
+        } else {
+            $error = "Gagal menambahkan ruangan.";
+        }
     }
 }
 include '../../templates/sidebar.php';
@@ -64,27 +73,27 @@ include '../../templates/sidebar.php';
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-2">
-                                <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                <label for="idRuangan" class="form-label d-flex align-items-center">ID Ruangan</label>
                                 <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled>
                             </div>
                             <div class="mb-2">
-                                <label for="namaRuangan" class="form-label">Nama Ruangan
+                                <label for="namaRuangan" class="form-label d-flex align-items-center">Nama Ruangan
                                     <span id="namaError" class="text-danger ms-2" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan">
+                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
                             </div>
                             <div class="mb-2">
-                                <label for="kondisiRuangan" class="form-label">Kondisi Ruangan
+                                <label for="kondisiRuangan" class="form-label d-flex align-items-center">Kondisi Ruangan
                                     <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
-                                <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                <select class="form-select" id="kondisiRuangan" name="kondisiRuangan" value="<?= isset($kondisiRuangan) ? htmlspecialchars($kondisiRuangan) : '' ?>">
                                     <option disabled selected>Pilih Kondisi</option>
-                                    <option value="Baik">Baik</option>
-                                    <option value="Rusak">Rusak</option>
+                                    <option value="Baik" <?= (isset($kondisiRuangan) && $kondisiRuangan === 'Baik') ? 'selected' : '' ?>>Baik</option>
+                                    <option value="Rusak" <?= (isset($kondisiRuangan) && $kondisiRuangan === 'Rusak') ? 'selected' : '' ?>>Rusak</option>
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label for="ketersediaan" class="form-label">Ketersediaan Ruangan
+                                <label for="ketersediaan" class="form-label d-flex align-items-center">Ketersediaan Ruangan
                                     <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
                                 <select class="form-select" id="ketersediaan" name="ketersediaan">
@@ -105,16 +114,6 @@ include '../../templates/sidebar.php';
 </main>
 
 </div>
-
-<script>
-    function changeStok(val) {
-        var stokInput = document.getElementById('stokRuangan');
-        var current = parseInt(stokInput.value) || 0;
-        var next = current + val;
-        if (next < 0) next = 0;
-        stokInput.value = next;
-    }
-</script>
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {

@@ -86,7 +86,7 @@ include '../../templates/sidebar.php';
                                     Nama Barang
                                     <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <input type="text" class="form-control" id="namaBarang" name="namaBarang">
+                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="stokBarang" class="form-label">
@@ -95,7 +95,9 @@ include '../../templates/sidebar.php';
                                 </label>
                                 <div class="input-group" style="max-width: 180px;">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                    <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="0" min="2" style="max-width: 70px;">
+                                    <input type="number" class="form-control text-center" id="stokBarang" name="stokBarang"
+                                        min="0" style="max-width: 70px;"
+                                        value="<?= isset($stokBarang) ? htmlspecialchars($stokBarang) : '0' ?>">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                 </div>
                             </div>
@@ -105,9 +107,12 @@ include '../../templates/sidebar.php';
                                     <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
                                 <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                    <option value="" disabled selected>Pilih Lokasi</option>
-                                    <?php foreach ($lokasiList as $lokasiBarang) : ?>
-                                        <option value="<?= htmlspecialchars($lokasiBarang) ?>"><?= htmlspecialchars($lokasiBarang) ?></option>
+                                    <option disabled selected>Pilih Lokasi</option>
+                                    <?php foreach ($lokasiList as $lokasi) : ?>
+                                        <option value="<?= htmlspecialchars($lokasi) ?>"
+                                            <?= (isset($lokasiBarang) && $lokasiBarang == $lokasi) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($lokasi) ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
