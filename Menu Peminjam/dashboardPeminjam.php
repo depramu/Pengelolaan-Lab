@@ -1,5 +1,5 @@
 <?php
-// Memanggil header.php. Ini sudah termasuk session_start(), koneksi.php, dan validasi login
+require_once __DIR__ . '/../auth.php';
 include '../templates/header.php';
 include '../templates/sidebar.php';
 ?>
