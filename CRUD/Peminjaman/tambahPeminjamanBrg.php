@@ -143,12 +143,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label class="form-label">Tanggal Peminjaman</label>
                                         <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
-                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="<?php
-                                                                                                                        if (!empty($tglPeminjamanBrg)) {
-                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
-                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
-                                                                                                                        }
-                                                                                                                        ?>">
+                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="
+                                        <?php
+                                        if (!empty($tglPeminjamanBrg)) {
+                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
+                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
+                                        }
+                                        ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -201,27 +202,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <a href="../../Menu Peminjam/lihatBarang.php"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
-                    </div>
-                    <div class="modal-body">
-                        <p>Peminjaman dengan ID <?= $idPeminjamanBrg ?> berhasil.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-primary">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 </main>
 
 <script>
