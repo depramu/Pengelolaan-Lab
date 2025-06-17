@@ -314,10 +314,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <h3 class="login-form-title"><?php echo htmlspecialchars($pageTitle); ?></h3>
                 <form action="login.php?role=<?php echo htmlspecialchars($role); ?>" method="POST">
                     <?php if (!empty($error_message)): ?>
-                        <div class="alert alert-danger" role="alert">
+                        <div id="server-error" class="alert alert-danger" role="alert">
                             <?php echo htmlspecialchars($error_message); ?>
-                        </div>
-                    <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
                     <div class="mb-3">
                         <label for="identifier" class="form-label d-flex align-items-start">
                             <span><?php echo htmlspecialchars($identifierLabel); ?></span>
@@ -375,7 +376,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             e.preventDefault(); // Gagalkan submit
         }
     });
+        // validasi kalo NIM/NPK dan kata sandi salah 
+        document.querySelector('form').addEventListener('submit', function (e) {
+        const id = document.getElementById('identifier').value.trim();
+        const pass = document.getElementById('kataSandi').value.trim();
+        let valid = true;
+
+        const idError = document.getElementById('identifier-error');
+        const passError = document.getElementById('password-error');
+        idError.textContent = '';
+        passError.textContent = '';
+
+        if (id === '' && pass === '') {
+            idError.textContent = '*Kolom ini tidak boleh kosong.*';
+            passError.textContent = '*Kolom ini tidak boleh kosong.*';
+            valid = false;
+        } else if (id === '') {
+            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
+            valid = false;
+        } else if (pass === '') {
+            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault();
+        }
+            });
+
+        // Tampilkan error dari server (jika ada)
+        window.addEventListener('DOMContentLoaded', function () {
+            const serverError = document.getElementById('server-error');
+            if (serverError && serverError.textContent.trim() !== '') {
+                // Ambil pesan
+                const errorMessage = serverError.textContent.trim().toLowerCase();
+
+                // Sembunyikan box alert
+                serverError.classList.add('d-none');
+
+                // Tampilkan sesuai kesalahan
+                if (errorMessage.includes('nim') || errorMessage.includes('npk')) {
+                    document.getElementById('identifier-error').textContent = '*NIM/NPK salah.*';
+                    document.getElementById('password-error').textContent = '*Kata Sandi salah.*';
+                }
+            }
+        });
+
 </script>
+
 </body>
  
 </html>
