@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
 
     if ($cekNamaRow['jumlah'] > 0) {
-        $error = "Nama ruangan sudah terdaftar";
+        $namaError = "*Nama ruangan sudah terdaftar";
     } else {
         $query = "INSERT INTO Ruangan (idRuangan, namaRuangan, kondisiRuangan, ketersediaan) VALUES (?, ?, ?, ?)";
         $params = [$idRuangan, $namaRuangan, $kondisiRuangan, $ketersediaan];
@@ -74,11 +74,14 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2">
                                 <label for="idRuangan" class="form-label d-flex align-items-center">ID Ruangan</label>
-                                <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled>
+                                <input type="text" class="form-control protect-input " id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="namaRuangan" class="form-label d-flex align-items-center">Nama Ruangan
                                     <span id="namaError" class="text-danger ms-2" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                                        <?php if (!empty($namaError)): ?>
+                                            <span class="text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                        <?php endif; ?>
                                 </label>
                                 <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
                             </div>
@@ -93,13 +96,13 @@ include '../../templates/sidebar.php';
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label for="ketersediaan" class="form-label d-flex align-items-center">Ketersediaan Ruangan
+                                <label for="ketersediaan" class="form-label d-flex align-items-center" value="<?= isset($ketersediaan) ? htmlspecialchars($ketersediaan) : '' ?>">Ketersediaan Ruangan
                                     <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
                                 <select class="form-select" id="ketersediaan" name="ketersediaan">
                                     <option disabled selected>Pilih Ketersediaan</option>
-                                    <option value="Tersedia">Tersedia</option>
-                                    <option value="Tidak Tersedia">Tidak Tersedia</option>
+                                    <option value="Tersedia" <?= (isset($ketersediaan) && $ketersediaan === 'Tersedia') ? 'selected' : '' ?>>Tersedia</option>
+                                    <option value="Tidak Tersedia" <?= (isset($ketersediaan) && $ketersediaan === 'Tidak Tersedia') ? 'selected' : '' ?>>Tidak Tersedia</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
@@ -148,7 +151,6 @@ include '../../templates/sidebar.php';
         } else if (ketersediaanError) {
             ketersediaanError.style.display = 'none';
         }
-
         if (!valid) e.preventDefault();
     });
 </script>
