@@ -97,7 +97,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
                 <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php'])) ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuang.php'])) ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">

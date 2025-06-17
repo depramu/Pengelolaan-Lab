@@ -1,5 +1,7 @@
 <?php
-// Memanggil header.php. Ini sudah termasuk session_start(), koneksi.php, dan validasi login
+require_once __DIR__ . '/../auth.php'; // Muat fungsi otorisasi
+
+authorize_role('Peminjam'); // Lindungi halaman ini untuk role 'Peminjam'
 include '../templates/header.php';
 include '../templates/sidebar.php';
 ?>
