@@ -72,7 +72,7 @@ include '../../templates/sidebar.php';
                             $altText = 'Menunggu Pengecekan oleh PIC';
                         } elseif ($statusPeminjaman == 'Menunggu approval') {
                             $iconSrc = BASE_URL . '/icon/jamAbu.svg';
-                            $altText = 'Menunggu Persetujuan';
+                            $altText = 'Menunggu Persetujuan oleh PIC';
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';
                             $altText = 'Peminjaman Ditolak';

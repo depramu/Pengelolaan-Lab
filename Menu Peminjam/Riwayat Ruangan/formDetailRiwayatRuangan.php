@@ -18,7 +18,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                 p.alasanPeminjamanRuangan, p.statusPeminjaman,
                 peng.dokumentasiSebelum, peng.dokumentasiSesudah,
                 tolak.alasanPenolakan,
-                COALESCE(m.namaMhs, k.namaKry) AS namaPeminjam
+                COALESCE(m.nama, k.nama) AS namaPeminjam
             FROM 
                 Peminjaman_Ruangan p
             LEFT JOIN 
@@ -49,7 +49,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-    <div class="mb-3">
+    <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
@@ -59,141 +59,139 @@ if (isset($_GET['idPeminjamanRuangan'])) {
         </nav>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="card-title mb-0 fw-semibold">Detail Peminjaman Ruangan</h5>
-                </div>
-                <div class="card-body p-4 scrollable-card-content">
-                    <?php if ($error_message) : ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?= $error_message ?>
-                        </div>
-                    <?php elseif ($data) : ?>
-                        <form id="formDetail" action="proses_pengembalian.php" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="idPeminjamanRuangan" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">ID Peminjaman</label>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">NIM / NPK</label>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Ruangan</label>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Waktu Peminjaman</label>
-                                        <input type="text" class="form-control" value="<?= ($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Status Peminjaman</label>
-                                        <input type="text" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Alasan Peminjaman</label>
-                                        <textarea class="form-control" rows="3" disabled><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
-                                    </div>
-                                </div>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
+                <div class="card border border-dark">
+                    <div class="card-header bg-white border-bottom border-dark">
+                        <span class="fw-semibold">Detail Pengajuan Peminjaman Ruangan</span>
+                    </div>
+                    <div class="card-body">
+                        <?php if ($error_message) : ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?= $error_message ?>
                             </div>
+                        <?php elseif ($data) : ?>
+                            <form id="formDetail" action="proses_pengembalian.php" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="idPeminjamanRuangan" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
 
-                            <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang dipinjam', 'Menunggu Pengecekan', 'Selesai'])) : ?>
-                                <hr>
-                                <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
-                                    <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
-                                    <div class="mt-3">
-                                        <label class="form-label fw-bold">Alasan Penolakan dari PIC</label>
-                                        <textarea class="form-control" rows="3" disabled><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
-                                    </div>
-                                <?php else: ?>
-                                    <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">
-                                                Dokumentasi Sebelum
-                                                <span id="dokSebelumError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
-                                            </label>
-                                            <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
-                                                <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
-                                            <?php else : ?>
-                                                <div class="mt-1">
-                                                    <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
-                                                    <?php else : ?>
-                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">ID Peminjaman</label>
+                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
                                         </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">
-                                                Dokumentasi Selesai
-                                                <span id="dokSesudahError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
-                                            </label>
-                                            <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
-                                                <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
-                                            <?php else : ?>
-                                                <div class="mt-1">
-                                                    <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
-                                                    <?php else : ?>
-                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            <?php endif; ?>
+                                        <div class="mb-3">
+                                            <label class="form-label">NIM / NPK</label>
+                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ruangan</label>
+                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
                                         </div>
                                     </div>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tanggal Peminjaman</label>
+                                            <input type="text" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Waktu Peminjaman</label>
+                                            <input type="text" class="form-control" value="<?= ($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Status Peminjaman</label>
+                                            <input type="text" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Alasan Peminjaman</label>
+                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
-                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
-                                    <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
+                                <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang dipinjam', 'Menunggu Pengecekan', 'Selesai'])) : ?>
+                                    <hr>
+                                    <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
+                                        <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
+                                        <div class="mt-3">
+                                            <label class="form-label fw-bold">Alasan Penolakan dari PIC</label>
+                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                        </div>
+                                    <?php else: ?>
+                                        <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-bold">
+                                                    Dokumentasi Sebelum
+                                                    <span id="dokSebelumError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
+                                                </label>
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                                    <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
+                                                <?php else : ?>
+                                                    <div class="mt-1">
+                                                        <?php if (!empty($data['dokumentasiSebelum'])) : ?>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                        <?php else : ?>
+                                                            <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label fw-bold">
+                                                    Dokumentasi Selesai
+                                                    <span id="dokSesudahError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
+                                                </label>
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                                    <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
+                                                <?php else : ?>
+                                                    <div class="mt-1">
+                                                        <?php if (!empty($data['dokumentasiSesudah'])) : ?>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                        <?php else : ?>
+                                                            <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
-                            </div>
-                        </form>
-                    <?php endif; ?>
+
+                                <div class="d-flex justify-content-between mt-3">
+                                    <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
+                                    <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                        <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
+                                    <?php endif; ?>
+                                </div>
+                            </form>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Dokumentasi berhasil terkirim
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Dokumentasi berhasil terkirim
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
-<?php
-include '../../templates/footer.php';
-?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -231,8 +229,13 @@ include '../../templates/footer.php';
     });
     document.addEventListener('DOMContentLoaded', function() {
         <?php if ($showSuccessModal) : ?>
-        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
         <?php endif; ?>
     });
 </script>
+
+
+<?php
+include '../../templates/footer.php';
+?>
