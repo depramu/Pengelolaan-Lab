@@ -14,13 +14,17 @@
                             } else if ($currentFile == 'tambahRuangan.php' || $currentFile == 'editRuangan.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenRuangan.php';
                             } else if ($currentFile == 'tambahPeminjamanBrg.php') {
-                                echo BASE_URL . '/Menu Peminjam/Peminjaman Barang/lihatBarang.php';
+                                echo BASE_URL . '/Menu Peminjam/Riwayat Barang/riwayatBarang.php';
                             } else if ($currentFile == 'tambahPeminjamanRuangan.php') {
-                                echo BASE_URL . '/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php';
+                                echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
                             } else if ($currentFile == 'tambahAkunKry.php' || $currentFile == 'editAkunKry.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenAkunKry.php';
                             } else if ($currentFile == 'tambahAkunMhs.php' || $currentFile == 'editAkunMhs.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenAkunMhs.php';
+                            } else if ($currentFile == 'pengajuanBarang.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
+                            } else if ($currentFile == 'pengajuanRuangan.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                             }
                             ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
@@ -53,6 +57,10 @@
                         echo 'Data akun mahasiswa berhasil ditambahkan.';
                     } else if ($currentFile == 'editAkunMhs.php') {
                         echo 'Data akun mahasiswa berhasil diperbarui.';
+                    } else if ($currentFile == 'pengajuanBarang.php') {
+                        echo 'Peminjaman barang telah disetujui.';
+                    } else if ($currentFile == 'pengajuanRuangan.php') {
+                        echo 'Peminjaman ruangan telah disetujui.';
                     }
                     ?></p>
             </div>
@@ -73,6 +81,10 @@
                                 echo BASE_URL . '/Menu PIC/manajemenAkunKry.php';
                             } else if ($currentFile == 'tambahAkunMhs.php' || $currentFile == 'editAkunMhs.php') {
                                 echo BASE_URL . '/Menu PIC/manajemenAkunMhs.php';
+                            } else if ($currentFile == 'pengajuanBarang.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
+                            } else if ($currentFile == 'pengajuanRuangan.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                             }
                             ?>" class="btn btn-primary">OK</a>
             </div>

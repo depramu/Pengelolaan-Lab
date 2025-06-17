@@ -1,83 +1,70 @@
 <?php
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../koneksi.php';
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Inisialisasi variabel
 $error = null;
 $showModal = false;
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 
-// Auto-generate id Peminjaman Ruangan dari database SQL Server
+// Auto-generate ID Peminjaman Barang
 $idPeminjamanBrg = 'PJB001';
-$sqlId = "SELECT TOP 1 idPeminjamanBrg FROM Peminjaman_Barang WHERE idPeminjamanBrg LIKE 'PJB%' ORDER BY idPeminjamanBrg DESC";
-$stmtId = sqlsrv_query($conn, $sqlId);
+$stmtId = sqlsrv_query($conn, "SELECT TOP 1 idPeminjamanBrg FROM Peminjaman_Barang WHERE idPeminjamanBrg LIKE 'PJB%' ORDER BY idPeminjamanBrg DESC");
 if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
-    $lastId = $rowId['idPeminjamanBrg']; // contoh: PJR012
-    $num = intval(substr($lastId, 3));
-    $newNum = $num + 1;
-    $idPeminjamanBrg = 'PJB' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
+    $num = intval(substr($rowId['idPeminjamanBrg'], 3)) + 1;
+    $idPeminjamanBrg = 'PJB' . str_pad($num, 3, '0', STR_PAD_LEFT);
 }
-// ID Barang
+
+// Validasi ID Barang dari URL
 $idBarang = $_GET['idBarang'] ?? null;
 if (empty($idBarang)) {
     die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
 }
 
-$namaBarang = '';
-$stokTersedia = 0;
-
-$sqlDetail = "SELECT namaBarang, stokBarang FROM Barang WHERE idBarang = ?";
-$paramsDetail = [$idBarang];
-$stmtDetail = sqlsrv_query($conn, $sqlDetail, $paramsDetail);
-
-// Cek apakah data barang ditemukan
+// Ambil detail barang
+$stmtDetail = sqlsrv_query($conn, "SELECT namaBarang, stokBarang FROM Barang WHERE idBarang = ?", [$idBarang]);
 if ($stmtDetail && $dataBarang = sqlsrv_fetch_array($stmtDetail, SQLSRV_FETCH_ASSOC)) {
-    // Jika data ditemukan, simpan ke dalam variabel
-    $namaBarang = $dataBarang['namaBarang'];
-    $stokTersedia = $dataBarang['stokBarang'];
+    [$namaBarang, $stokTersedia] = [$dataBarang['namaBarang'], $dataBarang['stokBarang']];
 } else {
-    // Jika ID barang dari URL tidak valid, hentikan proses.
     die("Error: Data untuk ID Barang '" . htmlspecialchars($idBarang) . "' tidak ditemukan di database.");
 }
 
-// Data sesi dan tanggal
-$nim = $_SESSION['nim'] ?? null;
-$npk = $_SESSION['npk'] ?? null;
-$tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? null;
+// Data sesi
+[$nim, $npk, $tglPeminjamanBrg] = [
+    $_SESSION['nim'] ?? null,
+    $_SESSION['npk'] ?? null,
+    $_SESSION['tglPeminjamanBrg'] ?? null
+];
 
-
-//  stok barang
-$sqlStok = "SELECT stokBarang FROM Barang WHERE idBarang = ?";
-$paramsStok = [$idBarang];
-$stmtStok = sqlsrv_query($conn, $sqlStok, $paramsStok);
-$stokBarang = sqlsrv_fetch_array($stmtStok, SQLSRV_FETCH_ASSOC)['stokBarang'];
-
-// Proses Peminjaman hanya jika metode POST
+// Proses Peminjaman
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanBrg = $_POST['alasanPeminjamanBrg'];
-    $jumlahBrg = (int)$_POST['jumlahBrg']; // Pastikan integer
+    $jumlahBrg = (int)$_POST['jumlahBrg'];
+
+    // Format tanggal untuk SQL
+    $tglPeminjamanBrgForSQL = $tglPeminjamanBrg ?
+        DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg)?->format('Y-m-d H:i:s') : null;
 
     // Validasi input
-    if ($jumlahBrg <= 0) {
+    if (!$tglPeminjamanBrgForSQL) {
+        $error = "Terjadi kesalahan format tanggal. Silakan coba lagi dari halaman sebelumnya.";
+    } elseif ($jumlahBrg <= 0) {
         $error = "Jumlah peminjaman harus lebih dari 0.";
     } elseif ($jumlahBrg > $stokTersedia) {
         $error = "*Jumlah peminjaman melebihi stok yang tersedia.";
     } else {
-        // 1. Insert data peminjaman    
-        $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrg, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
-        $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
+        // Insert peminjaman
+        $stmtInsert = sqlsrv_query(
+            $conn,
+            "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgForSQL, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan']
+        );
 
         if ($stmtInsert) {
-            // 2. Jika insert berhasil, update stok barang
-            $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
-            $paramsUpdate = [$jumlahBrg, $idBarang];
-            $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
+            // Update stok barang
+            $stmtUpdate = sqlsrv_query(
+                $conn,
+                "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?",
+                [$jumlahBrg, $idBarang]
+            );
 
             if ($stmtUpdate) {
                 $showModal = true;
@@ -85,11 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
             }
         } else {
-            $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
+            $error = "Gagal menambahkan peminjaman barang. Periksa kembali data Anda. Error: " . print_r(sqlsrv_errors(), true);
         }
+    }
+
+    if ($error) {
+        echo "<div class='alert alert-danger'>$error</div>";
     }
 }
 ?>
+
 <style>
     .protect-input {
         background-color: #e9ecef;
@@ -141,11 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <label class="form-label">Tanggal Peminjaman</label>
                                         <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                         <input type="text" class="form-control protect-input" name="tglDisplay" value="<?php
-                                                                                                                        if (!empty($tglPeminjamanBrg)) {
-                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
-                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
-                                                                                                                        }
-                                                                                                                        ?>">
+                                        if (!empty($tglPeminjamanBrg)) {
+                                            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
+                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
+                                        }
+                                        ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -186,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" required style="max-width: 70px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                     </div>
-                                    <small class="text-muted">Stok tersedia: <?= $stokBarang ?></small>
+                                    <small class="text-muted">Stok tersedia: <?= $stokTersedia ?></small>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
