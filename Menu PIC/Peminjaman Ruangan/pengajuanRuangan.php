@@ -65,22 +65,23 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
-
                             <div class="row">
                                 <!-- Kolom Kiri -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idRuangan" class="form-label">ID Ruangan</label>
-                                        <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" disabled style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
+                                        <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
                                         <label for="tglPeminjamanRuangan" class="form-label">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" disabled style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanRuangan) ?></div>
+                                        <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
                                         <label for="nim" class="form-label">NIM</label>
-                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
+                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" style="background: #f5f5f5;">
                                     </div>
 
                                 </div>
@@ -88,26 +89,27 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idPeminjamanRuangan" class="form-label">ID Peminjaman Ruangan</label>
-                                        <input type="text" class="form-control" id="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" disabled style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
+                                        <input type="hidden" class="form-control" id="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col-md-6">
                                             <label for="waktuMulai" class="form-label">Waktu Mulai</label>
-                                            <input type="text" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai ?? '08.00') ?>" disabled style="background: #f5f5f5;">
+                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai ?? '') ?>" style="background: #f5f5f5;">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="waktuSelesai" class="form-label">Waktu Selesai</label>
-                                            <input type="text" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai ?? '10.00') ?>" disabled style="background: #f5f5f5;">
+                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai ?? '10.00') ?>" style="background: #f5f5f5;">
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="npk" class="form-label">NPK</label>
-                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled style="background: #f5f5f5;">
+                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" style="background: #f5f5f5;">
                                     </div>
                                 </div>
                                 <div class="mb-2">
                                     <label for="alasanPeminjaman" class="form-label">Alasan Peminjaman</label>
-                                    <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" rows="3" disabled style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
+                                    <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
                                 </div>
                             </div>
 

@@ -64,18 +64,18 @@ include '../../templates/sidebar.php';
                         if ($statusPeminjaman == 'Selesai') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
-                        } elseif ($statusPeminjaman == 'Sedang dipinjam') {
+                        } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
                             $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Sedang Dipinjam';
                         } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Menunggu Pengecekan oleh PIC';
-                        } elseif ($statusPeminjaman == 'Menunggu approval') {
-                            $iconSrc = BASE_URL . '/icon/jamAbu.svg';
+                        } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
+                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Menunggu Persetujuan oleh PIC';
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';
-                            $altText = 'Peminjaman Ditolak';
+                            $altText = 'Ditolak';
                         }
                         ?>
                         <tr class="text-center">
