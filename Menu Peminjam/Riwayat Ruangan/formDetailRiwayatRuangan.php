@@ -100,9 +100,10 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                             <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Waktu Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></div>
-                                            <input type="hidden" class="form-control" value="<?= ($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') . ' - ' . ($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>">
+                                            <div class="row">
+                                                <div class="col-6"> Waktu Mulai: <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?></p></div>
+                                                <div class="col-6">Waktu Selesai: <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></p></div>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Status Peminjaman</label>

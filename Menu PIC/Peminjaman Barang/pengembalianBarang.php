@@ -1,4 +1,4 @@
-    <?php
+<?php
     include '../../templates/header.php';
 
     $showModal = false;
@@ -15,18 +15,23 @@
     $idBarang = null;
 
     // Menggunakan prepared statement yang lebih aman untuk GET
-    $query_get = "SELECT jumlahBrg, idBarang FROM Peminjaman_Barang WHERE idPeminjamanBrg = ?";
+   $query_get = "SELECT pb.jumlahBrg, pb.idBarang, b.namaBarang
+              FROM Peminjaman_Barang pb
+              JOIN Barang b ON pb.idBarang = b.idBarang
+              WHERE pb.idPeminjamanBrg = ?";
     $params_get = [$idPeminjamanBrg];
     $stmt_get = sqlsrv_query($conn, $query_get, $params_get);
 
-    if ($stmt_get && ($data = sqlsrv_fetch_array($stmt_get, SQLSRV_FETCH_ASSOC))) {
-        $jumlahBrg = (int)$data['jumlahBrg'];
-        $idBarang = $data['idBarang'];
-    } else {
-        // Tampilkan error jika query gagal atau data tidak ditemukan
-        die("Data peminjaman tidak ditemukan atau terjadi kesalahan query. " . print_r(sqlsrv_errors(), true));
-    }
 
+    if ($stmt_get && ($data = sqlsrv_fetch_array($stmt_get, SQLSRV_FETCH_ASSOC))) {
+        $idBarang = $data['idBarang'];
+        $jumlahBrg = $data['jumlahBrg'];
+        $namaBarang = $data['namaBarang'];
+    } else {
+        $idBarang = '';
+        $jumlahBrg = 0;
+        $namaBarang = '';
+    }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Ambil data dari form
@@ -91,7 +96,6 @@
             </nav>
         </div>
 
-
         <!-- Pengembalian Barang -->
         <div class="container mt-4">
             <?php if (isset($error)) : ?>
@@ -107,16 +111,26 @@
                         <div class="card-header bg-white border-bottom border-dark">
                             <span class="fw-semibold">Pengembalian Peminjaman Barang</span>
                         </div>
+
                         <div class="card-body">
                             <form method="POST">
-                                <div class="mb-2">
-                                    <label for="idPeminjamanBrg" class="form-label">ID Peminjaman Barang</label>
-                                    <input type="text" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= isset($idPeminjamanBrg) ? htmlspecialchars($idPeminjamanBrg) : '' ?>" disabled>
+                                <div class='mb-2 row'>
+                                    <div class="col-md-6">
+                                        <label for="idPeminjamanBrg" class="form-label">ID Peminjaman Barang</label>
+                                            <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= isset($idPeminjamanBrg) ? htmlspecialchars($idPeminjamanBrg) : '' ?>">
+                                            <span class="form-control d-block bg-light" id="idPeminjaman"><?= $idPeminjamanBrg ?></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="namaBarang" class="form-label">Nama Barang</label>
+                                            <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?>">
+                                            <span class="form-control d-block bg-light" id="namaBarang"><?= htmlspecialchars($namaBarang) ?></span>
+                                    </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <div class="col-md-3">
                                         <label for="jumlahBrg" class="form-label">Jumlah Peminjaman</label>
-                                        <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>" disabled>
+                                            <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
+                                            <span class="form-control d-block bg-light" id="tampilJumlah"><?= $jumlahBrg ?></span>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="jumlahPengembalian" class="form-label w-100 text-center">Jumlah Pengembalian
@@ -243,5 +257,49 @@
             }
         });
     </script>
+
+    <script>
+        let jumlah = parseInt(document.getElementById('jumlahBrg').value) || 0;
+
+        function updateJumlah() {
+        // Update tampilan ke user
+        document.getElementById('tampilJumlah').textContent = jumlah;
+
+        // Update input hidden untuk dikirim ke server
+        document.getElementById('jumlahBrg').value = jumlah;
+        }
+    </script>
+
+    <script>
+        let id = parseInt(document.getElementById('idPeminjamanBrg').value) || 0;
+
+        function updateId() {
+        // Update tampilan ke user
+        document.getElementById('idPeminjaman').textContent = id;
+
+        // Update input hidden untuk dikirim ke server
+        document.getElementById('idPeminjamanBrg').value = id;
+        }
+    </script>
+
+    <script>
+        let namaBarang = document.getElementById('namaBarang').value || '';
+
+        function updateNamaBarang() {
+        // Update tampilan ke user
+        document.getElementById('namaBarang').textContent = namaBarang;
+
+        // Update input hidden untuk dikirim ke server
+        document.getElementById('namaBarang').value = namaBarang;
+        }
+    </script>
+
+    <?php if ($showModal) : ?>
+        <script>
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        </script>
+    <?php endif; ?>
+
 
     <?php include '../../templates/footer.php'; ?>

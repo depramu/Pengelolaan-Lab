@@ -75,15 +75,13 @@ include '../../templates/sidebar.php';
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-2">
-                                <label class="form-label">ID Ruangan</label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
+                                <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($idRuangan) ?></div>
                                 <input type="hidden" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Nama Ruangan
-                                    <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                </label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($data['namaRuangan']) ?></div>
+                                <label for="namaRuangan" class="form-label">Nama Ruangan</label>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($data['namaRuangan']) ?></div>
                                 <input type="hidden" id="namaRuangan" name="namaRuangan" value="<?= htmlspecialchars($data['namaRuangan']) ?>">
                             </div>
                             <div class="mb-2">
