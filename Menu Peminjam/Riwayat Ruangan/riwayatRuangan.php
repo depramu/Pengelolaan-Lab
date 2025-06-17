@@ -13,7 +13,6 @@ if (isset($_SESSION['user_role'])) {
         $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE nim = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
         $params = [$nim_value];
 
-        // Langsung eksekusi query di sini!
         $result = sqlsrv_query($conn, $query, $params);
 
         // Jika role adalah Karyawan dan session 'npk' ada
@@ -22,7 +21,6 @@ if (isset($_SESSION['user_role'])) {
         $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE npk = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
         $params = [$npk_value];
 
-        // Langsung eksekusi query di sini!
         $result = sqlsrv_query($conn, $query, $params);
     }
 }
@@ -42,13 +40,12 @@ include '../../templates/sidebar.php';
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Peminjaman</th>
                     <th>ID Ruangan</th>
                     <th>Tanggal Peminjaman</th>
-                    <th>Waktu Mulai </th>
-                    <th>Waktu Selesai </th>
-                    <th class="text-center">Aksi</th>
+                    <th>Waktu Peminjaman </th>
+                    <th>Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -67,26 +64,27 @@ include '../../templates/sidebar.php';
                         if ($statusPeminjaman == 'Selesai') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
-                        } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-                            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                        } elseif ($statusPeminjaman == 'Sedang dipinjam') {
+                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Sedang Dipinjam';
                         } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Menunggu Pengecekan oleh PIC';
-                        } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
-                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
-                            $altText = 'Menunggu Persetujuan';
+                        } elseif ($statusPeminjaman == 'Menunggu approval') {
+                            $iconSrc = BASE_URL . '/icon/jamAbu.svg';
+                            $altText = 'Menunggu Persetujuan oleh PIC';
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';
                             $altText = 'Peminjaman Ditolak';
                         }
                         ?>
-                        <tr>
+                        <tr class="text-center">
                             <td><?= htmlspecialchars($row['idPeminjamanRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
-                            <td><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?></td>
-                            <td><?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
+                            <td><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?>
+                                -
+                                <?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
