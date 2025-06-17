@@ -49,42 +49,47 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idBarang" class="form-label">ID Barang</label>
-                                        <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
+                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="tglPeminjamanBrg" class="form-label">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="jumlahBrg" class="form-label">Jumlah Barang</label>
-                                        <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idPeminjamanBrgDisplay" class="form-label">ID Peminjaman Barang</label>
-                                        <input type="text" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
+                                        <input type="hidden" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="nim" class="form-label">NIM</label>
-                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
+                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="npk" class="form-label">NPK</label>
-                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
+                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     </div>
                                 </div>
                             </div>
                             <!-- Alasan Peminjaman -->
                             <div class="mb-2">
                                 <label for="alasanPeminjamanBrg" class="form-label">Alasan Peminjaman</label>
-                                <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanBrg) ?></div>
+                                <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" hidden><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
                             </div>
 
                             <div class="d-flex justify-content-start gap-2 mt-4">
