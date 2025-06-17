@@ -1,0 +1,55 @@
+SERVER COMMANDS REFERENCE
+
+1. STARTING XAMPP
+----------------
+- Open XAMPP Control Panel
+- Click 'Start' next to Apache and MySQL
+- Verify both services are running (green)
+
+2. STARTING SERVER VIA COMMAND LINE
+----------------------------------
+- Start Apache: net start Apache2.4
+- Start MySQL: net start MySQL
+
+3. STOPPING SERVER
+-----------------
+- Open XAMPP Control Panel
+- Click 'Stop' next to Apache and MySQL
+- Verify both services are stopped (red)
+
+4. VERIFICATION
+--------------
+- Check Apache: http://localhost
+- Check MySQL: mysql -u root -p
+- Check PHP: php -v
+- Check PHPMyAdmin: http://localhost/phpmyadmin
+- Access Application: http://localhost/PIC-peminjaman-approval/index.php
+
+5. ACCESSING SPECIFIC PAGES
+--------------------------
+- Base URL: http://localhost/PIC-peminjaman-approval/
+- Example pages:
+  * Login: http://localhost/PIC-peminjaman-approval/Login/login.php
+  * Admin Dashboard: http://localhost/PIC-peminjaman-approval/PIC/dashboardPIC.php
+  * Room Booking: http://localhost/PIC-peminjaman-approval/PIC/peminjamanRuangan.php
+  * Equipment Booking: http://localhost/PIC-peminjaman-approval/PIC/peminjamanBarang.php
+  * History: http://localhost/PIC-peminjaman-approval/PIC/riwayatPeminjamanAdmin.php
+
+5. PORTS
+--------
+- Apache: Port 80 (HTTP), Port 443 (HTTPS)
+- MySQL: Port 3306
+- PHPMyAdmin: Port 80 (via localhost/phpmyadmin)
+
+6. TROUBLESHOOTING
+------------------
+- If port 80 is in use: netstat -ano | findstr :80
+- If Apache won't start: Check error logs in C:\xampp\apache\logs\error.log
+- If MySQL won't start: Check error logs in C:\xampp\mysql\data\mysql_error.log
+
+7. USEFUL COMMANDS
+-----------------
+- View running services: tasklist
+- Kill process by PID: taskkill /F /PID <PID>
+- View Apache status: http://localhost/dashboard/php/status.php
+- View MySQL status: http://localhost/phpmyadmin/server_status.php

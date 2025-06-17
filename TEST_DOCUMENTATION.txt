@@ -1,0 +1,59 @@
+PENGELOLAAN-LAB TEST DOCUMENTATION
+
+1. GIT WORKFLOW
+----------------
+- Created feature branch: feature/your-changes
+- Main branch (main) contains production-ready code
+- Feature branch for isolated development
+- Regular updates from main recommended
+
+2. PASSWORD RESET TESTING
+------------------------
+- Created simplified password reset without hashing
+- Database: PENGELOLAAN_LAB
+- Email configuration working with Gmail SMTP
+- Password reset flow:
+  * Generate new password
+  * Store in database (plain text)
+  * Send email with new password
+
+3. BRANCH MANAGEMENT
+-------------------
+Switching between branches:
+- To switch to main: git checkout main
+- To switch to feature: git checkout feature/your-changes
+- To update feature branch:
+  * git checkout main
+  * git pull origin main
+  * git checkout feature/your-changes
+  * git merge main
+
+4. RECOMMENDED WORKFLOW
+----------------------
+1. Start on feature branch
+2. Test changes thoroughly
+3. Regular updates from main
+4. Commit changes frequently
+5. Test after each update
+6. Merge back to main when ready
+
+5. GIT TIPS
+-----------
+- Always check git status before switching branches
+- Create backups before major changes
+- Test thoroughly before merging
+- Keep feature branches focused
+- Update from main regularly
+
+6. FILE STRUCTURE
+----------------
+- Main project: c:\xampp\htdocs\PIC-peminjaman-approval
+- Backup: c:\xampp\htdocs\PIC-peminjaman-approval-backup-20250616
+
+7. NEXT STEPS
+-------------
+1. Test current project functionality
+2. Gradually integrate password reset feature
+3. Test room lease feature integration
+4. Regular updates from main branch
+5. Document all changes and tests
