@@ -16,7 +16,7 @@ $error_message = '';
 if ($user_id && $user_role) {
   if ($user_role === 'Mahasiswa') {
     // Ambil data Mahasiswa
-    $query = "SELECT nim, namaMhs FROM Mahasiswa WHERE nim = ?";
+    $query = "SELECT nim, nama, email FROM Mahasiswa WHERE nim = ?";
     $stmt = sqlsrv_query($conn, $query, array($user_id));
     if ($stmt === false) {
       $error_message = "Gagal mengambil data Mahasiswa.";
@@ -26,9 +26,9 @@ if ($user_id && $user_role) {
         $profil['role'] = 'Mahasiswa';
       }
     }
-  } elseif ($user_role === 'Karyawan' || $user_role === 'PIC Aset' || $user_role === 'Ka UPT') {
+  } elseif ($user_role === 'Karyawan' || $user_role === 'PIC Aset' || $user_role === 'KA UPT') {
     // Ambil data Karyawan
-    $query = "SELECT npk, namaKry, noHp, jenisRole FROM Karyawan WHERE npk = ?";
+    $query = "SELECT npk, nama, email, jenisRole FROM Karyawan WHERE npk = ?";
     $stmt = sqlsrv_query($conn, $query, array($user_id));
     if ($stmt === false) {
       $error_message = "Gagal mengambil data Karyawan.";
@@ -57,9 +57,9 @@ if ($user_id && $user_role) {
           if ($user_role === 'PIC Aset') {
             $base_url = 'Menu PIC/';
             $dashboard_link = $base_url . 'dashboardPIC.php';
-          } elseif ($user_role === 'Ka UPT') {
-            $base_url = 'Menu Ka UPT/';
-            $dashboard_link = $base_url . 'dashboardKaUPT.php';
+          } elseif ($user_role === 'KA UPT') {
+            $base_url = 'Menu KA UPT/';
+            $dashboard_link = $base_url . 'dashboardKAUPT.php';
           }
           
         ?>
@@ -76,7 +76,7 @@ if ($user_id && $user_role) {
           <i class="bi bi-person-circle" style="font-size: 8rem; color: #343a40;"></i>
         </div>
         <h3 class="fw-bold mb-0" style="font-size: 1.75rem; margin-left: 20px;">
-          <?= htmlspecialchars($user_nama ?? ($profil['namaMhs'] ?? $profil['namaKry'] ?? '')) ?>
+          <?= htmlspecialchars($user_nama ?? ($profil['nama'] ?? $profil['namaKry'] ?? '')) ?>
         </h3>
       </div>
       <div class="bg-primary text-white p-3 rounded-3">
@@ -89,9 +89,6 @@ if ($user_id && $user_role) {
             </div>
             <div class="col-12 mb-2">
               <strong><?= isset($profil['nim']) ? 'NIM' : 'NPK' ?>:</strong> <?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?>
-            </div>
-            <div class="col-12 mb-2">
-              <strong>Nama:</strong> <?= htmlspecialchars($profil['namaMhs'] ?? $profil['namaKry'] ?? '') ?>
             </div>
             <div class="col-12 mb-2">
               <strong>Email:</strong> <?= htmlspecialchars($profil['email'] ?? '-') ?>
