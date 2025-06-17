@@ -1,121 +1,106 @@
 <?php
 include '../../templates/header.php';
+$idPeminjamanBrg = $_GET['id'] ?? '';
+$data = [];
 
-// Get peminjaman detail
-if (isset($_GET['id'])) {
-    $idPeminjamanBrg = $_GET['id'];
-    $query = "SELECT p.*, m.namaMhs, m.email, m.noHp, b.namaBarang, b.kondisi 
-              FROM Peminjaman p 
-              JOIN Mahasiswa m ON p.nim = m.nim 
-              JOIN Barang b ON p.idBarang = b.idBarang 
-              WHERE p.idPeminjaman = ?";
-    $params = [$idPeminjamanBrg];
+if (!empty($idPeminjamanBrg)) {
+    $_SESSION['idPeminjamanBrg'] = $idPeminjamanBrg;
+
+    $query = "SELECT * FROM Peminjaman_Barang WHERE idPeminjamanBrg = ?";
+    $params = array($idPeminjamanBrg);
     $stmt = sqlsrv_query($conn, $query, $params);
+
+    if ($stmt && sqlsrv_has_rows($stmt)) {
+        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+    }
 }
+
+// Ekstrak data
+$idBarang = $data['idBarang'] ?? '';
+$nim = $data['nim'] ?? '';
+$npk = $data['npk'] ?? '';
+$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
+$jumlahBrg = $data['jumlahBrg'] ?? '';
+$alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
+$currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
+
 
 include '../../templates/sidebar.php';
 ?>
-<!-- Main Content -->
-<main class="col bg-white px-3 px-md-4 py-3">
-    <div class="mb-5">
+<main class="col bg-white px-4 py-3 position-relative">
+    <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
-                <li class="breadcrumb-item active">Detail Peminjaman</li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman Barang</li>
             </ol>
         </nav>
     </div>
 
-    <!-- Content here -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Detail Peminjaman Barang</h4>
-        <a href="index.php" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
-    </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="card-title mb-4">Informasi Peminjaman</h5>
-                    <table class="table">
-                        <tr>
-                            <th>ID Peminjaman</th>
-                            <td><?php echo htmlspecialchars($idPeminjamanBrg['idPeminjamanBrg']); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Peminjaman</th>
-                            <td><?php echo $peminjaman['tanggalPeminjaman']->format('d/m/Y'); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Kembali</th>
-                            <td><?php echo $peminjaman['tanggalKembali']->format('d/m/Y'); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>
-                                <?php
-                                switch ($peminjaman['status']) {
-                                    case 'pending':
-                                        echo '<span class="badge bg-warning">Menunggu</span>';
-                                        break;
-                                    case 'approved':
-                                        echo '<span class="badge bg-success">Disetujui</span>';
-                                        break;
-                                    case 'rejected':
-                                        echo '<span class="badge bg-danger">Ditolak</span>';
-                                        break;
-                                    case 'returned':
-                                        echo '<span class="badge bg-info">Dikembalikan</span>';
-                                        break;
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h5 class="card-title mb-4">Informasi Peminjam</h5>
-                    <table class="table">
-                        <tr>
-                            <th>Nama</th>
-                            <td><?php echo htmlspecialchars($peminjaman['namaMhs']); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td><?php echo htmlspecialchars($peminjaman['email']); ?></td>
-                        </tr>
-                        <tr>
-                            <th>No. HP</th>
-                            <td><?php echo htmlspecialchars($peminjaman['noHp']); ?></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <h5 class="card-title mb-4">Informasi Barang</h5>
-                    <table class="table">
-                        <tr>
-                            <th>Nama Barang</th>
-                            <td><?php echo htmlspecialchars($peminjaman['namaBarang']); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Kondisi</th>
-                            <td><?php echo htmlspecialchars($peminjaman['kondisi']); ?></td>
-                        </tr>
-                        <tr>
-                            <th>Keterangan</th>
-                            <td><?php echo htmlspecialchars($peminjaman['keterangan']); ?></td>
-                        </tr>
-                    </table>
+    <!-- Pengajuan Peminjaman Barang -->
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
+                <div class="card border border-dark">
+                    <div class="card-header bg-white border-bottom border-dark">
+                        <span class="fw-semibold">Pengajuan Peminjaman Barang</span>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="idBarang" class="form-label">ID Barang</label>
+                                        <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="tglPeminjamanBrg" class="form-label">Tanggal Peminjaman</label>
+                                        <input type="text" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>" disabled>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="jumlahBrg" class="form-label">Jumlah Barang</label>
+                                        <input type="text" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="idPeminjamanBrgDisplay" class="form-label">ID Peminjaman Barang</label>
+                                        <input type="text" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>" disabled>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="nim" class="form-label">NIM</label>
+                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" disabled>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="npk" class="form-label">NPK</label>
+                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Alasan Peminjaman -->
+                            <div class="mb-2">
+                                <label for="alasanPeminjamanBrg" class="form-label">Alasan Peminjaman</label>
+                                <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-start gap-2 mt-4">
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </main>
 
+<?php
 
-<?php include '../../templates/footer.php'; ?>
+include '../../templates/footer.php';
+?>
