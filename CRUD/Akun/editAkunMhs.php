@@ -47,9 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-
-<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Ubah Akun Mahasiswa</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">

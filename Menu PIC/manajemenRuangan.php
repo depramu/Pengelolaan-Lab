@@ -2,7 +2,7 @@
 include '../templates/header.php';
 
 // Pagination setup
-$perPage = 9;
+$perPage = 3;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -13,16 +13,20 @@ $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 
-
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan";
+$query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan ORDER BY idRuangan OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+if ($result === false) {
+    echo "Error executing query: <br>";
+    die(print_r(sqlsrv_errors(), true));
+}
+require_once '../function/pagination.php';
 
 include '../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Manajemen Ruangan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -34,8 +38,8 @@ include '../templates/sidebar.php';
 
     <!-- Table Manajemen Ruangan -->
     <div class="d-flex justify-content-start mb-2">
-        <a href="../CRUD/Ruangan/tambahRuangan.php" class="btn btn-primary">
-            <img src="../icon/tambah.svg" alt="tambah" class="me-2">Tambah Ruangan</a>
+        <a href="<?= BASE_URL ?>/CRUD/Ruangan/tambahRuangan.php" class="btn btn-primary">
+            <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="tambah" class="me-2">Tambah Ruangan</a>
     </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
@@ -95,43 +99,12 @@ include '../templates/sidebar.php';
             </tbody>
         </table>
 
-        <!-- Pagination -->
-        <nav aria-label="Page navigation" class="fixed-pagination">
-            <ul class="pagination justify-content-end">
-                <!-- Previous button -->
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
-                </li>
-                <!-- Page numbers -->
-                <?php
-                $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
-                $ellipsisShown = false;
-                for ($i = 1; $i <= $totalPages; $i++) {
-                    if (
-                        $i <= $showPages || // always show first 3
-                        $i > $totalPages - $showPages || // always show last 3
-                        abs($i - $page) <= 1 // show current, previous, next
-                    ) {
-                        $ellipsisShown = false;
-                ?>
-                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                <?php
-                    } elseif (!$ellipsisShown) {
-                        // Show ellipsis only once
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                        $ellipsisShown = true;
-                    }
-                }
-                ?>
-                <!-- Next button -->
-                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
-                </li>
-            </ul>
-        </nav>
     </div>
+    <?php
+    if ($totalPages > 1) {
+        generatePagination($page, $totalPages);
+    }
+    ?>  
 </main>
 
 <?php

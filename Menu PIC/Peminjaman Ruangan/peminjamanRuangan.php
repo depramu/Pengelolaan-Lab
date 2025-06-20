@@ -1,120 +1,123 @@
 <?php
 include '../../templates/header.php';
-$query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan";
+
+// Pagination setup
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$perPage = 3;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
+// Hitung total data
+$countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Ruangan";
+$countResult = sqlsrv_query($conn, $countQuery);
+$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
+$totalData = $countRow['total'];
+$totalPages = ceil($totalData / $perPage);
+
+// Ambil data sesuai halaman
+$offset = ($page - 1) * $perPage;
+$query = "SELECT pr.*, r.namaRuangan 
+          FROM Peminjaman_Ruangan pr 
+          JOIN Ruangan r ON pr.idRuangan = r.idRuangan 
+          ORDER BY pr.idPeminjamanRuangan 
+          OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 if ($result === false) {
   echo "Error executing query: <br>";
   die(print_r(sqlsrv_errors(), true));
 }
+
+require_once '../../function/pagination.php';
 include '../../templates/sidebar.php';
 ?>
-      <!-- Content Area -->
-      <main class="col bg-white px-4 py-3 position-relative">
-        <div class="mb-4">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Peminjaman Ruangan</li>
-            </ol>
-          </nav>
-        </div>
+<main class="col bg-white px-3 px-md-4 py-3 position-relative">
+  <h3 class="fw-semibold mb-3">Peminjaman Ruangan</h3>
+  <div class="mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Peminjaman Ruangan</li>
+      </ol>
+    </nav>
+  </div>
 
-        <!-- Table Peminjaman Barang -->
-        <div class="table-responsive">
-          <table class="table table-hover align-middle table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>ID Peminjaman</th>
-                <th>ID Ruangan</th>
-                <th>Tanggal Peminjaman</th>
-                <th>Waktu Mulai</th>
-                <th>Waktu Selesai</th>
-                <th class="text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              $hasData = false;
-              while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                $hasData = true;
-              ?>
-                <tr>
-                  <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
-                  <td><?= htmlspecialchars($row['idRuangan']) ?></td>
-                  <td>
-                    <?= ($row['tglPeminjamanRuangan'] instanceof DateTimeInterface) ? $row['tglPeminjamanRuangan']->format('D, d M Y') : 'N/A'; ?>
-                  </td>
-                  <td><?= ($row['waktuMulai'] instanceof DateTimeInterface) ? $row['waktuMulai']->format('H:i') : 'N/A'; ?></td>
-                  <td><?= ($row['waktuSelesai'] instanceof DateTimeInterface) ? $row['waktuSelesai']->format('H:i') : 'N/A'; ?></td>
-                  <td class="text-center">
-                    <?php
-                    $statusFromDB = $row['statusPeminjaman'] ?? 'Menunggu Persetujuan';
+  <!-- Table Peminjaman Ruangan -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle table-bordered">
+      <thead class="table-light">
+        <tr class="text-center">
+          <th>ID Peminjaman</th>
+          <th>ID Ruangan</th>
+          <th>Nama Ruangan</th>
+          <th>Tanggal Peminjaman</th>
+          <th>Waktu Mulai</th>
+          <th>Waktu Selesai</th>
+          <th class="text-center">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $hasData = false;
+        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+          $hasData = true;
+          $statusPeminjaman = $row['statusPeminjaman'] ?? '';
+          $idPeminjaman = htmlspecialchars($row['idPeminjamanRuangan'] ?? '');
 
-                    $iconSource = 'bi-hourglass-split';
-                    $statusText = 'Status Tidak Diketahui';
+          if ($statusPeminjaman == 'Menunggu Persetujuan') {
+            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+            $altText = 'Menunggu Persetujuan oleh PIC';
+            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
+          } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
+            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+            $altText = 'Sedang Dipinjam';
+            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
+          } elseif ($statusPeminjaman == 'Ditolak') {
+            $iconSrc = BASE_URL . '/icon/silang.svg';
+            $altText = 'Ditolak';
+            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPenolakanRuangan.php?id=' . $idPeminjaman;
+          } elseif ($statusPeminjaman == 'Telah Dikembalikan') {
+            $iconSrc = BASE_URL . '/icon/centang.svg';
+            $altText = 'Peminjaman Selesai';
+            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/DetailPeminjamanRuangan.php?id=' . $idPeminjaman;
+          } else {
+            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+            $altText = 'Status Tidak Diketahui';
+            $linkDetail = '#';
+          }
+        ?>
+          <tr class="text-center">
+            <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
+            <td><?= htmlspecialchars($row['idRuangan']) ?></td>
+            <td><?= htmlspecialchars($row['namaRuangan']) ?></td>
+            <td>
+              <?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?>
+            </td>
+            <td><?= ($row['waktuMulai'] instanceof DateTimeInterface) ? $row['waktuMulai']->format('H:i') : 'N/A'; ?></td>
+            <td><?= ($row['waktuSelesai'] instanceof DateTimeInterface) ? $row['waktuSelesai']->format('H:i') : 'N/A'; ?></td>
+            <td class="td-aksi">
+              <a href="<?= $linkDetail ?>">
+                <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
+              </a>
+              <a href="<?= $linkDetail ?>">
+                <img src="<?= BASE_URL ?>/icon/detail.svg" alt="Lihat Detail" class="aksi-icon">
+              </a>
+            </td>
+          </tr>
+        <?php }
 
-                    switch ($statusFromDB) {
-                      case 'Menunggu Persetujuan':
-                        $iconSource = '../../icon/jamkuning.svg';
-                        $statusText = 'Menunggu Persetujuan';
-                        break;
-                      case 'Sedang Dipinjam':
-                        $iconSource = '../../icon/jamhijau.svg';
-                        $statusText = 'Sedang Dipinjam';
-                        break;
-                      case 'Ditolak':
-                        $iconSource = '../../icon/silang.svg';
-                        $statusText = 'Ditolak';
-                        break;
-                      case 'Telah Dikembalikan':
-                        $iconSource = '../../icon/centang.svg';
-                        $statusText = 'Telah Dikembalikan';
-                        break;
-                    }
-                    ?>
+        if (!$hasData) {
+          echo '<tr><td colspan="7" class="text-center">Tidak ada data peminjaman</td></tr>';
+        }
+        ?>
+      </tbody>
+    </table>
+  </div>
 
-                    <span title="<?= htmlspecialchars($statusText); ?>" style="cursor: help; vertical-align: middle;">
-                      <?php
-                      if (str_contains($iconSource, '.svg') || str_contains($iconSource, '.png')) {
-                        echo '<img src="' . htmlspecialchars($iconSource) . '" 
-                       alt="' . htmlspecialchars($statusText) . '" 
-                       style="width: 30px; height: 30px;" 
-                       class="me-2 mb-2">';
-                      } else {
-                        // JIKA TIDAK: Tampilkan sebagai font icon <i> (cara lama)
-                        echo '<i class="bi ' . htmlspecialchars($iconSource) . ' me-3" 
-                     style="font-size: 1.2rem;"></i>';
-                      }
-                      ?>
-                    </span>
-                    <?php if ($statusFromDB == 'Menunggu Persetujuan') { ?>
-                      <a href="pengajuanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
-                      </a>
-                    <?php } else if ($statusFromDB == 'Sedang Dipinjam') { ?>
-                      <a href="pengembalianRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
-                      </a>
-                    <?php } else if ($statusFromDB == 'Ditolak') { ?>
-                      <a href="detailPenolakanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
-                      </a>
-                    <?php } else if ($statusFromDB == 'Telah Dikembalikan') { ?>
-                      <a href="DetailPeminjamanRuangan.php?id=<?= htmlspecialchars($row['idPeminjamanRuangan']); ?>" class="text-secondary" title="Lihat Detail" style="vertical-align: middle;">
-                        <i><img src="../../icon/detail.svg" alt="Detail" style="width: 25px; height: 25px; margin-bottom: 7px;"></i>
-                      </a>
-                    <?php } ?>
-                  </td>
-                </tr>
-              <?php }
-
-              if (!$hasData) {
-                echo '<tr><td colspan="5" class="text-center">Tidak ada data peminjaman</td></tr>';
-              }
-              ?>
-            </tbody>
-          </table>
-        </div>
-      </main>
+  <?php
+    if ($totalPages > 1) {
+        generatePagination($page, $totalPages);
+    }
+    ?>
+</main>
 
 <?php include '../../templates/footer.php'; ?>

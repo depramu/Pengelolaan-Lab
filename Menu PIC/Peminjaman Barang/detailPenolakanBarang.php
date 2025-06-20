@@ -12,12 +12,13 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Detail Penolakan Peminjaman Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Detail Penolaka Peminjaman Barang</li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Penolakan Peminjaman Barang</li>
             </ol>
         </nav>
     </div>
@@ -43,7 +44,7 @@ include '../../templates/sidebar.php';
                             <div class="mb-2">
                                 <label for="alasanPenolakan" class="form-label">Alasan Penolakan</label>
                                 <div class="form-control-plaintext"><?= htmlspecialchars($alasanPenolakan) ?></div>
-                                <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" style="resize: none;" hidden ><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" style="resize: none;" hidden><?= htmlspecialchars($alasanPenolakan) ?></textarea>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>

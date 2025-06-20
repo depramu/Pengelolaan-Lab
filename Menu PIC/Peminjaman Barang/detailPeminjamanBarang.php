@@ -28,6 +28,7 @@
     include '../../templates/sidebar.php';
     ?>
     <main class="col bg-white px-4 py-3 position-relative">
+        <h3 class="fw-semibold mb-3">Detail Peminjaman Barang</h3>
         <div class="mb-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -38,8 +39,6 @@
             </nav>
         </div>
 
-
-        <!-- Pengajuan Peminjaman Barang -->
         <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
@@ -53,41 +52,41 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-2">
-                                            <label for="idBarang" class="form-label">ID Barang</label>
+                                            <label for="idBarang" class="form-label fw-bold">ID Barang</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
                                             <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="tglPeminjamanBrg" class="form-label">Tanggal Peminjaman</label>
+                                            <label for="tglPeminjamanBrg" class="form-label fw-bold">Tanggal Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
                                             <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="jumlahBrg" class="form-label">Jumlah Barang</label>
+                                            <label for="jumlahBrg" class="form-label fw-bold">Jumlah Barang</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
                                             <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-2">
-                                            <label for="idPeminjamanBrgDisplay" class="form-label">ID Peminjaman Barang</label>
+                                            <label for="idPeminjamanBrgDisplay" class="form-label fw-bold">ID Peminjaman Barang</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                             <input type="hidden" class="form-control" id="idPeminjamanBrgDisplay" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="nim" class="form-label">NIM</label>
+                                            <label for="nim" class="form-label fw-bold">NIM</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
                                             <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                         </div>
                                         <div class="mb-2">
-                                            <label for="npk" class="form-label">NPK</label>
+                                            <label for="npk" class="form-label fw-bold">NPK</label>
                                             <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Alasan Peminjaman -->
                                 <div class="mb-2">
-                                    <label for="alasanPeminjamanBrg" class="form-label">Alasan Peminjaman</label>
+                                    <label for="alasanPeminjamanBrg" class="form-label fw-bold">Alasan Peminjaman</label>
                                     <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanBrg) ?></div>
                                     <textarea class="form-control" id="alasanPeminjamanBrg" rows="3" style="width: 49%;" hidden><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
                                 </div>

@@ -1,23 +1,38 @@
 <?php
 include '../../templates/header.php';
 
-$tglPeminjamanBrg = isset($_POST['tglPeminjamanBrg']) ? $_POST['tglPeminjamanBrg'] : null;
-$query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
-if ($tglPeminjamanBrg) {
-    $query .= " AND tglPeminjamanBrg = '$tglPeminjamanBrg'";
-}
-$result = sqlsrv_query($conn, $query);
+// Pagination setup
+$perPage = 2;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
+// Hitung total data barang yang tersedia
+$countQuery = "SELECT COUNT(*) AS total FROM Barang WHERE stokBarang > 0";
+$countResult = sqlsrv_query($conn, $countQuery);
+$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
+$totalData = $countRow['total'] ?? 0;
+$totalPages = ceil($totalData / $perPage);
+
+// Ambil data barang sesuai halaman
+$offset = ($page - 1) * $perPage;
+$query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang 
+          FROM Barang 
+          WHERE stokBarang > 0
+          ORDER BY idBarang
+          OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$params = [$offset, $perPage];
+$result = sqlsrv_query($conn, $query, $params);
+
+require_once '../../function/pagination.php';
 
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 $peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php', 'lihatBarang.php', 'lihatRuangan.php'];
 $isPeminjamanActive = in_array($currentPage, $peminjamanPages);
 
 include '../../templates/sidebar.php';
-
-
 ?>
-<!-- Content Area -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -42,37 +57,41 @@ include '../../templates/sidebar.php';
             <tbody>
                 <?php
                 $hasData = false;
-                while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                    $hasData = true;
+                if ($result === false) {
+                    echo '<tr><td colspan="5" class="text-center text-danger">Gagal mengambil data dari database</td></tr>';
+                } else {
+                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                        $hasData = true;
                 ?>
                     <tr>
-                        <td><?= $row['idBarang'] ?></td>
-                        <td><?= $row['namaBarang'] ?></td>
-                        <td><?= $row['stokBarang'] ?></td>
-                        <td><?= $row['lokasiBarang'] ?></td>
+                        <td><?= htmlspecialchars($row['idBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['namaBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['stokBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['lokasiBarang']) ?></td>
                         <td class="text-center">
-                            <a href="../../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= $row['idBarang'] ?>"
+                            <a href="../../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>"
                                 onclick="event.preventDefault(); window.location.href=this.href+'<?= isset($_SESSION['tglPeminjamanBrg']) ? ('&tglPeminjamanBrg=' . urlencode($_SESSION['tglPeminjamanBrg'])) : '' ?>';">
                                 <img src="../../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button">
                             </a>
                         </td>
-
                     </tr>
                 <?php
-                }
-                if (!$hasData) {
-                    echo '<tr><td colspan="5" class="text-center">Tidak ada barang yang tersedia</td></tr>';
+                    }
+                    if (!$hasData) {
+                        echo '<tr><td colspan="5" class="text-center">Tidak ada barang yang tersedia</td></tr>';
+                    }
                 }
                 ?>
-
             </tbody>
         </table>
     </div>
+    <?php
+    if ($totalPages > 1) {
+        generatePagination($page, $totalPages);
+    }
+    ?>
 </main>
 
-
 <?php
-
 include '../../templates/footer.php';
-
 ?>

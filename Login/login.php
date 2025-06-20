@@ -9,7 +9,6 @@ include '../koneksi.php';
 $error_message = '';
 $role = $_GET['role'] ?? 'Peminjam';
 
-// Tentukan judul dan label form berdasarkan peran
 $pageTitle = "Login";
 $identifierLabel = "NIM / NPK";
 $identifierPlaceholder = "Masukkan NIM / NPK Anda";
@@ -30,47 +29,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identifier = $_POST['identifier'];
     $kataSandi = $_POST['kataSandi'];
 
-    // Ambil role dari $_GET['role'] pada saat POST juga
     $role = $_GET['role'] ?? 'Peminjam';
 
     if (empty($identifier) || empty($kataSandi)) {
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
-        // Gunakan SWITCH untuk menjalankan logika sesuai peran
         switch ($role) {
             case 'Peminjam':
-                // Coba login sebagai Mahasiswa
                 $query_mhs = "SELECT nim, kataSandi, nama FROM Mahasiswa WHERE nim = ?";
                 $stmt_mhs = sqlsrv_query($conn, $query_mhs, [$identifier]);
                 $row_mhs = sqlsrv_fetch_array($stmt_mhs, SQLSRV_FETCH_ASSOC);
 
                 if ($row_mhs && $kataSandi === $row_mhs['kataSandi']) {
-                    // Login Mahasiswa berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_mhs['nim'];
                     $_SESSION['user_nama'] = $row_mhs['nama'];
                     $_SESSION['user_role'] = 'Mahasiswa';
-                    $_SESSION['nim'] = $row_mhs['nim']; // Tetap simpan untuk query spesifik jika perlu
+                    $_SESSION['nim'] = $row_mhs['nim'];
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
                     exit;
                 }
 
-                // Jika gagal, coba login sebagai Karyawan (Peminjam)
                 $query_kry = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt_kry = sqlsrv_query($conn, $query_kry, [$identifier]);
                 $row_kry = sqlsrv_fetch_array($stmt_kry, SQLSRV_FETCH_ASSOC);
 
-                // Untuk login sebagai peminjam, semua karyawan (termasuk PIC Aset dan Ka UPT) boleh login sebagai peminjam
                 if ($row_kry && $kataSandi === $row_kry['kataSandi']) {
-                    // Login Karyawan berhasil -> STANDARISASI SESSION
                     $_SESSION['user_id'] = $row_kry['npk'];
                     $_SESSION['user_nama'] = $row_kry['nama'];
                     $_SESSION['user_role'] = 'Karyawan';
-                    $_SESSION['npk'] = $row_kry['npk']; // Tetap simpan untuk query spesifik jika perlu
+                    $_SESSION['npk'] = $row_kry['npk'];
                     header('Location: ../Menu Peminjam/dashboardPeminjam.php');
                     exit;
                 }
 
-                // Jika keduanya gagal
                 $error_message = 'NIM/NPK atau Kata Sandi salah.';
                 break;
 
@@ -79,15 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $expectedRole = ($role === 'PIC Aset') ? 'PIC Aset' : 'KA UPT';
                 $redirectPath = ($role === 'PIC Aset') ? '../Menu PIC/dashboardPIC.php' : '../Menu Ka UPT/dashboardKaUPT.php';
 
-                // Ambil user berdasarkan NPK
                 $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt = sqlsrv_query($conn,  $query, [$identifier]);
                 $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
                 if ($row) {
-                    // Cek password dan role HARUS sesuai
                     if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
-                        // Login berhasil -> STANDARISASI SESSION
                         $_SESSION['user_id'] = $row['npk'];
                         $_SESSION['user_nama'] = $row['nama'];
                         $_SESSION['user_role'] = $row['jenisRole'];
@@ -95,14 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         header('Location: ' . $redirectPath);
                         exit;
                     } elseif ($kataSandi === $row['kataSandi']) {
-                        // Password benar tapi role salah
                         $error_message = "Anda tidak memiliki hak akses sebagai $expectedRole.";
                     } else {
-                        // Password salah
                         $error_message = 'NPK atau Kata Sandi salah.';
                     }
                 } else {
-                    // NPK tidak ditemukan
                     $error_message = 'NPK atau Kata Sandi salah.';
                 }
                 break;
@@ -120,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Salin semua CSS dari salah satu file login lama Anda ke sini */
         body,
         html {
             height: 100%;
@@ -354,7 +338,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const pass = document.getElementById('kataSandi').value.trim();
         let valid = true;
 
-        // Reset error messages
         const idError = document.getElementById('identifier-error');
         const passError = document.getElementById('password-error');
         idError.textContent = '';
@@ -373,11 +356,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (!valid) {
-            e.preventDefault(); // Gagalkan submit
+            e.preventDefault();
         }
     });
-        // validasi kalo NIM/NPK dan kata sandi salah 
-        document.querySelector('form').addEventListener('submit', function (e) {
+
+    document.querySelector('form').addEventListener('submit', function (e) {
         const id = document.getElementById('identifier').value.trim();
         const pass = document.getElementById('kataSandi').value.trim();
         let valid = true;
@@ -402,25 +385,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!valid) {
             e.preventDefault();
         }
-            });
+    });
 
-        // Tampilkan error dari server (jika ada)
-        window.addEventListener('DOMContentLoaded', function () {
-            const serverError = document.getElementById('server-error');
-            if (serverError && serverError.textContent.trim() !== '') {
-                // Ambil pesan
-                const errorMessage = serverError.textContent.trim().toLowerCase();
+    window.addEventListener('DOMContentLoaded', function () {
+        const serverError = document.getElementById('server-error');
+        if (serverError && serverError.textContent.trim() !== '') {
+            const errorMessage = serverError.textContent.trim().toLowerCase();
 
-                // Sembunyikan box alert
-                serverError.classList.add('d-none');
+            serverError.classList.add('d-none');
 
-                // Tampilkan sesuai kesalahan
-                if (errorMessage.includes('nim') || errorMessage.includes('npk')) {
-                    document.getElementById('identifier-error').textContent = '*NIM/NPK salah.*';
-                    document.getElementById('password-error').textContent = '*Kata Sandi salah.*';
-                }
+            if (errorMessage.includes('nim') || errorMessage.includes('npk')) {
+                document.getElementById('identifier-error').textContent = '*NIM/NPK salah.*';
+                document.getElementById('password-error').textContent = '*Kata Sandi salah.*';
             }
-        });
+        }
+    });
 
 </script>
 

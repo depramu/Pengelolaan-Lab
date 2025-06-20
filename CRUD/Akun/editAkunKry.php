@@ -2,13 +2,12 @@
 include '../../templates/header.php';
 
 $npk = $_GET['id'] ?? null;
+$showModal = false;
 
 if (!$npk) {
     header('Location: ../../Menu PIC/manajemenAkunKry.php');
     exit;
 }
-
-$showModal = false;
 
 $query = "SELECT * FROM Karyawan WHERE npk = ?";
 $stmt = sqlsrv_query($conn, $query, [$npk]);
@@ -47,15 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-
-<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Ubah Akun Karyawan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunKry.php">Manajemen Akun Karyawan</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Akun Karyawan</li>
+                <li class="breadcrumb-item active" aria-current="page">Ubah Akun Karyawan</li>
             </ol>
         </nav>
     </div>

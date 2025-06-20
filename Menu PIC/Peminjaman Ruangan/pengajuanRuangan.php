@@ -23,6 +23,8 @@ $idRuangan = $data['idRuangan'] ?? '';
 $nim = $data['nim'] ?? '';
 $npk = $data['npk'] ?? '';
 $tglPeminjamanRuangan = isset($data['tglPeminjamanRuangan']) ? $data['tglPeminjamanRuangan']->format('Y-m-d') : '';
+$waktuMulai = isset($data['waktuMulai']) ? $data['waktuMulai']->format('H:i') : '';
+$waktuSelesai = isset($data['waktuSelesai']) ? $data['waktuSelesai']->format('H:i') : '';
 $alasanPeminjamanRuangan = $data['alasanPeminjamanRuangan'] ?? '';
 $currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
 
@@ -44,11 +46,12 @@ include '../../templates/sidebar.php';
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Pengajuan Peminjaman Ruangan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="peminjamanRuangan.php">Peminjaman Ruangan</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php">Peminjaman Ruangan</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Ruangan</li>
             </ol>
         </nav>
@@ -69,17 +72,17 @@ include '../../templates/sidebar.php';
                                 <!-- Kolom Kiri -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                        <label for="idRuangan" class="form-label fw-bold">ID Ruangan</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
                                         <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
-                                        <label for="tglPeminjamanRuangan" class="form-label">Tanggal Peminjaman</label>
+                                        <label for="tglPeminjamanRuangan" class="form-label fw-bold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanRuangan) ?></div>
                                         <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
-                                        <label for="nim" class="form-label">NIM</label>
+                                        <label for="nim" class="form-label fw-bold">NIM</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
                                         <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" style="background: #f5f5f5;">
                                     </div>
@@ -88,28 +91,31 @@ include '../../templates/sidebar.php';
                                 <!-- Kolom Kanan -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idPeminjamanRuangan" class="form-label">ID Peminjaman Ruangan</label>
+                                        <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman Ruangan</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
                                         <input type="hidden" class="form-control" id="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col-md-6">
-                                            <label for="waktuMulai" class="form-label">Waktu Mulai</label>
-                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai ?? '') ?>" style="background: #f5f5f5;">
+                                            <label for="waktuMulai" class="form-label fw-bold">Waktu Mulai</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($waktuMulai) ?></div>
+                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai) ?>">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="waktuSelesai" class="form-label">Waktu Selesai</label>
-                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai ?? '10.00') ?>" style="background: #f5f5f5;">
+                                            <label for="waktuSelesai" class="form-label fw-bold">Waktu Selesai</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($waktuSelesai) ?></div>
+                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai) ?>">
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label for="npk" class="form-label">NPK</label>
+                                        <label for="npk" class="form-label fw-bold">NPK</label>
                                         <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" style="background: #f5f5f5;">
                                     </div>
                                 </div>
                                 <div class="mb-2">
-                                    <label for="alasanPeminjaman" class="form-label">Alasan Peminjaman</label>
-                                    <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
+                                    <label for="alasanPeminjaman" class="form-label fw-bold">Alasan Peminjaman</label>
+                                    <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></div>
+                                    <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
                                 </div>
                             </div>
 
@@ -120,10 +126,6 @@ include '../../templates/sidebar.php';
                                     <button type="submit" name="submit" class="btn btn-primary">Setuju</button>
                                 </div>
                             </div>
-
-
-
-
                         </form>
                     </div>
                 </div>

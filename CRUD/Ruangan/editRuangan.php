@@ -47,6 +47,7 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Ubah Ruangan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -57,7 +58,7 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
- <!-- Edit Ruangan -->
+    <!-- Edit Ruangan -->
     <div class="container mt-4">
         <?php if (!empty($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -70,7 +71,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Edit Ruangan</span>
+                        <span class="fw-semibold">Ubah Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
