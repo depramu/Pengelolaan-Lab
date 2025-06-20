@@ -230,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-decoration: underline;
         }
 
+        /* Perubahan pada tombol dan link */
         .btn-login-submit {
             background-color: #28a745;
             color: #fff;
@@ -239,8 +240,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 1.1rem;
             font-weight: 600;
             width: 180px;
-            display: block;
-            margin: 0 auto;
+            display: block; /* Agar bisa diatur margin auto */
+            margin: 0 auto 15px auto; /* Memberi margin bawah 15px */
             transition: background-color 0.3s ease;
         }
 
@@ -300,34 +301,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php if (!empty($error_message)): ?>
                         <div id="server-error" class="alert alert-danger" role="alert">
                             <?php echo htmlspecialchars($error_message); ?>
-                            </div>
-                        <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="mb-3">
                         <label for="identifier" class="form-label d-flex align-items-start">
                             <span><?php echo htmlspecialchars($identifierLabel); ?></span>
-                                  <span id="identifier-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
-
+                            <span id="identifier-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
                         </label>
-                    <div class="input-group">
-                    <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
-                    <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
-                    </div>
+                        <div class="input-group">
+                            <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
+                            <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?php echo htmlspecialchars($identifierPlaceholder); ?>">
+                        </div>
                     </div>
 
                     <div class="mb-2">
-                    <label for="kataSandi" class="form-label d-flex align-items-start">
-                        <span>Kata Sandi</span>
+                        <label for="kataSandi" class="form-label d-flex align-items-start">
+                            <span>Kata Sandi</span>
                             <span id="password-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
-                        <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
-                         </div>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
+                            <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
+                        </div>
                     </div>
 
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
-                    <button type="submit" class="btn-login-submit w-75">Masuk</button>
+
+                    <button type="submit" class="btn-login-submit">Masuk</button>
+                    <div class="d-flex justify-content-center">
+                        <a href="../index.php" class="forgot-link text-white">
+                            Kembali
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -360,49 +366,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     });
 
-    document.querySelector('form').addEventListener('submit', function (e) {
-        const id = document.getElementById('identifier').value.trim();
-        const pass = document.getElementById('kataSandi').value.trim();
-        let valid = true;
-
-        const idError = document.getElementById('identifier-error');
-        const passError = document.getElementById('password-error');
-        idError.textContent = '';
-        passError.textContent = '';
-
-        if (id === '' && pass === '') {
-            idError.textContent = '*Kolom ini tidak boleh kosong.*';
-            passError.textContent = '*Kolom ini tidak boleh kosong.*';
-            valid = false;
-        } else if (id === '') {
-            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
-            valid = false;
-        } else if (pass === '') {
-            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
-            valid = false;
-        }
-
-        if (!valid) {
-            e.preventDefault();
-        }
-    });
-
+    // Tampilkan error dari server (jika ada)
     window.addEventListener('DOMContentLoaded', function () {
         const serverError = document.getElementById('server-error');
         if (serverError && serverError.textContent.trim() !== '') {
+            // Ambil pesan
             const errorMessage = serverError.textContent.trim().toLowerCase();
 
+            // Sembunyikan box alert
             serverError.classList.add('d-none');
 
-            if (errorMessage.includes('nim') || errorMessage.includes('npk')) {
-                document.getElementById('identifier-error').textContent = '*NIM/NPK salah.*';
-                document.getElementById('password-error').textContent = '*Kata Sandi salah.*';
+            // Tampilkan sesuai kesalahan
+            if (errorMessage.includes('kolom tidak boleh kosong')) {
+                // Ini seharusnya sudah ditangani validasi JS sebelumnya, tapi sebagai fallback
+                document.getElementById('identifier-error').textContent = '*Kolom ini tidak boleh kosong.*';
+                document.getElementById('password-error').textContent = '*Kolom ini tidak boleh kosong.*';
+            } else if (errorMessage.includes('nim/npk atau kata sandi salah')) {
+                document.getElementById('identifier-error').textContent = '*NIM/NPK atau Kata Sandi salah.*';
+                // Tidak perlu menargetkan password-error secara terpisah karena pesan sudah gabungan
+            } else if (errorMessage.includes('anda tidak memiliki hak akses')) {
+                // Password benar tapi role salah
+                document.getElementById('identifier-error').textContent = errorMessage; // Tampilkan pesan langsung di bawah identifier
+                document.getElementById('password-error').textContent = ''; // Pastikan pesan password kosong
             }
         }
     });
 
-</script>
+    </script>
 
 </body>
- 
+
 </html>
