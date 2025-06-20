@@ -29,6 +29,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 include '../../templates/sidebar.php';
 ?>
     <main class="col bg-white px-3 px-md-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Riwayat Peminjaman Ruangan</h3>
         <div class="mb-4">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">

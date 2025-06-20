@@ -1,6 +1,7 @@
 </div>
 </div>
 
+
 <!-- Modal Berhasil -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -173,6 +174,9 @@
     });
 </script>
 
+<?php
+?>
+
 <?php if (isset($showModal) && $showModal) : ?>
     <script>
         window.addEventListener('load', function() {
@@ -180,7 +184,20 @@
             modal.show();
         });
     </script>
-    
+<?php endif; ?>
+
+</body>
+
+</html>
+
+<?php if (isset($showModal) && $showModal) : ?>
+    <script>
+        window.addEventListener('load', function() {
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        });
+    </script>
+
 <?php endif; ?>
 
 </body>

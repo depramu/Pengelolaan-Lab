@@ -224,7 +224,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="login-right">
         <div class="login-form-container">
-            <h3 class="login-form-title">Silahkan Masukkan Email dan Nama Lengkap</h3>
+            <h2 class="text-center fw-75 mb-5" style="color: #fff;">Lupa Kata Sandi</h2>
+            <h3 class="login-form-title">Silahkan Masukkan <br> Email dan Nama Lengkap</h3>
             <form method="POST" action="">
                 <?php
                     // Success flash

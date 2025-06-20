@@ -1,14 +1,10 @@
 <?php
-// Ambil peran pengguna dari session untuk menentukan menu mana yang akan ditampilkan.
 $role = $_SESSION['user_role'] ?? '';
 
-// Untuk peminjam: Mahasiswa atau Karyawan tanpa role khusus (PIC Aset/Ka UPT)
 $isPeminjam = false;
 if ($role === 'Mahasiswa') {
     $isPeminjam = true;
 } elseif ($role === 'Karyawan') {
-    // Cek apakah user Karyawan TIDAK punya jenisRole (atau kosong/null)
-    // Asumsi: $_SESSION['jenisRole'] hanya di-set jika Karyawan punya role khusus
     if (
         !isset($_SESSION['jenisRole']) ||
         $_SESSION['jenisRole'] === '' ||
@@ -20,7 +16,6 @@ if ($role === 'Mahasiswa') {
 
 function renderSidebarMenu($role, $isPeminjam, $currentPage)
 {
-    // ... (array $submenuFiles biarkan sama) ...
     $submenuFiles = [
         'aset' => ['manajemenBarang.php', 'manajemenRuangan.php'],
         'akun' => ['manajemenAkunMhs.php', 'manajemenAkunKry.php'],
@@ -36,7 +31,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         $isPinjamActive = in_array($currentPage, $submenuFiles['pinjam']);
 ?>
         <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php" class="nav-link <?= ($currentPage == 'dashboardPIC.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Dashboard</a>
+            <a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php" class="nav-link <?= ($currentPage == 'dashboardPIC.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Beranda</a>
         </li>
         <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center <?= $isAsetActive ? 'active' : '' ?>" data-bs-toggle="collapse" href="#asetSubmenu" role="button" aria-expanded="false" aria-controls="asetSubmenu">
@@ -69,26 +64,28 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
             </div>
         </li>
         <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu PIC/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>"><img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan</a>
+            <a href="<?= BASE_URL ?>/Menu PIC/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>">
+                <img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan
+            </a>
         </li>
     <?php
     elseif ($role === 'KA UPT') :
         $isPinjamActive = in_array($currentPage, $submenuFiles['pinjam']);
     ?>
         <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php" class="nav-link <?= ($currentPage == 'dashboardKaUPT.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Dashboard</a>
+            <a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php" class="nav-link <?= ($currentPage == 'dashboardKaUPT.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Beranda</a>
         </li>
         <li class="nav-item mb-2">
             <a href="<?= BASE_URL ?>/Menu Ka UPT/laporan.php" class="nav-link <?= ($currentPage == 'laporan.php') ? 'active' : '' ?>"><img src="<?= BASE_URL ?>/icon/graph-report0.png" class="sidebar-icon sidebar-icon-report">Laporan</a>
         </li>
-    
+
     <?php
     elseif ($isPeminjam) :
         $isPeminjamanActive = in_array($currentPage, $submenuFiles['peminjaman']);
         $isRiwayatActive = in_array($currentPage, $submenuFiles['riwayat']);
     ?>
         <li class="nav-item mb-2">
-            <a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php" class="nav-link <?= ($currentPage == 'dashboardPeminjam.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Dashboard</a>
+            <a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php" class="nav-link <?= ($currentPage == 'dashboardPeminjam.php') ? 'active' : ''; ?>"><img src="<?= BASE_URL ?>/icon/dashboard0.svg" class="sidebar-icon">Beranda</a>
         </li>
         <li class="nav-item mb-2">
             <a class="nav-link d-flex justify-content-between align-items-center <?= $isPeminjamanActive ? 'active' : '' ?>" data-bs-toggle="collapse" href="#peminjamanSubmenu" role="button" aria-expanded="false" aria-controls="peminjamanSubmenu">
@@ -122,7 +119,6 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
 ?>
 
 <style>
-    /* Sidebar icon size for consistency */
     .sidebar-icon {
         width: 24px;
         height: 24px;
@@ -131,14 +127,20 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         vertical-align: middle;
     }
 
-    /* Active state for parent menu (submenu open) */
+    .sidebar-icon-report {
+        width: 32px !important;
+        height: 32px !important;
+        object-fit: contain;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
     .nav-link.active,
     .offcanvas .nav-link.active {
         background: #2563eb !important;
         color: #fff !important;
     }
 
-    /* Active state for submenu item */
     .collapse .nav-link.active,
     .offcanvas .collapse .nav-link.active {
         background: #1d4ed8 !important;
@@ -146,36 +148,31 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
     }
 
     .aksi-icon {
-        width: 24px; /* Sesuaikan ukuran ikon */
-        height: 24px; /* Sesuaikan ukuran ikon */
-        object-fit: contain; /* Pastikan gambar tidak terdistorsi */
-        vertical-align: middle; /* Pastikan ikon sejajar dengan konten lain jika ada */
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+        vertical-align: middle;
     }
 
-    /* Atur kontainer TD agar ikon bisa diatur dengan Flexbox */
     .td-aksi {
-        display: flex; /* Menggunakan Flexbox untuk mengatur item di dalamnya */
-        align-items: center; /* Pusatkan ikon secara vertikal */
-        justify-content: center; /* Pusatkan ikon secara horizontal di dalam TD */
-        gap: 8px; /* Memberi jarak antar ikon, sesuaikan nilainya */
-        /* Atau bisa juga pakai padding-right pada elemen ikon */
-    }
-
-    /* Styling tambahan jika kamu ingin linknya jadi tombol atau ada hover effect */
-    .td-aksi a {
-        display: flex; /* Agar link juga bisa diatur flex */
+        display: flex;
         align-items: center;
-        text-decoration: none; /* Hapus garis bawah pada link */
-        color: inherit; /* Warisi warna teks dari parent */
+        justify-content: center;
+        gap: 8px;
     }
 
-    /* Optional: Hover effect untuk ikon aksi */
+    .td-aksi a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+    }
+
     .td-aksi a:hover .aksi-icon {
-        transform: scale(1.1); /* Sedikit membesar saat di-hover */
-        transition: transform 0.2s ease-in-out; /* Animasi halus */
+        transform: scale(1.1);
+        transition: transform 0.2s ease-in-out;
     }
 
-    /* Offcanvas sidebar custom style for small screen */
     @media (max-width: 991.98px) {
         .offcanvas-start {
             background: linear-gradient(135deg, rgb(18, 99, 180) 60%, #e0e7ef 100%);
@@ -250,18 +247,23 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
             transform: rotate(180deg);
         }
 
+        .offcanvas .sidebar-icon-report {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: contain;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
     }
 </style>
 
 <div class="row flex-grow-1 g-0">
-    <!-- Sidebar untuk layar besar (large screen) -->
     <nav class="col-auto sidebar d-none d-lg-flex flex-column p-2 ms-lg-4">
         <ul class="nav nav-pills flex-column mb-auto">
             <?= renderSidebarMenu($role, $isPeminjam, $currentPage); ?>
         </ul>
     </nav>
 
-    <!-- Sidebar untuk layar kecil (small screen) dengan tampilan lebih menarik -->
     <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
         <div class="offcanvas-header">
             <div class="d-flex align-items-center gap-2">

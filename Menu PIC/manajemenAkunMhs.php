@@ -2,7 +2,7 @@
 include '../templates/header.php';
 
 // Pagination setup
-$perPage = 9;
+$perPage = 3;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -19,10 +19,12 @@ $query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa ORDER BY nim OFFSET 
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 
+require_once '../function/pagination.php';
 include '../templates/sidebar.php'
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Manajemen Akun Mahasiswa</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -45,7 +47,7 @@ include '../templates/sidebar.php'
                     <th>NIM</th>
                     <th>Nama Lengkap</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Peran</th>
                     <th class="text-center">Aksi</th>
                 </tr>
             </thead>
@@ -61,8 +63,8 @@ include '../templates/sidebar.php'
                         <td><?= $row['email'] ?></td>
                         <td><?= $row['jenisRole'] ?></td>
                         <td class="text-center">
-                            <a href="../CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="../icon/edit.svg" alt="editAkun" style=" width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-                            <a href="../CRUD/Akun/hapusAkunMhs.php?id=<?= $row['nim'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="../icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                            <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
 
                             <!-- delete -->
                             <div class="modal fade" id="deleteModal<?= $row['nim'] ?>"
@@ -76,7 +78,7 @@ include '../templates/sidebar.php'
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Apakah Anda yakin ingin menghapus akun? "<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
+                                                Apakah Anda yakin ingin menghapus akun <br>"<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -97,48 +99,16 @@ include '../templates/sidebar.php'
             </tbody>
         </table>
 
-        <!-- Pagination -->
-        <nav aria-label="Page navigation" class="fixed-pagination">
-            <ul class="pagination justify-content-end">
-                <!-- Previous button -->
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
-                </li>
-                <!-- Page numbers -->
-                <?php
-                $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
-                $ellipsisShown = false;
-                for ($i = 1; $i <= $totalPages; $i++) {
-                    if (
-                        $i <= $showPages || // always show first 3
-                        $i > $totalPages - $showPages || // always show last 3
-                        abs($i - $page) <= 1 // show current, previous, next
-                    ) {
-                        $ellipsisShown = false;
-                ?>
-                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                <?php
-                    } elseif (!$ellipsisShown) {
-                        // Show ellipsis only once
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                        $ellipsisShown = true;
-                    }
-                }
-                ?>
-                <!-- Next button -->
-                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
-                </li>
-            </ul>
-        </nav>
+
 
     </div>
+    <?php
+    if ($totalPages > 1) {
+        generatePagination($page, $totalPages);
+    }
+    ?>
 </main>
 
 <?php
 
 include '../templates/footer.php';
-
-?>

@@ -2,7 +2,7 @@
 include '../templates/header.php';
 
 // Pagination setup
-$perPage = 9;
+$perPage = 3;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -17,24 +17,28 @@ $totalPages = ceil($totalData / $perPage);
 $offset = ($page - 1) * $perPage;
 $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
-include '../templates/sidebar.php';
+if ($result === false) {
+    echo "Error executing query: <br>";
+    die(print_r(sqlsrv_errors(), true));
+}
+require_once '../function/pagination.php';
 
+include '../templates/sidebar.php';
 ?>
-<!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Manajemen Barang</li>
             </ol>
         </nav>
     </div>
 
-    <!-- Table Manajemen Barang -->
     <div class="d-flex justify-content-start mb-2">
         <a href="<?= BASE_URL ?>/CRUD/Barang/tambahBarang.php" class="btn btn-primary">
-            <img src="../icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
+            <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
     </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
@@ -54,18 +58,17 @@ include '../templates/sidebar.php';
                     $hasData = true;
                 ?>
                     <tr>
-                        <td><?= $row['idBarang'] ?></td>
-                        <td><?= $row['namaBarang'] ?></td>
-                        <td><?= $row['stokBarang'] ?></td>
-                        <td><?= $row['lokasiBarang'] ?></td>
+                        <td><?= htmlspecialchars($row['idBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['namaBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['stokBarang']) ?></td>
+                        <td><?= htmlspecialchars($row['lokasiBarang']) ?></td>
                         <td class="text-center">
-                            <a href="<?= BASE_URL ?>/CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="../icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                            <a href="<?= BASE_URL ?>CRUD/Barang/hapusBarang.php?id" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="../icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>/CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
 
-                            <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>"
-                                tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
+                            <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
-                                    <form action="../CRUD/Barang/hapusBarang.php" method="POST">
+                                    <form action="<?= BASE_URL ?>/CRUD/Barang/hapusBarang.php" method="POST">
                                         <input type="hidden" name="idBarang" value="<?= $row['idBarang'] ?>">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -93,51 +96,14 @@ include '../templates/sidebar.php';
                 ?>
             </tbody>
         </table>
-
-        <!-- Pagination -->
-        <nav aria-label="Page navigation" class="fixed-pagination">
-            <ul class="pagination justify-content-end">
-                <!-- Previous button -->
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>" tabindex="-1">&lt;</a>
-                </li>
-                <!-- Page numbers -->
-                <?php
-                $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
-                $ellipsisShown = false;
-                for ($i = 1; $i <= $totalPages; $i++) {
-                    if (
-                        $i <= $showPages || // always show first 3
-                        $i > $totalPages - $showPages || // always show last 3
-                        abs($i - $page) <= 1 // show current, previous, next
-                    ) {
-                        $ellipsisShown = false;
-                ?>
-                        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                <?php
-                    } elseif (!$ellipsisShown) {
-                        // Show ellipsis only once
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                        $ellipsisShown = true;
-                    }
-                }
-                ?>
-                <!-- Next button -->
-                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>">&gt;</a>
-                </li>
-            </ul>
-        </nav>
-
-
     </div>
+    <?php
+    if ($totalPages > 1) {
+        generatePagination($page, $totalPages);
+    }
+    ?>
 </main>
 
-
 <?php
-
 include '../templates/footer.php';
-
 ?>

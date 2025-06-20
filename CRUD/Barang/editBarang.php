@@ -55,12 +55,13 @@ include '../../templates/sidebar.php';
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Ubah Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
+                <li class="breadcrumb-item active" aria-current="page">Ubah Barang</li>
             </ol>
         </nav>
     </div>
