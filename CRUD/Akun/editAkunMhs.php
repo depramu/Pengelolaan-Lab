@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Ubah Akun Mahasiswa</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Akun Mahasiswa</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Akun Mahasiswa</li>
+                <li class="breadcrumb-item active" aria-current="page">Ubah Akun Mahasiswa</li>
             </ol>
         </nav>
     </div>
@@ -73,7 +73,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Edit Akun Mahasiswa</span>
+                        <span class="fw-semibold">Ubah Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">

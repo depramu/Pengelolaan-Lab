@@ -2,7 +2,7 @@
 include '../../templates/header.php';
 
 // Pagination setup
-$perPage = 2;
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -24,11 +24,6 @@ $params = [$offset, $perPage];
 $result = sqlsrv_query($conn, $query, $params);
 
 require_once '../../function/pagination.php';
-
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-$peminjamanPages = ['cekBarang.php', 'cekRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php', 'lihatBarang.php', 'lihatRuangan.php'];
-$isPeminjamanActive = in_array($currentPage, $peminjamanPages);
-
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
@@ -46,7 +41,7 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Barang</th>
                     <th>Nama Barang</th>
                     <th>Stok Barang</th>
@@ -63,15 +58,14 @@ include '../../templates/sidebar.php';
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $hasData = true;
                 ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['idBarang']) ?></td>
-                        <td><?= htmlspecialchars($row['namaBarang']) ?></td>
-                        <td><?= htmlspecialchars($row['stokBarang']) ?></td>
-                        <td><?= htmlspecialchars($row['lokasiBarang']) ?></td>
-                        <td class="text-center">
-                            <a href="../../CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>"
-                                onclick="event.preventDefault(); window.location.href=this.href+'<?= isset($_SESSION['tglPeminjamanBrg']) ? ('&tglPeminjamanBrg=' . urlencode($_SESSION['tglPeminjamanBrg'])) : '' ?>';">
-                                <img src="../../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button">
+                    <tr class="text-center">
+                        <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
+                        <td class="td-aksi text-center align-middle">
+                            <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>" class="d-inline-block">
+                                <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Barang" style="display: inline-block; vertical-align: middle;">
                             </a>
                         </td>
                     </tr>

@@ -153,7 +153,7 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <label for="alasanPeminjamanRuangan" class="form-label fw-bold">Alasan Peminjaman</label>
                                     <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
-                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="2" style="max-width: 400px;"></textarea>
+                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" style="max-width: 400px;"></textarea>
 
                                     <script>
                                         document.getElementById('alasanPeminjamanRuangan').addEventListener('input', function() {

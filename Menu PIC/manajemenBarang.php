@@ -2,7 +2,7 @@
 include '../templates/header.php';
 
 // Pagination setup
-$perPage = 3;
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -43,7 +43,7 @@ include '../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Barang</th>
                     <th>Nama Barang</th>
                     <th>Stok Barang</th>
@@ -57,7 +57,7 @@ include '../templates/sidebar.php';
                 while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     $hasData = true;
                 ?>
-                    <tr>
+                    <tr class="text-center">
                         <td><?= htmlspecialchars($row['idBarang']) ?></td>
                         <td><?= htmlspecialchars($row['namaBarang']) ?></td>
                         <td><?= htmlspecialchars($row['stokBarang']) ?></td>

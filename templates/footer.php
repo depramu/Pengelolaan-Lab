@@ -1,9 +1,28 @@
 </div>
 </div>
 
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Konfirmasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin <span id="confirmAction"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                <button type="button" class="btn btn-primary" id="confirmYes">Ya</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Modal Berhasil -->
-<div class="modal fade" id="successModal" tabindex="-1">
+
+
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -174,8 +193,14 @@
     });
 </script>
 
-<?php
-?>
+<script>
+    document.getElementById('confirmYes').addEventListener('click', function() {
+        var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        confirmModal.hide();
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    });
+</script>
 
 <?php if (isset($showModal) && $showModal) : ?>
     <script>
@@ -184,20 +209,6 @@
             modal.show();
         });
     </script>
-<?php endif; ?>
-
-</body>
-
-</html>
-
-<?php if (isset($showModal) && $showModal) : ?>
-    <script>
-        window.addEventListener('load', function() {
-            let modal = new bootstrap.Modal(document.getElementById('successModal'));
-            modal.show();
-        });
-    </script>
-
 <?php endif; ?>
 
 </body>
