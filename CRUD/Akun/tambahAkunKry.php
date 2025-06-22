@@ -30,13 +30,13 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Tambah Akun Karyawan</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Akun Karyawan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunKry.php">Manajemen Akun Karyawan</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Akun</li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Akun Mahasiswa</li>
             </ol>
         </nav>
     </div>
@@ -52,7 +52,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Tambah Akun</span>
+                        <span class="fw-semibold">Tambah Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">

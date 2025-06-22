@@ -17,11 +17,11 @@ if ($role === 'Mahasiswa') {
 function renderSidebarMenu($role, $isPeminjam, $currentPage)
 {
     $submenuFiles = [
-        'aset' => ['manajemenBarang.php', 'manajemenRuangan.php'],
-        'akun' => ['manajemenAkunMhs.php', 'manajemenAkunKry.php'],
-        'pinjam' => ['peminjamanBarang.php', 'peminjamanRuangan.php'],
+        'aset' => ['manajemenBarang.php', 'manajemenRuangan.php', 'tambahBarang.php', 'editBarang.php', 'tambahRuangan.php', 'editRuangan.php', 'hapusBarang.php', 'hapusRuangan.php'],
+        'akun' => ['manajemenAkunMhs.php', 'manajemenAkunKry.php', 'tambahAkunMhs.php', 'editAkunMhs.php', 'tambahAkunKry.php', 'editAkunKry.php', 'hapusAkunMhs.php', 'hapusAkunKry.php'],
+        'pinjam' => ['peminjamanBarang.php', 'peminjamanRuangan.php', 'detailPeminjamanBarang.php', 'detailPeminjamanRuangan.php', 'pengembalianBarang.php', 'pengembalianRuangan.php'],
         'peminjaman' => ['cekBarang.php', 'cekRuangan.php', 'lihatBarang.php', 'lihatRuangan.php', 'tambahPeminjamanBrg.php', 'tambahPeminjamanRuangan.php'],
-        'riwayat' => ['riwayatBarang.php', 'riwayatRuangan.php']
+        'riwayat' => ['riwayatBarang.php', 'riwayatRuangan.php', 'formDetailRiwayatBrg.php', 'formDetailRiwayatRuangan.php']
     ];
 
     ob_start();
@@ -39,8 +39,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="asetSubmenu">
-                <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="nav-link <?= ($currentPage == 'manajemenBarang.php') ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu PIC/manajemenRuangan.php" class="nav-link <?= ($currentPage == 'manajemenRuangan.php') ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="nav-link <?= ($currentPage == 'manajemenBarang.php' || $currentPage == 'tambahBarang.php' || $currentPage == 'editBarang.php' || $currentPage == 'hapusBarang.php') ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/manajemenRuangan.php" class="nav-link <?= ($currentPage == 'manajemenRuangan.php' || $currentPage == 'tambahRuangan.php' || $currentPage == 'editRuangan.php' || $currentPage == 'hapusRuangan.php') ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -49,8 +49,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="akunSubmenu">
-                <a href="<?= BASE_URL ?>/Menu PIC/manajemenAkunMhs.php" class="nav-link <?= ($currentPage == 'manajemenAkunMhs.php') ? 'active' : '' ?>">Mahasiswa</a>
-                <a href="<?= BASE_URL ?>/Menu PIC/manajemenAkunKry.php" class="nav-link <?= ($currentPage == 'manajemenAkunKry.php') ? 'active' : '' ?>">Karyawan</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/manajemenAkunMhs.php" class="nav-link <?= ($currentPage == 'manajemenAkunMhs.php' || $currentPage == 'tambahAkunMhs.php' || $currentPage == 'editAkunMhs.php' || $currentPage == 'hapusAkunMhs.php') ? 'active' : '' ?>">Mahasiswa</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/manajemenAkunKry.php" class="nav-link <?= ($currentPage == 'manajemenAkunKry.php' || $currentPage == 'tambahAkunKry.php' || $currentPage == 'editAkunKry.php' || $currentPage == 'hapusAkunKry.php') ? 'active' : '' ?>">Karyawan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -59,8 +59,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="pinjamSubmenu">
-                <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="nav-link <?= ($currentPage == 'peminjamanBarang.php') ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="nav-link <?= ($currentPage == 'peminjamanRuangan.php') ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="nav-link <?= ($currentPage == 'peminjamanBarang.php' || $currentPage == 'cekBarang.php' || $currentPage == 'lihatBarang.php' || $currentPage == 'tambahPeminjamanBrg.php' || $currentPage == 'pengembalianBarang.php' || $currentPage == 'detailPeminjamanBarang.php') ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="nav-link <?= ($currentPage == 'peminjamanRuangan.php' || $currentPage == 'cekRuangan.php' || $currentPage == 'lihatRuangan.php' || $currentPage == 'tambahPeminjamanRuangan.php' || $currentPage == 'pengembalianRuangan.php' || $currentPage == 'detailPeminjamanRuangan.php') ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -93,8 +93,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="peminjamanSubmenu">
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php'])) ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuang.php'])) ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php', 'pengembalianBarang.php', 'detailPeminjamanBarang.php'])) ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php', 'pengembalianRuangan.php', 'detailPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -103,8 +103,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4" id="riwayatSubmenu">
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php" class="nav-link <?= ($currentPage == 'riwayatBarang.php') ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="nav-link <?= ($currentPage == 'riwayatRuangan.php') ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php" class="nav-link <?= ($currentPage == 'riwayatBarang.php' || $currentPage == 'formDetailRiwayatBrg.php') ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="nav-link <?= ($currentPage == 'riwayatRuangan.php' || $currentPage == 'formDetailRiwayatRuangan.php') ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
     <?php

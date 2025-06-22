@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Tambah Barang</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -119,7 +119,7 @@ include '../../templates/sidebar.php';
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-primary">Tambah</button>
+                                <button type="button" class="btn btn-primary" id="btnTambah">Tambah</button>
                             </div>
                         </form>
                     </div>
@@ -142,7 +142,8 @@ include '../../templates/sidebar.php';
         stokInput.value = next;
     }
 
-    document.querySelector('form').addEventListener('submit', function(e) {
+    // Validasi form dan tampilkan modal konfirmasi
+    document.getElementById('btnTambah').addEventListener('click', function(e) {
         let valid = true;
 
         // Nama Barang
@@ -175,9 +176,20 @@ include '../../templates/sidebar.php';
             errorLokasiBarang.style.display = 'none';
         }
 
-        if (!valid) e.preventDefault();
+        if (valid) {
+            // Set pesan konfirmasi
+            document.getElementById('confirmAction').textContent = 'menambah barang';
+            // Tampilkan modal konfirmasi
+            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            confirmModal.show();
+        }
+    });
+
+    // Submit form jika klik 'Ya' di modal konfirmasi
+    document.getElementById('confirmYes').addEventListener('click', function() {
+        document.querySelector('form').submit();
     });
 </script>
 
-
+x`
 <?php include '../../templates/footer.php'; ?>

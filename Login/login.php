@@ -240,8 +240,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 1.1rem;
             font-weight: 600;
             width: 180px;
-            display: block; /* Agar bisa diatur margin auto */
-            margin: 0 auto 15px auto; /* Memberi margin bawah 15px */
+            display: block;
+            /* Agar bisa diatur margin auto */
+            margin: 0 auto 15px auto;
+            /* Memberi margin bawah 15px */
             transition: background-color 0.3s ease;
         }
 
@@ -329,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
 
                     <button type="submit" class="btn-login-submit">Masuk</button>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center mt-4">
                         <a href="../index.php" class="forgot-link text-white">
                             Kembali
                         </a>
@@ -339,59 +341,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
     <script>
-    document.querySelector('form').addEventListener('submit', function (e) {
-        const id = document.getElementById('identifier').value.trim();
-        const pass = document.getElementById('kataSandi').value.trim();
-        let valid = true;
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const id = document.getElementById('identifier').value.trim();
+            const pass = document.getElementById('kataSandi').value.trim();
+            let valid = true;
 
-        const idError = document.getElementById('identifier-error');
-        const passError = document.getElementById('password-error');
-        idError.textContent = '';
-        passError.textContent = '';
+            const idError = document.getElementById('identifier-error');
+            const passError = document.getElementById('password-error');
+            idError.textContent = '';
+            passError.textContent = '';
 
-        if (id === '' && pass === '') {
-            idError.textContent = '*Kolom ini tidak boleh kosong.*';
-            passError.textContent = '*Kolom ini tidak boleh kosong.*';
-            valid = false;
-        } else if (id === '') {
-            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
-            valid = false;
-        } else if (pass === '') {
-            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
-            valid = false;
-        }
-
-        if (!valid) {
-            e.preventDefault();
-        }
-    });
-
-    // Tampilkan error dari server (jika ada)
-    window.addEventListener('DOMContentLoaded', function () {
-        const serverError = document.getElementById('server-error');
-        if (serverError && serverError.textContent.trim() !== '') {
-            // Ambil pesan
-            const errorMessage = serverError.textContent.trim().toLowerCase();
-
-            // Sembunyikan box alert
-            serverError.classList.add('d-none');
-
-            // Tampilkan sesuai kesalahan
-            if (errorMessage.includes('kolom tidak boleh kosong')) {
-                // Ini seharusnya sudah ditangani validasi JS sebelumnya, tapi sebagai fallback
-                document.getElementById('identifier-error').textContent = '*Kolom ini tidak boleh kosong.*';
-                document.getElementById('password-error').textContent = '*Kolom ini tidak boleh kosong.*';
-            } else if (errorMessage.includes('nim/npk atau kata sandi salah')) {
-                document.getElementById('identifier-error').textContent = '*NIM/NPK atau Kata Sandi salah.*';
-                // Tidak perlu menargetkan password-error secara terpisah karena pesan sudah gabungan
-            } else if (errorMessage.includes('anda tidak memiliki hak akses')) {
-                // Password benar tapi role salah
-                document.getElementById('identifier-error').textContent = errorMessage; // Tampilkan pesan langsung di bawah identifier
-                document.getElementById('password-error').textContent = ''; // Pastikan pesan password kosong
+            if (id === '' && pass === '') {
+                idError.textContent = '*Kolom ini tidak boleh kosong.*';
+                passError.textContent = '*Kolom ini tidak boleh kosong.*';
+                valid = false;
+            } else if (id === '') {
+                idError.textContent = '*NIM/NPK tidak boleh kosong.*';
+                valid = false;
+            } else if (pass === '') {
+                passError.textContent = '*Kata Sandi tidak boleh kosong.*';
+                valid = false;
             }
-        }
-    });
 
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+
+        // Tampilkan error dari server (jika ada)
+        window.addEventListener('DOMContentLoaded', function() {
+            const serverError = document.getElementById('server-error');
+            if (serverError && serverError.textContent.trim() !== '') {
+                // Ambil pesan
+                const errorMessage = serverError.textContent.trim().toLowerCase();
+
+                // Sembunyikan box alert
+                serverError.classList.add('d-none');
+
+                // Tampilkan sesuai kesalahan
+                if (errorMessage.includes('kolom tidak boleh kosong')) {
+                    // Ini seharusnya sudah ditangani validasi JS sebelumnya, tapi sebagai fallback
+                    document.getElementById('identifier-error').textContent = '*Kolom ini tidak boleh kosong.*';
+                    document.getElementById('password-error').textContent = '*Kolom ini tidak boleh kosong.*';
+                } else if (errorMessage.includes('nim/npk atau kata sandi salah')) {
+                    document.getElementById('identifier-error').textContent = '*NIM/NPK atau Kata Sandi salah.*';
+                    // Tidak perlu menargetkan password-error secara terpisah karena pesan sudah gabungan
+                } else if (errorMessage.includes('anda tidak memiliki hak akses')) {
+                    // Password benar tapi role salah
+                    document.getElementById('identifier-error').textContent = errorMessage; // Tampilkan pesan langsung di bawah identifier
+                    document.getElementById('password-error').textContent = ''; // Pastikan pesan password kosong
+                }
+            }
+        });
     </script>
 
 </body>

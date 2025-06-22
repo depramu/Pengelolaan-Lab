@@ -266,7 +266,7 @@
                 </div>
             </div>
             <div class="role-right">
-                <h3>Pilih Peran</h3>
+                <h3>Silahkan Pilih Role</h3>
                 <a href="Login/login.php?role=Peminjam" class="btn btn-light role-btn fw-bold mb-2 d-flex align-items-center justify-content-center text-center" style="color: #065ba6;">
                     <span class="d-flex align-items-center justify-content-center" style="width: 24px;">
                         <i class="bi bi-person-fill"></i>

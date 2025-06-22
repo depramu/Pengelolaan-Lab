@@ -2,7 +2,7 @@
 include '../../templates/header.php';
 
 // Pagination setup
-$perPage = 2;
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 

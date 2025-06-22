@@ -85,8 +85,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         .fixed-pagination {
             position: fixed;
             bottom: 4rem;
-            left: 14rem; /* Sesuaikan lebar sidebar Anda */
-            width: calc(100% - 280px); /* Hitung sisa lebar */
+            left: 14rem;
+            /* Sesuaikan lebar sidebar Anda */
+            width: calc(100% - 280px);
+            /* Hitung sisa lebar */
         }
 
         .fixed-pagination .pagination {
@@ -123,7 +125,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         .protect-input {
             background-color: #f8f9fa;
             border: 1px solid #ced4da;
-            color:rgb(41, 42, 44);
+            color: rgb(41, 42, 44);
         }
 
         @media (max-width: 991.98px) {

@@ -44,7 +44,7 @@ include '../../templates/sidebar.php';
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Tambah Ruangan</h3>
+<h3 class="fw-semibold mb-3">Manajemen Ruangan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -75,7 +75,7 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2">
                                 <label for="idRuangan" class="form-label d-flex align-items-center">ID Ruangan</label>
-                                <input type="text" class="form-control protect-input " id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
+                                <input type="text" class="form-control protect-input " id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" readonly tabindex="-1" onfocus="this.blur()">
                             </div>
                             <div class="mb-2">
                                 <label for="namaRuangan" class="form-label d-flex align-items-center">Nama Ruangan

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Ubah Akun Karyawan</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Akun Karyawan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -71,7 +71,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Edit Akun Karyawan</span>
+                        <span class="fw-semibold">Ubah   Akun Karyawan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">

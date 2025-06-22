@@ -30,7 +30,7 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Tambah Akun Mahasiswa</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Akun Mahasiswa</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -140,7 +140,7 @@ include '../../templates/sidebar.php';
         namaError.style.display = 'none';
         emailError.style.display = 'none';
         roleError.style.display = 'none';
-        passError.style.display = 'none';   
+        passError.style.display = 'none';
 
         if (nim === "") {
             nimError.textContent = '*Harus diisi';

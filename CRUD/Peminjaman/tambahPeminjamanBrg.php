@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <label for="alasanPeminjamanBrg" class="form-label fw-bold">
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
-                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="3"></textarea>
+                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

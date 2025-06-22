@@ -1,8 +1,7 @@
 <?php
 include '../../templates/header.php';
 
-// Pagination setup
-$perPage = 3;
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -41,7 +40,7 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Ruangan</th>
                     <th>Nama Ruangan</th>
                     <th>Kondisi</th>
@@ -51,25 +50,28 @@ include '../../templates/sidebar.php';
             </thead>
             <tbody>
                 <?php
+                $hasData = false;
                 if ($result === false) {
-                    echo "<tr><td colspan='5' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
-                } elseif (sqlsrv_has_rows($result) === false) {
-                    echo '<tr><td colspan="5" class="text-center">Tidak ada ruangan yang tersedia</td></tr>';
+                    echo '<tr><td colspan="5" class="text-center text-danger">Gagal mengambil data dari database</td></tr>';
                 } else {
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                        $hasData = true;
                 ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
-                        <td class="td-aksi text-center">
-                            <a href="../../CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= urlencode($row['idRuangan']) ?>">
-                                <img src="../../icon/tandaplus.svg" class="plus-tambah w-25" alt="plus button">
-                            </a>
-                        </td>
-                    </tr>
+                        <tr class="text-center">
+                            <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
+                            <td class="td-aksi text-center align-middle">
+                                <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= urlencode($row['idRuangan']) ?>" class="d-inline-block">
+                                    <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Ruangan" style="display: inline-block; vertical-align: middle;">
+                                </a>
+                            </td>
+                        </tr>
                 <?php
+                    }
+                    if (!$hasData) {
+                        echo '<tr><td colspan="5" class="text-center">Tidak ada ruangan yang tersedia</td></tr>';
                     }
                 }
                 ?>
