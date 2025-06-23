@@ -48,7 +48,7 @@ if (!empty($idPeminjamanRuangan)) {
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Peminjaman Ruangan</h3>
+    <h3 class="fw-semibold mb-3">Peminjaman Ruangan</h3>
     <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -76,7 +76,7 @@ if (!empty($idPeminjamanRuangan)) {
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">ID Peminjaman</label>
+                                            <label class="form-label fw-bold">ID Peminjaman Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
                                             <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
                                         </div>
@@ -86,8 +86,8 @@ if (!empty($idPeminjamanRuangan)) {
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">Ruangan</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?> - <?= htmlspecialchars($data['namaRuangan']) ?></div>
+                                            <label class="form-label fw-bold">ID Ruangan</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
                                         </div>
                                     </div>
@@ -99,13 +99,40 @@ if (!empty($idPeminjamanRuangan)) {
                                         </div>
                                         <div class="mb-3">
                                             <div class="row">
-                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Mulai:</label> <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?></p></div>
-                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Selesai:</label> <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></p></div>
+                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Mulai:</label>
+                                                    <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?></p>
+                                                </div>
+                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Selesai:</label>
+                                                    <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Status Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
+                                            <?php
+                                            $statusClass = 'text-secondary';
+                                            switch ($data['statusPeminjaman']) {
+                                                case 'Diajukan':
+                                                    $statusClass = 'text-primary';
+                                                    break;
+                                                case 'Menunggu Persetujuan':
+                                                    $statusClass = 'text-warning';
+                                                    break;
+                                                case 'Menunggu Pengecekan':
+                                                    $statusClass = 'text-warning';
+                                                    break;
+                                                case 'Sedang Dipinjam':
+                                                    $statusClass = 'text-info';
+                                                    break;
+                                                case 'Telah Dikembalikan':
+                                                    $statusClass = 'text-success';
+                                                    break;
+                                                case 'Ditolak':
+                                                    $statusClass = 'text-danger';
+                                                    break;
+                                            }
+                                            ?>
+                                            <div class="form-control-plaintext <?= $statusClass ?> fw-semibold"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
                                         </div>
                                     </div>
@@ -118,45 +145,6 @@ if (!empty($idPeminjamanRuangan)) {
                                     </div>
                                 </div>
 
-                                <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan'])) : ?>
-                                    <hr>
-                                    <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
-                                        <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
-                                        <div class="mt-3">
-                                            <label class="form-label fw-bold">Alasan Penolakan</label>
-                                            <textarea class="form-control" rows="3" readonly onfocus="this.blur();"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
-                                        </div>
-                                    <?php else: ?>
-                                        <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label fw-bold">
-                                                    Dokumentasi Sebelum
-                                                </label>
-                                                <div class="mt-1">
-                                                    <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
-                                                    <?php else : ?>
-                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label fw-bold">
-                                                    Dokumentasi Selesai
-                                                </label>
-                                                <div class="mt-1">
-                                                    <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
-                                                    <?php else : ?>
-                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php endif; ?>
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>
