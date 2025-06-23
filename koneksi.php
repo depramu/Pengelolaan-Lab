@@ -1,9 +1,9 @@
 <?php
-$serverName = "pengabdilab.database.windows.net";
+$serverName = "DEPENIGER\SQLEXPRESS01";
 $connectionOptions = [
     "Database" => "PENGELOLAAN_LAB",
-    "Uid" => "pengabdiLab",
-    "PWD" => "abdilab123*",
+    // "Uid" => "pengabdiLab",
+    // "PWD" => "abdilab123*",
     "TrustServerCertificate" => true,
 ];
 

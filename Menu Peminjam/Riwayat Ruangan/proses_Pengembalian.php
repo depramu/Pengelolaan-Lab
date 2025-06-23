@@ -62,7 +62,7 @@ if (isset($_POST['submit_pengembalian'])) {
             $stmt_update = sqlsrv_query($conn, $sql_update_status, $params_update);
 
             if ($stmt_update) {
-                header("Location: formDetailRiwayatRuangan.php?idPeminjamanRuangan=" . $idPeminjaman . "&upload=sukses");
+                header("Location: riwayatRuangan.php");
                 exit();
             } else {
                 echo "Data pengembalian berhasil disimpan, TAPI gagal update status peminjaman. Error: <pre>";
@@ -71,10 +71,11 @@ if (isset($_POST['submit_pengembalian'])) {
             }
         } else {
             echo "Gagal menyimpan data pengembalian ke database. Error: <pre>";
-            print_r(sqlsrv_errors(), true);
+            echo print_r(sqlsrv_errors(), true);
             echo "</pre>";
         }
     } else {
         echo "Gagal mengupload file. Alasan: " . $pesan_error;
     }
 }
+?>

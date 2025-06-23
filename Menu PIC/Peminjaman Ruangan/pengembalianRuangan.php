@@ -1,9 +1,110 @@
 <?php
-include '../../templates/header.php';
+include '../../koneksi.php';
 
 $showModal = false;
 $idPeminjamanRuangan = $_GET['id'] ?? '';
+$error = null;
 
+// Proses POST untuk simpan ke database
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $idPeminjamanRuangan) {
+    $kondisiRuangan = $_POST['kondisiRuangan'] ?? '';
+    $catatanPengembalianRuangan = $_POST['catatanPengembalianRuangan'] ?? '';
+
+    // Validasi sederhana
+    if ($kondisiRuangan === 'Pilih Kondisi Ruangan' || empty($kondisiRuangan)) {
+        $error = "Kondisi ruangan harus dipilih.";
+    } elseif (empty($catatanPengembalianRuangan)) {
+        $error = "Catatan pengembalian harus diisi.";
+    } else {
+        // Cek apakah sudah ada data pengembalian untuk id ini
+        $cekSql = "SELECT COUNT(*) as cnt FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
+        $cekParams = [$idPeminjamanRuangan];
+        $cekStmt = sqlsrv_query($conn, $cekSql, $cekParams);
+        $sudahAda = false;
+        if ($cekStmt && ($cekRow = sqlsrv_fetch_array($cekStmt, SQLSRV_FETCH_ASSOC))) {
+            $sudahAda = $cekRow['cnt'] > 0;
+        }
+
+        if ($sudahAda) {
+            // Update
+            $sqlSave = "UPDATE Pengembalian_Ruangan SET kondisiRuangan = ?, catatanPengembalianRuangan = ? WHERE idPeminjamanRuangan = ?";
+            $paramsSave = [$kondisiRuangan, $catatanPengembalianRuangan, $idPeminjamanRuangan];
+        } else {
+            // Insert
+            $sqlSave = "INSERT INTO Pengembalian_Ruangan (idPeminjamanRuangan, kondisiRuangan, catatanPengembalianRuangan) VALUES (?, ?, ?)";
+            $paramsSave = [$idPeminjamanRuangan, $kondisiRuangan, $catatanPengembalianRuangan];
+        }
+
+        $stmtSave = sqlsrv_query($conn, $sqlSave, $paramsSave);
+
+        if ($stmtSave) {
+            // Update statusPeminjaman menjadi 'Telah Dikembalikan'
+            $sqlUpdateStatus = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = ? WHERE idPeminjamanRuangan = ?";
+            $paramsUpdateStatus = ['Telah Dikembalikan', $idPeminjamanRuangan];
+            $stmtUpdateStatus = sqlsrv_query($conn, $sqlUpdateStatus, $paramsUpdateStatus);
+
+            if ($stmtUpdateStatus) {
+                // Ambil idRuangan dari peminjaman untuk update ketersediaan ruangan
+                $sqlGetRuangan = "SELECT idRuangan FROM Peminjaman_Ruangan WHERE idPeminjamanRuangan = ?";
+                $paramsGetRuangan = [$idPeminjamanRuangan];
+                $stmtGetRuangan = sqlsrv_query($conn, $sqlGetRuangan, $paramsGetRuangan);
+                $idRuangan = null;
+                if ($stmtGetRuangan && ($rowRuangan = sqlsrv_fetch_array($stmtGetRuangan, SQLSRV_FETCH_ASSOC))) {
+                    $idRuangan = $rowRuangan['idRuangan'];
+                }
+
+                if ($idRuangan) {
+                    // Update ketersediaan ruangan menjadi 'Tersedia'
+                    $sqlUpdateKetersediaan = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
+                    $paramsUpdateKetersediaan = ['Tersedia', $idRuangan];
+                    $stmtUpdateKetersediaan = sqlsrv_query($conn, $sqlUpdateKetersediaan, $paramsUpdateKetersediaan);
+                    // Tidak perlu cek error di sini, karena proses utama sudah berhasil
+                }
+
+                $showModal = true;
+            } else {
+                $error = "Gagal mengubah status peminjaman.";
+            }
+        } else {
+            $error = "Gagal menyimpan data pengembalian ruangan.";
+        }
+    }
+}
+
+// Ambil data pengembalian ruangan dan dokumentasi
+$data = null;
+$dokSebelum = null;
+$dokSesudah = null;
+if ($idPeminjamanRuangan) {
+    // Pastikan koneksi $conn sudah tersedia dari header.php
+    $sql = "SELECT 
+                p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
+                p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
+                p.alasanPeminjamanRuangan, p.statusPeminjaman,
+                peng.kondisiRuangan, peng.catatanPengembalianRuangan
+            FROM 
+                Peminjaman_Ruangan p
+            LEFT JOIN 
+                Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
+            WHERE 
+                p.idPeminjamanRuangan = ?";
+    $params = [$idPeminjamanRuangan];
+    $stmt = sqlsrv_query($conn, $sql, $params);
+    if ($stmt && ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC))) {
+        $data = $row;
+    }
+
+    // Ambil dokumentasi sebelum dan sesudah dari database
+    $sqlDok = "SELECT dokumentasiSebelum, dokumentasiSesudah FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
+    $paramsDok = [$idPeminjamanRuangan];
+    $stmtDok = sqlsrv_query($conn, $sqlDok, $paramsDok);
+    if ($stmtDok && ($rowDok = sqlsrv_fetch_array($stmtDok, SQLSRV_FETCH_ASSOC))) {
+        $dokSebelum = $rowDok['dokumentasiSebelum'] ?? null;
+        $dokSesudah = $rowDok['dokumentasiSesudah'] ?? null;
+    }
+}
+
+include '../../templates/header.php';
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
@@ -19,10 +120,8 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-
-    <!-- Pengembalian Barang -->
     <div class="container mt-4">
-        <?php if (isset($error)) : ?>
+        <?php if (!empty($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php echo $error; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -39,12 +138,12 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2 row">
                                 <div class="col md-6">
-                                    <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman Barang</label>
+                                    <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman Ruangan</label>
                                     <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>" disabled>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="txtKondisi" class="form-label fw-bold">Kondisi Ruangan
-                                        <span id="kondisiError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Dipilih</span>
+                                        <span id="kondisiError" class="text-danger small mt-1" style="font-size: 0.95em;display:none;">*Harus Dipilih</span>
                                     </label>
                                     <select class="form-select" id="txtKondisi" name="kondisiRuangan">
                                         <option selected>Pilih Kondisi Ruangan</option>
@@ -54,18 +153,26 @@ include '../../templates/sidebar.php';
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <label for="catatanPengembalianBarang" class="form-label fw-bold">Catatan Pengembalian
-                                    <span id="catatanError" class="text-danger small mt-1" style="font: size 0.95em;display:none;">*Harus Diisi</span>
+                                <label for="catatanPengembalianRuangan" class="form-label fw-bold">Catatan Pengembalian
+                                    <span id="catatanError" class="text-danger small mt-1" style="font-size: 0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"><?= isset($data['catatanPengembalianBarang']) ? htmlspecialchars($data['catatanPengembalianBarang']) : '' ?></textarea>
+                                <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="3" style="resize: none;"><?= isset($data['catatanPengembalianRuangan']) ? htmlspecialchars($data['catatanPengembalianRuangan']) : '' ?></textarea>
                             </div>
                             <div class="mb-2">
                                 <label for="dokumentasiSebelum" class="fw-bold">Dokumentasi sebelum pemakaian</label><br>
-                                <a href="">Unduh bukti dokumentasi</a>
+                                <?php if (!empty($dokSebelum)): ?>
+                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Unduh bukti dokumentasi</a>
+                                <?php else: ?>
+                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                <?php endif; ?>
                             </div>
                             <div class="mb-2">
-                                <label for="dokumentasiSebelum" class="fw-bold">Dokumentasi sesudah pemakaian</label><br>
-                                <a href="">Unduh bukti dokumentasi</a>
+                                <label for="dokumentasiSesudah" class="fw-bold">Dokumentasi sesudah pemakaian</label><br>
+                                <?php if (!empty($dokSesudah)): ?>
+                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Unduh bukti dokumentasi</a>
+                                <?php else: ?>
+                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                <?php endif; ?>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanRuangan.php" class="btn btn-secondary">Kembali</a>
@@ -77,71 +184,5 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 </main>
-
-
-<script>
-    // Fungsi stepper untuk tombol +/-
-    function changeStok(val) {
-        // Targetkan ID yang benar: 'jumlahPengembalian'
-        let stokInput = document.getElementById('jumlahPengembalian');
-        let maxStok = parseInt(document.getElementById('jumlahBrg').value) || 0;
-        let current = parseInt(stokInput.value) || 0;
-        let next = current + val;
-
-        if (next < 0) next = 0;
-        if (next > maxStok) next = maxStok; // Batasi agar tidak lebih dari jumlah pinjaman
-        stokInput.value = next;
-    }
-</script>
-
-<script>
-    // Fungsi validasi form sebelum submit
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let valid = true;
-
-        // Validasi Jumlah Pengembalian
-        // Targetkan ID yang benar: 'jumlahPengembalian'
-        const jumlahInput = document.getElementById('jumlahPengembalian');
-        const jumlahError = document.getElementById('jumlahError');
-        const jumlahPinjam = parseInt(document.getElementById('jumlahBrg').value) || 0;
-
-        if (parseInt(jumlahInput.value) <= 0) {
-            jumlahError.textContent = '*Jumlah harus lebih dari 0.';
-            jumlahError.style.display = 'block';
-            valid = false;
-        } else if (parseInt(jumlahInput.value) > jumlahPinjam) {
-            jumlahError.textContent = '*Jumlah melebihi yang dipinjam.';
-            jumlahError.style.display = 'block';
-            valid = false;
-        } else {
-            jumlahError.style.display = 'none';
-        }
-
-        // Validasi Kondisi Barang
-        const kondisiSelect = document.getElementById('txtKondisi');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisiSelect.value === 'Pilih Kondisi Barang') {
-            kondisiError.style.display = 'block';
-            valid = false;
-        } else {
-            kondisiError.style.display = 'none';
-        }
-
-        // Validasi Catatan Pengembalian
-        // Targetkan ID yang benar: 'catatanPengembalianBarang'
-        const catatanInput = document.getElementById('catatanPengembalianBarang');
-        const catatanError = document.getElementById('catatanError');
-        if (catatanInput.value.trim() === '') {
-            catatanError.style.display = 'block';
-            valid = false;
-        } else {
-            catatanError.style.display = 'none';
-        }
-
-        if (!valid) {
-            e.preventDefault(); // Hentikan pengiriman form jika tidak valid
-        }
-    });
-</script>
 
 <?php include '../../templates/footer.php'; ?>
