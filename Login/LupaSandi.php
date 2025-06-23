@@ -96,11 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         .login-form-title {
             color: #fff;
-            font-size: 1.2rem; /* Ukuran lebih kecil */
+            font-size: 1.2rem;
             font-weight: 500;
-            margin-bottom: 20px;
+            margin-bottom: 10px; /* ↓ ganti dari 20px ke 10px */
             text-align: center;
         }
+
 
         .form-label {
             color: #e0e0e0;
@@ -225,8 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-right">
         <div class="login-form-container">
             <h2 class="text-center fw-75 mb-5" style="color: #fff;">Lupa Kata Sandi</h2>
-            <h3 class="login-form-title">Silahkan Masukkan <br> Email dan Nama Lengkap</h3>
-            <form method="POST" action="">
+            <h3 class="login-form-title" style="margin-bottom: 10px;">Silahkan Masukkan Email</h3>
+
                 <?php
                     // Success flash
                     $success_message = $_SESSION['flash_success'] ?? '';
@@ -242,14 +243,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?= htmlspecialchars($error_message); ?>
                     </div>
                 <?php endif; ?>
-
-                <div class="input-group flex-column">
-                    <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
-                    <div class="d-flex w-100">
-                        <span class="input-group-text"><img src="../icon/user-round.svg" alt="Nama Lengkap"></span>
-                        <input type="text" id="namaLengkap" name="namaLengkap" class="form-control" placeholder="Masukkan Nama Lengkap">
-                    </div>
-                </div>
 
                 <div class="input-group flex-column">
                     <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
