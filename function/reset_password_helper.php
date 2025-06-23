@@ -24,12 +24,13 @@ function generateSecurePassword(int $length = 8): string
  * Attempt to reset user password for Mahasiswa or Karyawan.
  * Returns [bool success, string message]
  */
-function resetUserPassword($conn, string $email, string $namaLengkap): array
+function resetUserPassword($conn, string $email): array
 {
     // First, attempt to locate the user in Mahasiswa
-    $sqlMhs = "SELECT nim AS id, namaMhs AS nama FROM Mahasiswa WHERE namaMhs = ?";
-    $stmtMhs = sqlsrv_query($conn, $sqlMhs, [$namaLengkap]);
+    $sqlMhs = "SELECT nim AS id, nama AS nama FROM Mahasiswa WHERE email = ?";
+    $stmtMhs = sqlsrv_query($conn, $sqlMhs, [$email]);
     if ($stmtMhs === false) {
+        error_log('SQLSRV Mahasiswa query error: '.print_r(sqlsrv_errors(), true));
         return [false, 'Terjadi kesalahan database.'];
     }
     $row = sqlsrv_fetch_array($stmtMhs, SQLSRV_FETCH_ASSOC);
@@ -37,40 +38,46 @@ function resetUserPassword($conn, string $email, string $namaLengkap): array
     $table = null;
     $idCol = null;
     $idVal = null;
+    $namaLengkap = null;
 
-    if ($row && strcasecmp($row['nama'], $namaLengkap) === 0) {
+    if ($row) {
         $table = 'Mahasiswa';
         $idCol = 'nim';
         $idVal = $row['id'];
+        $namaLengkap = $row['nama'];
     } else {
-        // Check Karyawan (namaKry or nama)
-        $sqlKry = "SELECT npk AS id, namaKry AS nama FROM Karyawan WHERE namaKry = ?";
-        $stmtKry = sqlsrv_query($conn, $sqlKry, [$namaLengkap]);
+        // Check Karyawan by email
+        $sqlKry = "SELECT npk AS id, nama AS nama FROM Karyawan WHERE email = ?";
+        $stmtKry = sqlsrv_query($conn, $sqlKry, [$email]);
         if ($stmtKry === false) {
+            error_log('SQLSRV Karyawan query error: '.print_r(sqlsrv_errors(), true));
             return [false, 'Terjadi kesalahan database.'];
         }
         $rowK = sqlsrv_fetch_array($stmtKry, SQLSRV_FETCH_ASSOC);
-        if ($rowK && strcasecmp($rowK['nama'], $namaLengkap) === 0) {
+        if ($rowK) {
             $table = 'Karyawan';
             $idCol = 'npk';
             $idVal = $rowK['id'];
+            $namaLengkap = $rowK['nama'];
         }
     }
 
     if ($table === null) {
-        return [false, 'Email atau nama tidak ditemukan.'];
+        return [false, 'Email tidak ditemukan.'];
     }
 
     $newPass = generateSecurePassword();
 
-    $updateSql = "UPDATE $table SET kataSandi = ? WHERE $idCol = ?";
-    $updateStmt = sqlsrv_query($conn, $updateSql, [$newPass, $idVal]);
+    $updateSql = "UPDATE $table SET kataSandi = ?, nama = ? WHERE $idCol = ?";
+    $updateStmt = sqlsrv_query($conn, $updateSql, [$newPass, $namaLengkap, $idVal]);
     if ($updateStmt === false) {
+        error_log('SQLSRV Update query error: '.print_r(sqlsrv_errors(), true));
+        error_log('SQLSRV ERROR (Update): '.print_r(sqlsrv_errors(), true));
         return [false, 'Gagal memperbarui kata sandi.'];
     }
 
     // Kirim email menggunakan PHPMailer SMTP
-    $configMail = require __DIR__ . '/../config_mail.php';
+    $configMail = require __DIR__ . '/config_email.php';
 
     $mail = new PHPMailer(true);
     try {

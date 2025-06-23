@@ -4,14 +4,13 @@ $error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'] ?? '';
-    $namaLengkap = $_POST['namaLengkap'] ?? '';
 
-    if (empty($email) || empty($namaLengkap)) {
+    if (empty($email)) {
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
         require_once __DIR__ . '/../koneksi.php';
         require_once __DIR__ . '/../function/reset_password_helper.php';
-        [$success, $msg] = resetUserPassword($conn, $email, $namaLengkap);
+        [$success, $msg] = resetUserPassword($conn, $email);
         if ($success) {
             $_SESSION['flash_success'] = $msg;
             header('Location: LupaSandi.php');
@@ -226,7 +225,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-right">
         <div class="login-form-container">
             <h2 class="text-center fw-75 mb-5" style="color: #fff;">Lupa Kata Sandi</h2>
-            <h3 class="login-form-title" style="margin-bottom: 10px;">Silahkan Masukkan Email</h3>
+            <h3 class="login-form-title" style="margin-bottom: 10px;">Silahkan Masukkan Data</h3>
+
+            <form action="" method="POST" novalidate>
 
                 <?php
                     // Success flash
@@ -266,22 +267,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     };
 
     document.querySelector('form').addEventListener('submit', function(e){
-        let nama = document.getElementById('namaLengkap').value.trim();
         let email = document.getElementById('email').value.trim();
-        let namaError = document.getElementById('namaError');
         let emailError = document.getElementById('emailError');
         let valid = true;
         // reset
-        namaError.style.display = 'none';
         emailError.style.display = 'none';
 
         if(nama === ''){
-            namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'inline';
+            .textContent = '*Harus diisi';
+            .style.display = 'inline';
             valid = false;
         } else if(/\d/.test(nama)){
-            namaError.textContent = '*Harus berupa huruf';
-            namaError.style.display = 'inline';
+            .textContent = '*Harus berupa huruf';
+            .style.display = 'inline';
             valid = false;
         }
 
