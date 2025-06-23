@@ -9,10 +9,24 @@ $error = '';
 $alasanPenolakan = '';
 $showAlasanPenolakan = false; // Untuk kontrol tampilan kolom alasan penolakan
 
+// Ambil data peminjaman beserta nama peminjam (Mahasiswa/Karyawan) dan info nim/npk
 if (!empty($idPeminjamanRuangan)) {
     $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
 
-    $query = "SELECT * FROM Peminjaman_Ruangan WHERE idPeminjamanRuangan = ?";
+    // Query gabungan seperti di file_context_1
+    $query = "SELECT 
+                p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
+                p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
+                p.alasanPeminjamanRuangan, p.statusPeminjaman,
+                COALESCE(m.nama, k.nama) AS namaPeminjam
+            FROM 
+                Peminjaman_Ruangan p
+            LEFT JOIN 
+                Mahasiswa m ON p.nim = m.nim
+            LEFT JOIN 
+                Karyawan k ON p.npk = k.npk
+            WHERE 
+                p.idPeminjamanRuangan = ?";
     $params = array($idPeminjamanRuangan);
     $stmt = sqlsrv_query($conn, $query, $params);
 
@@ -25,6 +39,7 @@ if (!empty($idPeminjamanRuangan)) {
 $idRuangan = $data['idRuangan'] ?? '';
 $nim = $data['nim'] ?? '';
 $npk = $data['npk'] ?? '';
+$namaPeminjam = $data['namaPeminjam'] ?? '';
 $tglPeminjamanRuangan = isset($data['tglPeminjamanRuangan']) ? $data['tglPeminjamanRuangan']->format('Y-m-d') : '';
 $waktuMulai = isset($data['waktuMulai']) ? $data['waktuMulai']->format('H:i') : '';
 $waktuSelesai = isset($data['waktuSelesai']) ? $data['waktuSelesai']->format('H:i') : '';
@@ -43,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt) {
             $showModal = true;
+            
         } else {
             $error = "Gagal melakukan pengajuan ruangan.";
             exit;
@@ -68,11 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmtPenolakan = sqlsrv_query($conn, $queryPenolakan, $paramsPenolakan);
 
             if ($stmt && $stmtPenolakan) {
-                $showRejectedModal = true;
-                $showAlasanPenolakan = false;
+                $showModal = true;
             } else {
                 $error = "Gagal menolak pengajuan ruangan.";
-                $showRejectedModal = true;
             }
         }
     } elseif (isset($_POST['tolak'])) {
@@ -95,7 +109,7 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-        <!-- Pengajuan Peminjaman Ruangan -->
+    <!-- Pengajuan Peminjaman Ruangan -->
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
@@ -119,9 +133,20 @@ include '../../templates/sidebar.php';
                                         <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
-                                        <label for="nim" class="form-label fw-bold">NIM</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($nim) ?></div>
-                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>" style="background: #f5f5f5;">
+                                        <label class="form-label fw-bold">NIM / NPK</label>
+                                        <div class="form-control-plaintext">
+                                            <?php
+                                            if (!empty($nim)) {
+                                                echo htmlspecialchars($nim);
+                                            } elseif (!empty($npk)) {
+                                                echo htmlspecialchars($npk);
+                                            } else {
+                                                echo "-";
+                                            }
+                                            ?>
+                                        </div>
+                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     </div>
                                 </div>
                                 <!-- Kolom Kanan -->
@@ -144,17 +169,12 @@ include '../../templates/sidebar.php';
                                         </div>
                                     </div>
                                     <div class="mb-2">
-                                        <label for="npk" class="form-label fw-bold">NPK</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($npk) ?></div>
-                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>" style="background: #f5f5f5;">
+                                        <label for="alasanPeminjaman" class="form-label fw-bold">Alasan Peminjaman</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></div>
+                                        <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
                                     </div>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="alasanPeminjaman" class="form-label fw-bold">Alasan Peminjaman</label>
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></div>
-                                    <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
-                                </div>
-                                <!-- Kolom alasan penolakan, hanya muncul jika tombol tolak diklik -->
+
                                 <div class="mb-2" id="alasanPenolakanGroup" style="<?= $showAlasanPenolakan ? '' : 'display:none;' ?>">
                                     <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan</label>
                                     <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
@@ -175,43 +195,45 @@ include '../../templates/sidebar.php';
                             </div>
                         </form>
                         <script>
-                        // Tampilkan kolom alasan penolakan jika tombol tolak diklik (tanpa reload)
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var btnTolak = document.getElementById('btnTolak');
-                            if (btnTolak) {
-                                btnTolak.addEventListener('click', function(e) {
-                                    e.preventDefault();
-                                    document.getElementById('alasanPenolakanGroup').style.display = '';
-                                    // Ganti tombol Tolak menjadi Submit Penolakan
-                                    btnTolak.style.display = 'none';
-                                    // Tambahkan tombol submit penolakan secara dinamis
-                                    if (!document.getElementById('btnSubmitPenolakan')) {
-                                        var submitBtn = document.createElement('button');
-                                        submitBtn.type = 'submit';
-                                        submitBtn.name = 'tolak_submit';
-                                        submitBtn.className = 'btn btn-danger';
-                                        submitBtn.id = 'btnSubmitPenolakan';
-                                        submitBtn.innerText = 'Submit Penolakan';
-                                        submitBtn.onclick = function() { return validateTolak(); };
-                                        btnTolak.parentNode.insertBefore(submitBtn, btnTolak);
-                                    }
-                                    document.getElementById('alasanPenolakan').focus();
-                                });
-                            }
-                        });
+                            // Tampilkan kolom alasan penolakan jika tombol tolak diklik (tanpa reload)
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var btnTolak = document.getElementById('btnTolak');
+                                if (btnTolak) {
+                                    btnTolak.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        document.getElementById('alasanPenolakanGroup').style.display = '';
+                                        // Ganti tombol Tolak menjadi Submit Penolakan
+                                        btnTolak.style.display = 'none';
+                                        // Tambahkan tombol submit penolakan secara dinamis
+                                        if (!document.getElementById('btnSubmitPenolakan')) {
+                                            var submitBtn = document.createElement('button');
+                                            submitBtn.type = 'submit';
+                                            submitBtn.name = 'tolak_submit';
+                                            submitBtn.className = 'btn btn-danger';
+                                            submitBtn.id = 'btnSubmitPenolakan';
+                                            submitBtn.innerText = 'Submit Penolakan';
+                                            submitBtn.onclick = function() {
+                                                return validateTolak();
+                                            };
+                                            btnTolak.parentNode.insertBefore(submitBtn, btnTolak);
+                                        }
+                                        document.getElementById('alasanPenolakan').focus();
+                                    });
+                                }
+                            });
 
-                        function validateTolak() {
-                            var alasan = document.getElementById('alasanPenolakan').value.trim();
-                            var errorDiv = document.getElementById('alasanPenolakanError');
-                            if (alasan === '') {
-                                errorDiv.style.display = 'block';
-                                document.getElementById('alasanPenolakan').focus();
-                                return false;
-                            } else {
-                                errorDiv.style.display = 'none';
-                                return true;
+                            function validateTolak() {
+                                var alasan = document.getElementById('alasanPenolakan').value.trim();
+                                var errorDiv = document.getElementById('alasanPenolakanError');
+                                if (alasan === '') {
+                                    errorDiv.style.display = 'block';
+                                    document.getElementById('alasanPenolakan').focus();
+                                    return false;
+                                } else {
+                                    errorDiv.style.display = 'none';
+                                    return true;
+                                }
                             }
-                        }
                         </script>
                     </div>
                 </div>

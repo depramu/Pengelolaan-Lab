@@ -55,9 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($updateStmt && $insertStmt) {
             sqlsrv_commit($conn);
-            // Langsung redirect, tidak perlu modal
-            header("Location: peminjamanBarang.php?status=tolak&id=" . urlencode($idPeminjamanBrg));
-            exit();
+            $showModal = true; // Tampilkan modal sukses
         } else {
             sqlsrv_rollback($conn);
             $errors = sqlsrv_errors();
@@ -109,22 +107,22 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">ID Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($idBarang) ?></div>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
                                         <input type="hidden" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Tanggal Peminjaman</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
                                         <input type="hidden" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Jumlah Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($jumlahBrg) ?></div>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
                                         <input type="hidden" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Alasan Peminjaman</label>
-                                        <textarea class="form-control" rows="3" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
+                                        <textarea class="form-control-plaintext" rows="3" disabled><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
                                     </div>
                                 </div>
 
@@ -132,23 +130,22 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">ID Peminjaman Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                         <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Nama Barang</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($namaBarang) ?></div>
                                         <input type="hidden" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">NIM</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($nim) ?></div>
                                         <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                        <div class="form-control-plaintextt"><?= htmlspecialchars($nim) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">NPK</label>
-                                        <div class="form-control bg-light"><?= htmlspecialchars($npk) ?></div>
-                                        <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($npk) ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +185,31 @@ include '../../templates/sidebar.php';
                             });
                         </script>
 
-
+                        <!-- Modal Berhasil -->
+                        <?php if ($showModal): ?>
+                            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header"> <!-- <- di sini sudah diubah -->
+                                            <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            PIC menolak peminjaman barang <strong><?= htmlspecialchars($idPeminjamanBrg) ?></strong>.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="peminjamanBarang.php" class="btn btn-primary">OK</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                // Otomatis tampilkan modal jika $showModal true
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var modal = new bootstrap.Modal(document.getElementById('successModal'));
+                                    modal.show();
+                                });
+                            </script>
+                        <?php endif; ?>
 
                         <?php include '../../templates/footer.php'; ?>

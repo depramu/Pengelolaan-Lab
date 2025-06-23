@@ -1,7 +1,7 @@
 <?php
 include '../../koneksi.php';
 
-$showModal = false;
+$showSuccessModal = false;
 $idPeminjamanRuangan = $_GET['id'] ?? '';
 $error = null;
 
@@ -58,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $idPeminjamanRuangan) {
                     $sqlUpdateKetersediaan = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
                     $paramsUpdateKetersediaan = ['Tersedia', $idRuangan];
                     $stmtUpdateKetersediaan = sqlsrv_query($conn, $sqlUpdateKetersediaan, $paramsUpdateKetersediaan);
-                    // Tidak perlu cek error di sini, karena proses utama sudah berhasil
                 }
 
                 $showModal = true;
@@ -76,7 +75,6 @@ $data = null;
 $dokSebelum = null;
 $dokSesudah = null;
 if ($idPeminjamanRuangan) {
-    // Pastikan koneksi $conn sudah tersedia dari header.php
     $sql = "SELECT 
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
@@ -161,7 +159,7 @@ include '../../templates/sidebar.php';
                             <div class="mb-2">
                                 <label for="dokumentasiSebelum" class="fw-bold">Dokumentasi sebelum pemakaian</label><br>
                                 <?php if (!empty($dokSebelum)): ?>
-                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Unduh bukti dokumentasi</a>
+                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
                                 <?php else: ?>
                                     <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                 <?php endif; ?>
@@ -169,7 +167,7 @@ include '../../templates/sidebar.php';
                             <div class="mb-2">
                                 <label for="dokumentasiSesudah" class="fw-bold">Dokumentasi sesudah pemakaian</label><br>
                                 <?php if (!empty($dokSesudah)): ?>
-                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Unduh bukti dokumentasi</a>
+                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
                                 <?php else: ?>
                                     <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                 <?php endif; ?>
@@ -184,5 +182,6 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 </main>
+
 
 <?php include '../../templates/footer.php'; ?>
