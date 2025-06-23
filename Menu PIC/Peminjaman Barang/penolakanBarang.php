@@ -1,5 +1,5 @@
 <?php
-include '../../templates/header.php';
+
 include '../../koneksi.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
@@ -39,7 +39,6 @@ $npk = $data['npk'] ?? '';
 $tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
 $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanBrg) && !empty($alasanPenolakan)) {
         sqlsrv_begin_transaction($conn);
@@ -54,10 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertParams = array($idPeminjamanBrg, $alasanPenolakan);
         $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
 
-        // FIX: Improved error handling with detailed messages
         if ($updateStmt && $insertStmt) {
             sqlsrv_commit($conn);
-            $showModal = true;
+            // Langsung redirect, tidak perlu modal
+            header("Location: peminjamanBarang.php?status=tolak&id=" . urlencode($idPeminjamanBrg));
+            exit();
         } else {
             sqlsrv_rollback($conn);
             $errors = sqlsrv_errors();
@@ -70,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Form tidak boleh kosong.";
     }
 }
+include '../../templates/header.php';
+
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
@@ -161,8 +163,7 @@ include '../../templates/sidebar.php';
 
                             <!-- Tombol -->
                             <div class="d-flex justify-content-between">
-                                <a href="pengajuanBarang.php" class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-danger">Tolak</button>
+                                <a href="pengajuanBarang.php?id=<?= urlencode($idPeminjamanBrg) ?>" class="btn btn-secondary">Kembali</a> <button type="submit" class="btn btn-danger">Tolak</button>
                             </div>
                         </form>
 
@@ -187,24 +188,6 @@ include '../../templates/sidebar.php';
                             });
                         </script>
 
-                        <?php
-                        // Add success modal
-                        if ($showModal): ?>
-                            <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-success text-white">
-                                            <h5 class="modal-title">Berhasil!</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Penolakan peminjaman berhasil dicatat</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a href="pengajuanBarang.php" class="btn btn-primary">Kembali ke Daftar</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
+
 
                         <?php include '../../templates/footer.php'; ?>

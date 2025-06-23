@@ -45,6 +45,8 @@
                                 echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
                             } else if ($currentFile == 'pengajuanRuangan.php') {
                                 echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                            } else if ($currentFile == 'pengembalianRuangan.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                             }
                             ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
@@ -81,6 +83,8 @@
                         echo 'Peminjaman barang telah disetujui.';
                     } else if ($currentFile == 'pengajuanRuangan.php') {
                         echo 'Peminjaman ruangan telah disetujui.';
+                    } else if ($currentFile == 'pengembalianRuangan.php') {
+                        echo 'Data pengembalian ruangan berhasil ditambahkan.';
                     }
                     ?></p>
             </div>
@@ -104,6 +108,8 @@
                             } else if ($currentFile == 'pengajuanBarang.php') {
                                 echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
                             } else if ($currentFile == 'pengajuanRuangan.php') {
+                                echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                            } else if ($currentFile == 'pengembalianRuangan.php') {
                                 echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                             }
                             ?>" class="btn btn-primary">OK</a>

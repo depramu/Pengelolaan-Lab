@@ -63,26 +63,44 @@ include '../../templates/sidebar.php';
           $statusPeminjaman = $row['statusPeminjaman'] ?? '';
           $idPeminjaman = htmlspecialchars($row['idPeminjamanRuangan'] ?? '');
 
-          if ($statusPeminjaman == 'Menunggu Persetujuan') {
-            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
-            $altText = 'Menunggu Persetujuan oleh PIC';
-            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
-          } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
-            $altText = 'Sedang Dipinjam';
-            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
-          } elseif ($statusPeminjaman == 'Ditolak') {
-            $iconSrc = BASE_URL . '/icon/silang.svg';
-            $altText = 'Ditolak';
-            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPenolakanRuangan.php?id=' . $idPeminjaman;
-          } elseif ($statusPeminjaman == 'Telah Dikembalikan') {
-            $iconSrc = BASE_URL . '/icon/centang.svg';
-            $altText = 'Peminjaman Selesai';
-            $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/DetailPeminjamanRuangan.php?id=' . $idPeminjaman;
-          } else {
-            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
-            $altText = 'Status Tidak Diketahui';
-            $linkDetail = '#';
+          // Penyesuaian link dan ikon aksi sesuai status
+          switch ($statusPeminjaman) {
+            case 'Menunggu Persetujuan':
+              $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+              $altText = 'Menunggu Persetujuan oleh PIC';
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
+              break;
+            case 'Menunggu Pengecekan':
+              $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+              $altText = 'Menunggu Pengecekan oleh PIC';
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              break;
+            case 'Sedang Dipinjam':
+              $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+              $altText = 'Sedang Dipinjam';
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              break;
+            case 'Ditolak':
+              $iconSrc = BASE_URL . '/icon/silang.svg';
+              $altText = 'Ditolak';
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              break;
+            case 'Telah Dikembalikan':
+              $iconSrc = BASE_URL . '/icon/centang.svg';
+              $altText = 'Telah Dikembalikan';
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              break;
+            default:
+              $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+              $altText = 'Status Tidak Diketahui';
+              $linkAksi = '#';
+              $linkDetail = '#';
+              break;
           }
         ?>
           <tr class="text-center">
@@ -95,7 +113,7 @@ include '../../templates/sidebar.php';
             <td><?= ($row['waktuMulai'] instanceof DateTimeInterface) ? $row['waktuMulai']->format('H:i') : 'N/A'; ?></td>
             <td><?= ($row['waktuSelesai'] instanceof DateTimeInterface) ? $row['waktuSelesai']->format('H:i') : 'N/A'; ?></td>
             <td class="td-aksi">
-              <a href="<?= $linkDetail ?>">
+              <a href="<?= $linkAksi ?>">
                 <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
               </a>
               <a href="<?= $linkDetail ?>">
