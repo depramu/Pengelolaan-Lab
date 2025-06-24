@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
 include '../templates/header.php';
 
 // Pagination setup
@@ -17,7 +19,7 @@ $totalPages = ceil($totalData / $perPage);
 $offset = ($page - 1) * $perPage;
 $query = "SELECT npk, nama, email, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$currentPage = basename($_SERVER['PHP_SELF']); 
 require_once '../function/pagination.php';
 
 include '../templates/sidebar.php';
@@ -97,8 +99,6 @@ include '../templates/sidebar.php';
             ?>
         </tbody>
     </table>
-
-
 
     </div>
     <?php

@@ -1,0 +1,603 @@
+.pengembalian-ruangan-1-pic-nad,
+.pengembalian-ruangan-1-pic-nad * {
+  box-sizing: border-box;
+}
+.pengembalian-ruangan-1-pic-nad {
+  background: #f9fafc;
+  height: 1024px;
+  position: relative;
+  overflow: hidden;
+}
+.menu {
+  background: #065ba6;
+  border-radius: 20px;
+  width: 365px;
+  height: 798px;
+  position: absolute;
+  left: 32px;
+  top: 172px;
+}
+.menu2 {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 976px;
+  height: 798px;
+  position: absolute;
+  left: 429px;
+  top: 172px;
+}
+.logo {
+  width: 296px;
+  height: 68px;
+  position: absolute;
+  left: 76px;
+  top: 68px;
+  object-fit: cover;
+  aspect-ratio: 296/68;
+}
+.vector {
+  width: 4.17%;
+  height: 5.86%;
+  position: absolute;
+  right: 2.43%;
+  left: 93.4%;
+  bottom: 86.33%;
+  top: 7.81%;
+  overflow: visible;
+}
+.vector2 {
+  width: 3.82%;
+  height: 5.57%;
+  position: absolute;
+  right: 7.99%;
+  left: 88.19%;
+  bottom: 86.62%;
+  top: 7.81%;
+  overflow: visible;
+}
+.hello {
+  color: #3a3a3a;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 40px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 429px;
+  top: 66px;
+}
+.nadira-anindita-pic {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 429px;
+  top: 110px;
+}
+.peminjaman-ruangan {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 20px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 694px;
+  top: 191px;
+}
+.sistem-pengelolaan-lab {
+  color: #0d6efd;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 20px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 452px;
+  top: 191px;
+}
+.group-18 {
+  position: absolute;
+  inset: 0;
+}
+.group-17 {
+  width: 928px;
+  height: 57px;
+  position: static;
+}
+.rectangle-6 {
+  background: #f2f1f1;
+  border-radius: 5px 5px 0px 0px;
+  width: 928px;
+  height: 57px;
+  position: absolute;
+  left: 452px;
+  top: 245px;
+}
+.rectangle-7 {
+  background: rgba(242, 241, 241, 0);
+  border-radius: 5px 5px 0px 0px;
+  border-style: solid;
+  border-color: #3a3a3a;
+  border-width: 2px;
+  width: 928px;
+  height: 57px;
+  position: absolute;
+  left: 452px;
+  top: 245px;
+}
+.rectangle-8 {
+  background: rgba(242, 241, 241, 0);
+  border-radius: 0px 0px 5px 5px;
+  border-style: solid;
+  border-color: #3a3a3a;
+  border-width: 2px;
+  width: 928px;
+  height: 477px;
+  position: absolute;
+  left: 452px;
+  top: 300px;
+}
+.pengembalian-peminjaman-ruangan {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 466px;
+  top: 266px;
+}
+.id-peminjaman-ruangan {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 478px;
+  top: 326px;
+}
+.kondisi-ruangan {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 900px;
+  top: 326px;
+}
+.rectangle-9 {
+  background: #f2f1f1;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #d3d3d3;
+  border-width: 2px;
+  width: 343px;
+  height: 35px;
+  position: absolute;
+  left: 478px;
+  top: 346px;
+}
+.rectangle-24 {
+  background: #ffffff;
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #d3d3d3;
+  border-width: 2px;
+  width: 179px;
+  height: 35px;
+  position: absolute;
+  left: 900px;
+  top: 346px;
+}
+.pr-001 {
+  color: #3a3a3a;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 486px;
+  top: 356px;
+}
+.catatan-pengembalian-ruangan {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 478px;
+  top: 401px;
+}
+.group-7 {
+  position: absolute;
+  inset: 0;
+}
+.rectangle-21 {
+  background: #0d6efd;
+  border-radius: 5px;
+  width: 101px;
+  height: 35px;
+  position: absolute;
+  left: 1253px;
+  top: 719px;
+}
+.kirim {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 1284px;
+  top: 729px;
+}
+.group-8 {
+  position: absolute;
+  inset: 0;
+}
+.rectangle-212 {
+  background: #757575;
+  border-radius: 5px;
+  width: 101px;
+  height: 35px;
+  position: absolute;
+  left: 478px;
+  top: 719px;
+}
+.kembali {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  left: 497px;
+  top: 729px;
+}
+.ri-arrow-drop-down-line {
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  left: 1048px;
+  top: 351px;
+  overflow: visible;
+  aspect-ratio: 1;
+}
+.component-37 {
+  width: 309.68px;
+  height: 476.83px;
+  position: absolute;
+  left: 71px;
+  top: 203px;
+}
+.dashboard {
+  width: 12.92%;
+  height: 8.39%;
+  position: absolute;
+  right: 85.47%;
+  left: 1.61%;
+  bottom: 91.61%;
+  top: 0%;
+  overflow: visible;
+}
+.dashboard2 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-SemiBold", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 600;
+  position: absolute;
+  right: 34.03%;
+  left: 20.12%;
+  width: 45.85%;
+  bottom: 93.64%;
+  top: 1.11%;
+  height: 5.24%;
+}
+.manajemen-aset {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 11.52%;
+  left: 20.02%;
+  width: 68.46%;
+  bottom: 77.77%;
+  top: 16.99%;
+  height: 5.24%;
+}
+.barang {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 38%;
+  left: 20.34%;
+  width: 41.66%;
+  bottom: 36.88%;
+  top: 57.88%;
+  height: 5.24%;
+}
+.ruangan {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 30.57%;
+  left: 20.34%;
+  width: 49.08%;
+  bottom: 27.44%;
+  top: 67.32%;
+  height: 5.24%;
+}
+.peminjaman {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 28.31%;
+  left: 20.02%;
+  width: 51.67%;
+  bottom: 46.31%;
+  top: 48.44%;
+  height: 5.24%;
+}
+.ic-twotone-sync-alt {
+  width: 16.15%;
+  height: 50px;
+  position: absolute;
+  right: 83.85%;
+  left: 0%;
+  top: 218px;
+  overflow: visible;
+  aspect-ratio: 1;
+}
+.layers {
+  width: 16.15%;
+  height: 10.49%;
+  position: absolute;
+  right: 83.85%;
+  left: 0%;
+  bottom: 74.62%;
+  top: 14.89%;
+  object-fit: cover;
+}
+.group-98 {
+  position: absolute;
+  inset: 0;
+}
+.laporan {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 45.1%;
+  left: 21.64%;
+  width: 33.26%;
+  bottom: 15.27%;
+  top: 79.48%;
+  height: 5.24%;
+}
+.graph-report {
+  width: 16.15%;
+  height: 18.87%;
+  position: absolute;
+  right: 82.56%;
+  left: 1.29%;
+  bottom: 7.93%;
+  top: 73.19%;
+  object-fit: cover;
+}
+.drop-up {
+  width: 5.71%;
+  height: 2.47%;
+  position: absolute;
+  right: -4.41%;
+  left: 98.71%;
+  bottom: 76.81%;
+  top: 20.72%;
+  transform: translate(-17.66px, -11.81px);
+  overflow: visible;
+}
+.drop-up2 {
+  width: 5.71%;
+  height: 2.47%;
+  position: absolute;
+  right: 19.37%;
+  left: 74.92%;
+  bottom: 47.62%;
+  top: 49.91%;
+  overflow: visible;
+}
+.group-94 {
+  position: absolute;
+  inset: 0;
+}
+.log-out {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 47.69%;
+  left: 21.31%;
+  width: 31%;
+  bottom: 1.01%;
+  top: 93.74%;
+  height: 5.24%;
+}
+.vector3 {
+  width: 4.57%;
+  height: 5.42%;
+  position: absolute;
+  right: 86.73%;
+  left: 8.69%;
+  bottom: 0%;
+  top: 94.58%;
+  overflow: visible;
+}
+.vector4 {
+  width: 6.52%;
+  height: 2.89%;
+  position: absolute;
+  right: 88.96%;
+  left: 4.52%;
+  bottom: 1.26%;
+  top: 95.84%;
+  overflow: visible;
+}
+.group-89 {
+  position: absolute;
+  inset: 0;
+}
+.group-92 {
+  width: 247.69px;
+  height: 25px;
+  position: static;
+}
+.manajemen-akun {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 25px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 9.26%;
+  left: 20.02%;
+  width: 70.72%;
+  bottom: 62.25%;
+  top: 32.51%;
+  height: 5.24%;
+}
+.drop-up3 {
+  width: 5.71%;
+  height: 2.47%;
+  position: absolute;
+  right: -5.71%;
+  left: 100%;
+  bottom: 60.87%;
+  top: 36.66%;
+  overflow: visible;
+}
+.iconamoon-profile-fill {
+  width: 12.59%;
+  height: 39px;
+  position: absolute;
+  right: 85.15%;
+  left: 2.26%;
+  top: 149px;
+  overflow: visible;
+  aspect-ratio: 1;
+}
+.rectangle-25 {
+  background: rgba(242, 241, 241, 0);
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #d3d3d3;
+  border-width: 2px;
+  width: 343px;
+  height: 88px;
+  position: absolute;
+  left: 478px;
+  top: 421px;
+}
+.component-48 {
+  width: 259px;
+  height: 94px;
+  position: absolute;
+  left: 487px;
+  top: 529px;
+}
+.dokumentasi-sebelum-pemakaian {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 84.04%;
+  top: 0%;
+  height: 15.96%;
+}
+.unduh-bukti-dokumentasi {
+  color: #0d6efd;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 25.87%;
+  left: 0%;
+  width: 74.13%;
+  bottom: 60.64%;
+  top: 23.4%;
+  height: 15.96%;
+}
+.unduh-bukti-dokumentasi2 {
+  color: #0d6efd;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 25.87%;
+  left: 0%;
+  width: 74.13%;
+  bottom: 0%;
+  top: 84.04%;
+  height: 15.96%;
+}
+.dokumentasi-sesudah-pemakaian {
+  color: #000000;
+  text-align: left;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 100%;
+  font-weight: 400;
+  position: absolute;
+  right: 0.39%;
+  left: 0%;
+  width: 99.61%;
+  bottom: 23.4%;
+  top: 60.64%;
+  height: 15.96%;
+}
