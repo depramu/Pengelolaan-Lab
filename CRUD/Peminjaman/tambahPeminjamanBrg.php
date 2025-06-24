@@ -86,15 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-<style>
+<!-- <style>
     .protect-input {
         background-color: #e9ecef;
         color: #6c757d;
     }
-</style>
+</style> -->
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
+    <h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -126,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="idBarang" class="form-label fw-bold">ID Barang</label>
-                                        <input type="text" class="form-control protect-input" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="namaBarang" class="form-label fw-bold">Nama Barang</label>
-                                        <input type="text" class="form-control protect-input" name="namaBarang_display" value="<?= $namaBarang ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
                                 </div>
                             </div>
@@ -140,19 +140,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label class="form-label fw-bold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="
-                                        <?php
-                                        if (!empty($tglPeminjamanBrg)) {
-                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
-                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
-                                        }
-                                        ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
+                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
+                                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
+                                                                                                                                        } ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="nim" class="form-label fw-bold">NIM</label>
-                                        <input type="text" class="form-control protect-input" id="nim" name="nim_display"
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim_display"
                                             value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
                                     </div>
                                 </div>
@@ -161,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-bold">
-                                            Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
+                                            Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
                                         <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1"></textarea>
                                     </div>
@@ -169,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2" style="max-width: 400px;">
                                         <label for="npk" class="form-label fw-bold">NPK</label>
-                                        <input type="text" class="form-control protect-input" id="npk" name="npk_display"
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk_display"
                                             value="<?= isset($_SESSION['npk']) ? htmlspecialchars($_SESSION['npk']) : '' ?>">
                                     </div>
                                 </div>
@@ -178,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <label for="jumlahBrg" class="form-label w-100 fw-bold">
                                         Jumlah Peminjaman
-                                        <span id="jumlahError" class="text-danger small mt-1" style="font-size: 0.95em; display:none;">*Jumlah harus lebih dari 0.</span>
+                                        <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Jumlah harus lebih dari 0.</span>
                                     </label>
                                     <div class="input-group" style="max-width: 140px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
