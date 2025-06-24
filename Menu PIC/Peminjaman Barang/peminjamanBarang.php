@@ -65,7 +65,7 @@ include '../../templates/sidebar.php';
                     } elseif ($statusPeminjaman == 'Ditolak') {
                         $iconSrc = BASE_URL . '/icon/silang.svg';
                         $altText = 'Ditolak';
-                        $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/detailPenolakanBarang.php?id=' . $idPeminjaman;
+                        $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/detailPeminjamanBarang.php?id=' . $idPeminjaman;
                     } elseif ($statusPeminjaman == 'Telah Dikembalikan') {
                         $iconSrc = BASE_URL . '/icon/centang.svg';
                         $altText = 'Peminjaman Selesai';

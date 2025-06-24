@@ -58,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt) {
             $showModal = true;
-            
         } else {
             $error = "Gagal melakukan pengajuan ruangan.";
             exit;
@@ -182,8 +181,10 @@ include '../../templates/sidebar.php';
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <!-- TOMBOL AKSI -->
+                            <div class="d-flex justify-content-between gap-2 mt-4">
+                                <div class="align-self-start">
+                                    <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary">Kembali</a>
+                                </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <?php if (!$showAlasanPenolakan): ?>
                                         <button type="submit" name="tolak" class="btn btn-danger" id="btnTolak">Tolak</button>
