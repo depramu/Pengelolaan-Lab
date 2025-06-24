@@ -1,17 +1,21 @@
 <?php
-// Memanggil header.php. Ini akan menangani session_start(), koneksi ke DB, validasi login,
-include '../templates/header.php';
-// Memanggil sidebar.php. Ini akan merender menu navigasi samping sesuai peran pengguna (KaUPT).
+// laporan.php (Untuk KaUPT)
+
+// Memanggil header.php
+// Pastikan path ini benar, jika laporan.php KaUPT ada di 'Menu KA UPT/'
+// dan templates ada di root, maka pathnya adalah '../templates/header.php'
+include '../templates/header.php'; 
+
+// Memanggil sidebar.php
 include '../templates/sidebar.php';
 ?>
 
 <!-- Area Konten Utama Halaman Laporan -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-  <div class="mb-3"> <!-- Container untuk breadcrumb, dengan margin bawah -->
+  <div class="mb-3"> 
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <!-- Breadcrumb navigasi, link ke dashboard KaUPT dan halaman saat ini -->
-        <li class="breadcrumb-item"><a href="dashboardKAUPT.php">Sistem Pengelolaan Lab</a></li>
+        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu KA UPT/dashboardKAUPT.php">Sistem Pengelolaan Lab</a></li>
         <li class="breadcrumb-item active" aria-current="page">Laporan</li>
       </ol>
     </nav>
@@ -21,9 +25,7 @@ include '../templates/sidebar.php';
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h5 class="card-title mb-3">Filter Laporan</h5>
-      <!-- Baris yang berisi semua elemen filter -->
       <div class="row g-3 align-items-end">
-        <!-- Dropdown untuk memilih Jenis Laporan -->
         <div class="col-md-4">
           <label for="jenisLaporan" class="form-label">Jenis Laporan</label>
           <select class="form-select" id="jenisLaporan">
@@ -35,7 +37,6 @@ include '../templates/sidebar.php';
             <option value="ruanganSeringDipinjam">Ruangan yang Sering Dipinjam</option>
           </select>
         </div>
-        <!-- Dropdown untuk memilih Bulan -->
         <div class="col-md-3">
           <label for="bulanLaporan" class="form-label">Bulan</label>
           <select class="form-select" id="bulanLaporan">
@@ -46,15 +47,13 @@ include '../templates/sidebar.php';
             <option value="10">Oktober</option> <option value="11">November</option> <option value="12">Desember</option>
           </select>
         </div>
-        <!-- Dropdown untuk memilih Tahun -->
         <div class="col-md-3">
           <label for="tahunLaporan" class="form-label">Tahun</label>
           <select class="form-select" id="tahunLaporan">
             <option selected disabled value="">Pilih Tahun...</option>
-            <!-- Opsi tahun akan diisi secara dinamis oleh JavaScript -->
+            <!-- Opsi tahun diisi oleh JavaScript -->
           </select>
         </div>
-        <!-- Tombol untuk memicu pengambilan dan penampilan laporan -->
         <div class="col-md-2 d-flex">
           <button class="btn btn-primary w-100" id="tampilkanLaporanBtn"><i class="bi bi-search me-1"></i> Tampilkan</button>
         </div>
@@ -63,7 +62,6 @@ include '../templates/sidebar.php';
   </div>
   <!-- Akhir Card Filter Laporan -->
 
-  <!-- Area untuk menampilkan konten laporan (judul, tombol export, dan tabel data) -->
   <div id="areaKontenLaporan" style="display: none;"> 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h4 id="judulKontenLaporan" class="mb-0"></h4> 
@@ -72,36 +70,33 @@ include '../templates/sidebar.php';
       </button>
     </div>
     <div id="wadahLaporan" class="table-responsive">
-      <!-- Tabel data laporan akan dirender di sini oleh JavaScript -->
+      <!-- Tabel dirender di sini -->
     </div>
   </div>
   
-  <!-- Kontrol Paginasi untuk tabel laporan -->
   <div id="paginationControlsContainer" class="mt-3" style="display: none;"> 
     <nav aria-label="Page navigation">
       <ul class="pagination" id="paginationUl">
-        <!-- Tombol-tombol paginasi akan digenerate oleh JavaScript -->
+        <!-- Tombol paginasi -->
       </ul>
     </nav>
   </div>
-  <!-- Akhir Kontrol Paginasi -->
-
 </main>
 <!-- Akhir Area Konten Utama -->
 
-<!-- Modal HTML untuk Validasi Input Pengguna -->
+<!-- Modal Validasi -->
 <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="validationModalLabel">
-          <i><img src="<?= BASE_URL ?>/icon/info.svg" alt="" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>
+          <i><img src="<?= BASE_URL ?>/icon/info.svg" alt="Ikon Info" style="width: 25px; height: 25px; margin-bottom: 5px; margin-right: 10px;"></i>
           PERINGATAN
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="validationMessage">
-        <!-- Pesan validasi dinamis akan ditampilkan di sini -->
+        <!-- Pesan validasi -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mengerti</button>
@@ -110,36 +105,28 @@ include '../templates/sidebar.php';
   </div>
 </div>
 
-<!-- Hapus referensi ke SheetJS jika tidak digunakan lagi untuk Excel -->
+<!-- JANGAN GUNAKAN SheetJS jika memakai metode export server-side -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script> -->
 
 <script>
-// Semua kode JavaScript dieksekusi setelah seluruh halaman HTML selesai dimuat.
 document.addEventListener('DOMContentLoaded', function() {
-    // Mendapatkan referensi ke elemen-elemen HTML
     const jenisLaporanSelect = document.getElementById('jenisLaporan');
     const bulanLaporanSelect = document.getElementById('bulanLaporan');
     const tahunLaporanSelect = document.getElementById('tahunLaporan');
     const tampilkanLaporanBtn = document.getElementById('tampilkanLaporanBtn');
-
     const areaKontenLaporanDiv = document.getElementById('areaKontenLaporan');
     const judulKontenLaporanSpan = document.getElementById('judulKontenLaporan');
     const wadahLaporanDiv = document.getElementById('wadahLaporan'); 
-    const exportExcelBtn = document.getElementById('exportExcelBtn'); // Tombol Export Excel
-    
+    const exportExcelBtn = document.getElementById('exportExcelBtn'); 
     const validationModalElement = document.getElementById('validationModal');
     const validationModal = validationModalElement ? new bootstrap.Modal(validationModalElement) : null;
     const validationMessageEl = document.getElementById('validationMessage');
-
-    // Variabel state paginasi dan data
     let currentPage = 1;                  
     const rowsPerPage = 5;               
     let currentTableFullData = [];       
     let currentReportTypeForPaging = ''; 
     const paginationControlsContainer = document.getElementById('paginationControlsContainer');
     const paginationUl = document.getElementById('paginationUl');
-
-    // Mengisi dropdown tahun
     const currentYear = new Date().getFullYear();
     for (let i = 0; i < 5; i++) {
         const year = currentYear - i;
@@ -149,12 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tahunLaporanSelect.appendChild(option);
     }
 
-    // Event listener untuk tombol "Tampilkan"
     tampilkanLaporanBtn.addEventListener('click', function() {
         const jenisLaporan = jenisLaporanSelect.value;
         const bulan = bulanLaporanSelect.value;
         const tahun = tahunLaporanSelect.value;
-
         if (!jenisLaporan || !bulan || !tahun) {
             if (validationModal && validationMessageEl) { 
                 validationMessageEl.textContent = 'Silakan lengkapi semua filter (Jenis Laporan, Bulan, dan Tahun).';
@@ -164,14 +149,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return; 
         }
-
         wadahLaporanDiv.innerHTML = '<p class="text-center py-5"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memuat data...</p>';
         paginationControlsContainer.style.display = 'none'; 
         areaKontenLaporanDiv.style.display = 'none';      
         currentPage = 1;                                 
-
-        // Untuk KaUPT, path ke get_laporan_data.php mungkin sama dengan PIC jika file PHP nya generik
-        // Sesuaikan jika path berbeda untuk KaUPT.
+        
+        // Sesuaikan path ke get_laporan_data.php jika file laporan.php untuk KaUPT
+        // berada di direktori yang berbeda relatif terhadap CRUD/Laporan/
         const fetchUrl = `../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${jenisLaporan}&bulan=${bulan}&tahun=${tahun}`;
 
         fetch(fetchUrl)
@@ -185,16 +169,13 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(result => { 
                 wadahLaporanDiv.innerHTML = ''; 
-
                 if (result.status === 'success') { 
                     currentTableFullData = result.data || []; 
                     currentReportTypeForPaging = jenisLaporan; 
                     const namaBulanDipilih = bulanLaporanSelect.options[bulanLaporanSelect.selectedIndex].text;
                     const tahunDipilih = tahunLaporanSelect.value;
-
                     if (currentTableFullData.length > 0) { 
                         areaKontenLaporanDiv.style.display = 'block'; 
-                        
                         let judulText = `Laporan (${jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text}) - ${namaBulanDipilih} ${tahunDipilih}`;
                         if (jenisLaporan === 'dataBarang') judulText = `Laporan Data Barang - ${namaBulanDipilih} ${tahunDipilih}`;
                         else if (jenisLaporan === 'dataRuangan') judulText = `Laporan Data Ruangan - ${namaBulanDipilih} ${tahunDipilih}`;
@@ -202,14 +183,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (jenisLaporan === 'barangSeringDipinjam') judulText = `Laporan Barang yang Sering Dipinjam - ${namaBulanDipilih} ${tahunDipilih}`;
                         else if (jenisLaporan === 'ruanganSeringDipinjam') judulText = `Laporan Ruangan yang Sering Dipinjam - ${namaBulanDipilih} ${tahunDipilih}`;
                         judulKontenLaporanSpan.textContent = judulText; 
-                        
                         displayPage(currentPage); 
                         setupPagination();      
                     } else {
                         areaKontenLaporanDiv.style.display = 'none';      
                         paginationControlsContainer.style.display = 'none'; 
                         wadahLaporanDiv.innerHTML = '';                 
-
                         if (validationModal && validationMessageEl) {
                             validationMessageEl.textContent = 'Tidak Ada Data Laporan untuk periode yang dipilih.';
                             validationModal.show();
@@ -221,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     areaKontenLaporanDiv.style.display = 'block'; 
                     judulKontenLaporanSpan.textContent = 'Kesalahan Sistem';
                     wadahLaporanDiv.innerHTML = `<p class="text-danger text-center">Gagal memuat data: ${result.message}</p>`;
-                    console.error('Server Error:', result.message); 
+                    console.error('Server Error:', result.message, (result.debug_query || '')); 
                     paginationControlsContainer.style.display = 'none';
                 }
             })
@@ -234,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    // Fungsi displayPage(page) (SAMA SEPERTI SEBELUMNYA)
+    // --- Fungsi displayPage(page) (TIDAK DIUBAH) ---
     function displayPage(page) {
       currentPage = page; 
       wadahLaporanDiv.innerHTML = ''; 
@@ -292,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
       updatePaginationButtonsActiveState(); 
     }
 
-    // Fungsi setupPagination() (SAMA SEPERTI SEBELUMNYA)
+    // --- Fungsi setupPagination() (TIDAK DIUBAH) ---
     function setupPagination() {
       paginationUl.innerHTML = ''; 
       const pageCount = Math.ceil(currentTableFullData.length / rowsPerPage);
@@ -322,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
       updatePaginationButtonsActiveState(); 
     }
 
-    // Fungsi updatePaginationButtonsActiveState() (SAMA SEPERTI SEBELUMNYA)
+    // --- Fungsi updatePaginationButtonsActiveState() (TIDAK DIUBAH) ---
     function updatePaginationButtonsActiveState() {
       const pageCount = Math.ceil(currentTableFullData.length / rowsPerPage);
       const pageItems = paginationUl.querySelectorAll('.page-item'); 
@@ -350,16 +329,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // ===== AWAL MODIFIKASI UNTUK EXPORT EXCEL SESUAI METODE PDF (SERVER-SIDE) =====
+    // ===== MODIFIKASI BAGIAN EXPORT EXCEL =====
     exportExcelBtn.addEventListener('click', function() {
-        // Ambil nilai filter saat ini
-        const jenisLaporan = jenisLaporanSelect.value;
-        const bulan = bulanLaporanSelect.value;
-        const tahun = tahunLaporanSelect.value;
-
-        // Validasi sederhana di sisi klien: 
-        // Pastikan areaKontenLaporanDiv terlihat (artinya ada data yang sudah berhasil ditampilkan)
-        // dan currentTableFullData tidak kosong. Ini mencegah export jika tabel belum muncul / kosong.
+        // Validasi jika tidak ada data yang siap diexport
         if (areaKontenLaporanDiv.style.display === 'none' || !currentTableFullData || currentTableFullData.length === 0) {
             if (validationModal && validationMessageEl) {
                 validationMessageEl.textContent = 'Tidak ada data untuk diexport. Silakan tampilkan laporan terlebih dahulu.';
@@ -369,29 +341,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return;
         }
+        
+        const jenisLaporan = jenisLaporanSelect.value;
+        const bulan = bulanLaporanSelect.value; 
+        const tahun = tahunLaporanSelect.value; 
 
-        // Untuk laporan yang WAJIB filter waktu, pastikan bulan dan tahun ada.
-        // (Ini mungkin redundan jika areaKontenLaporanDiv sudah visible, tapi sebagai pengaman)
+        // Validasi filter waktu untuk laporan yang membutuhkannya
         const laporanWajibFilterWaktu = ['peminjamSeringMeminjam', 'barangSeringDipinjam', 'ruanganSeringDipinjam'];
         if (laporanWajibFilterWaktu.includes(jenisLaporan) && (!bulan || !tahun)) {
              if (validationModal && validationMessageEl) {
-                  validationMessageEl.textContent = 'Silakan pilih Bulan dan Tahun untuk jenis laporan ini sebelum export.';
+                  validationMessageEl.textContent = 'Silakan pilih Bulan dan Tahun yang valid untuk jenis laporan ini sebelum export.';
                   validationModal.show();
              } else {
-                  alert('Silakan pilih Bulan dan Tahun untuk jenis laporan ini sebelum export.');
+                  alert('Silakan pilih Bulan dan Tahun yang valid untuk jenis laporan ini sebelum export.');
              }
             return;
         }
         
-        // Membuat URL untuk file PHP yang akan menangani export Excel server-side.
-        // Nama file PHP nya (misalnya export_laporan_excel_kauph.php) harus Anda buat terpisah.
-        // Pastikan path ini benar sesuai struktur direktori Anda.
+        // URL ke skrip PHP server-side untuk export KaUPT.
+        // **Pastikan nama file ini (export_laporan_excel_kaupt.php) SUDAH Anda buat dan pathnya benar.**
         let exportUrl = `../CRUD/Laporan/export_laporan_excel_kaupt.php?jenisLaporan=${encodeURIComponent(jenisLaporan)}`;
         
-        // Tambahkan parameter bulan dan tahun ke URL JIKA ADA NILAINYA.
-        // Ini penting agar jika laporan dataBarang/dataRuangan (yang mungkin tidak difilter waktu di backend)
-        // tetap bisa diexport tanpa error karena parameter bulan/tahun kosong.
-        // Backend (export_laporan_excel_kauph.php) harus siap menangani jika bulan/tahun tidak ada.
         if (bulan) {
           exportUrl += `&bulan=${encodeURIComponent(bulan)}`;
         }
@@ -399,15 +369,14 @@ document.addEventListener('DOMContentLoaded', function() {
           exportUrl += `&tahun=${encodeURIComponent(tahun)}`;
         }
         
-        // Mengarahkan browser ke URL tersebut. 
-        // File PHP di server akan mengirimkan header untuk download file Excel.
+        // Redirect browser ke URL untuk memulai download file dari server.
         window.location.href = exportUrl;
     });
-    // ===== AKHIR MODIFIKASI UNTUK EXPORT EXCEL =====
+    // ===== AKHIR MODIFIKASI EXPORT EXCEL =====
   });
 </script>
 
 <?php
-// Memanggil footer.php yang akan menutup tag HTML dan memuat skrip global lainnya.
+// Memanggil footer.php
 include '../templates/footer.php';
 ?>
