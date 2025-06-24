@@ -242,3 +242,4 @@ include '../../templates/sidebar.php';
 <?php
 include '../../templates/footer.php';
 ?>
+<script src="script.js"></script>
