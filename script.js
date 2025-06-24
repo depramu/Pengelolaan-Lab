@@ -1,0 +1,212 @@
+// CRUD AKUN (PUNYA NAD JANGAN DIUBAH!!!)
+// Validasi untuk tambah akun mahasiswa
+document.querySelector("form").addEventListener("submit", function (e) {
+  let nim = document.getElementById("nim").value.trim();
+  let nama = document.getElementById("nama").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let jenisRole = document.getElementById("jenisRole").value;
+  let pass = document.getElementById("kataSandi").value;
+  let conf = document.getElementById("konfirmasiSandi").value;
+
+  let nimError = document.getElementById("nimError");
+  let namaError = document.getElementById("namaError");
+  let emailError = document.getElementById("emailError");
+  let roleError = document.getElementById("roleError");
+  let passError = document.getElementById("passError");
+  let confPassError = document.getElementById("confPassError");
+  let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+  let valid = true;
+
+  // Reset error messages
+  nimError.style.display = "none";
+  namaError.style.display = "none";
+  emailError.style.display = "none";
+  roleError.style.display = "none";
+  passError.style.display = "none";
+
+  if (nim === "") {
+    nimError.textContent = "*Harus diisi";
+    nimError.style.display = "inline";
+    valid = false;
+  } else if (!/^\d+$/.test(nim)) {
+    nimError.textContent = "*Harus berupa angka";
+    nimError.style.display = "inline";
+    valid = false;
+  }
+
+  if (nama === "") {
+    namaError.textContent = "*Harus diisi";
+    namaError.style.display = "inline";
+    valid = false;
+  } else if (/\d/.test(nama)) {
+    namaError.textContent = "*Harus berupa huruf";
+    namaError.style.display = "inline";
+    valid = false;
+  }
+
+  if (email === "") {
+    emailError.textContent = "*Harus diisi";
+    emailError.style.display = "inline";
+    valid = false;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.textContent = "*Format email tidak valid";
+    emailError.style.display = "inline";
+    valid = false;
+  }
+
+  if (jenisRole === "") {
+    roleError.textContent = "*Harus diisi";
+    roleError.style.display = "inline";
+    valid = false;
+  }
+
+  if (pass === "") {
+    passError.textContent = "*Harus diisi";
+    passError.style.display = "inline";
+    valid = false;
+  } else if (pass.length > 0 && pass.length < 8) {
+    passError.textContent = "*Minimal 8 karakter";
+    passError.style.display = "inline";
+    valid = false;
+  } else if (!passPattern.test(pass)) {
+    passError.textContent = "*Harus mengandung huruf dan angka";
+    passError.style.display = "inline";
+    valid = false;
+  }
+
+  if (conf === "") {
+    confPassError.textContent = "*Harus diisi";
+    confPassError.style.display = "inline";
+    valid = false;
+  } else if (pass !== "" && conf !== "" && pass !== conf) {
+    confPassError.textContent = "*Tidak sesuai";
+    confPassError.style.display = "inline";
+    valid = false;
+  }
+
+  if (!valid) e.preventDefault();
+});
+
+// Validasi untuk edit akun mahasiswa
+document.querySelector("form").addEventListener("submit", function (e) {
+  let email = document.getElementById("email").value.trim();
+  let emailError = document.getElementById("emailError");
+
+  let valid = true;
+
+  if (email === "") {
+    emailError.textContent = "*Harus diisi";
+    emailError.style.display = "inline";
+    valid = false;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.textContent = "*Format email tidak valid";
+    emailError.style.display = "inline";
+    valid = false;
+  }
+  if (!valid) e.preventDefault();
+});
+
+document.querySelectorAll(".protect-input").forEach((input) => {
+  input.addEventListener("paste", (e) => e.preventDefault());
+  input.addEventListener("input", (e) => (input.value = input.defaultValue));
+  input.addEventListener("mousedown", (e) => e.preventDefault());
+});
+
+const passInput = document.getElementById("kataSandi");
+passInput.addEventListener("mouseenter", function () {
+  passInput.type = "text";
+});
+passInput.addEventListener("mouseleave", function () {
+  passInput.type = "password";
+});
+
+// Validasi untuk tambah akun karyawan
+document.querySelector("form").addEventListener("submit", function (e) {
+  let npk = document.getElementById("npk").value.trim();
+  let nama = document.getElementById("nama").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let jenisRole = document.getElementById("jenisRole").value;
+  let pass = document.getElementById("kataSandi").value;
+  let conf = document.getElementById("konfirmasiSandi").value;
+
+  let npkError = document.getElementById("npkError");
+  let namaError = document.getElementById("namaError");
+  let emailError = document.getElementById("emailError");
+  let roleError = document.getElementById("roleError");
+  let passError = document.getElementById("passError");
+  let confPassError = document.getElementById("confPassError");
+  let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+  let valid = true;
+
+  // Reset error messages
+  npkError.style.display = "none";
+  namaError.style.display = "none";
+  emailError.style.display = "none";
+  roleError.style.display = "none";
+  passError.style.display = "none";
+
+  if (npk === "") {
+    npkError.textContent = "*Harus diisi";
+    npkError.style.display = "inline";
+    valid = false;
+  } else if (!/^\d+$/.test(npk)) {
+    npkError.textContent = "*Harus berupa angka";
+    npkError.style.display = "inline";
+    valid = false;
+  }
+
+  if (nama === "") {
+    namaError.textContent = "*Harus diisi";
+    namaError.style.display = "inline";
+    valid = false;
+  } else if (/\d/.test(nama)) {
+    namaError.textContent = "*Harus berupa huruf";
+    namaError.style.display = "inline";
+    valid = false;
+  }
+
+  if (email === "") {
+    emailError.textContent = "*Harus diisi";
+    emailError.style.display = "inline";
+    valid = false;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.textContent = "*Format email tidak valid";
+    emailError.style.display = "inline";
+    valid = false;
+  }
+
+  if (jenisRole === "") {
+    roleError.textContent = "*Harus diisi";
+    roleError.style.display = "inline";
+    valid = false;
+  }
+
+  if (pass === "") {
+    passError.textContent = "*Harus diisi";
+    passError.style.display = "inline";
+    valid = false;
+  } else if (pass.length > 0 && pass.length < 8) {
+    passError.textContent = "*Minimal 8 karakter";
+    passError.style.display = "inline";
+    valid = false;
+  } else if (!passPattern.test(pass)) {
+    passError.textContent = "*Harus mengandung huruf dan angka";
+    passError.style.display = "inline";
+    valid = false;
+  }
+
+  if (conf === "") {
+    confPassError.textContent = "*Harus diisi";
+    confPassError.style.display = "inline";
+    valid = false;
+  } else if (pass !== "" && conf !== "" && pass !== conf) {
+    confPassError.textContent = "*Tidak sesuai";
+    confPassError.style.display = "inline";
+    valid = false;
+  }
+
+  if (!valid) e.preventDefault();
+});
+
