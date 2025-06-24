@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // CRUD AKUN (PUNYA NAD JANGAN DIUBAH!!!)
 // Validasi untuk tambah akun mahasiswa
 document.querySelector("form").addEventListener("submit", function (e) {
@@ -244,9 +243,6 @@ document.querySelector("form").addEventListener("submit", function (e) {
         passInput.type = 'password';
     });
 
-
-=======
-
     function changeStok(val) {
         let stokInput = document.getElementById('jumlahBrg');
         let current = parseInt(stokInput.value) || 0;
@@ -296,4 +292,96 @@ document.querySelector("form").addEventListener("submit", function (e) {
             e.preventDefault(); // Hentikan pengiriman form jika tidak valid
         }
     });
->>>>>>> 0af498c1044f0a65f9b71b394b8a9d497ad90cf2
+
+// Pengembalian Barang
+// Fungsi untuk mengubah jumlah stok
+function changeStok(val) {
+  // Targetkan ID yang benar: 'jumlahPengembalian'
+  let stokInput = document.getElementById("jumlahPengembalian");
+  let maxStok = parseInt(document.getElementById("jumlahBrg").value) || 0;
+  let current = parseInt(stokInput.value) || 0;
+  let next = current + val;
+
+  if (next < 0) next = 0;
+  if (next > maxStok) next = maxStok; // Batasi agar tidak lebih dari jumlah pinjaman
+  stokInput.value = next;
+}
+// Validasi form pengembalian
+// Fungsi validasi form sebelum submit
+document.querySelector("form").addEventListener("submit", function (e) {
+  let valid = true;
+
+  // Validasi Jumlah Pengembalian
+  // Targetkan ID yang benar: 'jumlahPengembalian'
+  const jumlahInput = document.getElementById("jumlahPengembalian");
+  const jumlahError = document.getElementById("jumlahError");
+  const jumlahPinjam =
+    parseInt(document.getElementById("jumlahBrg").value) || 0;
+
+  if (parseInt(jumlahInput.value) <= 0) {
+    jumlahError.textContent = "*Jumlah harus lebih dari 0.";
+    jumlahError.style.display = "block";
+    valid = false;
+  } else if (parseInt(jumlahInput.value) > jumlahPinjam) {
+    jumlahError.textContent = "*Jumlah melebihi yang dipinjam.";
+    jumlahError.style.display = "block";
+    valid = false;
+  } else {
+    jumlahError.style.display = "none";
+  }
+
+  // Validasi Kondisi Barang
+  const kondisiSelect = document.getElementById("txtKondisi");
+  const kondisiError = document.getElementById("kondisiError");
+  if (kondisiSelect.value === "Pilih Kondisi Barang") {
+    kondisiError.style.display = "block";
+    valid = false;
+  } else {
+    kondisiError.style.display = "none";
+  }
+
+  // Validasi Catatan Pengembalian
+  // Targetkan ID yang benar: 'catatanPengembalianBarang'
+  const catatanInput = document.getElementById("catatanPengembalianBarang");
+  const catatanError = document.getElementById("catatanError");
+  if (catatanInput.value.trim() === "") {
+    catatanError.style.display = "block";
+    valid = false;
+  } else {
+    catatanError.style.display = "none";
+  }
+
+  if (!valid) {
+    e.preventDefault(); // Hentikan pengiriman form jika tidak valid
+  }
+});
+// VValidasi hidden
+let jumlah = parseInt(document.getElementById("jumlahBrg").value) || 0;
+
+function updateJumlah() {
+  // Update tampilan ke user
+  document.getElementById("tampilJumlah").textContent = jumlah;
+
+  // Update input hidden untuk dikirim ke server
+  document.getElementById("jumlahBrg").value = jumlah;
+}
+
+let id = parseInt(document.getElementById("idPeminjamanBrg").value) || 0;
+
+function updateId() {
+  // Update tampilan ke user
+  document.getElementById("idPeminjaman").textContent = id;
+
+  // Update input hidden untuk dikirim ke server
+  document.getElementById("idPeminjamanBrg").value = id;
+}
+
+let namaBarang = document.getElementById("namaBarang").value || "";
+
+function updateNamaBarang() {
+  // Update tampilan ke user
+  document.getElementById("namaBarang").textContent = namaBarang;
+
+  // Update input hidden untuk dikirim ke server
+  document.getElementById("namaBarang").value = namaBarang;
+}  
