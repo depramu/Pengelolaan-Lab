@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
 include '../../templates/header.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
@@ -8,31 +10,36 @@ $showRejectedModal = false;
 $showModal = false;
 $error = '';
 $alasanPenolakan = '';
-$showAlasanPenolakan = false;
+$showAlasanPenolakan = false; // Default: sembunyikan
 
 if (!empty($idPeminjamanBrg)) {
     $_SESSION['idPeminjamanBrg'] = $idPeminjamanBrg;
 
     // Ambil data peminjaman beserta nama peminjam (Mahasiswa/Karyawan) dan info nim/npk
-    $query = "SELECT 
-                pb.*, 
-                b.namaBarang, 
+    $query = "SELECT
+                pb.*,
+                b.namaBarang,
                 COALESCE(m.nama, k.nama) AS namaPeminjam
-            FROM 
+            FROM
                 Peminjaman_Barang pb
-            JOIN 
+            JOIN
                 Barang b ON pb.idBarang = b.idBarang
-            LEFT JOIN 
+            LEFT JOIN
                 Mahasiswa m ON pb.nim = m.nim
-            LEFT JOIN 
+            LEFT JOIN
                 Karyawan k ON pb.npk = k.npk
-            WHERE 
+            WHERE
                 pb.idPeminjamanBrg = ?";
     $params = array($idPeminjamanBrg);
     $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt && sqlsrv_has_rows($stmt)) {
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        // Jika status sudah Ditolak, tampilkan alasan penolakan yang tersimpan
+        if (($data['statusPeminjaman'] ?? '') === 'Ditolak') {
+            $showAlasanPenolakan = true;
+            $alasanPenolakan = $data['alasanPenolakan'] ?? '';
+        }
     }
 }
 
@@ -40,9 +47,9 @@ if (!empty($idPeminjamanBrg)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
     if (isset($_POST['setuju'])) {
         // Setujui peminjaman
-        $query = "UPDATE Peminjaman_Barang 
-                  SET statusPeminjaman = 'Sedang Dipinjam'
-                  WHERE idPeminjamanBrg = ?";
+        $query = "UPDATE Peminjaman_Barang
+                    SET statusPeminjaman = 'Sedang Dipinjam'
+                    WHERE idPeminjamanBrg = ?";
         $params = array($idPeminjamanBrg);
         $stmt = sqlsrv_query($conn, $query, $params);
 
@@ -50,25 +57,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
             $showModal = true;
         } else {
             $error = "Gagal menyetujui peminjaman barang.";
-            exit;
+            // Tampilkan error
         }
     } elseif (isset($_POST['tolak_submit'])) {
         // Tolak peminjaman (submit alasan penolakan)
         $alasanPenolakan = trim($_POST['alasanPenolakan'] ?? '');
-        $showAlasanPenolakan = true;
+        $showAlasanPenolakan = true; // Agar field tetap terlihat jika ada error
         if ($alasanPenolakan === '') {
             $error = "Alasan penolakan harus diisi.";
-            $showRejectedModal = true;
+            // $showRejectedModal = true; // Ini mungkin tidak perlu jika validasi di client-side sudah bekerja
         } else {
             // Update status dan alasan penolakan di Peminjaman_Barang
-            $query = "UPDATE Peminjaman_Barang 
-                      SET statusPeminjaman = 'Ditolak', alasanPenolakan = ?
-                      WHERE idPeminjamanBrg = ?";
-            $params = array($alasanPenolakan, $idPeminjamanBrg);
+            $query = "UPDATE Peminjaman_Barang
+                        SET statusPeminjaman = 'Ditolak'
+                        WHERE idPeminjamanBrg = ?";
+            $params = array($idPeminjamanBrg);
             $stmt = sqlsrv_query($conn, $query, $params);
 
-            // Simpan alasan penolakan ke tabel Penolakan
-            $queryPenolakan = "INSERT INTO Penolakan (idPeminjamanBrg, alasanPenolakan) VALUES (?, ?)";
+            // Simpan alasan penolakan ke tabel Penolakan (pastikan tabel Penolakan ada dan strukturnya sesuai)
+            $queryPenolakan = "INSERT INTO Penolakan (idPeminjamanBrg, alasanPenolakan) VALUES (?, ?)"; // Tambahkan tglPenolakan
             $paramsPenolakan = array($idPeminjamanBrg, $alasanPenolakan);
             $stmtPenolakan = sqlsrv_query($conn, $queryPenolakan, $paramsPenolakan);
 
@@ -76,10 +83,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
                 $showModal = true;
             } else {
                 $error = "Gagal menolak pengajuan barang.";
+                // Tampilkan error
             }
         }
     } elseif (isset($_POST['tolak'])) {
-        // Klik tombol tolak, tampilkan kolom alasan penolakan
+        // Klik tombol tolak, tampilkan kolom alasan penolakan (ini harusnya tidak akan terjadi karena kita akan pakai JS)
+        // Ini hanya sebagai fallback jika JS tidak bekerja
         $showAlasanPenolakan = true;
     }
 }
@@ -92,6 +101,7 @@ $namaPeminjam = $data['namaPeminjam'] ?? '';
 $tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
 $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
+$statusPeminjaman = $data['statusPeminjaman'] ?? ''; // Ambil status peminjaman untuk disable tombol
 
 include '../../templates/sidebar.php';
 ?>
@@ -115,9 +125,13 @@ include '../../templates/sidebar.php';
                         <span class="fw-semibold">Pengajuan Peminjaman Barang</span>
                     </div>
                     <div class="card-body">
+                        <?php if ($error) : ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?= htmlspecialchars($error) ?>
+                            </div>
+                        <?php endif; ?>
                         <form method="POST" id="formPengajuanBarang">
                             <div class="row">
-                                <!-- Kolom Kiri -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idBarang" class="form-label fw-bold">ID Barang</label>
@@ -148,10 +162,8 @@ include '../../templates/sidebar.php';
                                     <div class="mb-2">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-bold">Alasan Peminjaman</label>
                                         <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
-                                        <textarea class="form-control w-100" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanBrg) ?></textarea>
                                     </div>
                                 </div>
-                                <!-- Kolom Kanan -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
@@ -164,6 +176,8 @@ include '../../templates/sidebar.php';
                                         <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
                                     </div>
                                     <div class="mb-2">
+                                        <label for="namaPeminjam" class="form-label fw-bold">Nama Peminjam</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaPeminjam) ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="jumlahBrg" class="form-label fw-bold">Jumlah Barang</label>
@@ -171,10 +185,16 @@ include '../../templates/sidebar.php';
                                         <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
                                     </div>
                                 </div>
-                                <div class="mb-2" id="alasanPenolakanGroup" style="<?= $showAlasanPenolakan ? '' : 'display:none;' ?>">
-                                    <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan</label>
-                                    <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
-                                    <div class="form-text text-danger" id="alasanPenolakanError" style="display: none;">Alasan penolakan harus diisi jika menolak.</div>
+                                <div class="col-12">
+                                    <div class="mb-2" id="alasanPenolakanGroup" style="<?= $showAlasanPenolakan ? '' : 'display:none;' ?>">
+                                        <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan</label>
+                                        <?php if ($statusPeminjaman === 'Ditolak') : ?>
+                                            <div class="form-control-plaintext border p-2 bg-light rounded"><?= nl2br(htmlspecialchars($alasanPenolakan)) ?></div>
+                                        <?php else : ?>
+                                            <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                        <?php endif; ?>
+                                        <div class="form-text text-danger" id="alasanPenolakanError" style="display: none;">Alasan penolakan harus diisi jika menolak.</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end gap-2 mt-4">
@@ -183,54 +203,82 @@ include '../../templates/sidebar.php';
                                         <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
                                     </div>
                                     <div class="d-flex gap-2">
-                                        <?php if (!$showAlasanPenolakan): ?>
-                                            <button type="submit" name="tolak" class="btn btn-danger" id="btnTolak">Tolak</button>
-                                        <?php else: ?>
-                                            <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();">Submit Penolakan</button>
+                                        <?php if ($statusPeminjaman === 'Menunggu Persetujuan') : ?>
+                                            <button type="button" class="btn btn-danger" id="btnTolakShowField">Tolak</button>
+                                            <button type="submit" name="tolak_submit" class="btn btn-danger" id="btnTolakSubmit" style="display:none;">Submit Penolakan</button>
+                                            <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
+                                        <?php else : ?>
+                                            <button type="button" class="btn btn-danger" disabled>Tolak</button>
+                                            <button type="button" class="btn btn-primary" disabled>Setuju</button>
                                         <?php endif; ?>
-                                        <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
                                     </div>
                                 </div>
                             </div>
                         </form>
                         <script>
-                            // Tampilkan kolom alasan penolakan jika tombol tolak diklik (tanpa reload)
                             document.addEventListener('DOMContentLoaded', function() {
-                                var btnTolak = document.getElementById('btnTolak');
-                                if (btnTolak) {
-                                    btnTolak.addEventListener('click', function(e) {
-                                        e.preventDefault();
-                                        document.getElementById('alasanPenolakanGroup').style.display = '';
-                                        btnTolak.style.display = 'none';
-                                        if (!document.getElementById('btnSubmitPenolakan')) {
-                                            var submitBtn = document.createElement('button');
-                                            submitBtn.type = 'submit';
-                                            submitBtn.name = 'tolak_submit';
-                                            submitBtn.className = 'btn btn-danger';
-                                            submitBtn.id = 'btnSubmitPenolakan';
-                                            submitBtn.innerText = 'Submit Penolakan';
-                                            submitBtn.onclick = function() {
-                                                return validateTolak();
-                                            };
-                                            btnTolak.parentNode.insertBefore(submitBtn, btnTolak);
-                                        }
-                                        document.getElementById('alasanPenolakan').focus();
+                                var btnTolakShowField = document.getElementById('btnTolakShowField');
+                                var btnTolakSubmit = document.getElementById('btnTolakSubmit');
+                                var alasanPenolakanGroup = document.getElementById('alasanPenolakanGroup');
+                                var alasanPenolakanField = document.getElementById('alasanPenolakan');
+                                var alasanPenolakanError = document.getElementById('alasanPenolakanError');
+
+                                // Logika untuk menampilkan/menyembunyikan field alasan penolakan
+                                if (btnTolakShowField) {
+                                    btnTolakShowField.addEventListener('click', function(e) {
+                                        e.preventDefault(); // Mencegah form submit saat hanya ingin menampilkan field
+
+                                        alasanPenolakanGroup.style.display = ''; // Tampilkan grup
+                                        btnTolakShowField.style.display = 'none'; // Sembunyikan tombol "Tolak"
+                                        btnTolakSubmit.style.display = ''; // Tampilkan tombol "Submit Penolakan"
+                                        alasanPenolakanField.focus(); // Fokus ke field
                                     });
                                 }
-                            });
 
-                            function validateTolak() {
-                                var alasan = document.getElementById('alasanPenolakan').value.trim();
-                                var errorDiv = document.getElementById('alasanPenolakanError');
-                                if (alasan === '') {
-                                    errorDiv.style.display = 'block';
-                                    document.getElementById('alasanPenolakan').focus();
-                                    return false;
-                                } else {
-                                    errorDiv.style.display = 'none';
-                                    return true;
+                                // Validasi saat tombol "Submit Penolakan" diklik
+                                if (btnTolakSubmit) {
+                                    btnTolakSubmit.addEventListener('click', function(e) {
+                                        var alasan = alasanPenolakanField.value.trim();
+                                        if (alasan === '') {
+                                            e.preventDefault(); // Mencegah submit jika alasan kosong
+                                            alasanPenolakanError.style.display = 'block'; // Tampilkan pesan error
+                                            alasanPenolakanField.focus();
+                                        } else {
+                                            alasanPenolakanError.style.display = 'none'; // Sembunyikan pesan error
+                                            // Form akan disubmit secara otomatis karena ini adalah tombol type="submit"
+                                        }
+                                    });
                                 }
-                            }
+
+                                // Jika ada error dari server dan field alasan penolakan seharusnya tampil
+                                <?php if ($showAlasanPenolakan && $error) : ?>
+                                    alasanPenolakanGroup.style.display = '';
+                                    if (btnTolakShowField) btnTolakShowField.style.display = 'none';
+                                    if (btnTolakSubmit) btnTolakSubmit.style.display = '';
+                                    <?php if ($error === "Alasan penolakan harus diisi.") : ?>
+                                        alasanPenolakanError.style.display = 'block';
+                                        alasanPenolakanField.focus();
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                // Disable buttons if status is not 'Menunggu Persetujuan'
+                                var statusPeminjaman = "<?= htmlspecialchars($statusPeminjaman) ?>";
+                                if (statusPeminjaman !== 'Menunggu Persetujuan') {
+                                    var setujuBtn = document.querySelector('button[name="setuju"]');
+                                    var tolakShowBtn = document.getElementById('btnTolakShowField');
+                                    var tolakSubmitBtn = document.getElementById('btnTolakSubmit');
+
+                                    if (setujuBtn) setujuBtn.disabled = true;
+                                    if (tolakShowBtn) tolakShowBtn.disabled = true;
+                                    if (tolakSubmitBtn) tolakSubmitBtn.disabled = true;
+
+                                    // If already rejected, show the rejection reason and disable its input
+                                    if (statusPeminjaman === 'Ditolak') {
+                                        alasanPenolakanGroup.style.display = ''; // Make sure it's visible
+                                        // The PHP logic already makes it plain text, no need to hide input
+                                    }
+                                }
+                            });
                         </script>
                     </div>
                 </div>
@@ -242,4 +290,3 @@ include '../../templates/sidebar.php';
 <?php
 include '../../templates/footer.php';
 ?>
-<script src="script.js"></script>

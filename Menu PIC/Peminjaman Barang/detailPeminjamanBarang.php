@@ -1,4 +1,6 @@
     <?php
+  require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
     // Implement koneksi.php
     include '../../koneksi.php';
     include '../../templates/header.php';
