@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // CRUD AKUN (PUNYA NAD JANGAN DIUBAH!!!)
 // Validasi untuk tambah akun mahasiswa
 document.querySelector("form").addEventListener("submit", function (e) {
@@ -244,9 +243,7 @@ document.querySelector("form").addEventListener("submit", function (e) {
         passInput.type = 'password';
     });
 
-
-=======
-
+// AYUUUUUUU
     function changeStok(val) {
         let stokInput = document.getElementById('jumlahBrg');
         let current = parseInt(stokInput.value) || 0;
@@ -296,4 +293,77 @@ document.querySelector("form").addEventListener("submit", function (e) {
             e.preventDefault(); // Hentikan pengiriman form jika tidak valid
         }
     });
->>>>>>> 0af498c1044f0a65f9b71b394b8a9d497ad90cf2
+
+    // CRUD RUANGAN (KESYAAAAAAAAAA)
+    // Validasi untuk tambah ruangan
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
+
+        // Nama Ruangan
+        const nama = document.getElementById('namaRuangan');
+        const namaError = document.getElementById('namaError');
+        if (nama && nama.value.trim() === '') {
+            namaError.style.display = 'inline';
+            valid = false;
+        } else if (namaError) {
+            namaError.style.display = 'none';
+        }
+
+        // Kondisi Ruangan
+        const kondisi = document.getElementById('kondisiRuangan');
+        const kondisiError = document.getElementById('kondisiError');
+        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+            kondisiError.style.display = 'inline';
+            valid = false;
+        } else if (kondisiError) {
+            kondisiError.style.display = 'none';
+        }
+
+        // Ketersediaan Ruangan
+        const ketersediaan = document.getElementById('ketersediaan');
+        const ketersediaanError = document.getElementById('ketersediaanError');
+        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+            ketersediaanError.style.display = 'inline';
+            valid = false;
+        } else if (ketersediaanError) {
+            ketersediaanError.style.display = 'none';
+        }
+        if (!valid) e.preventDefault();
+    });
+
+        // Validasi untuk edit ruangan
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
+
+        // Nama Ruangan
+        const nama = document.getElementById('namaRuangan');
+        const namaError = document.getElementById('namaError');
+        if (nama && nama.value.trim() === '') {
+            namaError.style.display = 'inline';
+            valid = false;
+        } else if (namaError) {
+            namaError.style.display = 'none';
+        }
+
+        // Kondisi Ruangan
+        const kondisi = document.getElementById('kondisiRuangan');
+        const kondisiError = document.getElementById('kondisiError');
+        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+            kondisiError.style.display = 'inline';
+            valid = false;
+        } else if (kondisiError) {
+            kondisiError.style.display = 'none';
+        }
+
+        // Ketersediaan Ruangan
+        const ketersediaan = document.getElementById('ketersediaan');
+        const ketersediaanError = document.getElementById('ketersediaanError');
+        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+            ketersediaanError.style.display = 'inline';
+            valid = false;
+        } else if (ketersediaanError) {
+            ketersediaanError.style.display = 'none';
+        }
+
+        if (!valid) e.preventDefault();
+    });
