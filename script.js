@@ -211,6 +211,40 @@ document.querySelector("form").addEventListener("submit", function (e) {
   if (!valid) e.preventDefault();
 });
 
+// Validasi untuk edit akun karyawan
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let email = document.getElementById('email').value.trim();
+        let emailError = document.getElementById('emailError');
+
+        let valid = true;
+
+        if (email === "") {
+            emailError.textContent = '*Harus diisi';
+            emailError.style.display = 'inline';
+            valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = '*Format email tidak valid';
+            emailError.style.display = 'inline';
+            valid = false;
+        }
+        if (!valid) e.preventDefault();
+    });
+
+    document.querySelectorAll('.protect-input').forEach(input => {
+        input.addEventListener('paste', e => e.preventDefault());
+        input.addEventListener('input', e => input.value = input.defaultValue);
+        input.addEventListener('mousedown', e => e.preventDefault());
+    });
+
+    const passInput = document.getElementById('kataSandi');
+    passInput.addEventListener('mouseenter', function() {
+        passInput.type = 'text';
+    });
+    passInput.addEventListener('mouseleave', function() {
+        passInput.type = 'password';
+    });
+
+
 =======
 
     function changeStok(val) {
