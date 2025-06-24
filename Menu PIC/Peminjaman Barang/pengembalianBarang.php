@@ -85,7 +85,7 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Pengembalian Barang</h3>
+    <h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">

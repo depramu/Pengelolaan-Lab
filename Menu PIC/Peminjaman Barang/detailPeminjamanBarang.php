@@ -1,4 +1,6 @@
     <?php
+    // Implement koneksi.php
+    include '../../koneksi.php';
     include '../../templates/header.php';
     include '../../templates/sidebar.php';
 
@@ -59,91 +61,109 @@
                             <?php elseif ($data) : ?>
                                 <form id="formDetail" method="POST">
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">ID Peminjaman Barang</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['idPeminjamanBrg']) ?>
-                                                </div>
-                                                <input type="hidden" name="idPeminjamanBrg" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanBrg']) ?>">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label class="form-label fw-bold">ID Peminjaman Barang</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['idPeminjamanBrg']) ?>
                                             </div>
+                                            <input type="hidden" name="idPeminjamanBrg" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanBrg']) ?>">
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">NIM/NPK</label>
-                                                <div class="form-control-plaintext">
-                                                    <?php
-                                                    // Tampilkan NIM jika ada, jika tidak tampilkan NPK, jika keduanya kosong tampilkan '-'
-                                                    if (!empty($data['nim'])) {
-                                                        echo htmlspecialchars($data['nim']);
-                                                    } elseif (!empty($data['npk'])) {
-                                                        echo htmlspecialchars($data['npk']);
-                                                    } else {
-                                                        echo '-';
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?php
-                                                    if (!empty($data['nim'])) {
-                                                        echo htmlspecialchars($data['nim']);
-                                                    } elseif (!empty($data['npk'])) {
-                                                        echo htmlspecialchars($data['npk']);
-                                                    } else {
-                                                        echo '-';
-                                                    }
-                                                ?>">
+                                            <label class="form-label fw-bold">NIM/NPK</label>
+                                            <div class="form-control-plaintext">
+                                                <?php
+                                                // Tampilkan NIM jika ada, jika tidak tampilkan NPK, jika keduanya kosong tampilkan '-'
+                                                if (!empty($data['nim'])) {
+                                                    echo htmlspecialchars($data['nim']);
+                                                } elseif (!empty($data['npk'])) {
+                                                    echo htmlspecialchars($data['npk']);
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>
                                             </div>
+                                            <input type="hidden" class="form-control" value="<?php
+                                                if (!empty($data['nim'])) {
+                                                    echo htmlspecialchars($data['nim']);
+                                                } elseif (!empty($data['npk'])) {
+                                                    echo htmlspecialchars($data['npk']);
+                                                } else {
+                                                    echo '-';
+                                                }
+                                            ?>">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">ID Barang</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['idBarang']) ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idBarang']) ?>">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label class="form-label fw-bold">ID Barang</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['idBarang']) ?>
                                             </div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idBarang']) ?>">
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">Jumlah Barang</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['jumlahBrg']) ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
+                                            <label class="form-label fw-bold">Jumlah Barang</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['jumlahBrg']) ?>
                                             </div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">Tanggal Peminjaman</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars(
-                                                        $data['tglPeminjamanBrg'] instanceof DateTime
-                                                            ? $data['tglPeminjamanBrg']->format('d F Y')
-                                                            : ''
-                                                    ) ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanBrg'] instanceof DateTime) ? $data['tglPeminjamanBrg']->format('d F Y') : '' ?>">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label class="form-label fw-bold">Tanggal Peminjaman</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars(
+                                                    $data['tglPeminjamanBrg'] instanceof DateTime
+                                                        ? $data['tglPeminjamanBrg']->format('d F Y')
+                                                        : ''
+                                                ) ?>
                                             </div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanBrg'] instanceof DateTime) ? $data['tglPeminjamanBrg']->format('d F Y') : '' ?>">
                                         </div>
-                                        <div class="col-md-6"></div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Status Peminjaman</label>
+                                            <?php
+                                            // Tentukan class status
+                                            $statusClass = 'text-secondary';
+                                            switch ($data['statusPeminjaman']) {
+                                                case 'Diajukan':
+                                                    $statusClass = 'text-primary';
+                                                    break;
+                                                case 'Menunggu Persetujuan':
+                                                    $statusClass = 'text-warning';
+                                                    break;
+                                                case 'Menunggu Pengecekan':
+                                                    $statusClass = 'text-warning';
+                                                    break;
+                                                case 'Sedang Dipinjam':
+                                                    $statusClass = 'text-info';
+                                                    break;
+                                                case 'Telah Dikembalikan':
+                                                    $statusClass = 'text-success';
+                                                    break;
+                                                case 'Ditolak':
+                                                    $statusClass = 'text-danger';
+                                                    break;
+                                            }
+                                            ?>
+                                            <div class="form-control-plaintext <?= $statusClass ?> fw-semibold"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
+                                        </div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-12">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold">Alasan Peminjaman</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['alasanPeminjamanBrg']) ?>
-                                                </div>
-                                                <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanBrg']) ?></textarea>
+                                            <label class="form-label fw-bold">Alasan Peminjaman</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['alasanPeminjamanBrg']) ?>
                                             </div>
+                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanBrg']) ?></textarea>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between mt-3">
-                                        <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary me-2">Kembali</a>
+                                    <div class="row">
+                                        <div class="col-12 d-flex justify-content-between mt-3">
+                                            <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary me-2">Kembali</a>
+                                        </div>
                                     </div>
                                 </form>
                             <?php endif; ?>
