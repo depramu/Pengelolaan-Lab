@@ -35,12 +35,12 @@ $stmt = sqlsrv_query($conn, $query);
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Cek Barang</span>
+                        <span class="fw-bold">Cek Barang</span>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="">
                             <div class="mb-2">
-                                <label class="form-label">
+                                <label class="form-label fw-semibold">
                                     Pilih Tanggal Peminjaman
                                     <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                 </label>
