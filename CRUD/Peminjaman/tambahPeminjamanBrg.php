@@ -124,13 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <form method="POST">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label for="idBarang" class="form-label fw-bold">ID Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label for="namaBarang" class="form-label fw-bold">Nama Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label class="form-label fw-bold">Tanggal Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
                                                                                                                                             $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label for="nim" class="form-label fw-bold">NIM</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim_display"
                                             value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-bold">
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
+                                    <div class="mb-2">
                                         <label for="npk" class="form-label fw-bold">NPK</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk_display"
                                             value="<?= isset($_SESSION['npk']) ? htmlspecialchars($_SESSION['npk']) : '' ?>">
