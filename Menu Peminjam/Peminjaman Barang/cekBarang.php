@@ -17,7 +17,6 @@ include __DIR__ . '/../../templates/sidebar.php';
 $tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? '';
 $query = "SELECT idBarang, namaBarang, lokasiBarang, stokBarang FROM Barang WHERE stokBarang > 0";
 $stmt = sqlsrv_query($conn, $query);
-
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
