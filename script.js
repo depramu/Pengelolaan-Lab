@@ -296,72 +296,133 @@ document.querySelector("form").addEventListener("submit", function (e) {
 
     // CRUD RUANGAN (KESYAAAAAAAAAA)
     // Validasi untuk tambah ruangan
+    let kondisiSelect = document.getElementById('kondisiRuangan');
+    let ketersediaanSelect = document.getElementById('ketersediaan');
+    let ketersediaanHidden = document.getElementById('ketersediaanHidden');
+
+    // Saat kondisi berubah
+    kondisiSelect.addEventListener('change', function () {
+        if (this.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanSelect.disabled = false;
+            ketersediaanSelect.value = '';
+            ketersediaanHidden.value = '';
+        }
+    });
+
+    // Saat ketersediaan dipilih manual
+    ketersediaanSelect.addEventListener('change', function () {
+        ketersediaanHidden.value = this.value;
+    });
+
+    // Pastikan hidden tetap update saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', function () {
+        if (kondisiSelect.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanHidden.value = ketersediaanSelect.value;
+        }
+    });
+
+    // Validasi
     document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
 
-        // Nama Ruangan
-        const nama = document.getElementById('namaRuangan');
-        const namaError = document.getElementById('namaError');
-        if (nama && nama.value.trim() === '') {
+        // Nama
+        let nama = document.getElementById('namaRuangan');
+        let namaError = document.getElementById('namaError');
+        if (nama.value.trim() === '') {
             namaError.style.display = 'inline';
             valid = false;
-        } else if (namaError) {
+        } else {
             namaError.style.display = 'none';
         }
 
-        // Kondisi Ruangan
-        const kondisi = document.getElementById('kondisiRuangan');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+        // Kondisi
+        let kondisiError = document.getElementById('kondisiError');
+        if (!kondisiSelect.value || kondisiSelect.value === 'Pilih Kondisi') {
             kondisiError.style.display = 'inline';
             valid = false;
-        } else if (kondisiError) {
+        } else {
             kondisiError.style.display = 'none';
         }
 
-        // Ketersediaan Ruangan
-        const ketersediaan = document.getElementById('ketersediaan');
-        const ketersediaanError = document.getElementById('ketersediaanError');
-        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+        // Ketersediaan (cek hidden)
+        let ketersediaanError = document.getElementById('ketersediaanError');
+        if (!ketersediaanHidden.value || ketersediaanHidden.value === 'Pilih Ketersediaan') {
             ketersediaanError.style.display = 'inline';
             valid = false;
-        } else if (ketersediaanError) {
+        } else {
             ketersediaanError.style.display = 'none';
         }
+
         if (!valid) e.preventDefault();
     });
 
         // Validasi untuk edit ruangan
+    // Saat kondisi berubah
+    kondisiSelect.addEventListener('change', function () {
+        if (this.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanSelect.disabled = false;
+            ketersediaanSelect.value = '';
+            ketersediaanHidden.value = '';
+        }
+    });
+
+    // Saat ketersediaan dipilih manual
+    ketersediaanSelect.addEventListener('change', function () {
+        ketersediaanHidden.value = this.value;
+    });
+
+    // Pastikan hidden tetap update saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', function () {
+        if (kondisiSelect.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanHidden.value = ketersediaanSelect.value;
+        }
+    });
+
+    // Validasi
     document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
 
-        // Nama Ruangan
-        const nama = document.getElementById('namaRuangan');
-        const namaError = document.getElementById('namaError');
-        if (nama && nama.value.trim() === '') {
+        // Nama
+        let nama = document.getElementById('namaRuangan');
+        let namaError = document.getElementById('namaError');
+        if (nama.value.trim() === '') {
             namaError.style.display = 'inline';
             valid = false;
-        } else if (namaError) {
+        } else {
             namaError.style.display = 'none';
         }
 
-        // Kondisi Ruangan
-        const kondisi = document.getElementById('kondisiRuangan');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+        // Kondisi
+        let kondisiError = document.getElementById('kondisiError');
+        if (!kondisiSelect.value || kondisiSelect.value === 'Pilih Kondisi') {
             kondisiError.style.display = 'inline';
             valid = false;
-        } else if (kondisiError) {
+        } else {
             kondisiError.style.display = 'none';
         }
 
-        // Ketersediaan Ruangan
-        const ketersediaan = document.getElementById('ketersediaan');
-        const ketersediaanError = document.getElementById('ketersediaanError');
-        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+        // Ketersediaan (cek hidden)
+        let ketersediaanError = document.getElementById('ketersediaanError');
+        if (!ketersediaanHidden.value || ketersediaanHidden.value === 'Pilih Ketersediaan') {
             ketersediaanError.style.display = 'inline';
             valid = false;
-        } else if (ketersediaanError) {
+        } else {
             ketersediaanError.style.display = 'none';
         }
 
