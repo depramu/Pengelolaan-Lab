@@ -1,6 +1,3 @@
-# --- Base URL ---
-http://localhost/PIC-peminjaman-approval/
-
 # --- Login Pages ---
 Login Page:             /Login/login.php
 Forgot Password:        /Login/LupaSandi.php
