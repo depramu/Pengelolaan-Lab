@@ -203,3 +203,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </button>
             </div>
         </header>
+        <?php
+            // Sticky flash notification (success banners) positioned top-center
+            include_once __DIR__ . '/flash.php';
+        ?>

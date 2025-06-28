@@ -1,5 +1,6 @@
 <?php
 include '../../templates/header.php';
+require_once __DIR__ . '/../../function/notification_helper.php';
 $idPeminjamanRuangan = $_GET['id'] ?? '';
 $data = [];
 
@@ -29,6 +30,7 @@ if (!empty($idPeminjamanRuangan)) {
                 p.idPeminjamanRuangan = ?";
     $params = array($idPeminjamanRuangan);
     $stmt = sqlsrv_query($conn, $query, $params);
+        
 
     if ($stmt && sqlsrv_has_rows($stmt)) {
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
@@ -55,9 +57,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   WHERE idPeminjamanRuangan = ?";
         $params = array($idPeminjamanRuangan);
         $stmt = sqlsrv_query($conn, $query, $params);
+        
 
         if ($stmt) {
-            $showModal = true;
+            // Tambahkan notifikasi (tanpa duplikat)
+            add_notif_once("Peminjaman Ruangan $idPeminjamanRuangan berhasil disetujui.");
+            echo "<script>window.location.href='peminjamanRuangan.php?notif=approve_success';</script>";
+            exit;
         } else {
             $error = "Gagal melakukan pengajuan ruangan.";
             exit;
@@ -70,12 +76,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Alasan penolakan harus diisi.";
             $showRejectedModal = true;
         } else {
-            // Update status dan alasan penolakan di Peminjaman_Ruangan
+            // Update status di Peminjaman_Ruangan
             $query = "UPDATE Peminjaman_Ruangan 
-                      SET statusPeminjaman = 'Ditolak', alasanPenolakan = ?
-                      WHERE idPeminjamanRuangan = ?";
-            $params = array($alasanPenolakan, $idPeminjamanRuangan);
+                       SET statusPeminjaman = 'Ditolak'
+                       WHERE idPeminjamanRuangan = ?";
+            $params = array($idPeminjamanRuangan);
             $stmt = sqlsrv_query($conn, $query, $params);
+        
 
             // Simpan alasan penolakan ke tabel Penolakan
             $queryPenolakan = "INSERT INTO Penolakan (idPeminjamanRuangan, alasanPenolakan) VALUES (?, ?)";
@@ -83,7 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmtPenolakan = sqlsrv_query($conn, $queryPenolakan, $paramsPenolakan);
 
             if ($stmt && $stmtPenolakan) {
-                $showModal = true;
+                // Tambahkan notifikasi (tanpa duplikat)
+                add_notif_once("Peminjaman Ruangan $idPeminjamanRuangan ditolak.");
+                echo "<script>window.location.href='peminjamanRuangan.php?notif=reject_success';</script>";
+                exit;
             } else {
                 $error = "Gagal menolak pengajuan ruangan.";
             }
@@ -189,9 +199,11 @@ include '../../templates/sidebar.php';
                                     <?php if (!$showAlasanPenolakan): ?>
                                         <button type="submit" name="tolak" class="btn btn-danger" id="btnTolak">Tolak</button>
                                     <?php else: ?>
-                                        <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();">Submit Penolakan</button>
+                                        <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();" id="btnSubmitPenolakan">Submit Penolakan</button>
                                     <?php endif; ?>
-                                    <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
+                                    <?php if (!$showAlasanPenolakan): ?>
+                                        <button type="submit" name="setuju" class="btn btn-primary" id="btnSetuju">Setuju</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </form>
@@ -205,6 +217,8 @@ include '../../templates/sidebar.php';
                                         document.getElementById('alasanPenolakanGroup').style.display = '';
                                         // Ganti tombol Tolak menjadi Submit Penolakan
                                         btnTolak.style.display = 'none';
+                                        var btnSetuju = document.getElementById('btnSetuju');
+                                        if (btnSetuju) btnSetuju.style.display = 'none';
                                         // Tambahkan tombol submit penolakan secara dinamis
                                         if (!document.getElementById('btnSubmitPenolakan')) {
                                             var submitBtn = document.createElement('button');

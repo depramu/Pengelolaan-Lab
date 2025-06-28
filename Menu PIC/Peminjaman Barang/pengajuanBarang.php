@@ -1,5 +1,6 @@
 <?php
 include '../../templates/header.php';
+require_once __DIR__ . '/../../function/notification_helper.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
 $data = [];
@@ -47,7 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
-            $showModal = true;
+            // Tambahkan notifikasi (tanpa duplikat)
+            add_notif_once("Peminjaman Barang $idPeminjamanBrg berhasil disetujui.");
+            header("Location: peminjamanBarang.php?notif=approve_success");
+            exit;
         } else {
             $error = "Gagal menyetujui peminjaman barang.";
             exit;
@@ -62,9 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
         } else {
             // Update status dan alasan penolakan di Peminjaman_Barang
             $query = "UPDATE Peminjaman_Barang 
-                      SET statusPeminjaman = 'Ditolak', alasanPenolakan = ?
-                      WHERE idPeminjamanBrg = ?";
-            $params = array($alasanPenolakan, $idPeminjamanBrg);
+                       SET statusPeminjaman = 'Ditolak'
+                       WHERE idPeminjamanBrg = ?";
+            $params = array($idPeminjamanBrg);
             $stmt = sqlsrv_query($conn, $query, $params);
 
             // Simpan alasan penolakan ke tabel Penolakan
@@ -73,7 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
             $stmtPenolakan = sqlsrv_query($conn, $queryPenolakan, $paramsPenolakan);
 
             if ($stmt && $stmtPenolakan) {
-                $showModal = true;
+                // Tambahkan notifikasi (tanpa duplikat)
+                add_notif_once("Peminjaman Barang $idPeminjamanBrg ditolak.");
+                header("Location: peminjamanBarang.php?notif=reject_success");
+                exit;
             } else {
                 $error = "Gagal menolak pengajuan barang.";
             }
@@ -186,9 +193,11 @@ include '../../templates/sidebar.php';
                                         <?php if (!$showAlasanPenolakan): ?>
                                             <button type="submit" name="tolak" class="btn btn-danger" id="btnTolak">Tolak</button>
                                         <?php else: ?>
-                                            <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();">Submit Penolakan</button>
+                                            <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();" id="btnSubmitPenolakan">Submit Penolakan</button>
                                         <?php endif; ?>
-                                        <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
+                                        <?php if (!$showAlasanPenolakan): ?>
+                                            <button type="submit" name="setuju" class="btn btn-primary" id="btnSetuju">Setuju</button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -202,6 +211,8 @@ include '../../templates/sidebar.php';
                                         e.preventDefault();
                                         document.getElementById('alasanPenolakanGroup').style.display = '';
                                         btnTolak.style.display = 'none';
+                                            var btnSetuju = document.getElementById('btnSetuju');
+                                            if (btnSetuju) btnSetuju.style.display = 'none';
                                         if (!document.getElementById('btnSubmitPenolakan')) {
                                             var submitBtn = document.createElement('button');
                                             submitBtn.type = 'submit';
