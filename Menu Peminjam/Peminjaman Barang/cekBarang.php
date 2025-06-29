@@ -41,8 +41,7 @@ $stmt = sqlsrv_query($conn, $query);
                         <form method="POST" action="">
                             <div class="mb-2">
                                 <label class="form-label fw-semibold">
-                                    Pilih Tanggal Peminjaman
-                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
+                                    Pilih Tanggal Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                 </label>
                                 <div class="d-flex gap-2">
                                     <select id="tglHari" class="form-select" style="width: 80px;"></select>
@@ -70,14 +69,21 @@ $stmt = sqlsrv_query($conn, $query);
     function updateDays() {
         let bulan = parseInt(document.getElementById('tglBulan').value);
         let tahun = parseInt(document.getElementById('tglTahun').value);
+        let hariSelect = document.getElementById('tglHari');
+        let prevHari = hariSelect.value;
         let days = 31;
         if ([4, 6, 9, 11].includes(bulan)) days = 30;
         else if (bulan === 2) days = isLeapYear(tahun) ? 29 : 28;
 
-        let hariSelect = document.getElementById('tglHari');
         hariSelect.innerHTML = '';
         for (let i = 1; i <= days; i++) {
             hariSelect.innerHTML += `<option value="${i.toString().padStart(2, '0')}">${i}</option>`;
+        }
+        // Kembalikan ke hari sebelumnya jika masih valid, jika tidak pilih hari terakhir
+        if (prevHari && parseInt(prevHari) <= days) {
+            hariSelect.value = prevHari.padStart(2, '0');
+        } else {
+            hariSelect.value = days.toString().padStart(2, '0');
         }
     }
 
