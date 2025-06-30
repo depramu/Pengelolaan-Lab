@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body, html {
+        body,
+        html {
             height: 100%;
             margin: 0;
             font-family: 'Poppins', sans-serif;
@@ -135,7 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: none;
         }
 
-        .btn-login-submit, .btn-back {
+        .btn-login-submit,
+        .btn-back {
             border: none;
             border-radius: 8px;
             padding: 6px 0;
@@ -162,7 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #5a6268;
         }
 
-        .alert-danger, .alert-success {
+        .alert-danger,
+        .alert-success {
             font-size: 0.9rem;
             padding: 10px;
             margin-bottom: 20px;
@@ -187,7 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 flex-direction: column;
             }
 
-            .login-left, .login-right {
+            .login-left,
+            .login-right {
                 width: 100%;
                 padding: 20px;
             }
@@ -207,7 +212,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
-<body>
 <div class="container-login">
     <div class="login-left">
         <div class="w-100 mb-4">
@@ -227,8 +231,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h3 class="login-form-title">Silahkan Masukkan Email</h3>
 
             <?php
-                $success_message = $_SESSION['flash_success'] ?? '';
-                unset($_SESSION['flash_success']);
+            $success_message = $_SESSION['flash_success'] ?? '';
+            unset($_SESSION['flash_success']);
             ?>
             <?php if ($success_message): ?>
                 <div class="alert alert-success" role="alert">
@@ -251,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
 
                 <div class="d-flex justify-content-between mt-4 gap-3">
-                    <button type="button" class="btn btn-back">Kembali</button>
+                    <button type="button" class="btn btn-back" onclick="window.location.href='login.php'">Kembali</button>
                     <button type="submit" class="btn btn-login-submit">Kirim</button>
                 </div>
             </form>
@@ -259,31 +263,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 
-<script>
-    document.querySelector('.btn-back').onclick = function () {
-        window.location.href = '../index.php';
-    };
+<?php
 
-    document.querySelector('form').addEventListener('submit', function(e){
-        let email = document.getElementById('email').value.trim();
-        let emailError = document.getElementById('emailError');
-        let valid = true;
-        emailError.style.display = 'none';
+include '../templates/footer.php';
 
-        if(email === ''){
-            emailError.textContent = '*Harus diisi';
-            emailError.style.display = 'inline';
-            valid = false;
-        } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-            emailError.textContent = '*Format email tidak valid';
-            emailError.style.display = 'inline';
-            valid = false;
-        }
-
-        if(!valid){
-            e.preventDefault();
-        }
-    });
-</script>
-</body>
-</html>
+?>

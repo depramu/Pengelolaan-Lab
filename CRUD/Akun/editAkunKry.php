@@ -1,5 +1,8 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
 include '../../templates/header.php';
+
 
 $npk = $_GET['id'] ?? null;
 $showModal = false;
@@ -58,7 +61,6 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-    <!-- Edit Akun Karyawan -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -71,32 +73,32 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Ubah   Akun Karyawan</span>
+                        <span class="fw-bold">Ubah Akun Karyawan</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form id="formEditAkunkry" method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="npk" class="form-label">NPK</label>
-                                    <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                    <label for="npk" class="form-label fw-semibold">NPK</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="nama" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control protect-input" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                     <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label">Email
+                                    <label for="email" class="form-label fw-semibold">Email
                                         <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label">Jenis Role</label>
-                                    <select class="form-select protect-input" id="jenisRole" name="jenisRole">
+                                    <label for="jenisRole" class="form-label fw-semibold">Jenis Role</label>
+                                    <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
                                         <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
                                         <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
@@ -104,8 +106,8 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                 </div>
                                 <div class="mb-2">
-                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi</label>
-                                    <input type="password" class="form-control protect-input" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                    <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi</label>
+                                    <input type="password" class="form-control protect-input d-block bg-light" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="../../Menu PIC/manajemenAkunKry.php" class="btn btn-secondary">Kembali</a>
@@ -118,40 +120,6 @@ include '../../templates/sidebar.php';
         </div>
     </div>
 </main>
-<!-- End Edit Akun Karyawan -->
 
-<script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let email = document.getElementById('email').value.trim();
-        let emailError = document.getElementById('emailError');
-
-        let valid = true;
-
-        if (email === "") {
-            emailError.textContent = '*Harus diisi';
-            emailError.style.display = 'inline';
-            valid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            emailError.textContent = '*Format email tidak valid';
-            emailError.style.display = 'inline';
-            valid = false;
-        }
-        if (!valid) e.preventDefault();
-    });
-
-    document.querySelectorAll('.protect-input').forEach(input => {
-        input.addEventListener('paste', e => e.preventDefault());
-        input.addEventListener('input', e => input.value = input.defaultValue);
-        input.addEventListener('mousedown', e => e.preventDefault());
-    });
-
-    const passInput = document.getElementById('kataSandi');
-    passInput.addEventListener('mouseenter', function() {
-        passInput.type = 'text';
-    });
-    passInput.addEventListener('mouseleave', function() {
-        passInput.type = 'password';
-    });
-</script>
 
 <?php include '../../templates/footer.php'; ?>

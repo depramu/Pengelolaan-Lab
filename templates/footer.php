@@ -51,6 +51,8 @@
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                     } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
                         echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
+                    } else if ($currentFile == 'pengembalianBarang.php') {
+                        echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
                     }
                     ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
@@ -88,11 +90,13 @@
                     } else if ($currentFile == 'pengajuanRuangan.php') {
                         echo 'Peminjaman ruangan telah disetujui.';
                     } else if ($currentFile == 'pengembalianRuangan.php') {
-                        echo 'Data pengembalian ruangan berhasil ditambahkan.';
+                        echo 'Peminjaman ruangan berhasil dikembalikan.';
                     } else if ($currentFile == 'formDetailRuangan.php') {
                         echo 'Dokumentasi peminjaman ruangan berhasil dikirim.';
                     } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
                         echo 'Dokumentasi peminjaman ruangan berhasil dikirim.';
+                    } else if ($currentFile == 'pengembalianBarang.php') {
+                        echo 'Data pengembalian barang berhasil ditambahkan.';
                     }
                     ?></p>
             </div>
@@ -123,6 +127,8 @@
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                     } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
                         echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
+                    } else if ($currentFile == 'pengembalianBarang.php') {
+                        echo BASE_URL . '/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
                     }
                     ?>" class="btn btn-primary">OK</a>
             </div>
@@ -151,82 +157,16 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const sidebar = document.querySelector(".sidebar, .offcanvas-body");
-        if (!sidebar) return;
-
-        const storageKey = 'sidebar_active_menus';
-
-        // Fungsi untuk mendapatkan ID submenu yang aktif dari localStorage
-        const getActiveMenus = () => {
-            const activeMenus = localStorage.getItem(storageKey);
-            return activeMenus ? JSON.parse(activeMenus) : [];
-        };
-
-        // Fungsi untuk menyimpan ID ke localStorage
-        const setActiveMenus = (menus) => {
-            localStorage.setItem(storageKey, JSON.stringify(menus));
-        };
-
-        // Saat halaman dimuat, buka submenu yang sebelumnya sudah dibuka
-        const activeMenuIds = getActiveMenus();
-        activeMenuIds.forEach(menuId => {
-            const menuElement = document.getElementById(menuId);
-            if (menuElement) {
-                // Gunakan instance Bootstrap Collapse untuk membukanya
-                const collapseInstance = new bootstrap.Collapse(menuElement, {
-                    toggle: false // Jangan toggle, hanya buka
-                });
-                collapseInstance.show();
-
-                // Juga update atribut aria-expanded pada tombolnya
-                const trigger = document.querySelector(`[href="#${menuId}"]`);
-                if (trigger) trigger.setAttribute('aria-expanded', 'true');
-            }
-        });
-
-        // Tambahkan event listener untuk semua elemen collapse di sidebar
-        const collapsible = sidebar.querySelectorAll('.collapse');
-        collapsible.forEach(menu => {
-            // Saat submenu akan ditampilkan (dibuka)
-            menu.addEventListener('show.bs.collapse', function() {
-                let activeMenus = getActiveMenus();
-                if (!activeMenus.includes(this.id)) {
-                    activeMenus.push(this.id);
-                    setActiveMenus(activeMenus);
-                }
-            });
-
-            // Saat submenu akan disembunyikan (ditutup)
-            menu.addEventListener('hide.bs.collapse', function() {
-                let activeMenus = getActiveMenus();
-                const index = activeMenus.indexOf(this.id);
-                if (index > -1) {
-                    activeMenus.splice(index, 1);
-                    setActiveMenus(activeMenus);
-                }
-            });
-        });
-    });
-
-    document.querySelectorAll('.protect-input').forEach(input => {
-        input.addEventListener('paste', e => e.preventDefault());
-        input.addEventListener('input', e => input.value = input.defaultValue);
-        input.addEventListener('mousedown', e => e.preventDefault());
-    });
+    // Menyediakan BASE_URL ke main.js menggunakan PHP
+    window.BASE_URL = "<?php echo BASE_URL; ?>";
 </script>
+<script src="<?php echo BASE_URL; ?>/../main.js"></script>
 
-<script>
-    document.getElementById('confirmYes').addEventListener('click', function() {
-        var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-        confirmModal.hide();
-        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
-    });
-</script>
+
 
 <?php if (isset($showModal) && $showModal) : ?>
     <script>

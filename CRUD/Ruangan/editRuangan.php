@@ -78,7 +78,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Ubah Ruangan</span>
+                        <span class="fw-bold">Edit Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -142,72 +142,5 @@ include '../../templates/sidebar.php';
         </div>
     </div>
 </main>
-
-<script>
-    // Otomatis set ketersediaan jika kondisi "Rusak"
-    document.getElementById('kondisiRuangan').addEventListener('change', function () {
-        let kondisi = this.value;
-        let ketersediaan = document.getElementById('ketersediaan');
-        if (kondisi === 'Rusak') {
-            ketersediaan.value = 'Tidak Tersedia';
-            ketersediaan.disabled = true;
-        } else {
-<<<<<<< HEAD
-            ketersediaan.disabled = false;
-=======
-            ketersediaanSelect.disabled = false;
-            ketersediaanSelect.value = 'Pilih Ketersediaan';
-            ketersediaanHidden.value = '';
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
-        }
-    });
-
-    // Set initial state on load
-    window.addEventListener('DOMContentLoaded', function () {
-        let kondisi = document.getElementById('kondisiRuangan').value;
-        let ketersediaan = document.getElementById('ketersediaan');
-        if (kondisi === 'Rusak') {
-            ketersediaan.value = 'Tidak Tersedia';
-            ketersediaan.disabled = true;
-        }
-    });
-
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let nama = document.getElementById('namaRuangan').value.trim();
-        let kondisi = document.getElementById('kondisiRuangan').value;
-        let ketersediaan = document.getElementById('ketersediaan').value;
-
-        let namaError = document.getElementById('namaError');
-        let kondisiError = document.getElementById('kondisiError');
-        let ketersediaanError = document.getElementById('ketersediaanError');
-
-        let valid = true;
-
-        // Reset error messages
-        namaError.style.display = 'none';
-        kondisiError.style.display = 'none';
-        ketersediaanError.style.display = 'none';
-
-        if (nama === "") {
-            namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'inline';
-            valid = false;
-        }
-
-        if (kondisi === "" || kondisi === "Pilih Kondisi") {
-            kondisiError.textContent = '*Harus diisi';
-            kondisiError.style.display = 'inline';
-            valid = false;
-        }
-
-        if (ketersediaan === "" || ketersediaan === "Pilih Ketersediaan") {
-            ketersediaanError.textContent = '*Harus diisi';
-            ketersediaanError.style.display = 'inline';
-            valid = false;
-        }
-
-        if (!valid) e.preventDefault();
-    });
-</script>
 
 <?php include '../../templates/footer.php'; ?>

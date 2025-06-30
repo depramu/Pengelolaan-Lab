@@ -1,7 +1,5 @@
     <?php
-    require_once __DIR__ . '/../../auth.php';
-    authorize_role('PIC Aset');
-    
+    // Implement koneksi.php
     include '../../koneksi.php';
     include '../../templates/header.php';
     include '../../templates/sidebar.php';
@@ -64,7 +62,7 @@
                                 <form id="formDetail" method="POST">
                                     <div class="row mb-3">
                                         <div class="col-md-6 mb-3 mb-md-0">
-                                            <label class="form-label fw-bold">ID Peminjaman</label>
+                                            <label class="form-label fw-bold">ID Peminjaman Barang</label>
                                             <div class="form-control-plaintext">
                                                 <?= htmlspecialchars($data['idPeminjamanBrg']) ?>
                                             </div>
@@ -117,8 +115,8 @@
                                             <div class="form-control-plaintext">
                                                 <?= htmlspecialchars(
                                                     $data['tglPeminjamanBrg'] instanceof DateTime
-                                                        ? $data['tglPeminjamanBrg']->format('d-m-Y')
-                                                        : $data['tglPeminjamanBrg']
+                                                        ? $data['tglPeminjamanBrg']->format('d F Y')
+                                                        : ''
                                                 ) ?>
                                             </div>
                                             <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanBrg'] instanceof DateTime) ? $data['tglPeminjamanBrg']->format('d F Y') : '' ?>">

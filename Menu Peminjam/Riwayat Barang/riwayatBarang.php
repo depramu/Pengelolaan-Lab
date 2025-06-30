@@ -112,12 +112,12 @@ include '../../templates/sidebar.php';
                             $altText = 'Ditolak';
                         }
                 ?>
-                        <tr class="text-center">
-                            <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                        <tr>
+                            <td class="text-center"><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                            <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
-                            <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                            <td class="text-center"><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">

@@ -187,34 +187,6 @@ include '../../templates/sidebar.php';
                                 <button type="submit" class="btn btn-primary">Kirim</button>
                             </div>
                         </form>
-                        <script>
-                        // Validasi client-side
-                        document.getElementById('formPengembalianRuangan').addEventListener('submit', function(e) {
-                            let valid = true;
-
-                            // Kondisi Ruangan
-                            let kondisi = document.getElementById('kondisiRuangan');
-                            let kondisiError = document.getElementById('kondisiError');
-                            kondisiError.style.display = 'none';
-                            if (!kondisi.value || kondisi.value === "" || kondisi.value === "Pilih Kondisi Ruangan") {
-                                kondisiError.textContent = '*Harus diisi';
-                                kondisiError.style.display = 'inline';
-                                valid = false;
-                            }
-
-                            // Catatan Pengembalian
-                            let catatan = document.getElementById('catatanPengembalianRuangan');
-                            let catatanError = document.getElementById('catatanError');
-                            catatanError.style.display = 'none';
-                            if (catatan.value.trim() === '') {
-                                catatanError.textContent = '*Harus diisi';
-                                catatanError.style.display = 'inline';
-                                valid = false;
-                            }
-
-                            if (!valid) e.preventDefault();
-                        });
-                        </script>
                     </div>
                 </div>
             </div>

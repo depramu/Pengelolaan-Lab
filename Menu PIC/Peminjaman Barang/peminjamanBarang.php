@@ -1,8 +1,7 @@
 <?php
-require_once __DIR__ . '/../../auth.php';
-authorize_role('PIC Aset');
 include '../../templates/header.php';
 
+// Pagination setup
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -17,7 +16,11 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg, statusPeminjaman FROM Peminjaman_Barang ORDER BY idPeminjamanBrg OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT pr.*, b.namaBarang 
+          FROM Peminjaman_Barang pr 
+          JOIN Barang b ON pr.idBarang = b.idBarang 
+          ORDER BY pr.idPeminjamanBrg 
+          OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 
 require_once '../../function/pagination.php';
@@ -42,6 +45,7 @@ include '../../templates/sidebar.php';
                 <tr class="text-center">
                     <th>ID Peminjaman</th>
                     <th>ID Barang</th>
+                    <th>Nama Barang</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah Peminjaman</th>
                     <th>Aksi</th>
@@ -84,6 +88,7 @@ include '../../templates/sidebar.php';
                     <tr class="text-center">
                         <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
                         <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                         <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                         <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
                         <td class="td-aksi">

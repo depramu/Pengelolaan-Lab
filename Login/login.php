@@ -356,75 +356,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
 
                     <div class="d-flex justify-content-center" style="gap: 12px;">
-                        <a href="../index.php" class="btn-login-submit" style="background-color: #6c757d; text-align: center; line-height: normal;">
+                        <button type="button" class="btn-login-submit w-50" style="background-color: #6c757d; text-align: center; line-height: normal;" onclick="window.location.href='../index.php'">
                             Kembali
-                        </a>
-                        <button type="submit" class="btn-login-submit">Masuk</button>
-                        </div>
+                        </button>
+                        <button type="submit" class="btn-login-submit w-100" style="max-width: 300px;">
+                            Masuk
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-    <script>
-    document.querySelector('form').addEventListener('submit', function (e) {
-        const id = document.getElementById('identifier').value.trim();
-        const pass = document.getElementById('kataSandi').value.trim();
-        let valid = true;
 
-        // Reset error messages
-        const idError = document.getElementById('identifier-error');
-        const passError = document.getElementById('password-error');
-        idError.textContent = '';
-        passError.textContent = '';
-
-        if (id === '' && pass === '') {
-            idError.textContent = '*Harus Diisi*';
-            passError.textContent = '*Harus Diisi.*';
-            valid = false;
-        } else if (id === '') {
-            idError.textContent = '*NIM/NPK tidak boleh kosong.*';
-            valid = false;
-        } else if (!/^\d+$/.test(id)) {
-            idError.textContent = '*NIM/NPK harus berupa angka.*';
-            valid = false;
-        } else if (pass === '') {
-            passError.textContent = '*Kata Sandi tidak boleh kosong.*';
-            valid = false;
-        }
-
-        if (!valid) {
-            e.preventDefault(); // Gagalkan submit
-        }
-    });
-
-    // Tampilkan error dari server (jika ada)
-    window.addEventListener('DOMContentLoaded', function () {
-    const serverError = document.getElementById('server-error');
-    if (serverError && serverError.textContent.trim() !== '') {
-        const errorMessage = serverError.textContent.trim().toLowerCase();
-        serverError.classList.add('d-none');
-
-        const idError = document.getElementById('identifier-error');
-        const passError = document.getElementById('password-error');
-
-        if (errorMessage.includes('kolom tidak boleh kosong')) {
-            idError.textContent = '*Kolom ini tidak boleh kosong.*';
-            passError.textContent = '*Kolom ini tidak boleh kosong.*';
-        } else if (errorMessage.includes('akun_tidak_terdaftar')) {
-            idError.textContent = '*Akun tidak terdaftar*';
-        } else if (errorMessage.includes('kata_sandi_salah')) {
-            passError.textContent = '*Kata sandi salah*';
-        } else if (errorMessage.includes('anda tidak memiliki hak akses')) {
-            idError.textContent = errorMessage;
-            passError.textContent = '';
-        } else {
-            // Default fallback
-            idError.textContent = errorMessage;
-        }
-    }
-});
-    </script>
-
-</body>
-
-</html>
+<?php
+include '../templates/footer.php';
+?>

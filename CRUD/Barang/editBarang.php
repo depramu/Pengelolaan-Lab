@@ -59,17 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
-<<<<<<< HEAD
     <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
-=======
-    <h3 class="fw-semibold mb-3">Ubah Barang</h3>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Ubah Barang</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
             </ol>
         </nav>
     </div>
@@ -89,8 +85,7 @@ include '../../templates/sidebar.php';
                         <span class="fw-bold">Edit Barang</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
-<<<<<<< HEAD
+                        <form id="formEditBarang" method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
                                     <label for="idBarang" class="form-label fw-semibold d-flex align-items-center">ID Barang</label>
@@ -102,30 +97,6 @@ include '../../templates/sidebar.php';
                                         <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?>" placeholder="Masukkan nama barang..">
-=======
-                            <div class="mb-2">
-                                <label for="idBarang" class="form-label">ID Barang</label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
-                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
-                            </div>
-                            <div class="mb-2">
-                                <label for="namaBarang" class="form-label">
-                                    Nama Barang
-                                    <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                </label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang']) ?></div>
-                                <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($data['namaBarang']) ?>">
-                            </div>
-                            <div class="mb-2">
-                                <label for="stokBarang" class="form-label">
-                                    Stok Barang
-                                    <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                </label>
-                                <div class="input-group" style="max-width: 180px;">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                    <input type="number hidden" class="form-control text-center" id="stokBarang" name="stokBarang" value="<?= htmlspecialchars($data['stokBarang']) ?>" min="0" style="max-width: 70px;">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -169,51 +140,5 @@ include '../../templates/sidebar.php';
         </div>
     </div>
 </main>
-
-<script>
-    function changeStok(val) {
-        let stokInput = document.getElementById('stokBarang');
-        let current = parseInt(stokInput.value) || 0;
-        let next = current + val;
-        if (next < 0) next = 0;
-        stokInput.value = next;
-    }
-
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let valid = true;
-
-        // Nama Barang
-        let nama = document.getElementById('namaBarang');
-        let namaError = document.getElementById('namaError');
-        namaError.style.display = 'none';
-        if (nama.value.trim() === '') {
-            namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'inline';
-            valid = false;
-        }
-
-        // Stok Barang
-        let stok = document.getElementById('stokBarang');
-        let stokError = document.getElementById('stokError');
-        stokError.style.display = 'none';
-        if (stok.value.trim() === '' || parseInt(stok.value) < 0) {
-            stokError.textContent = '*Harus diisi';
-            stokError.style.display = 'inline';
-            valid = false;
-        }
-
-        // Lokasi Barang
-        let lokasi = document.getElementById('lokasiBarang');
-        let lokasiError = document.getElementById('lokasiError');
-        lokasiError.style.display = 'none';
-        if (!lokasi.value || lokasi.value === "" || lokasi.value === "Pilih Lokasi") {
-            lokasiError.textContent = '*Harus diisi';
-            lokasiError.style.display = 'inline';
-            valid = false;
-        }
-
-        if (!valid) e.preventDefault();
-    });
-</script>
 
 <?php include '../../templates/footer.php'; ?>

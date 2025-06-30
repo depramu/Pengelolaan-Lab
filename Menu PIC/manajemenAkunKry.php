@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+
 include '../templates/header.php';
 
 // Pagination setup
@@ -56,8 +59,8 @@ include '../templates/sidebar.php';
             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                 $hasData = true;
             ?>
-                <tr class="text-center">
-                    <td><?= htmlspecialchars($row['npk']) ?></td>
+                <tr>
+                    <td class="text-center"><?= htmlspecialchars($row['npk']) ?></td>
                     <td><?= htmlspecialchars($row['nama']) ?></td>
                     <td><?= htmlspecialchars($row['email']) ?></td>
                     <td><?= htmlspecialchars($row['jenisRole']) ?></td>
