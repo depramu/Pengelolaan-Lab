@@ -118,7 +118,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         }
 
         .scrollable-card-content {
-            max-height: 58vh;
+            max-height: 64vh;
             overflow-y: auto;
         }
 

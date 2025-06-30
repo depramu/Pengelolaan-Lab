@@ -106,7 +106,7 @@ include '../../templates/sidebar.php';
           <tr class="text-center">
             <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
             <td><?= htmlspecialchars($row['idRuangan']) ?></td>
-            <td class="text-start"><?= htmlspecialchars($row['namaRuangan']) ?></td>
+            <td><?= htmlspecialchars($row['namaRuangan']) ?></td>
             <td>
               <?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?>
             </td>
