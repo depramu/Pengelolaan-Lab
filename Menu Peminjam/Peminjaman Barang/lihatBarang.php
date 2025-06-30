@@ -41,7 +41,7 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr class="text-center">
+                <tr>
                     <th>ID Barang</th>
                     <th>Nama Barang</th>
                     <th>Stok Barang</th>
@@ -59,10 +59,10 @@ include '../../templates/sidebar.php';
                         $hasData = true;
                 ?>
                         <tr>
-                            <td class="text-center"><?= htmlspecialchars(string: $row['idBarang'] ?? '') ?></td>
+                            <td><?= htmlspecialchars(string: $row['idBarang'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
                             <td class="td-aksi text-center align-middle">
                                 <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>" class="d-inline-block">
                                     <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Barang" style="display: inline-block; vertical-align: middle;">

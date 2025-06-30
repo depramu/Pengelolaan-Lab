@@ -40,7 +40,7 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr class="text-center">
+                <tr>
                     <th>ID Ruangan</th>
                     <th>Nama Ruangan</th>
                     <th>Kondisi</th>
@@ -57,7 +57,7 @@ include '../../templates/sidebar.php';
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $hasData = true;
                 ?>
-                        <tr class="text-center">
+                        <tr>
                             <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
