@@ -1,5 +1,9 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+
 include '../../templates/header.php';
+
 
 $nim = $_GET['id'] ?? null;
 
