@@ -372,7 +372,7 @@ include '../templates/sidebar.php';
           displayPage(parseInt(e.target.closest('li').dataset.page)); // Pindah ke halaman yang diklik.
         });
         pageLi.appendChild(pageLink);
-          paginationUl.appendChild(pageLi);
+        paginationUl.appendChild(pageLi);
       }
 
       // Membuat tombol "Next".

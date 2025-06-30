@@ -1,28 +1,36 @@
 <?php
 include '../../koneksi.php';
 
-$showSuccessModal = false;
+$showModal = false;
 $idPeminjamanRuangan = $_GET['id'] ?? '';
 $error = null;
+$kondisiError = '';
+$catatanError = '';
 
 // Proses POST untuk simpan ke database
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $idPeminjamanRuangan) {
     $kondisiRuangan = $_POST['kondisiRuangan'] ?? '';
     $catatanPengembalianRuangan = $_POST['catatanPengembalianRuangan'] ?? '';
 
-    // Validasi sederhana
-    if ($kondisiRuangan === 'Pilih Kondisi Ruangan' || empty($kondisiRuangan)) {
-        $error = "Kondisi ruangan harus dipilih.";
-    } elseif (empty($catatanPengembalianRuangan)) {
-        $error = "Catatan pengembalian harus diisi.";
-    } else {
+    // Validasi harus diisi
+    $valid = true;
+    if (empty($kondisiRuangan)) {
+        $kondisiError = "*Harus diisi";
+        $valid = false;
+    }
+    if (empty($catatanPengembalianRuangan)) {
+        $catatanError = "*Harus diisi";
+        $valid = false;
+    }
+
+    if ($valid) {
         // Cek apakah sudah ada data pengembalian untuk id ini
-        $cekSql = "SELECT COUNT(*) as cnt FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
+        $cekSql = "SELECT COUNT(*) as jumlah FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
         $cekParams = [$idPeminjamanRuangan];
         $cekStmt = sqlsrv_query($conn, $cekSql, $cekParams);
         $sudahAda = false;
         if ($cekStmt && ($cekRow = sqlsrv_fetch_array($cekStmt, SQLSRV_FETCH_ASSOC))) {
-            $sudahAda = $cekRow['cnt'] > 0;
+            $sudahAda = $cekRow['jumlah'] > 0;
         }
 
         if ($sudahAda) {
@@ -119,45 +127,47 @@ include '../../templates/sidebar.php';
     </div>
 
     <div class="container mt-4">
-        <?php if (!empty($error)) : ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?php echo $error; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Pengembalian Ruangan</span>
+                        <span class="fw-bold">Pengembalian Ruangan</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" id="formPengembalianRuangan" autocomplete="off">
                             <div class="mb-2 row">
-                                <div class="col md-6">
-                                    <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman Ruangan</label>
-                                    <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>" disabled>
+                                <div class="col-md-6">
+                                    <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>" readonly>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="txtKondisi" class="form-label fw-bold">Kondisi Ruangan
-                                        <span id="kondisiError" class="text-danger small mt-1" style="font-size: 0.95em;display:none;">*Harus Dipilih</span>
+                                    <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">
+                                        Kondisi Ruangan
+                                        <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;">
+                                            <?= !empty($kondisiError) ? htmlspecialchars($kondisiError) : '' ?>
+                                        </span>
                                     </label>
-                                    <select class="form-select" id="txtKondisi" name="kondisiRuangan">
-                                        <option selected>Pilih Kondisi Ruangan</option>
+                                    <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                        <option value="" disabled <?= (empty($data['kondisiRuangan'])) ? 'selected' : '' ?>>Pilih Kondisi Ruangan</option>
                                         <option value="Baik" <?= (isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == 'Baik') ? 'selected' : '' ?>>Baik</option>
                                         <option value="Rusak" <?= (isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == 'Rusak') ? 'selected' : '' ?>>Rusak</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <label for="catatanPengembalianRuangan" class="form-label fw-bold">Catatan Pengembalian
-                                    <span id="catatanError" class="text-danger small mt-1" style="font-size: 0.95em;display:none;">*Harus Diisi</span>
+                                <label for="catatanPengembalianRuangan" class="form-label fw-semibold d-flex align-items-center">
+                                    Catatan Pengembalian
+                                    <span id="catatanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;">
+                                        <?= !empty($catatanError) ? htmlspecialchars($catatanError) : '' ?>
+                                    </span>
                                 </label>
-                                <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="3" style="resize: none;"><?= isset($data['catatanPengembalianRuangan']) ? htmlspecialchars($data['catatanPengembalianRuangan']) : '' ?></textarea>
+                                <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="3" style="resize: none;" placeholder="Masukkan catatan pengembalian.."><?= isset($data['catatanPengembalianRuangan']) ? htmlspecialchars($data['catatanPengembalianRuangan']) : '' ?></textarea>
                             </div>
                             <div class="mb-2">
-                                <label for="dokumentasiSebelum" class="fw-bold">Dokumentasi sebelum pemakaian</label><br>
+                                <label for="dokumentasiSebelum" class="fw-semibold">Dokumentasi sebelum pemakaian</label><br>
                                 <?php if (!empty($dokSebelum)): ?>
                                     <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
                                 <?php else: ?>
@@ -165,7 +175,7 @@ include '../../templates/sidebar.php';
                                 <?php endif; ?>
                             </div>
                             <div class="mb-2">
-                                <label for="dokumentasiSesudah" class="fw-bold">Dokumentasi sesudah pemakaian</label><br>
+                                <label for="dokumentasiSesudah" class="fw-semibold">Dokumentasi sesudah pemakaian</label><br>
                                 <?php if (!empty($dokSesudah)): ?>
                                     <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
                                 <?php else: ?>
@@ -177,11 +187,38 @@ include '../../templates/sidebar.php';
                                 <button type="submit" class="btn btn-primary">Kirim</button>
                             </div>
                         </form>
+                        <script>
+                        // Validasi client-side
+                        document.getElementById('formPengembalianRuangan').addEventListener('submit', function(e) {
+                            let valid = true;
+
+                            // Kondisi Ruangan
+                            let kondisi = document.getElementById('kondisiRuangan');
+                            let kondisiError = document.getElementById('kondisiError');
+                            kondisiError.style.display = 'none';
+                            if (!kondisi.value || kondisi.value === "" || kondisi.value === "Pilih Kondisi Ruangan") {
+                                kondisiError.textContent = '*Harus diisi';
+                                kondisiError.style.display = 'inline';
+                                valid = false;
+                            }
+
+                            // Catatan Pengembalian
+                            let catatan = document.getElementById('catatanPengembalianRuangan');
+                            let catatanError = document.getElementById('catatanError');
+                            catatanError.style.display = 'none';
+                            if (catatan.value.trim() === '') {
+                                catatanError.textContent = '*Harus diisi';
+                                catatanError.style.display = 'inline';
+                                valid = false;
+                            }
+
+                            if (!valid) e.preventDefault();
+                        });
+                        </script>
                     </div>
                 </div>
             </div>
         </div>
 </main>
-
 
 <?php include '../../templates/footer.php'; ?>

@@ -1,7 +1,8 @@
 <?php
 include 'config.php';
 
-function authorize_role($allowed_roles) {
+function authorize_role($allowed_roles)
+{
     // Pastikan session sudah dimulai
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
@@ -25,5 +26,3 @@ function authorize_role($allowed_roles) {
         exit;
     }
 }
-
-?>

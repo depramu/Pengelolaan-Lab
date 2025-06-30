@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
-authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+require_once __DIR__ . '/../../auth.php';
+authorize_role('PIC Aset');
 include '../../templates/header.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
@@ -166,7 +166,7 @@ include '../../templates/sidebar.php';
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
+                                        <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                         <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                     </div>
@@ -191,7 +191,7 @@ include '../../templates/sidebar.php';
                                         <?php if ($statusPeminjaman === 'Ditolak') : ?>
                                             <div class="form-control-plaintext border p-2 bg-light rounded"><?= nl2br(htmlspecialchars($alasanPenolakan)) ?></div>
                                         <?php else : ?>
-                                            <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                            <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Masukkan alasan penolakan jika ingin menolak.."><?= htmlspecialchars($alasanPenolakan) ?></textarea>
                                         <?php endif; ?>
                                         <div class="form-text text-danger" id="alasanPenolakanError" style="display: none;">Alasan penolakan harus diisi jika menolak.</div>
                                     </div>
@@ -205,11 +205,11 @@ include '../../templates/sidebar.php';
                                     <div class="d-flex gap-2">
                                         <?php if ($statusPeminjaman === 'Menunggu Persetujuan') : ?>
                                             <button type="button" class="btn btn-danger" id="btnTolakShowField">Tolak</button>
-                                            <button type="submit" name="tolak_submit" class="btn btn-danger" id="btnTolakSubmit" style="display:none;">Submit Penolakan</button>
+                                            <button type="submit" name="tolak_submit" class="btn btn-danger" id="btnTolakSubmit" style="display:none;">Tolak</button>
                                             <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
                                         <?php else : ?>
-                                            <button type="button" class="btn btn-danger" disabled>Tolak</button>
-                                            <button type="button" class="btn btn-primary" disabled>Setuju</button>
+                                            <button type="button" class="btn btn-danger">Tolak</button>
+                                            <button type="button" class="btn btn-primary">Setuju</button>
                                         <?php endif; ?>
                                     </div>
                                 </div>

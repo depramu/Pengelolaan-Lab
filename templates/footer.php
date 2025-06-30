@@ -47,12 +47,12 @@
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                     } else if ($currentFile == 'pengembalianRuangan.php') {
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
-                    } else if ($currentFile == 'pengajuanBarang.php') {
-                        echo BASE_URL . '/Menu PIC/Peminjaman Barang/pengajuanBarang.php';
-                    } else if ($currentFile == 'pengajuanRuangan.php') {
-                        echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php';
+                    } else if ($currentFile == 'formDetailRuangan.php') {
+                        echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                    } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
+                        echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
                     }
-                ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                    ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
             <div class="modal-body">
                 <p><?php
@@ -89,12 +89,12 @@
                         echo 'Peminjaman ruangan telah disetujui.';
                     } else if ($currentFile == 'pengembalianRuangan.php') {
                         echo 'Data pengembalian ruangan berhasil ditambahkan.';
-                    } else if ($currentFile == 'pengajuanBarang.php') {
-                        echo 'Pengajuan peminjaman barang berhasil diajukan.';
-                    } else if ($currentFile == 'pengajuanRuangan.php') {
-                        echo 'Pengajuan peminjaman ruangan berhasil diajukan.';
+                    } else if ($currentFile == 'formDetailRuangan.php') {
+                        echo 'Dokumentasi peminjaman ruangan berhasil dikirim.';
+                    } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
+                        echo 'Dokumentasi peminjaman ruangan berhasil dikirim.';
                     }
-                ?></p>
+                    ?></p>
             </div>
             <div class="modal-footer">
                 <a href="<?php
@@ -119,12 +119,12 @@
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                     } else if ($currentFile == 'pengembalianRuangan.php') {
                         echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
-                    } else if ($currentFile == 'pengajuanBarang.php') {
-                        echo BASE_URL . '/Menu PIC/Peminjaman Barang/pengajuanBarang.php';
-                    } else if ($currentFile == 'pengajuanRuangan.php') {
-                        echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php';
+                    } else if ($currentFile == 'formDetailRuangan.php') {
+                        echo BASE_URL . '/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                    } else if ($currentFile == 'formDetailRiwayatRuangan.php') {
+                        echo BASE_URL . '/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
                     }
-                ?>" class="btn btn-primary">OK</a>
+                    ?>" class="btn btn-primary">OK</a>
             </div>
         </div>
     </div>
@@ -148,6 +148,8 @@
         </div>
     </div>
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
@@ -208,6 +210,12 @@
                 }
             });
         });
+    });
+
+    document.querySelectorAll('.protect-input').forEach(input => {
+        input.addEventListener('paste', e => e.preventDefault());
+        input.addEventListener('input', e => input.value = input.defaultValue);
+        input.addEventListener('mousedown', e => e.preventDefault());
     });
 </script>
 

@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/../../auth.php';
+authorize_role('PIC Aset');
 include '../../templates/header.php';
 
-// Pagination setup
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -66,6 +67,10 @@ include '../../templates/sidebar.php';
                     } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
                         $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                         $altText = 'Sedang Dipinjam';
+                        $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=' . $idPeminjaman;
+                    } elseif ($statusPeminjaman == 'Sebagian Dikembalikan') {
+                        $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                        $altText = 'Sebagian Dikembalikan';
                         $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=' . $idPeminjaman;
                     } elseif ($statusPeminjaman == 'Ditolak') {
                         $iconSrc = BASE_URL . '/icon/silang.svg';

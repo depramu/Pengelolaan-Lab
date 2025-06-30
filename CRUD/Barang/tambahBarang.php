@@ -3,6 +3,7 @@ include '../../templates/header.php';
 
 $showModal = false;
 
+// Generate ID Barang otomatis (BRG001, BRG002, dst)
 $idBarang = 'BRG001';
 $sqlId = "SELECT TOP 1 idBarang FROM Barang WHERE idBarang LIKE 'BRG%' ORDER BY idBarang DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -13,6 +14,7 @@ if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
     $idBarang = 'BRG' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
 }
 
+// Ambil daftar lokasi (idRuangan) dari tabel Ruangan
 $lokasiList = [];
 $sqlLokasi = "SELECT idRuangan FROM Ruangan";
 $stmtLokasi = sqlsrv_query($conn, $sqlLokasi);
@@ -23,8 +25,8 @@ if ($stmtLokasi) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $namaBarang = $_POST['namaBarang'];
-    $stokBarang = $_POST['stokBarang'];
+    $namaBarang = $_POST['namaBarang'] ?? '';
+    $stokBarang = $_POST['stokBarang'] ?? '';
     $lokasiBarang = $_POST['lokasiBarang'] ?? '';
 
     // Cek apakah nama barang sudah ada
@@ -34,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cekNamaRow = sqlsrv_fetch_array($cekNamaStmt, SQLSRV_FETCH_ASSOC);
 
     if ($cekNamaRow['jumlah'] > 0) {
-        $error = "Nama barang sudah terdaftar, silakan gunakan nama lain.";
+        $namaError = "*Nama barang sudah terdaftar";
     } else {
         $query = "INSERT INTO Barang (idBarang, namaBarang, stokBarang, lokasiBarang) VALUES (?, ?, ?, ?)";
         $params = [$idBarang, $namaBarang, $stokBarang, $lokasiBarang];
@@ -50,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 include '../../templates/sidebar.php';
 ?>
-
 
 <main class="col bg-white px-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
@@ -76,52 +77,58 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Tambah Barang</span>
+                        <span class="fw-bold">Tambah Barang</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <div class="mb-2">
-                                <label for="idBarang" class="form-label">ID Barang</label>
-                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($idBarang) ?></div>
-                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" >
-                            </div>
-                            <div class="mb-2">
-                                <label for="namaBarang" class="form-label">
-                                    Nama Barang
-                                    <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                </label>
-                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" placeholder="Masukkan nama barang.." value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
-                            </div>
-                            <div class="mb-2">
-                                <label for="stokBarang" class="form-label">
-                                    Stok Barang
-                                    <span class="text-danger ms-2" id="errorStokBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                </label>
-                                <div class="input-group" style="max-width: 180px;">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                    <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
-                                        min="0" style="max-width: 70px;"
-                                        value="<?= isset($stokBarang) ? htmlspecialchars($stokBarang) : '0' ?>">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="idBarang" class="form-label fw-semibold d-flex align-items-center">ID Barang</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="namaBarang" class="form-label fw-semibold d-flex align-items-center">
+                                        Nama Barang
+                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($namaError)): ?>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                        <?php endif; ?>
+                                    </label>
+                                    <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>" placeholder="Masukkan nama barang..">
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="lokasiBarang" class="form-label">
-                                    Lokasi Barang
-                                    <span class="text-danger ms-2" id="errorLokasiBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
-                                </label>
-                                <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                    <option disabled selected>Pilih Lokasi</option>
-                                    <?php foreach ($lokasiList as $lokasi) : ?>
-                                        <option value="<?= htmlspecialchars($lokasi) ?>"
-                                            <?= (isset($lokasiBarang) && $lokasiBarang == $lokasi) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($lokasi) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="stokBarang" class="form-label fw-semibold d-flex align-items-center">
+                                        Stok Barang
+                                        <span id="stokError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <div class="input-group" style="max-width: 180px;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                        <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
+                                            min="0" style="max-width: 70px;"
+                                            value="<?= isset($stokBarang) ? htmlspecialchars($stokBarang) : '0' ?>">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lokasiBarang" class="form-label fw-semibold d-flex align-items-center">
+                                        Lokasi Barang
+                                        <span id="lokasiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <select class="form-select" id="lokasiBarang" name="lokasiBarang">
+                                        <option value="" disabled <?= !isset($lokasiBarang) || $lokasiBarang == '' ? 'selected' : '' ?>>Pilih Lokasi</option>
+                                        <?php foreach ($lokasiList as $lokasi) : ?>
+                                            <option value="<?= htmlspecialchars($lokasi) ?>"
+                                                <?= (isset($lokasiBarang) && $lokasiBarang == $lokasi) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($lokasi) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
                         </form>
@@ -132,7 +139,6 @@ include '../../templates/sidebar.php';
     </div>
 </main>
 
-
 <script>
     function changeStok(val) {
         let stokInput = document.getElementById('stokBarang');
@@ -142,44 +148,41 @@ include '../../templates/sidebar.php';
         stokInput.value = next;
     }
 
-    // Validasi form dan tampilkan modal konfirmasi
     document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
 
         // Nama Barang
         let nama = document.getElementById('namaBarang');
-        let namaError = document.getElementById('errorNamaBarang');
+        let namaError = document.getElementById('namaError');
+        namaError.style.display = 'none';
         if (nama.value.trim() === '') {
+            namaError.textContent = '*Harus diisi';
             namaError.style.display = 'inline';
             valid = false;
-        } else {
-            namaError.style.display = 'none';
         }
 
         // Stok Barang
         let stok = document.getElementById('stokBarang');
-        let stokError = document.getElementById('errorStokBarang');
+        let stokError = document.getElementById('stokError');
+        stokError.style.display = 'none';
         if (stok.value.trim() === '' || parseInt(stok.value) <= 0) {
+            stokError.textContent = '*Harus diisi';
             stokError.style.display = 'inline';
             valid = false;
-        } else {
-            stokError.style.display = 'none';
         }
 
         // Lokasi Barang
         let lokasi = document.getElementById('lokasiBarang');
-        let lokasiError = document.getElementById('errorLokasiBarang');
-        if (!lokasi.value || lokasi.value === 'Pilih Lokasi') {
+        let lokasiError = document.getElementById('lokasiError');
+        lokasiError.style.display = 'none';
+        if (!lokasi.value || lokasi.value === "" || lokasi.value === "Pilih Lokasi") {
+            lokasiError.textContent = '*Harus diisi';
             lokasiError.style.display = 'inline';
             valid = false;
-        } else {
-            lokasiError.style.display = 'none';
         }
 
         if (!valid) e.preventDefault();
     });
-
-    
 </script>
 
 <?php include '../../templates/footer.php'; ?>

@@ -1,6 +1,7 @@
 <?php
-// --- PROSES POST & REDIRECT DULU, SEBELUM OUTPUT APAPUN ---
-require_once '../../koneksi.php'; // pastikan koneksi sudah di-include di sini
+require_once __DIR__ . '/../../auth.php';
+authorize_role('PIC Aset');
+require_once '../../koneksi.php';
 
 $showModal = false;
 $idPeminjamanBrg = $_GET['id'] ?? '';
@@ -123,22 +124,19 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class='mb-2 row'>
                                 <div class="col-md-6">
-                                    <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman Barang</label>
-                                    <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
-                                    <span class="form-control d-block bg-light" id="idPeminjaman"><?= $idPeminjamanBrg ?></span>
+                                    <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                    <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
-                                    <span class="form-control d-block bg-light" id="namaBarang"><?= htmlspecialchars($namaBarang) ?></span>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-4">
                                     <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
-                                    <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
                                     <input type="hidden" id="sisaPinjaman" value="<?= $sisaPinjaman ?>">
-                                    <span class="form-control d-block bg-light" id="tampilJumlah"><?= $jumlahBrg ?></span>
                                     <?php if ($sisaPinjaman == 0): ?>
                                         <span class="text-success small">Semua barang sudah dikembalikan.</span>
                                     <?php else: ?>
@@ -151,7 +149,7 @@ include '../../templates/sidebar.php';
                                     </label>
                                     <div class="input-group mx-auto" style="max-width: 140px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                        <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" max="<?= $sisaPinjaman ?>" required style="max-width: 70px;">
+                                        <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" max="<?= $sisaPinjaman ?>" style="max-width: 70px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                     </div>
                                 </div>
@@ -170,31 +168,13 @@ include '../../templates/sidebar.php';
                                 <label for="catatanPengembalianBarang" class="form-label fw-semibold">Catatan Pengembalian
                                     <span id="catatanError" class="text-danger small mt-1 fw-normal" style="font: size 0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"  placeholder="Masukkan Catatan Pengembalian"></textarea>
+                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;" placeholder="Masukkan catatan pengembalian.."></textarea>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Kirim</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Berhasil -->
-        <div class="modal fade" id="successModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmModalLabel">Berhasil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Peminjaman berhasil Dikembalikan.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="peminjamanBarang.php" class="btn btn-primary">OK</a>
                     </div>
                 </div>
             </div>
@@ -228,8 +208,8 @@ include '../../templates/sidebar.php';
         if (val < 0) this.value = 0;
         if (maxStok === 0) this.value = 0;
     });
-</script>
-<script>
+
+
     // Fungsi validasi form sebelum submit
     document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
@@ -277,11 +257,5 @@ include '../../templates/sidebar.php';
         }
     });
 </script>
-<?php if ($showModal) : ?>
-    <script>
-        let modal = new bootstrap.Modal(document.getElementById('successModal'));
-        modal.show();
-    </script>
-<?php endif; ?>
 
 <?php include '../../templates/footer.php'; ?>

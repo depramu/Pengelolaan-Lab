@@ -68,7 +68,7 @@ if (isset($_GET['idPeminjamanBrg'])) {
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Peminjaman Barang</label>
+                                            <label class="form-label fw-semibold">ID Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanBrg']) ?></div>
                                             <input type="hidden" name="idPeminjamanBrg" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanBrg']) ?>">
                                         </div>

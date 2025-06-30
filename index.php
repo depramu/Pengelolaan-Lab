@@ -279,7 +279,7 @@
                     </span>
                     <span class="w-100 text-center me-4">PIC Aset</span>
                 </a>
-                <a href="Login/login.php?role=Ka UPT" class="btn btn-light role-btn fw-bold d-flex align-items-center justify-content-center text-center" style="color: #065ba6;">
+                <a href="Login/login.php?role=KA UPT" class="btn btn-light role-btn fw-bold d-flex align-items-center justify-content-center text-center" style="color: #065ba6;">
                     <span class="d-flex align-items-center justify-content-center" style="width: 24px;">
                         <i class="bi bi-person-badge-fill"></i>
                     </span>

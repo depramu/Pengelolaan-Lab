@@ -1,7 +1,8 @@
 <?php
 include '../../templates/header.php';
+
 $idPeminjamanRuangan = $_GET['id'] ?? '';
-$data = [];
+$data = null;
 
 $showRejectedModal = false;
 $showModal = false;
@@ -13,7 +14,6 @@ $showAlasanPenolakan = false; // Untuk kontrol tampilan kolom alasan penolakan
 if (!empty($idPeminjamanRuangan)) {
     $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
 
-    // Query gabungan seperti di file_context_1
     $query = "SELECT 
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
@@ -34,17 +34,6 @@ if (!empty($idPeminjamanRuangan)) {
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     }
 }
-
-// Ekstrak data 
-$idRuangan = $data['idRuangan'] ?? '';
-$nim = $data['nim'] ?? '';
-$npk = $data['npk'] ?? '';
-$namaPeminjam = $data['namaPeminjam'] ?? '';
-$tglPeminjamanRuangan = isset($data['tglPeminjamanRuangan']) ? $data['tglPeminjamanRuangan']->format('Y-m-d') : '';
-$waktuMulai = isset($data['waktuMulai']) ? $data['waktuMulai']->format('H:i') : '';
-$waktuSelesai = isset($data['waktuSelesai']) ? $data['waktuSelesai']->format('H:i') : '';
-$alasanPeminjamanRuangan = $data['alasanPeminjamanRuangan'] ?? '';
-$currentStatus = $data['statusPeminjaman'] ?? 'Diajukan';
 
 // Proses form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -123,60 +112,102 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="idRuangan" class="form-label fw-bold">ID Ruangan</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
-                                        <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan'] ?? '') ?></div>
+                                        <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($data['idRuangan'] ?? '') ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
                                         <label for="tglPeminjamanRuangan" class="form-label fw-bold">Tanggal Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanRuangan) ?></div>
-                                        <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>" style="background: #f5f5f5;">
+                                        <div class="form-control-plaintext">
+                                            <?php
+                                            if (isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime) {
+                                                echo htmlspecialchars($data['tglPeminjamanRuangan']->format('Y-m-d'));
+                                            } else {
+                                                echo '';
+                                            }
+                                            ?>
+                                        </div>
+                                        <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?php
+                                            if (isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime) {
+                                                echo htmlspecialchars($data['tglPeminjamanRuangan']->format('Y-m-d'));
+                                            } else {
+                                                echo '';
+                                            }
+                                        ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-2">
                                         <label class="form-label fw-bold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
                                             <?php
-                                            if (!empty($nim)) {
-                                                echo htmlspecialchars($nim);
-                                            } elseif (!empty($npk)) {
-                                                echo htmlspecialchars($npk);
+                                            if (!empty($data['nim'])) {
+                                                echo htmlspecialchars($data['nim']);
+                                            } elseif (!empty($data['npk'])) {
+                                                echo htmlspecialchars($data['npk']);
                                             } else {
                                                 echo "-";
                                             }
                                             ?>
                                         </div>
-                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
-                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($data['nim'] ?? '') ?>">
+                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($data['npk'] ?? '') ?>">
                                     </div>
                                 </div>
                                 <!-- Kolom Kanan -->
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman Ruangan</label>
+                                        <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
                                         <input type="hidden" class="form-control" id="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="row mb-2">
                                         <div class="col-md-6">
                                             <label for="waktuMulai" class="form-label fw-bold">Waktu Mulai</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($waktuMulai) ?></div>
-                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= htmlspecialchars($waktuMulai) ?>">
+                                            <div class="form-control-plaintext">
+                                                <?php
+                                                if (isset($data['waktuMulai']) && $data['waktuMulai'] instanceof DateTime) {
+                                                    echo htmlspecialchars($data['waktuMulai']->format('H:i'));
+                                                } else {
+                                                    echo '';
+                                                }
+                                                ?>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?php
+                                                if (isset($data['waktuMulai']) && $data['waktuMulai'] instanceof DateTime) {
+                                                    echo htmlspecialchars($data['waktuMulai']->format('H:i'));
+                                                } else {
+                                                    echo '';
+                                                }
+                                            ?>">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="waktuSelesai" class="form-label fw-bold">Waktu Selesai</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($waktuSelesai) ?></div>
-                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= htmlspecialchars($waktuSelesai) ?>">
+                                            <div class="form-control-plaintext">
+                                                <?php
+                                                if (isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime) {
+                                                    echo htmlspecialchars($data['waktuSelesai']->format('H:i'));
+                                                } else {
+                                                    echo '';
+                                                }
+                                                ?>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?php
+                                                if (isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime) {
+                                                    echo htmlspecialchars($data['waktuSelesai']->format('H:i'));
+                                                } else {
+                                                    echo '';
+                                                }
+                                            ?>">
                                         </div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="alasanPeminjaman" class="form-label fw-bold">Alasan Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></div>
-                                        <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['alasanPeminjamanRuangan'] ?? '') ?></div>
+                                        <textarea class="form-control w-100" id="alasanPeminjaman" name="alasanPeminjaman" hidden rows="3" style="background: #f5f5f5;"><?= htmlspecialchars($data['alasanPeminjamanRuangan'] ?? '') ?></textarea>
                                     </div>
                                 </div>
 
                                 <div class="mb-2" id="alasanPenolakanGroup" style="<?= $showAlasanPenolakan ? '' : 'display:none;' ?>">
                                     <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan</label>
-                                    <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
+                                    <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Masukkan alasan penolakan jika ingin menolak.."><?= htmlspecialchars($alasanPenolakan) ?></textarea>
                                     <div class="form-text text-danger" id="alasanPenolakanError" style="display: none;">Alasan penolakan harus diisi jika menolak.</div>
                                 </div>
                             </div>
@@ -189,7 +220,7 @@ include '../../templates/sidebar.php';
                                     <?php if (!$showAlasanPenolakan): ?>
                                         <button type="submit" name="tolak" class="btn btn-danger" id="btnTolak">Tolak</button>
                                     <?php else: ?>
-                                        <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();">Submit Penolakan</button>
+                                        <button type="submit" name="tolak_submit" class="btn btn-danger" onclick="return validateTolak();">Tolak</button>
                                     <?php endif; ?>
                                     <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
                                 </div>
@@ -212,7 +243,7 @@ include '../../templates/sidebar.php';
                                             submitBtn.name = 'tolak_submit';
                                             submitBtn.className = 'btn btn-danger';
                                             submitBtn.id = 'btnSubmitPenolakan';
-                                            submitBtn.innerText = 'Submit Penolakan';
+                                            submitBtn.innerText = 'Tolak';
                                             submitBtn.onclick = function() {
                                                 return validateTolak();
                                             };

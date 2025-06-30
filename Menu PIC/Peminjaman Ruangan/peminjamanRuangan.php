@@ -75,12 +75,12 @@ include '../../templates/sidebar.php';
               $iconSrc = BASE_URL . '/icon/jamHijau.svg';
               $altText = 'Menunggu Pengecekan oleh PIC';
               $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
-              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+              $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
               break;
             case 'Sedang Dipinjam':
               $iconSrc = BASE_URL . '/icon/jamHijau.svg';
               $altText = 'Sedang Dipinjam';
-              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
+              $linkAksi = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
               $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
               break;
             case 'Ditolak':

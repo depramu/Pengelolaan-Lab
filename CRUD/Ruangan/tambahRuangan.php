@@ -2,12 +2,14 @@
 include '../../templates/header.php';
 
 $showModal = false;
+
+// Generate ID Ruangan otomatis (CB001, CB002, dst)
 $idRuangan = 'CB001';
 $sqlId = "SELECT TOP 1 idRuangan FROM Ruangan WHERE idRuangan LIKE 'CB%' ORDER BY idRuangan DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
 if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
     $lastId = $rowId['idRuangan']; // contoh: CB012
-    $num = intval(substr($lastId, 3));
+    $num = intval(substr($lastId, 2));
     $newNum = $num + 1;
     $idRuangan = 'CB' . str_pad($newNum, 3, '0', STR_PAD_LEFT);
 }
@@ -40,11 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
 include '../../templates/sidebar.php';
 ?>
-<!-- Content Area -->
+
 <main class="col bg-white px-4 py-3 position-relative">
-<h3 class="fw-semibold mb-3">Manajemen Ruangan</h3>
+    <h3 class="fw-semibold mb-3">Manajemen Ruangan</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -54,9 +57,6 @@ include '../../templates/sidebar.php';
             </ol>
         </nav>
     </div>
-
-
-    <!-- Tambah Ruangan -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -73,39 +73,48 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <div class="mb-2">
-                                <label for="idRuangan" class="form-label d-flex align-items-center fw-semibold ">ID Ruangan</label>
-                                <input type="text" class="form-control protect-input " id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>" readonly tabindex="-1" onfocus="this.blur()">
-                            </div>
-                            <div class="mb-2">
-                                <label for="namaRuangan" class="form-label d-flex align-items-center fw-semibold">Nama Ruangan
-                                    <span id="namaError" class="text-danger ms-2" style="font-size:0.95em;display:none;">*Harus Diisi</span>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="idRuangan" class="form-label fw-semibold d-flex align-items-center">ID Ruangan</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
+                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                         <?php if (!empty($namaError)): ?>
-                                            <span class="text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
                                         <?php endif; ?>
-                                </label>
-                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
+                                    </label>
+                                    <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>" placeholder="Masukkan nama ruangan..">
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="kondisiRuangan" class="form-label d-flex align-items-center fw-semibold">Kondisi Ruangan
-                                    <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                </label>
-                                <select class="form-select" id="kondisiRuangan" name="kondisiRuangan" value="<?= isset($kondisiRuangan) ? htmlspecialchars($kondisiRuangan) : '' ?>">
-                                    <option disabled selected>Pilih Kondisi</option>
-                                    <option value="Baik" <?= (isset($kondisiRuangan) && $kondisiRuangan === 'Baik') ? 'selected' : '' ?>>Baik</option>
-                                    <option value="Rusak" <?= (isset($kondisiRuangan) && $kondisiRuangan === 'Rusak') ? 'selected' : '' ?>>Rusak</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label for="ketersediaan" class="form-label d-flex align-items-center fw-semibold" value="<?= isset($ketersediaan) ? htmlspecialchars($ketersediaan) : '' ?>">Ketersediaan Ruangan
-                                    <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
-                                </label>
-                                <select class="form-select" id="ketersediaan" name="ketersediaan">
-                                    <option disabled selected>Pilih Ketersediaan</option>
-                                    <option value="Tersedia" <?= (isset($ketersediaan) && $ketersediaan === 'Tersedia') ? 'selected' : '' ?>>Tersedia</option>
-                                    <option value="Tidak Tersedia" <?= (isset($ketersediaan) && $ketersediaan === 'Tidak Tersedia') ? 'selected' : '' ?>>Tidak Tersedia</option>
-                                </select>
-                                <input type="hidden" id="ketersediaanHidden" name="ketersediaan" value="Tidak Tersedia">
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan
+                                        <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                        <option value="" disabled <?= !isset($kondisiRuangan) || $kondisiRuangan == '' ? 'selected' : '' ?>>Pilih Kondisi</option>
+                                        <?php foreach ($kondisiRuanganList as $kondisi): ?>
+                                            <option value="<?= htmlspecialchars($kondisi) ?>" <?= (isset($kondisiRuangan) && $kondisiRuangan == $kondisi) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($kondisi) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ketersediaan" class="form-label fw-semibold d-flex align-items-center">Ketersediaan Ruangan
+                                        <span id="ketersediaanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <select class="form-select" id="ketersediaan" name="ketersediaan">
+                                        <option value="" disabled <?= !isset($ketersediaan) || $ketersediaan == '' ? 'selected' : '' ?>>Pilih Ketersediaan</option>
+                                        <?php foreach ($ketersediaanList as $tersedia): ?>
+                                            <option value="<?= htmlspecialchars($tersedia) ?>" <?= (isset($ketersediaan) && $ketersediaan == $tersedia) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($tersedia) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
@@ -116,79 +125,68 @@ include '../../templates/sidebar.php';
                 </div>
             </div>
         </div>
+    </div>
 </main>
-</div>
 
 <script>
-    let kondisiSelect = document.getElementById('kondisiRuangan');
-    let ketersediaanSelect = document.getElementById('ketersediaan');
-    let ketersediaanHidden = document.getElementById('ketersediaanHidden');
-
-    kondisiSelect.addEventListener('change', function () {
-        if (this.value === 'Rusak') {
-            ketersediaanSelect.value = 'Tidak Tersedia';
-            ketersediaanSelect.disabled = true;
-            ketersediaanHidden.value = 'Tidak Tersedia';
+    // Otomatis set ketersediaan jika kondisi "Rusak"
+    document.getElementById('kondisiRuangan').addEventListener('change', function () {
+        let kondisi = this.value;
+        let ketersediaan = document.getElementById('ketersediaan');
+        if (kondisi === 'Rusak') {
+            ketersediaan.value = 'Tidak Tersedia';
+            ketersediaan.disabled = true;
         } else {
-            ketersediaanSelect.disabled = false;
-            ketersediaanSelect.value = '';
-            ketersediaanHidden.value = '';
+            ketersediaan.disabled = false;
         }
     });
 
-    // Saat ketersediaan dipilih manual
-    ketersediaanSelect.addEventListener('change', function () {
-        ketersediaanHidden.value = this.value;
-    });
-
-    // Pastikan hidden tetap update saat halaman dimuat
+    // Set initial state on load
     window.addEventListener('DOMContentLoaded', function () {
-        if (kondisiSelect.value === 'Rusak') {
-            ketersediaanSelect.value = 'Tidak Tersedia';
-            ketersediaanSelect.disabled = true;
-            ketersediaanHidden.value = 'Tidak Tersedia';
-        } else {
-            ketersediaanHidden.value = ketersediaanSelect.value;
+        let kondisi = document.getElementById('kondisiRuangan').value;
+        let ketersediaan = document.getElementById('ketersediaan');
+        if (kondisi === 'Rusak') {
+            ketersediaan.value = 'Tidak Tersedia';
+            ketersediaan.disabled = true;
         }
     });
 
-    // Validasi
     document.querySelector('form').addEventListener('submit', function(e) {
+        let nama = document.getElementById('namaRuangan').value.trim();
+        let kondisi = document.getElementById('kondisiRuangan').value;
+        let ketersediaan = document.getElementById('ketersediaan').value;
+
+        let namaError = document.getElementById('namaError');
+        let kondisiError = document.getElementById('kondisiError');
+        let ketersediaanError = document.getElementById('ketersediaanError');
+
         let valid = true;
 
-        // Nama
-        let nama = document.getElementById('namaRuangan');
-        let namaError = document.getElementById('namaError');
-        if (nama.value.trim() === '') {
+        // Reset error messages
+        namaError.style.display = 'none';
+        kondisiError.style.display = 'none';
+        ketersediaanError.style.display = 'none';
+
+        if (nama === "") {
+            namaError.textContent = '*Harus diisi';
             namaError.style.display = 'inline';
             valid = false;
-        } else {
-            namaError.style.display = 'none';
         }
 
-        // Kondisi
-        let kondisiError = document.getElementById('kondisiError');
-        if (!kondisiSelect.value || kondisiSelect.value === 'Pilih Kondisi') {
+        if (kondisi === "" || kondisi === "Pilih Kondisi") {
+            kondisiError.textContent = '*Harus diisi';
             kondisiError.style.display = 'inline';
             valid = false;
-        } else {
-            kondisiError.style.display = 'none';
         }
 
-        // Ketersediaan (cek hidden)
-        let ketersediaanError = document.getElementById('ketersediaanError');
-        if (!ketersediaanHidden.value || ketersediaanHidden.value === 'Pilih Ketersediaan') {
+        if (ketersediaan === "" || ketersediaan === "Pilih Ketersediaan") {
+            ketersediaanError.textContent = '*Harus diisi';
             ketersediaanError.style.display = 'inline';
             valid = false;
-        } else {
-            ketersediaanError.style.display = 'none';
         }
 
         if (!valid) e.preventDefault();
     });
 </script>
 
-
-<?php
-include '../../templates/footer.php';
-?>
+<?php include '../../templates/footer.php'; ?>

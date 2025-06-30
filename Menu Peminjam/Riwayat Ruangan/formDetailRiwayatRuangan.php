@@ -1,18 +1,21 @@
 <?php
-
-$showSuccessModal = false;
-if (isset($_GET['upload']) && $_GET['upload'] == 'sukses') {
-    $showSuccessModal = true;
-}
+$showModal = false;
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 
 $data = null;
 $error_message = null;
 
-if (isset($_GET['idPeminjamanRuangan'])) {
+// Cek baik POST maupun GET untuk idPeminjamanRuangan
+if (isset($_POST['idPeminjamanRuangan'])) {
+    $idPeminjamanRuangan = $_POST['idPeminjamanRuangan'];
+} else if (isset($_GET['idPeminjamanRuangan'])) {
     $idPeminjamanRuangan = $_GET['idPeminjamanRuangan'];
+} else {
+    $idPeminjamanRuangan = null;
+}
 
+if ($idPeminjamanRuangan !== null) {
     $sql = "SELECT 
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
@@ -80,7 +83,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">ID Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
+                                            <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">NIM / NPK</label>
@@ -96,18 +99,8 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                            <div class="form-control-plaintext">
-                                                <?= htmlspecialchars(
-                                                    ($data['tglPeminjamanRuangan'] instanceof DateTime)
-                                                        ? $data['tglPeminjamanRuangan']->format('d-m-Y')
-                                                        : $data['tglPeminjamanRuangan']
-                                                ) ?>
-                                            </div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars(
-                                                                                                    ($data['tglPeminjamanRuangan'] instanceof DateTime)
-                                                                                                        ? $data['tglPeminjamanRuangan']->format('d-m-Y')
-                                                                                                        : $data['tglPeminjamanRuangan']
-                                                                                                ) ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?></div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
                                         </div>
                                         <div class="mb-3">
                                             <div class="row">
@@ -122,16 +115,15 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Status Peminjaman</label>
                                             <?php
-                                            // Status color mapping
                                             $statusClass = 'text-secondary';
                                             switch ($data['statusPeminjaman']) {
-                                                case 'Diajukan':
-                                                    $statusClass = 'text-primary';
-                                                    break;
                                                 case 'Menunggu Persetujuan':
                                                     $statusClass = 'text-warning';
                                                     break;
                                                 case 'Sedang Dipinjam':
+                                                    $statusClass = 'text-info';
+                                                    break;
+                                                case 'Menunggu Pengecekan':
                                                     $statusClass = 'text-info';
                                                     break;
                                                 case 'Telah Dikembalikan':
@@ -155,28 +147,28 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                     </div>
                                 </div>
 
-                                <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang Dipinjam', 'Sedang dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan'])) : ?>
+                                <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan'])) : ?>
                                     <hr>
                                     <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
-                                        <h6 class="mb-3">DETAIL PENOLAKAN</h6>
+                                        <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
                                         <div class="mt-3">
-                                            <label class="form-label fw-semibold text-danger">Alasan Penolakan dari PIC</label>
-                                            <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.')) ?></div>
+                                            <label class="form-label fw-semibold">Alasan Penolakan dari PIC</label>
+                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
                                         </div>
                                     <?php else: ?>
-                                        <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
+                                        <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label fw-semibold">
                                                     Dokumentasi Sebelum
                                                     <span id="dokSebelumError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
-                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam' || $data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank" class="text-primary">Lihat Dokumentasi</a>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
@@ -189,12 +181,12 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                                                     Dokumentasi Selesai
                                                     <span id="dokSesudahError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
-                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam' || $data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank" class="text-primary">Lihat Dokumentasi</a>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
@@ -207,7 +199,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
-                                    <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                    <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
                                         <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
                                     <?php endif; ?>
                                 </div>
@@ -217,6 +209,7 @@ if (isset($_GET['idPeminjamanRuangan'])) {
                 </div>
             </div>
         </div>
+    </div>
 </main>
 
 
