@@ -210,6 +210,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (next < 0) next = 0;
         stokInput.value = next;
     }
+
+    document.querySelectorAll('.protect-input').forEach(input => {
+        input.addEventListener('paste', e => e.preventDefault());
+        input.addEventListener('input', e => input.value = input.defaultValue);
+        input.addEventListener('mousedown', e => e.preventDefault());
+    });
 </script>
 <script>
     // Fungsi validasi form sebelum submit
@@ -230,6 +236,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             jumlahError.textContent = '*Jumlah melebihi stok tersedia.';
             jumlahError.style.display = 'inline';
             valid = false;
+        } else {
+            jumlahError.style.display = 'none';
         }
 
         // Validate Alasan Peminjaman
