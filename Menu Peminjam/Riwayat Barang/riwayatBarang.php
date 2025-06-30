@@ -112,12 +112,21 @@ include '../../templates/sidebar.php';
                             $altText = 'Ditolak';
                         }
                 ?>
+<<<<<<< HEAD
+                        <tr class="text-center">
+                            <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                            <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                            <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+=======
                         <tr>
                             <td class="text-center"><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
                             <td class="text-center"><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                             <td class="text-center"><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                             <td class="text-center"><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+>>>>>>> f620eeb4d07ac05ab437ed9e747b7d464c2b2f96
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
