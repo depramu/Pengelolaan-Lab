@@ -25,7 +25,7 @@ if ($stmtLokasi) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $namaBarang = $_POST['namaBarang'];
     $stokBarang = $_POST['stokBarang'];
-    $lokasiBarang = $_POST['lokasiBarang'];
+    $lokasiBarang = $_POST['lokasiBarang'] ?? '';
 
     // Cek apakah nama barang sudah ada
     $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Barang WHERE namaBarang = ?";
@@ -98,7 +98,7 @@ include '../../templates/sidebar.php';
                                 </label>
                                 <div class="input-group" style="max-width: 180px;">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                    <input type="number" class="form-control text-center" id="stokBarang" name="stokBarang"
+                                    <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
                                         min="0" style="max-width: 70px;"
                                         value="<?= isset($stokBarang) ? htmlspecialchars($stokBarang) : '0' ?>">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
@@ -158,7 +158,7 @@ include '../../templates/sidebar.php';
         // Stok Barang
         let stok = document.getElementById('stokBarang');
         let stokError = document.getElementById('errorStokBarang');
-        if (stok.value.trim() === '' || parseInt(stok.value) < 0) {
+        if (stok.value.trim() === '' || parseInt(stok.value) <= 0) {
             stokError.style.display = 'inline';
             valid = false;
         } else {
@@ -181,5 +181,4 @@ include '../../templates/sidebar.php';
     
 </script>
 
-x`
 <?php include '../../templates/footer.php'; ?>
