@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
-                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1" placeholder="Masukkan alasan peminjaman"></textarea>
+                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1" placeholder="Masukkan alasan peminjaman..."></textarea>
                                     </div>
                                 </div>
                             </div>
