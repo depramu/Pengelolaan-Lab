@@ -55,13 +55,13 @@ include '../../templates/sidebar.php';
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Ubah Barang</h3>
+    <h3 class="fw-semibold mb-3">Edit Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Ubah Barang</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
             </ol>
         </nav>
     </div>
@@ -86,15 +86,15 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2">
                                 <label for="idBarang" class="form-label">ID Barang</label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
-                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($data['idBarang']) ?></div>
+                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="namaBarang" class="form-label">
                                     Nama Barang
                                     <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang']) ?></div>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($data['namaBarang']) ?></div>
                                 <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($data['namaBarang']) ?>">
                             </div>
                             <div class="mb-2">

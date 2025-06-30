@@ -178,11 +178,11 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">Alasan Peminjaman</label>
                                     <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
-                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1"></textarea>
+                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" placeholder="Masukkan alasan peminjaman.."></textarea>
 
                                     <script>
 
-                                        // Mencegah inputan pada field tertentu
+                                        // Mencegah inputan pada field tertentu 
                                         document.querySelectorAll('.protect-input').forEach(input => {
                                             input.addEventListener('paste', e => e.preventDefault());
                                             input.addEventListener('input', e => input.value = input.defaultValue);

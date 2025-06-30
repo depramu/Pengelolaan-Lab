@@ -73,13 +73,13 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Peminjaman</th>
                     <th>ID Barang</th>
                     <th>Nama Barang</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah</th>
-                    <th class="text-center">Aksi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,11 +113,11 @@ include '../../templates/sidebar.php';
                         }
                 ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
-                            <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                            <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
-                            <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                            <td class="text-center"><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">

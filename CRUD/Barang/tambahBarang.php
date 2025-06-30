@@ -82,14 +82,15 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2">
                                 <label for="idBarang" class="form-label">ID Barang</label>
-                                <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($idBarang) ?></div>
+                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" >
                             </div>
                             <div class="mb-2">
                                 <label for="namaBarang" class="form-label">
                                     Nama Barang
                                     <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
+                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" placeholder="Masukkan nama barang.." value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="stokBarang" class="form-label">

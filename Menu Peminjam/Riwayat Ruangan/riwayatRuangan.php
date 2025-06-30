@@ -10,7 +10,11 @@
         // Jika role adalah Mahasiswa dan session 'nim' ada
         if ($_SESSION['user_role'] == 'Mahasiswa' && isset($_SESSION['nim'])) {
             $nim_value = $_SESSION['nim'];
-            $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE nim = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
+            $query = "SELECT pr.*, r.namaRuangan
+                      FROM Peminjaman_Ruangan pr
+                      JOIN Ruangan r ON pr.idRuangan = r.idRuangan
+                      WHERE pr.nim = ? 
+                      ORDER BY pr.tglPeminjamanRuangan DESC, pr.waktuMulai DESC";
             $params = [$nim_value];
 
             $result = sqlsrv_query($conn, $query, $params);
@@ -18,7 +22,11 @@
             // Jika role adalah Karyawan dan session 'npk' ada
         } elseif ($_SESSION['user_role'] == 'Karyawan' && isset($_SESSION['npk'])) {
             $npk_value = $_SESSION['npk'];
-            $query = "SELECT idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, waktuMulai, waktuSelesai, statusPeminjaman FROM Peminjaman_Ruangan WHERE npk = ? ORDER BY tglPeminjamanRuangan DESC, waktuMulai DESC";
+            $query = "SELECT pr.*, r.namaRuangan
+                      FROM Peminjaman_Ruangan pr
+                      JOIN Ruangan r ON pr.idRuangan = r.idRuangan
+                      WHERE pr.npk = ? 
+                      ORDER BY pr.tglPeminjamanRuangan DESC, pr.waktuMulai DESC";
             $params = [$npk_value];
 
             $result = sqlsrv_query($conn, $query, $params);
@@ -41,9 +49,10 @@
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
-                    <tr>
+                    <tr class="text-center">
                         <th>ID Peminjaman</th>
                         <th>ID Ruangan</th>
+                        <th>Nama Ruangan</th>
                         <th>Tanggal Peminjaman</th>
                         <th>Waktu Mulai </th>
                         <th>Waktu Selesai </th>
@@ -81,11 +90,12 @@
                             }
                     ?>
                             <tr>
-                                <td><?= htmlspecialchars($row['idPeminjamanRuangan'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
-                                <td><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
-                                <td><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?></td>
-                                <td><?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
+                                <td class="text-center"><?= htmlspecialchars($row['idPeminjamanRuangan'] ?? '') ?></td>
+                                <td class="text-center"><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
+                                <td class="text-center"><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
+                                <td class="text-center"><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?></td>
+                                <td class="text-center"><?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
                                 <td class="td-aksi">
                                     <a href="<?= $linkDetail ?>">
                                         <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
