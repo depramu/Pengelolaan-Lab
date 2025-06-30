@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // 1. Insert data peminjaman    
-        $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
+        $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, sisaPinjaman, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
         $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
         if ($stmtInsert) {
@@ -125,25 +125,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
+                                        <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg_display" value="<?= $idPeminjamanBrg ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
+                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
-                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
-                                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
-                                                                                                                                        } ?>">
+                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -157,10 +154,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
-                                            Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
-                                        </label>
-                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1"></textarea>
+                                        <label class="form-label fw-semibold">Tanggal Peminjaman</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
+                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
+                                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
+                                                                                                                                        } ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -184,6 +182,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                     <small class="text-muted">Stok tersedia: <?= $stokTersedia ?></small>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
+                                            Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
+                                        </label>
+                                        <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1" placeholder="Masukkan alasan peminjaman..."></textarea>
+                                    </div>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-secondary">Kembali</a>
@@ -204,12 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (next < 0) next = 0;
         stokInput.value = next;
     }
-
-    document.querySelectorAll('.protect-input').forEach(input => {
-        input.addEventListener('paste', e => e.preventDefault());
-        input.addEventListener('input', e => input.value = input.defaultValue);
-        input.addEventListener('mousedown', e => e.preventDefault());
-    });
 </script>
 <script>
     // Fungsi validasi form sebelum submit

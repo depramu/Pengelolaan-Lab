@@ -6,6 +6,22 @@ if (empty($idRuangan)) {
     die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
 }
 
+$namaRuangan = '';
+$sqlNama = "SELECT namaRuangan FROM Ruangan WHERE idRuangan = ?";
+$params = [$idRuangan];
+$stmtNama = sqlsrv_query($conn, $sqlNama, $params);
+
+if ($stmtNama === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+
+if ($rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
+    $namaRuangan = $rowNama['namaRuangan'];
+} else {
+    echo "<div style='color:orange;'>Tidak ada ruangan dengan ID: $idRuangan</div>";
+}
+
+
 // Auto-generate id Peminjaman Ruangan
 $idPeminjamanRuangan = 'PJR001';
 $sqlId = "SELECT TOP 1 idPeminjamanRuangan FROM Peminjaman_Ruangan ORDER BY idPeminjamanRuangan DESC";
@@ -55,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Jika INSERT peminjaman berhasil, baru UPDATE status ruangan
             $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
             $paramsKetersediaan = [$idRuangan];
+
             $stmtKetersediaan = sqlsrv_query($conn, $ketersediaanQuery, $paramsKetersediaan);
 
             if ($stmtKetersediaan) {
@@ -95,67 +112,84 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
+                        <span class="fw-bold">Pengajuan Peminjaman Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman</label>
-                                        <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>" disabled>
+                                    <div class="mb-2">
+                                        <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman Ruangan</label>
+                                        <input type="text" class="form-control protect-input" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="idRuangan" class="form-label fw-bold">ID Ruangan</label>
+                                    <div class="mb-2">
+                                        <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                         <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
-                                        <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>" disabled>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="tglPeminjamanRuangan" class="form-label fw-bold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= $tglPeminjamanRuangan ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="nim" class="form-label fw-bold">NIM</label>
-                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= $nim ?>" disabled>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="waktuMulai" class="form-label fw-bold">Waktu Mulai</label>
-                                        <input type="text" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="npk" class="form-label fw-bold">NPK</label>
-                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= $npk ?>" disabled>
+                                        <input type="text" class="form-control protect-input" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-2" style="max-width: 400px;">
-                                        <label for="waktuSelesai" class="form-label fw-bold">Waktu Selesai</label>
-                                        <input type="text" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>" disabled>
+                                    <div class="mb-2">
+                                        <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
+                                        <input type="text" class="form-control protect-input" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="alasanPeminjamanRuangan" class="form-label fw-bold">Alasan Peminjaman</label>
+                                    <div class="mb-2">
+                                        <label for="nim" class="form-label fw-semibold">NIM</label>
+                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="tglPeminjamanRuangan" class="form-label fw-semibold">Tanggal Peminjaman</label>
+                                        <input type="text" class="form-control protect-input" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= $tglPeminjamanRuangan ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="npk" class="form-label fw-semibold">NPK</label>
+                                        <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-2">
+                                        <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
+                                        <input type="text" class="form-control protect-input" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-2">
+                                        <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
+                                        <input type="text" class="form-control protect-input" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">Alasan Peminjaman</label>
                                     <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
-                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" style="max-width: 400px;"></textarea>
+                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" placeholder="Masukkan alasan peminjaman.."></textarea>
 
                                     <script>
+
+                                        // Mencegah inputan pada field tertentu 
+                                        document.querySelectorAll('.protect-input').forEach(input => {
+                                            input.addEventListener('paste', e => e.preventDefault());
+                                            input.addEventListener('input', e => input.value = input.defaultValue);
+                                            input.addEventListener('mousedown', e => e.preventDefault());
+                                        });
+
+                                        //validasi harus diisi
                                         document.getElementById('alasanPeminjamanRuangan').addEventListener('input', function() {
                                             let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
                                             let errorMessage = document.getElementById('error-message');
@@ -185,14 +219,16 @@ include '../../templates/sidebar.php';
                                 <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                             </div>
-                        </fobuat>
+                            </fobuat>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </main>
 
 <?php
 include '../../templates/footer.php';
 ?>
+

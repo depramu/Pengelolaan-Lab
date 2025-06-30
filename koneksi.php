@@ -1,10 +1,8 @@
 <?php
 // ganti serverName sesuai dengan nama sqlserver yang ada di komputer kalian untuk testing
-$serverName = "DESKTOP-3QFLTFG\SQLEXPRESS01";
+$serverName = "DEPENIGER\\SQLEXPRESS01";
 $connectionOptions = [
     "Database" => "PENGELOLAAN_LAB",
-    // "Uid" => "pengabdiLab",
-    // "PWD" => "abdilab123*",
     "TrustServerCertificate" => true,
 ];
 

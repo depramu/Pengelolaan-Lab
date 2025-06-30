@@ -71,22 +71,22 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Ubah Ruangan</span>
+                        <span class="fw-bold">Edit Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-2">
-                                <label for="idRuangan" class="form-label">ID Ruangan</label>
+                                <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                 <div type="text" class="form-control protect-input"><?= htmlspecialchars($idRuangan) ?></div>
                                 <input type="hidden" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
                             </div>
                             <div class="mb-2">
-                                <label for="namaRuangan" class="form-label">Nama Ruangan</label>
+                                <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
                                 <div type="text" class="form-control protect-input"><?= htmlspecialchars($data['namaRuangan']) ?></div>
                                 <input type="hidden" id="namaRuangan" name="namaRuangan" value="<?= htmlspecialchars($data['namaRuangan']) ?>">
                             </div>
                             <div class="mb-2">
-                                <label for="kondisiRuangan" class="form-label">Kondisi Ruangan
+                                <label for="kondisiRuangan" class="form-label fw-semibold">Kondisi Ruangan
                                     <span id="kondisiError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
                                 <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
@@ -96,7 +96,7 @@ include '../../templates/sidebar.php';
                                 </select>
                             </div>
                             <div class="mb-2">
-                                <label for="ketersediaan" class="form-label">Ketersediaan Ruangan
+                                <label for="ketersediaan" class="form-label fw-semibold">Ketersediaan Ruangan
                                     <span id="ketersediaanError" class="text-danger ms-2" style="display:none;font-size:0.95em;">*Harus diisi</span>
                                 </label>
                                 <select class="form-select" id="ketersediaan" name="ketersediaan">
@@ -104,6 +104,8 @@ include '../../templates/sidebar.php';
                                     <option value="Tersedia" <?php if (isset($data['ketersediaan']) && $data['ketersediaan'] == 'Tersedia') echo 'selected'; ?>>Tersedia</option>
                                     <option value="Tidak Tersedia" <?php if (isset($data['ketersediaan']) && $data['ketersediaan'] == 'Tidak Tersedia') echo 'selected'; ?>>Tidak Tersedia</option>
                                 </select>
+                                <input type="hidden" id="ketersediaanHidden" name="ketersediaan" value="Tidak Tersedia">
+
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="../../Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
@@ -115,37 +117,61 @@ include '../../templates/sidebar.php';
             </div>
         </div>
 </main>
+</div>
+
 <script>
+    let kondisiSelect = document.getElementById('kondisiRuangan');
+    let ketersediaanSelect = document.getElementById('ketersediaan');
+    let ketersediaanHidden = document.getElementById('ketersediaanHidden');
+
+    // Saat kondisi berubah
+    kondisiSelect.addEventListener('change', function () {
+        if (this.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanSelect.disabled = false;
+            ketersediaanSelect.value = '';
+            ketersediaanHidden.value = '';
+        }
+    });
+
+    // Saat ketersediaan dipilih manual
+    ketersediaanSelect.addEventListener('change', function () {
+        ketersediaanHidden.value = this.value;
+    });
+
+    // Pastikan hidden tetap update saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', function () {
+        if (kondisiSelect.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanHidden.value = ketersediaanSelect.value;
+        }
+    });
+
+    // Validasi
     document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
 
-        // Nama Ruangan
-        const nama = document.getElementById('namaRuangan');
-        const namaError = document.getElementById('namaError');
-        if (nama && nama.value.trim() === '') {
-            namaError.style.display = 'inline';
-            valid = false;
-        } else if (namaError) {
-            namaError.style.display = 'none';
-        }
-
-        // Kondisi Ruangan
-        const kondisi = document.getElementById('kondisiRuangan');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
+        // Kondisi
+        let kondisiError = document.getElementById('kondisiError');
+        if (!kondisiSelect.value || kondisiSelect.value === 'Pilih Kondisi') {
             kondisiError.style.display = 'inline';
             valid = false;
-        } else if (kondisiError) {
+        } else {
             kondisiError.style.display = 'none';
         }
 
-        // Ketersediaan Ruangan
-        const ketersediaan = document.getElementById('ketersediaan');
-        const ketersediaanError = document.getElementById('ketersediaanError');
-        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
+        // Ketersediaan (cek hidden)
+        let ketersediaanError = document.getElementById('ketersediaanError');
+        if (!ketersediaanHidden.value || ketersediaanHidden.value === 'Pilih Ketersediaan') {
             ketersediaanError.style.display = 'inline';
             valid = false;
-        } else if (ketersediaanError) {
+        } else {
             ketersediaanError.style.display = 'none';
         }
 
