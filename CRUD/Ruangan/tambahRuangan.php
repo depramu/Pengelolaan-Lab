@@ -84,7 +84,7 @@ include '../../templates/sidebar.php';
                                             <span class="text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
                                         <?php endif; ?>
                                 </label>
-                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
+                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" placeholder="Masukkan Nama Ruangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="kondisiRuangan" class="form-label d-flex align-items-center fw-semibold">Kondisi Ruangan
@@ -132,7 +132,7 @@ include '../../templates/sidebar.php';
             ketersediaanHidden.value = 'Tidak Tersedia';
         } else {
             ketersediaanSelect.disabled = false;
-            ketersediaanSelect.value = '';
+            ketersediaanSelect.value = 'Pilih Ketersediaan';
             ketersediaanHidden.value = '';
         }
     });

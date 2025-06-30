@@ -132,7 +132,7 @@ include '../../templates/sidebar.php';
             ketersediaanHidden.value = 'Tidak Tersedia';
         } else {
             ketersediaanSelect.disabled = false;
-            ketersediaanSelect.value = '';
+            ketersediaanSelect.value = 'Pilih Ketersediaan';
             ketersediaanHidden.value = '';
         }
     });
