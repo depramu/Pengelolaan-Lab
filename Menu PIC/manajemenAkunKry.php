@@ -56,11 +56,11 @@ include '../templates/sidebar.php';
             while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                 $hasData = true;
             ?>
-                <tr class="text-center">
-                    <td><?= htmlspecialchars($row['npk']) ?></td>
+                <tr>
+                    <td class="text-center"><?= htmlspecialchars($row['npk']) ?></td>
                     <td><?= htmlspecialchars($row['nama']) ?></td>
                     <td><?= htmlspecialchars($row['email']) ?></td>
-                    <td><?= htmlspecialchars($row['jenisRole']) ?></td>
+                    <td class="text-center"><?= htmlspecialchars($row['jenisRole']) ?></td>
                     <td class="text-center">
                         <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunKry.php?id=<?= urlencode($row['npk']) ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['npk'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>

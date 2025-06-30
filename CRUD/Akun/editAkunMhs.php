@@ -73,32 +73,32 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-semibold">Ubah Akun Mahasiswa</span>
+                        <span class="fw-bold">Ubah Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="nim" class="form-label">NIM</label>
-                                    <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                    <label for="nim" class="form-label fw-semibold">NIM</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                     <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="nama" class="form-label">Nama Lengkap</label>
-                                    <input type="text" class="form-control protect-input" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                     <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label">Email
+                                    <label for="email" class="form-label fw-semibold">Email
                                         <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label">Jenis Role</label>
-                                    <select class="form-select protect-input" id="jenisRole" name="jenisRole">
+                                    <label for="jenisRole" class="form-label fw-semibold">Jenis Role</label>
+                                    <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
                                         <!-- <option value="" disabled selected>Pilih Role</option> -->
                                         <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
                                         <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
@@ -107,9 +107,9 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                 </div>
                                 <div class="mb-2">
-                                    <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                    <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi
                                     </label>
-                                    <input type="password" class="form-control protect-input" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
+                                    <input type="password" class="form-control protect-input d-block bg-light" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="../../Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
