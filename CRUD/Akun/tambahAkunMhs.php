@@ -1,9 +1,12 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'PIC Aset'
+
 include '../../templates/header.php';
 
 $showModal = false;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') { //POST: ambil semuda data dari input form
     $nim = $_POST['nim'];
     $nama = $_POST['nama'];
     $email = $_POST['email'];
@@ -11,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
+    // Cek apakah nim sudah ada di database?
     $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
         $nimError = "*NIM sudah terdaftar";
@@ -26,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
 include '../../templates/sidebar.php';
 ?>
 
@@ -64,13 +69,13 @@ include '../../templates/sidebar.php';
                                             <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $nimError ?></span>
                                         <?php endif; ?>
                                     </label>
-                                    <input type="text" class="form-control" id="nim" name="nim" value="<?= isset($nim) ? htmlspecialchars($nim) : '' ?>">
+                                    <input type="text" class="form-control" id="nim" name="nim" placeholder="Masukkan NIM" value="<?= isset($nim) ? htmlspecialchars($nim) : '' ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label fw-semibold d-flex align-items-center">Nama Lengkap
                                         <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="nama" name="nama" value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
+                                    <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan Nama Lengkap" value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
                                 </div>
                             </div>
                             <div class="mb-2 row">
@@ -78,7 +83,7 @@ include '../../templates/sidebar.php';
                                     <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
                                         <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="email" name="email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+                                    <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan Email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">Role
@@ -94,13 +99,13 @@ include '../../templates/sidebar.php';
                                 <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi
                                     <span id="passError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>">
+                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi" value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="konfirmasiSandi" class="form-label fw-semibold d-flex align-items-center">Konfirmasi Kata Sandi
                                     <span id="confPassError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>">
+                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" placeholder="Masukkan Konfirmasi Kata Sandi" value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>">
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
@@ -118,7 +123,9 @@ include '../../templates/sidebar.php';
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        let nim = document.getElementById('nim').value.trim();
+        e.preventDefault(); // Mencegah form submit 
+        // Ambil nilai dari input
+        let nim = document.getElementById('nim').value.trim(); // trim() untuk hapus spasi di awal & akhir
         let nama = document.getElementById('nama').value.trim();
         let email = document.getElementById('email').value.trim();
         let jenisRole = document.getElementById('jenisRole').value;
@@ -131,7 +138,7 @@ include '../../templates/sidebar.php';
         let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
         let confPassError = document.getElementById('confPassError');
-        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/; // Minimal 8 karakter, harus ada huruf dan angka
 
         let valid = true;
 

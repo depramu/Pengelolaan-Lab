@@ -1,5 +1,8 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'PIC Aset'
 include '../../templates/header.php';
+
 
 $npk = $_GET['id'] ?? null;
 $showModal = false;

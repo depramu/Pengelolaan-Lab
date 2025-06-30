@@ -57,8 +57,8 @@ include '../../templates/sidebar.php';
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $hasData = true;
                 ?>
-                        <tr>
-                            <td class="text-center"><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                        <tr class="text-center">
+                            <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
                             <td class="text-center"><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
                             <td class="text-center"><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>

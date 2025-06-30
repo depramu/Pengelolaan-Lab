@@ -1,5 +1,9 @@
 <?php
+require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'PIC Aset'
+
 include '../../templates/header.php';
+
 
 $nim = $_GET['id'] ?? null;
 
@@ -21,12 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $jenisRole = $_POST['jenisRole'];
     $kataSandi = $_POST['kataSandi'];
 
-    if (!empty($kataSandi)) {
+    if (!empty($email)) {
         $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE nim = ?";
         $params_update = [$nama, $email, $jenisRole, $kataSandi, $nim];
     } else {
-        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ? WHERE nim = ?";
-        $params_update = [$nama, $email, $jenisRole, $nim];
+        $query_update = "UPDATE Mahasiswa SET nama = ?, jenisRole = ?, kataSandi = ? WHERE nim = ?";
+        $params_update = [$nama, $jenisRole, $kataSandi, $nim];
     }
 
     $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
@@ -143,6 +147,7 @@ include '../../templates/sidebar.php';
         if (!valid) e.preventDefault();
     });
 
+    // Tidak bisa paste, input, atau klik pada input yang dilindungi
     document.querySelectorAll('.protect-input').forEach(input => {
         input.addEventListener('paste', e => e.preventDefault());
         input.addEventListener('input', e => input.value = input.defaultValue);
