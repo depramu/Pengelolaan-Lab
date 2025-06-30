@@ -1,0 +1,56 @@
+# ======================
+# BASE URL CONFIGURATION
+# ======================
+# Note: Replace the base URL below with your project's folder name
+# Example: If your project is in http://localhost/team-project/, set BASE_URL = "/team-project"
+
+# BASE_URL = "http://localhost/PIC-peminjaman-approval"
+
+# ======================
+# 1. AUTHENTICATION
+# ======================
+Login Page:             /Login/login.php
+Forgot Password:        /Login/LupaSandi.php
+Logout:                 /Login/logout.php
+
+# ======================
+# 2. DASHBOARDS
+# ======================
+PIC Dashboard:          /Menu%20PIC/dashboardPIC.php
+Peminjam Dashboard:     /Menu%20Peminjam/dashboardPeminjam.php
+Ka UPT Dashboard:       /Menu%20Ka%20UPT/dashboardKAUPT.php
+
+# ======================
+# 3. ROOM MANAGEMENT (PIC)
+# ======================
+Room Booking:           /Menu%20PIC/Peminjaman%20Ruangan/peminjamanRuangan.php
+Room History:           /Menu%20PIC/Riwayat%20Ruangan/riwayatRuangan.php
+Room Detail (Admin):    /detailRiwayatRuanganAdmin.php?id=PR001  # Example ID
+Room Management:        /Menu%20PIC/manajemenRuangan.php
+
+# ======================
+# 4. ITEM MANAGEMENT (PIC)
+# ======================
+Item Booking:           /Menu%20PIC/Peminjaman%20Barang/peminjamanBarang.php
+Item History:           /Menu%20PIC/Riwayat%20Barang/riwayatBarang.php
+Item Management:        /Menu%20PIC/manajemenBarang.php
+
+# ======================
+# 5. ACCOUNT MANAGEMENT (PIC)
+# ======================
+Student Accounts:       /Menu%20PIC/manajemenAkunMhs.php
+Staff Accounts:         /Menu%20PIC/manajemenAkunKry.php
+
+# ======================
+# 6. USER PROFILE & SETTINGS
+# ======================
+Profile:                /profil.php
+Change Password:        /gantiPassword.php
+Notifications:          /notif.php
+
+# ======================
+# 7. EXAMPLE API ENDPOINTS
+# ======================
+# Get Room List:        /api/ruangan.php
+# Get Booking by ID:    /api/peminjaman.php?id=PR001
+# Get User Notifs:      /api/notifikasi.php?user=username
