@@ -273,15 +273,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // reset
         emailError.style.display = 'none';
 
-        if(nama === ''){
-            .textContent = '*Harus diisi';
-            .style.display = 'inline';
-            valid = false;
-        } else if(/\d/.test(nama)){
-            .textContent = '*Harus berupa huruf';
-            .style.display = 'inline';
-            valid = false;
-        }
 
         if(email === ''){
             emailError.textContent = '*Harus diisi';
