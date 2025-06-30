@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // CRUD AKUN (PUNYA NAD JANGAN DIUBAH!!!)
 // Validasi untuk tambah akun mahasiswa
 document.querySelector("form").addEventListener("submit", function (e) {
@@ -243,10 +244,7 @@ document.querySelector("form").addEventListener("submit", function (e) {
         passInput.type = 'password';
     });
 
-<<<<<<< HEAD
-=======
-// AYUUUUUUU
->>>>>>> 9a38592b5845a55dd9bb19476093941c2a703eaa
+// ini validasi untuk batas stok, alasan harus diisi
     function changeStok(val) {
         let stokInput = document.getElementById('jumlahBrg');
         let current = parseInt(stokInput.value) || 0;
@@ -297,76 +295,74 @@ document.querySelector("form").addEventListener("submit", function (e) {
         }
     });
 
-    // CRUD RUANGAN (KESYAAAAAAAAAA)
-    // Validasi untuk tambah ruangan
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let valid = true;
+// Validasi untuk tanggal peminjaman
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    }
 
-        // Nama Ruangan
-        const nama = document.getElementById('namaRuangan');
-        const namaError = document.getElementById('namaError');
-        if (nama && nama.value.trim() === '') {
-            namaError.style.display = 'inline';
-            valid = false;
-        } else if (namaError) {
-            namaError.style.display = 'none';
-        }
+    function updateDays() {
+        let bulan = parseInt(document.getElementById('tglBulan').value);
+        let tahun = parseInt(document.getElementById('tglTahun').value);
+        let days = 31;
+        if ([4, 6, 9, 11].includes(bulan)) days = 30;
+        else if (bulan === 2) days = isLeapYear(tahun) ? 29 : 28;
 
-        // Kondisi Ruangan
-        const kondisi = document.getElementById('kondisiRuangan');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
-            kondisiError.style.display = 'inline';
-            valid = false;
-        } else if (kondisiError) {
-            kondisiError.style.display = 'none';
+        let hariSelect = document.getElementById('tglHari');
+        hariSelect.innerHTML = '';
+        for (let i = 1; i <= days; i++) {
+            hariSelect.innerHTML += `<option value="${i.toString().padStart(2, '0')}">${i}</option>`;
         }
+    }
 
-        // Ketersediaan Ruangan
-        const ketersediaan = document.getElementById('ketersediaan');
-        const ketersediaanError = document.getElementById('ketersediaanError');
-        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
-            ketersediaanError.style.display = 'inline';
-            valid = false;
-        } else if (ketersediaanError) {
-            ketersediaanError.style.display = 'none';
+    function fillSelects() {
+        let tahunSelect = document.getElementById('tglTahun');
+        let bulanSelect = document.getElementById('tglBulan');
+        let hariSelect = document.getElementById('tglHari');
+        let now = new Date();
+        for (let y = now.getFullYear(); y <= now.getFullYear() + 5; y++) {
+            tahunSelect.innerHTML += `<option value="${y}">${y}</option>`;
         }
-        if (!valid) e.preventDefault();
+        for (let m = 1; m <= 12; m++) {
+            bulanSelect.innerHTML += `<option value="${m}">${m.toString().padStart(2, '0')}</option>`;
+        }
+        bulanSelect.value = now.getMonth() + 1;
+        tahunSelect.value = now.getFullYear();
+        updateDays();
+        // Set hari ke hari ini
+        hariSelect.value = now.getDate().toString().padStart(2, '0');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fillSelects();
+        document.getElementById('tglBulan').addEventListener('change', updateDays);
+        document.getElementById('tglTahun').addEventListener('change', updateDays);
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            // validasi tanggal
+            let hari = document.getElementById('tglHari').value;
+            let bulan = document.getElementById('tglBulan').value;
+            let tahun = document.getElementById('tglTahun').value;
+            let errorTanggal = document.getElementById('error-message');
+            let isValid = hari && bulan && tahun;
+            let pesan = '';
+            // Validasi tanggal tidak boleh di masa lalu
+            if (isValid) {
+                let inputDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (inputDate < today) {
+                    isValid = false;
+                    pesan = 'Input tanggal sudah lewat';
+                }
+            }
+            if (!isValid) {
+                errorTanggal.textContent = pesan ? `*${pesan}` : '*Harus Diisi';
+                errorTanggal.style.display = 'inline';
+                event.preventDefault();
+            } else {
+                errorTanggal.style.display = 'none';
+                document.getElementById('tglPeminjamanBrg').value = `${hari.padStart(2, '0')}-${bulan.padStart(2, '0')}-${tahun}`;
+            }
+        });
     });
-
-        // Validasi untuk edit ruangan
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let valid = true;
-
-        // Nama Ruangan
-        const nama = document.getElementById('namaRuangan');
-        const namaError = document.getElementById('namaError');
-        if (nama && nama.value.trim() === '') {
-            namaError.style.display = 'inline';
-            valid = false;
-        } else if (namaError) {
-            namaError.style.display = 'none';
-        }
-
-        // Kondisi Ruangan
-        const kondisi = document.getElementById('kondisiRuangan');
-        const kondisiError = document.getElementById('kondisiError');
-        if (kondisi && (!kondisi.value || kondisi.value === 'Pilih Kondisi')) {
-            kondisiError.style.display = 'inline';
-            valid = false;
-        } else if (kondisiError) {
-            kondisiError.style.display = 'none';
-        }
-
-        // Ketersediaan Ruangan
-        const ketersediaan = document.getElementById('ketersediaan');
-        const ketersediaanError = document.getElementById('ketersediaanError');
-        if (ketersediaan && (!ketersediaan.value || ketersediaan.value === 'Pilih Ketersediaan')) {
-            ketersediaanError.style.display = 'inline';
-            valid = false;
-        } else if (ketersediaanError) {
-            ketersediaanError.style.display = 'none';
-        }
-
-        if (!valid) e.preventDefault();
-    });
+>>>>>>> 0af498c1044f0a65f9b71b394b8a9d497ad90cf2

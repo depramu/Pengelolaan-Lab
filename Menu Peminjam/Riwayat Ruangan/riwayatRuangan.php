@@ -1,4 +1,12 @@
-<?php
+    <?php
+
+    // --- KODE DEBUGGING: Letakkan di baris paling atas ---
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    // --- Akhir dari kode debugging ---
+
+    // ... sisa kodemu dimulai dari sini (misalnya session_start(), include, dll.) ...
 include '../../templates/header.php';
 
 // Inisialisasi variabel result sebagai null

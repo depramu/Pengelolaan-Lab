@@ -32,7 +32,7 @@ if (isset($_SESSION['user_role'])) {
         $params = [$nim_value, $offset, $perPage];
         $result = sqlsrv_query($conn, $query, $params);
 
-        // Jika role adalah Karyawan dan session 'npk' ada
+    // Jika role adalah Karyawan dan session 'npk' ada
     } elseif ($_SESSION['user_role'] == 'Karyawan' && isset($_SESSION['npk'])) {
         $npk_value = $_SESSION['npk'];
 
@@ -101,9 +101,6 @@ include '../../templates/sidebar.php';
                         } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Sedang Dipinjam';
-                        } elseif ($statusPeminjaman == 'Sebagian Dikembalikan') {
-                            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
-                            $altText = 'Sebagian Dikembalikan';
                         } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Menunggu Pengecekan oleh PIC';
