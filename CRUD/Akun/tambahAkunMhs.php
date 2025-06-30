@@ -1,12 +1,12 @@
 <?php
 require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
-authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'PIC Aset'
 
 include '../../templates/header.php';
 
 $showModal = false;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') { //POST: ambil semuda data dari input form
     $nim = $_POST['nim'];
     $nama = $_POST['nama'];
     $email = $_POST['email'];
@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'];
     $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
+    // Cek apakah nim sudah ada di database?
     $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
         $nimError = "*NIM sudah terdaftar";
@@ -122,7 +123,9 @@ include '../../templates/sidebar.php';
 
 <script>
     document.querySelector('form').addEventListener('submit', function(e) {
-        let nim = document.getElementById('nim').value.trim();
+        e.preventDefault(); // Mencegah form submit 
+        // Ambil nilai dari input
+        let nim = document.getElementById('nim').value.trim(); // trim() untuk hapus spasi di awal & akhir
         let nama = document.getElementById('nama').value.trim();
         let email = document.getElementById('email').value.trim();
         let jenisRole = document.getElementById('jenisRole').value;
@@ -135,7 +138,7 @@ include '../../templates/sidebar.php';
         let roleError = document.getElementById('roleError');
         let passError = document.getElementById('passError');
         let confPassError = document.getElementById('confPassError');
-        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+        let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/; // Minimal 8 karakter, harus ada huruf dan angka
 
         let valid = true;
 
