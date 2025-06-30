@@ -124,7 +124,6 @@ include '../../templates/sidebar.php';
     let ketersediaanSelect = document.getElementById('ketersediaan');
     let ketersediaanHidden = document.getElementById('ketersediaanHidden');
 
-    // Saat kondisi berubah
     kondisiSelect.addEventListener('change', function () {
         if (this.value === 'Rusak') {
             ketersediaanSelect.value = 'Tidak Tersedia';
