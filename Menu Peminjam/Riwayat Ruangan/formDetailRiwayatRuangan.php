@@ -1,6 +1,13 @@
 <?php
+<<<<<<< HEAD
 $showModal = false;
 
+=======
+$showSuccessModal = false;
+if (isset($_GET['upload']) && $_GET['upload'] == 'sukses') {
+    $showSuccessModal = true;
+}
+>>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 

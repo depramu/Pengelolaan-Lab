@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 include '../../templates/sidebar.php';
 ?>
+
 <main class="col bg-white px-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
     <div class="mb-3">
@@ -63,8 +64,6 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-
-    <!-- Tambah Barang -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
@@ -80,7 +79,7 @@ include '../../templates/sidebar.php';
                         <span class="fw-bold">Tambah Barang</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form id="formTambahBarang" method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
                                     <label for="idBarang" class="form-label fw-semibold d-flex align-items-center">ID Barang</label>
@@ -127,7 +126,7 @@ include '../../templates/sidebar.php';
                                     </select>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-between mt-4">
+                            <div class="d-flex ju   stify-content-between mt-4">
                                 <a href="../../Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
@@ -142,55 +141,5 @@ include '../../templates/sidebar.php';
     </div>
 </main>
 
-<script>
-    function changeStok(val) {
-        let stokInput = document.getElementById('stokBarang');
-        let current = parseInt(stokInput.value) || 0;
-        let next = current + val;
-        if (next < 0) next = 0;
-        stokInput.value = next;
-    }
 
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let valid = true;
-
-        // Nama Barang
-        let nama = document.getElementById('namaBarang');
-        let namaError = document.getElementById('namaError');
-        namaError.style.display = 'none';
-        if (nama.value.trim() === '') {
-            namaError.textContent = '*Harus diisi';
-            namaError.style.display = 'inline';
-            valid = false;
-        }
-
-        // Stok Barang
-        let stok = document.getElementById('stokBarang');
-        let stokError = document.getElementById('stokError');
-        stokError.style.display = 'none';
-        if (stok.value.trim() === '' || parseInt(stok.value) <= 0) {
-            stokError.textContent = '*Harus diisi';
-            stokError.style.display = 'inline';
-            valid = false;
-        }
-
-        // Lokasi Barang
-        let lokasi = document.getElementById('lokasiBarang');
-        let lokasiError = document.getElementById('lokasiError');
-        lokasiError.style.display = 'none';
-        if (!lokasi.value || lokasi.value === "" || lokasi.value === "Pilih Lokasi") {
-            lokasiError.textContent = '*Harus diisi';
-            lokasiError.style.display = 'inline';
-            valid = false;
-        }
-
-        if (valid) {
-            // Set pesan konfirmasi
-            document.getElementById('confirmAction').textContent = 'menambah barang';
-            // Tampilkan modal konfirmasi
-            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            confirmModal.show();
-        }
-    });
-</script>
 <?php include '../../templates/footer.php'; ?>
