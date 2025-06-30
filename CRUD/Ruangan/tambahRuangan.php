@@ -84,9 +84,14 @@ include '../../templates/sidebar.php';
                                         <?php if (!empty($namaError)): ?>
                                             <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
                                         <?php endif; ?>
+<<<<<<< HEAD
                                     </label>
                                     <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>" placeholder="Masukkan nama ruangan..">
                                 </div>
+=======
+                                </label>
+                                <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" placeholder="Masukkan Nama Ruangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>">
+>>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
@@ -129,6 +134,7 @@ include '../../templates/sidebar.php';
 </main>
 
 <script>
+<<<<<<< HEAD
     // Otomatis set ketersediaan jika kondisi "Rusak"
     document.getElementById('kondisiRuangan').addEventListener('change', function () {
         let kondisi = this.value;
@@ -138,6 +144,22 @@ include '../../templates/sidebar.php';
             ketersediaan.disabled = true;
         } else {
             ketersediaan.disabled = false;
+=======
+    let kondisiSelect = document.getElementById('kondisiRuangan');
+    let ketersediaanSelect = document.getElementById('ketersediaan');
+    let ketersediaanHidden = document.getElementById('ketersediaanHidden');
+
+    // Saat kondisi berubah
+    kondisiSelect.addEventListener('change', function () {
+        if (this.value === 'Rusak') {
+            ketersediaanSelect.value = 'Tidak Tersedia';
+            ketersediaanSelect.disabled = true;
+            ketersediaanHidden.value = 'Tidak Tersedia';
+        } else {
+            ketersediaanSelect.disabled = false;
+            ketersediaanSelect.value = 'Pilih Ketersediaan';
+            ketersediaanHidden.value = '';
+>>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
         }
     });
 

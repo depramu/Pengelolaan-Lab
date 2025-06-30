@@ -1,4 +1,2 @@
 vendor/
 .gitignore
-config.php
-koneksi.php

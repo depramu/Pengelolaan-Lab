@@ -78,7 +78,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Edit Ruangan</span>
+                        <span class="fw-bold">Ubah Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -152,7 +152,13 @@ include '../../templates/sidebar.php';
             ketersediaan.value = 'Tidak Tersedia';
             ketersediaan.disabled = true;
         } else {
+<<<<<<< HEAD
             ketersediaan.disabled = false;
+=======
+            ketersediaanSelect.disabled = false;
+            ketersediaanSelect.value = 'Pilih Ketersediaan';
+            ketersediaanHidden.value = '';
+>>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
         }
     });
 

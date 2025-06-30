@@ -57,11 +57,11 @@ include '../../templates/sidebar.php';
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $hasData = true;
                 ?>
-                        <tr>
-                            <td class="text-center"><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                        <tr class="text-center">
+                            <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
                             <td class="td-aksi text-center align-middle">
                                 <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= urlencode($row['idRuangan']) ?>" class="d-inline-block">
                                     <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Ruangan" style="display: inline-block; vertical-align: middle;">

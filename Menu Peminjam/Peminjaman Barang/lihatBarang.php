@@ -58,17 +58,17 @@ include '../../templates/sidebar.php';
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $hasData = true;
                 ?>
-                        <tr>
-                            <td class="text-center"><?= htmlspecialchars(string: $row['idBarang'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
-                            <td class="td-aksi text-center align-middle">
-                                <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>" class="d-inline-block">
-                                    <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Barang" style="display: inline-block; vertical-align: middle;">
-                                </a>
-                            </td>
-                        </tr>
+                    <tr class="text-center">
+                        <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
+                        <td class="td-aksi text-center align-middle">
+                            <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanBrg.php?idBarang=<?= urlencode($row['idBarang']) ?>" class="d-inline-block">
+                                <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Barang" style="display: inline-block; vertical-align: middle;">
+                            </a>
+                        </td>
+                    </tr>
                 <?php
                     }
                     if (!$hasData) {

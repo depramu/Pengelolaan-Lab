@@ -36,7 +36,7 @@ include '../../templates/sidebar.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunKry.php">Manajemen Akun Karyawan</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Akun Karyawan</li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Akun Mahasiswa</li>
             </ol>
         </nav>
     </div>
@@ -52,37 +52,37 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Tambah Akun Karyawan</span>
+                        <span class="fw-semibold">Tambah Akun Mahasiswa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="npk" class="form-label fw-semibold d-flex align-items-center">NPK
-                                        <span id="npkError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    <label for="npk" class="form-label d-flex align-items-center">NPK
+                                        <span id="npkError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                         <?php if (!empty($npkError)): ?>
-                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $npkError ?></span>
+                                            <span class="text-danger ms-2" style="font-size:0.95em;"><?= $npkError ?></span>
                                         <?php endif; ?>
                                     </label>
                                     <input type="text" class="form-control" id="npk" name="npk" value="<?= isset($npk) ? htmlspecialchars($npk) : '' ?>" placeholder="Masukkan NPK..">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="nama" class="form-label fw-semibold d-flex align-items-center">Nama Lengkap
-                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    <label for="nama" class="form-label d-flex align-items-center">Nama Lengkap
+                                        <span id="namaError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="nama" name="nama" value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>" placeholder="Masukkan nama lengkap..">
                                 </div>
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
-                                        <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    <label for="email" class="form-label d-flex align-items-center">Email
+                                        <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="email" name="email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>" placeholder="Masukkan email..">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">Role
-                                        <span id="roleError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    <label for="jenisRole" class="form-label d-flex align-items-center">Role
+                                        <span id="roleError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <select class="form-select" id="jenisRole" name="jenisRole">
                                         <option value="" disabled selected>Pilih Role</option>
@@ -93,14 +93,14 @@ include '../../templates/sidebar.php';
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi
-                                    <span id="passError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                <label for="kataSandi" class="form-label d-flex align-items-center">Kata Sandi
+                                    <span id="passError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
                                 <input type="password" class="form-control" id="kataSandi" name="kataSandi" value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>" placeholder="Masukkan kata sandi..">
                             </div>
                             <div class="mb-2">
-                                <label for="konfirmasiSandi" class="form-label fw-semibold d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span id="confPassError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                <label for="konfirmasiSandi" class="form-label d-flex align-items-center">Konfirmasi Kata Sandi
+                                    <span id="confPassError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                 </label>
                                 <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>" placeholder="Masukkan ulang kata sandi..">
                             </div>

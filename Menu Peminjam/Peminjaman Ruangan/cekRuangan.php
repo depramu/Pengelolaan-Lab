@@ -31,14 +31,14 @@ include __DIR__ . '/../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Cek Ruangan</span>
+                        <span class="fw-semibold">Cek Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST" id="form-peminjaman" action="">
                             <div class="mb-2">
-                                <label class="form-label fw-semibold">
+                                <label class="form-label">
                                     Pilih Tanggal Peminjaman
-                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus Diisi</span>
+                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
                                 </label>
                                 <div class="d-flex gap-2">
                                     <select id="tglHari" class="form-select" style="width: 80px;"></select>
@@ -50,27 +50,23 @@ include __DIR__ . '/../../templates/sidebar.php';
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">
-                                        Waktu Mulai
-                                        <span id="error-waktu-mulai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                                    </label>
+                                    <label class="form-label">Waktu Mulai</label>
                                     <div class="d-flex gap-2">
                                         <select id="jam_dari" name="jam_dari" class="form-select" style="width: 100px;"></select>
                                         <select id="menit_dari" name="menit_dari" class="form-select" style="width: 100px;"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">
-                                        Waktu Selesai
-                                        <span id="error-waktu-selesai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                                    </label>
+                                    <label class="form-label">Waktu Selesai</label>
                                     <div class="d-flex gap-2">
                                         <select id="jam_sampai" name="jam_sampai" class="form-select" style="width: 100px;"></select>
                                         <select id="menit_sampai" name="menit_sampai" class="form-select" style="width: 100px;"></select>
                                     </div>
                                 </div>
                             </div>
+
                             <div id="error-waktu" style="color: red; display: none;">*Waktu tidak valid</div>
+
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="submit" class="btn btn-primary" name="submit">Cek</button>
                             </div>
@@ -120,18 +116,15 @@ include __DIR__ . '/../../templates/sidebar.php';
         hariSelect.value = now.getDate().toString().padStart(2, '0');
     }
 
-
     function isiWaktu(id, max) {
-    const el = document.getElementById(id);
-    el.innerHTML = '<option value="">--</option>'; // Tambahkan pilihan kosong default
-    for (let i = 0; i < max; i++) {
-        const val = i.toString().padStart(2, '0');
-        el.innerHTML += `<option value="${val}">${val}</option>`;
+        const el = document.getElementById(id);
+        for (let i = 0; i < max; i++) {
+            const val = i.toString().padStart(2, '0');
+            el.innerHTML += `<option value="${val}">${val}</option>`;
+        }
     }
-}
 
-
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         fillSelects();
         isiWaktu('jam_dari', 24);
         isiWaktu('jam_sampai', 24);
@@ -141,91 +134,69 @@ include __DIR__ . '/../../templates/sidebar.php';
         document.getElementById('tglBulan').addEventListener('change', updateDays);
         document.getElementById('tglTahun').addEventListener('change', updateDays);
 
-        document.getElementById('form-peminjaman').addEventListener('submit', function (e) {
-    const hari = document.getElementById('tglHari').value;
-    const bulan = document.getElementById('tglBulan').value;
-    const tahun = document.getElementById('tglTahun').value;
-    const jamDari = document.getElementById('jam_dari').value;
-    const menitDari = document.getElementById('menit_dari').value;
-    const jamSampai = document.getElementById('jam_sampai').value;
-    const menitSampai = document.getElementById('menit_sampai').value;
+        document.getElementById('form-peminjaman').addEventListener('submit', function(e) {
+            const hari = document.getElementById('tglHari').value;
+            const bulan = document.getElementById('tglBulan').value;
+            const tahun = document.getElementById('tglTahun').value;
+            const jamDari = document.getElementById('jam_dari').value;
+            const menitDari = document.getElementById('menit_dari').value;
+            const jamSampai = document.getElementById('jam_sampai').value;
+            const menitSampai = document.getElementById('menit_sampai').value;
 
-    const errorMsg = document.getElementById('error-message');
-    const errorWaktu = document.getElementById('error-waktu');
-    const errorWaktuMulai = document.getElementById('error-waktu-mulai');
-    const errorWaktuSelesai = document.getElementById('error-waktu-selesai');
+            const errorMsg = document.getElementById('error-message');
+            const errorWaktu = document.getElementById('error-waktu');
 
-    let isValid = true;
+            let isValid = hari && bulan && tahun;
 
-    // Validasi Tanggal (kosong atau sudah lewat)
-    if (!hari || !bulan || !tahun) {
-        errorMsg.textContent = "*Harus Diisi";
-        errorMsg.style.display = 'inline';
-        isValid = false;
-    } else {
-        const inputDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+            const inputDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-        if (inputDate < today) {
-            errorMsg.textContent = "*Input tanggal sudah lewat";
-            errorMsg.style.display = 'inline';
-            isValid = false;
-        } else {
-            errorMsg.style.display = 'none';
-        }
-    }
+            if (!isValid || inputDate < today) {
+                errorMsg.textContent = !isValid ? "*Harus Diisi" : "*Tanggal sudah lewat";
+                errorMsg.style.display = 'inline';
+                e.preventDefault();
+                return;
+            } else {
+                errorMsg.style.display = 'none';
+            }
 
-    // Validasi Waktu kosong
-    let waktuValid = true;
-    if (jamDari === "" || menitDari === "" || isNaN(parseInt(jamDari)) || isNaN(parseInt(menitDari))) {
-        errorWaktuMulai.style.display = 'inline';
-        waktuValid = false;
-    } else {
-        errorWaktuMulai.style.display = 'none';
-    }
+            const startMinutes = parseInt(jamDari) * 60 + parseInt(menitDari);
+            const endMinutes = parseInt(jamSampai) * 60 + parseInt(menitSampai);
 
-    if (jamSampai === "" || menitSampai === "" || isNaN(parseInt(jamSampai)) || isNaN(parseInt(menitSampai))) {
-        errorWaktuSelesai.style.display = 'inline';
-        waktuValid = false;
-    } else {
-        errorWaktuSelesai.style.display = 'none';
-    }
+            const selectedDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
+            const now = new Date();
+            const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-    // Validasi logika waktu (hanya jika waktu terisi)
-    if (waktuValid) {
-        const startMinutes = parseInt(jamDari) * 60 + parseInt(menitDari);
-        const endMinutes = parseInt(jamSampai) * 60 + parseInt(menitSampai);
-        const selectedDate = new Date(`${tahun}-${bulan.padStart(2, '0')}-${hari.padStart(2, '0')}`);
-        const now = new Date();
-        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+            if (
+                jamDari === "" || menitDari === "" ||
+                jamSampai === "" || menitSampai === "" ||
+                isNaN(parseInt(jamDari)) || isNaN(parseInt(menitDari)) ||
+                isNaN(parseInt(jamSampai)) || isNaN(parseInt(menitSampai))
+            ) {
+                errorWaktu.textContent = '*Semua waktu harus diisi';
+                errorWaktu.style.display = 'inline';
+                e.preventDefault();
+                return;
+            } else if (endMinutes <= startMinutes) {
+                errorWaktu.textContent = '*Waktu selesai harus lebih besar dari waktu mulai';
+                errorWaktu.style.display = 'block';
+                e.preventDefault();
+                return;
+            } else if (
+                selectedDate.toDateString() === now.toDateString() &&
+                startMinutes < nowMinutes
+            ) {
+                errorWaktu.textContent = '*Waktu mulai tidak boleh lebih kecil dari waktu sekarang';
+                errorWaktu.style.display = 'block';
+                e.preventDefault();
+                return;
+            } else {
+                errorWaktu.style.display = 'none';
+            }
 
-        if (endMinutes <= startMinutes) {
-            errorWaktu.textContent = '*Waktu selesai harus lebih besar dari waktu mulai';
-            errorWaktu.style.display = 'block';
-            isValid = false;
-        } else if (selectedDate.toDateString() === now.toDateString() && startMinutes < nowMinutes) {
-            errorWaktu.textContent = '*Waktu mulai tidak boleh lebih kecil dari waktu sekarang';
-            errorWaktu.style.display = 'block';
-            isValid = false;
-        } else {
-            errorWaktu.style.display = 'none';
-        }
-    } else {
-        errorWaktu.style.display = 'none';
-        isValid = false;
-    }
-
-    // Cegah submit kalau ada yang salah
-    if (!isValid) {
-        e.preventDefault();
-        return;
-    }
-
-    // Set input tersembunyi kalau semua valid
-    document.getElementById('tglPeminjamanRuangan').value = `${hari}-${bulan}-${tahun}`;
-});
-
+            document.getElementById('tglPeminjamanRuangan').value = `${hari}-${bulan}-${tahun}`;
+        });
     });
 </script>
 
