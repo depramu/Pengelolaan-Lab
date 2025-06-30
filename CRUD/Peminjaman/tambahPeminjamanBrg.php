@@ -111,7 +111,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
+<<<<<<< HEAD
                         <span class="fw-semibold">Peminjaman Barang</span>
+=======
+                        <span class="fw-bold">Peminjaman Barang</span>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                     </div>
                     <div class="card-body">
 
@@ -125,13 +129,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label for="idBarang" class="form-label fw-bold">ID Barang</label>
+=======
+                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label for="namaBarang" class="form-label fw-bold">Nama Barang</label>
+=======
+                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
                                 </div>
@@ -139,7 +151,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label class="form-label fw-bold">Tanggal Peminjaman</label>
+=======
+                                        <label class="form-label fw-semibold">Tanggal Peminjaman</label>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
                                                                                                                                             $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
                                                                                                                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
@@ -148,7 +164,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label for="nim" class="form-label fw-bold">NIM</label>
+=======
+                                        <label for="nim" class="form-label fw-semibold">NIM</label>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim_display"
                                             value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
                                     </div>
@@ -157,7 +177,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label for="alasanPeminjamanBrg" class="form-label fw-bold">
+=======
+                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
                                         <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1"></textarea>
@@ -165,7 +189,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
+<<<<<<< HEAD
                                         <label for="npk" class="form-label fw-bold">NPK</label>
+=======
+                                        <label for="npk" class="form-label fw-semibold">NPK</label>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk_display"
                                             value="<?= isset($_SESSION['npk']) ? htmlspecialchars($_SESSION['npk']) : '' ?>">
                                     </div>
@@ -173,7 +201,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
+<<<<<<< HEAD
                                     <label for="jumlahBrg" class="form-label w-100 fw-bold">
+=======
+                                    <label for="jumlahBrg" class="form-label w-100 fw-semibold">
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         Jumlah Peminjaman
                                         <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Jumlah harus lebih dari 0.</span>
                                     </label>

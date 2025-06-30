@@ -6,6 +6,7 @@ if (isset($_GET['upload']) && $_GET['upload'] == 'sukses') {
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 
+<<<<<<< HEAD
 $data = [];
 $error_message = null;
 
@@ -14,21 +15,40 @@ if (!empty($_GET['idPeminjamanRuangan'])) {
     $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
 
     $query = "SELECT 
+=======
+$data = null;
+$error_message = null;
+
+if (isset($_GET['idPeminjamanRuangan'])) {
+    $idPeminjamanRuangan = $_GET['idPeminjamanRuangan'];
+
+    $sql = "SELECT 
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
                 p.alasanPeminjamanRuangan, p.statusPeminjaman,
                 peng.dokumentasiSebelum, peng.dokumentasiSesudah,
+<<<<<<< HEAD
+=======
+                tolak.alasanPenolakan,
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                 COALESCE(m.nama, k.nama) AS namaPeminjam
             FROM 
                 Peminjaman_Ruangan p
             LEFT JOIN 
                 Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
             LEFT JOIN 
+<<<<<<< HEAD
+=======
+                Penolakan tolak ON p.idPeminjamanRuangan = tolak.idPeminjamanRuangan
+            LEFT JOIN 
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                 Mahasiswa m ON p.nim = m.nim
             LEFT JOIN 
                 Karyawan k ON p.npk = k.npk
             WHERE 
                 p.idPeminjamanRuangan = ?";
+<<<<<<< HEAD
     $params = array($idPeminjamanRuangan);
     $stmt = sqlsrv_query($conn, $query, $params);
 
@@ -36,10 +56,24 @@ if (!empty($_GET['idPeminjamanRuangan'])) {
         $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
     } else {
         $error_message = "Data peminjaman dengan ID '" . htmlspecialchars($idPeminjamanRuangan) . "' tidak ditemukan.";
+=======
+
+    $params = [$idPeminjamanRuangan];
+    $stmt = sqlsrv_query($conn, $sql, $params);
+
+    if ($stmt === false) {
+        $error_message = "Gagal mengambil data. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";
+    } else {
+        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        if (!$data) {
+            $error_message = "Data peminjaman dengan ID '" . htmlspecialchars($idPeminjamanRuangan) . "' tidak ditemukan.";
+        }
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
     }
 } else {
     $error_message = "ID Peminjaman Ruangan tidak valid atau tidak disertakan.";
 }
+<<<<<<< HEAD
 
 // Ekstrak data
 $idRuangan = $data['idRuangan'] ?? '';
@@ -68,6 +102,12 @@ if ($currentStatus == 'Ditolak') {
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Riwayat Peminjaman Ruangan</h3>
+=======
+?>
+
+<main class="col bg-white px-3 px-md-4 py-3 position-relative">
+<h3 class="fw-semibold mb-3">Riwayat Peminjaman Ruangan</h3>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
     <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -90,11 +130,16 @@ if ($currentStatus == 'Ditolak') {
                             <div class="alert alert-danger" role="alert">
                                 <?= $error_message ?>
                             </div>
+<<<<<<< HEAD
                         <?php elseif (!empty($data)) : ?>
+=======
+                        <?php elseif ($data) : ?>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                             <form id="formDetail" action="proses_pengembalian.php" method="POST" enctype="multipart/form-data">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
+<<<<<<< HEAD
                                             <label class="form-label fw-bold">ID Peminjaman Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
                                             <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
@@ -108,11 +153,27 @@ if ($currentStatus == 'Ditolak') {
                                             <label class="form-label fw-bold">ID Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($idRuangan) ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($idRuangan) ?>">
+=======
+                                            <label class="form-label fw-bold">ID Peminjaman</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">NIM / NPK</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Ruangan</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Tanggal Peminjaman</label>
+<<<<<<< HEAD
                                             <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanRuangan) ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>">
                                         </div>
@@ -126,10 +187,20 @@ if ($currentStatus == 'Ditolak') {
                                                     <label class="form-label fw-bold">Waktu Selesai:</label>
                                                     <p class="form-control-plaintext"><?= htmlspecialchars($waktuSelesai) ?></p>
                                                 </div>
+=======
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?></div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row">
+                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Mulai:</label> <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?></p></div>
+                                                <div class="col-6"> <label class="form-label fw-bold">Waktu Selesai:</label> <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></p></div>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Status Peminjaman</label>
+<<<<<<< HEAD
                                             <?php
                                             // Tambahkan status baru: Menunggu Persetujuan
                                             $statusClass = 'text-secondary';
@@ -156,17 +227,27 @@ if ($currentStatus == 'Ditolak') {
                                             ?>
                                             <div class="form-control-plaintext <?= $statusClass ?> fw-semibold"><?= htmlspecialchars($currentStatus) ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($currentStatus) ?>">
+=======
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Alasan Peminjaman</label>
+<<<<<<< HEAD
                                             <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanRuangan)) ?></div>
                                             <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($alasanPeminjamanRuangan) ?></textarea>
+=======
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></div>
+                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         </div>
                                     </div>
                                 </div>
 
+<<<<<<< HEAD
                                 <?php
                                 // Tambahkan 'Menunggu Persetujuan' ke daftar status yang menampilkan dokumentasi/penolakan
                                 if (in_array($currentStatus, ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan', 'Menunggu Persetujuan'])) : ?>
@@ -179,35 +260,69 @@ if ($currentStatus == 'Ditolak') {
                                         </div>
                                     <?php elseif ($currentStatus != 'Ditolak'): ?>
                                         <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
+=======
+                                <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan'])) : ?>
+                                    <hr>
+                                    <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
+                                        <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
+                                        <div class="mt-3">
+                                            <label class="form-label fw-bold">Alasan Penolakan dari PIC</label>
+                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                        </div>
+                                    <?php else: ?>
+                                        <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label fw-bold">
                                                     Dokumentasi Sebelum
                                                     <span id="dokSebelumError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
+<<<<<<< HEAD
                                                 <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($dokumentasiSebelum)) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokumentasiSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
+=======
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                                    <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
+                                                <?php else : ?>
+                                                    <div class="mt-1">
+                                                        <?php if (!empty($data['dokumentasiSebelum'])) : ?>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label fw-bold">
                                                     Dokumentasi Selesai
                                                     <span id="dokSesudahError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
+<<<<<<< HEAD
                                                 <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($dokumentasiSesudah)) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokumentasiSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
+=======
+                                                <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+                                                    <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
+                                                <?php else : ?>
+                                                    <div class="mt-1">
+                                                        <?php if (!empty($data['dokumentasiSesudah'])) : ?>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
@@ -220,7 +335,11 @@ if ($currentStatus == 'Ditolak') {
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
+<<<<<<< HEAD
                                     <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
+=======
+                                    <?php if ($data['statusPeminjaman'] == 'Sedang dipinjam') : ?>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
                                     <?php endif; ?>
                                 </div>
@@ -248,6 +367,10 @@ if ($currentStatus == 'Ditolak') {
         </div>
 </main>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('formDetail');
@@ -260,7 +383,11 @@ if ($currentStatus == 'Ditolak') {
                     const fileInput = document.getElementById(inputId);
                     const errorSpan = document.getElementById(errorId);
 
+<<<<<<< HEAD
                     if (fileInput && fileInput.offsetParent !== null) {
+=======
+                    if (fileInput) {
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                         errorSpan.textContent = '';
                         if (fileInput.files.length === 0) {
                             errorSpan.textContent = 'File wajib diupload.';
@@ -290,6 +417,10 @@ if ($currentStatus == 'Ditolak') {
     });
 </script>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
 <?php
 include '../../templates/footer.php';
 ?>

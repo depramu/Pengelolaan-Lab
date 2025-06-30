@@ -6,6 +6,7 @@ if (empty($idRuangan)) {
     die("Error: ID Ruangan tidak ditemukan. Silakan kembali dan pilih ruangan yang ingin dipinjam.");
 }
 
+<<<<<<< HEAD
 $namaRuangan = '';
 $sqlNama = "SELECT namaRuangan FROM Ruangan WHERE idRuangan = ?";
 $params = [$idRuangan];
@@ -22,6 +23,8 @@ if ($rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
 }
 
 
+=======
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
 // Auto-generate id Peminjaman Ruangan
 $idPeminjamanRuangan = 'PJR001';
 $sqlId = "SELECT TOP 1 idPeminjamanRuangan FROM Peminjaman_Ruangan ORDER BY idPeminjamanRuangan DESC";
@@ -71,7 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Jika INSERT peminjaman berhasil, baru UPDATE status ruangan
             $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
             $paramsKetersediaan = [$idRuangan];
+<<<<<<< HEAD
 
+=======
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
             $stmtKetersediaan = sqlsrv_query($conn, $ketersediaanQuery, $paramsKetersediaan);
 
             if ($stmtKetersediaan) {
@@ -112,12 +118,17 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
+<<<<<<< HEAD
                         <span class="fw-bold">Pengajuan Peminjaman Ruangan</span>
+=======
+                        <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                     </div>
                     <div class="card-body">
                         <form method="POST">
                             <div class="row">
                                 <div class="col-md-6">
+<<<<<<< HEAD
                                     <div class="mb-2">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman Ruangan</label>
                                         <input type="text" class="form-control protect-input" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>">
@@ -128,12 +139,53 @@ include '../../templates/sidebar.php';
                                         <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                         <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
                                         <input type="text" class="form-control protect-input" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>">
+=======
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="idPeminjamanRuangan" class="form-label fw-bold">ID Peminjaman</label>
+                                        <input type="text" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="idRuangan" class="form-label fw-bold">ID Ruangan</label>
+                                        <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
+                                        <input type="text" class="form-control" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="tglPeminjamanRuangan" class="form-label fw-bold">Tanggal Peminjaman</label>
+                                        <input type="text" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= $tglPeminjamanRuangan ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="nim" class="form-label fw-bold">NIM</label>
+                                        <input type="text" class="form-control" id="nim" name="nim" value="<?= $nim ?>" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="waktuMulai" class="form-label fw-bold">Waktu Mulai</label>
+                                        <input type="text" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="npk" class="form-label fw-bold">NPK</label>
+                                        <input type="text" class="form-control" id="npk" name="npk" value="<?= $npk ?>" disabled>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
+<<<<<<< HEAD
                                     <div class="mb-2">
                                         <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
                                         <input type="text" class="form-control protect-input" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
@@ -190,6 +242,19 @@ include '../../templates/sidebar.php';
                                         });
 
                                         //validasi harus diisi
+=======
+                                    <div class="mb-2" style="max-width: 400px;">
+                                        <label for="waktuSelesai" class="form-label fw-bold">Waktu Selesai</label>
+                                        <input type="text" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="alasanPeminjamanRuangan" class="form-label fw-bold">Alasan Peminjaman</label>
+                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
+                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" style="max-width: 400px;"></textarea>
+
+                                    <script>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                                         document.getElementById('alasanPeminjamanRuangan').addEventListener('input', function() {
                                             let alasanPeminjamanRuangan = document.getElementById('alasanPeminjamanRuangan').value;
                                             let errorMessage = document.getElementById('error-message');
@@ -219,16 +284,27 @@ include '../../templates/sidebar.php';
                                 <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                             </div>
+<<<<<<< HEAD
                             </fobuat>
+=======
+                        </fobuat>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
                     </div>
                 </div>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
 </main>
 
 <?php
 include '../../templates/footer.php';
+<<<<<<< HEAD
 ?>
 
+=======
+?>
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d

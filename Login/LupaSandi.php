@@ -273,6 +273,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // reset
         emailError.style.display = 'none';
 
+<<<<<<< HEAD
+=======
+        if(nama === ''){
+            .textContent = '*Harus diisi';
+            .style.display = 'inline';
+            valid = false;
+        } else if(/\d/.test(nama)){
+            .textContent = '*Harus berupa huruf';
+            .style.display = 'inline';
+            valid = false;
+        }
+
+>>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
         if(email === ''){
             emailError.textContent = '*Harus diisi';
             emailError.style.display = 'inline';
