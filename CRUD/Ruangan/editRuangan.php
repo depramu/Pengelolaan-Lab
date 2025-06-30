@@ -71,7 +71,7 @@ include '../../templates/sidebar.php';
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Ubah Ruangan</span>
+                        <span class="fw-bold">Edit Ruangan</span>
                     </div>
                     <div class="card-body">
                         <form method="POST">

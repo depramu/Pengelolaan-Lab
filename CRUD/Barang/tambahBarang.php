@@ -2,6 +2,7 @@
 include '../../templates/header.php';
 
 $showModal = false;
+
 $idBarang = 'BRG001';
 $sqlId = "SELECT TOP 1 idBarang FROM Barang WHERE idBarang LIKE 'BRG%' ORDER BY idBarang DESC";
 $stmtId = sqlsrv_query($conn, $sqlId);
@@ -24,7 +25,7 @@ if ($stmtLokasi) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $namaBarang = $_POST['namaBarang'];
     $stokBarang = $_POST['stokBarang'];
-    $lokasiBarang = $_POST['lokasiBarang'];
+    $lokasiBarang = $_POST['lokasiBarang'] ?? '';
 
     // Cek apakah nama barang sudah ada
     $cekNamaQuery = "SELECT COUNT(*) AS jumlah FROM Barang WHERE namaBarang = ?";
@@ -46,8 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
 include '../../templates/sidebar.php';
 ?>
+
+
 <main class="col bg-white px-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Manajemen Barang</h3>
     <div class="mb-3">
@@ -60,8 +64,6 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-
-    <!-- Tambah Barang -->
     <div class="container mt-4">
         <?php if (isset($error)) : ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-right: 1.5rem;">
@@ -80,14 +82,15 @@ include '../../templates/sidebar.php';
                         <form method="POST">
                             <div class="mb-2">
                                 <label for="idBarang" class="form-label">ID Barang</label>
-                                <input type="text" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" disabled>
+                                <div type="text" class="form-control protect-input"><?= htmlspecialchars($idBarang) ?></div>
+                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>" >
                             </div>
                             <div class="mb-2">
                                 <label for="namaBarang" class="form-label">
                                     Nama Barang
                                     <span class="text-danger ms-2" id="errorNamaBarang" style="font-size:0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
+                                <input type="text" class="form-control" id="namaBarang" name="namaBarang" placeholder="Masukkan nama barang.." value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>">
                             </div>
                             <div class="mb-2">
                                 <label for="stokBarang" class="form-label">
@@ -96,7 +99,7 @@ include '../../templates/sidebar.php';
                                 </label>
                                 <div class="input-group" style="max-width: 180px;">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                    <input type="number" class="form-control text-center" id="stokBarang" name="stokBarang"
+                                    <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
                                         min="0" style="max-width: 70px;"
                                         value="<?= isset($stokBarang) ? htmlspecialchars($stokBarang) : '0' ?>">
                                     <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
@@ -119,16 +122,13 @@ include '../../templates/sidebar.php';
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="<?= BASE_URL ?>/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
-                                <button type="button" class="btn btn-primary" id="btnTambah">Tambah</button>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
     </div>
 </main>
 
@@ -143,53 +143,43 @@ include '../../templates/sidebar.php';
     }
 
     // Validasi form dan tampilkan modal konfirmasi
-    document.getElementById('btnTambah').addEventListener('click', function(e) {
+    document.querySelector('form').addEventListener('submit', function(e) {
         let valid = true;
 
         // Nama Barang
-        const namaBarang = document.getElementById('namaBarang');
-        const errorNamaBarang = document.getElementById('errorNamaBarang');
-        if (namaBarang.value.trim() === '') {
-            errorNamaBarang.style.display = 'inline';
+        let nama = document.getElementById('namaBarang');
+        let namaError = document.getElementById('errorNamaBarang');
+        if (nama.value.trim() === '') {
+            namaError.style.display = 'inline';
             valid = false;
         } else {
-            errorNamaBarang.style.display = 'none';
+            namaError.style.display = 'none';
         }
 
         // Stok Barang
-        const stokBarang = document.getElementById('stokBarang');
-        const errorStokBarang = document.getElementById('errorStokBarang');
-        if (stokBarang.value.trim() === '' || parseInt(stokBarang.value) < 0) {
-            errorStokBarang.style.display = 'inline';
+        let stok = document.getElementById('stokBarang');
+        let stokError = document.getElementById('errorStokBarang');
+        if (stok.value.trim() === '' || parseInt(stok.value) <= 0) {
+            stokError.style.display = 'inline';
             valid = false;
         } else {
-            errorStokBarang.style.display = 'none';
+            stokError.style.display = 'none';
         }
 
         // Lokasi Barang
-        const lokasiBarang = document.getElementById('lokasiBarang');
-        const errorLokasiBarang = document.getElementById('errorLokasiBarang');
-        if (!lokasiBarang.value) {
-            errorLokasiBarang.style.display = 'inline';
+        let lokasi = document.getElementById('lokasiBarang');
+        let lokasiError = document.getElementById('errorLokasiBarang');
+        if (!lokasi.value || lokasi.value === 'Pilih Lokasi') {
+            lokasiError.style.display = 'inline';
             valid = false;
         } else {
-            errorLokasiBarang.style.display = 'none';
+            lokasiError.style.display = 'none';
         }
 
-        if (valid) {
-            // Set pesan konfirmasi
-            document.getElementById('confirmAction').textContent = 'menambah barang';
-            // Tampilkan modal konfirmasi
-            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-            confirmModal.show();
-        }
+        if (!valid) e.preventDefault();
     });
 
-    // Submit form jika klik 'Ya' di modal konfirmasi
-    document.getElementById('confirmYes').addEventListener('click', function() {
-        document.querySelector('form').submit();
-    });
+    
 </script>
 
-x`
 <?php include '../../templates/footer.php'; ?>
