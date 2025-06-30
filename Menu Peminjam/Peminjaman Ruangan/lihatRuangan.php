@@ -40,7 +40,7 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr>
+                <tr class="text-center">
                     <th>ID Ruangan</th>
                     <th>Nama Ruangan</th>
                     <th>Kondisi</th>
@@ -58,7 +58,7 @@ include '../../templates/sidebar.php';
                         $hasData = true;
                 ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                            <td class="text-center"><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>

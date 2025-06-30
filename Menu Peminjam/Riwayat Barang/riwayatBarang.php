@@ -115,7 +115,7 @@ include '../../templates/sidebar.php';
                         <tr>
                             <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                             <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                             <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
                             <td class="td-aksi">
