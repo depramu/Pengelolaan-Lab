@@ -73,13 +73,13 @@ include '../../templates/sidebar.php';
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
-                <tr class="text-center">
+                <tr>
                     <th>ID Peminjaman</th>
                     <th>ID Barang</th>
                     <th>Nama Barang</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah</th>
-                    <th>Aksi</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,7 +112,7 @@ include '../../templates/sidebar.php';
                             $altText = 'Ditolak';
                         }
                 ?>
-                        <tr class="text-center">
+                        <tr>
                             <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
                             <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
