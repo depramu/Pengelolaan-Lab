@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         require_once __DIR__ . '/../function/reset_password_helper.php';
         [$success, $msg] = resetUserPassword($conn, $email);
         if ($success) {
-            $_SESSION['flash_success'] = $msg;
+            $_SESSION['flash_success'] = $msg ?: 'Reset password berhasil dikirim. Silakan cek email Anda.';
             header('Location: LupaSandi.php');
             exit;
         } else {
@@ -42,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             display: flex;
             height: 100vh;
             width: 100%;
-            box-sizing: border-box;
         }
 
         .login-left {
@@ -53,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-sizing: border-box;
         }
 
         .role-title {
@@ -74,39 +72,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-top: 18px;
         }
 
-        img {
-            width: 2rem;
-        }
-
         .login-right {
             background: #065ba6;
             flex-basis: 50%;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 40px;
-            box-sizing: border-box;
         }
 
         .login-form-container {
             width: 100%;
             max-width: 380px;
+            margin-top: 200px;
         }
 
         .login-form-title {
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 500;
-            margin-bottom: 10px; /* ↓ ganti dari 20px ke 10px */
-            text-align: center;
+            margin-bottom: 10px;
+            text-align: left;
+            padding-left: 8px;
         }
-
 
         .form-label {
             color: #e0e0e0;
             font-size: 0.9rem;
             margin-bottom: 8px;
-            display: block;
         }
 
         .input-group {
@@ -149,7 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 0.9rem;
             font-weight: 600;
             width: 100%;
-            transition: background-color 0.3s ease;
         }
 
         .btn-login-submit {
@@ -170,16 +162,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #5a6268;
         }
 
-        /* Custom style for the error message to match the screenshot */
-        .alert-danger {
+        .alert-danger, .alert-success {
             font-size: 0.9rem;
             padding: 10px;
-            background-color: #f8d7da; /* Light red background */
-            color: #721c24; /* Dark red text */
-            border-color: #f5c6cb; /* Red border */
-            border-radius: 0; /* Remove border-radius */
-            margin-bottom: 20px; /* Add some margin below */
-            text-align: left; /* Align text to left */
+            margin-bottom: 20px;
+            border-radius: 0;
+            text-align: left;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
         }
 
         @media (max-width: 768px) {
@@ -194,7 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             .login-left {
                 text-align: center;
-                height: auto;
                 min-height: 300px;
             }
 
@@ -224,27 +223,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="login-right">
         <div class="login-form-container">
-            <h2 class="text-center fw-75 mb-5" style="color: #fff;">Lupa Kata Sandi</h2>
-            <h3 class="login-form-title" style="margin-bottom: 10px;">Silahkan Masukkan Data</h3>
+            <h2 class="text-center fw-75 mb-4" style="color: #fff;">Lupa Kata Sandi</h2>
+            <h3 class="login-form-title">Silahkan Masukkan Email</h3>
+
+            <?php
+                $success_message = $_SESSION['flash_success'] ?? '';
+                unset($_SESSION['flash_success']);
+            ?>
+            <?php if ($success_message): ?>
+                <div class="alert alert-success" role="alert">
+                    <?= htmlspecialchars($success_message); ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($error_message)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
 
             <form action="" method="POST" novalidate>
-
-                <?php
-                    // Success flash
-                    $success_message = $_SESSION['flash_success'] ?? '';
-                    unset($_SESSION['flash_success']);
-                ?>
-                <?php if ($success_message): ?>
-                    <div class="alert alert-success" role="alert">
-                        <?= htmlspecialchars($success_message); ?>
-                    </div>
-                <?php endif; ?>
-                <?php if (!empty($error_message)): ?>
-                    <div class="alert alert-danger" role="alert">
-                        <?= htmlspecialchars($error_message); ?>
-                    </div>
-                <?php endif; ?>
-
                 <div class="input-group flex-column">
                     <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
                     <div class="d-flex w-100">
@@ -261,6 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
+
 <script>
     document.querySelector('.btn-back').onclick = function () {
         window.location.href = '../index.php';
@@ -270,18 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         let email = document.getElementById('email').value.trim();
         let emailError = document.getElementById('emailError');
         let valid = true;
-        // reset
         emailError.style.display = 'none';
-
-        if(nama === ''){
-            .textContent = '*Harus diisi';
-            .style.display = 'inline';
-            valid = false;
-        } else if(/\d/.test(nama)){
-            .textContent = '*Harus berupa huruf';
-            .style.display = 'inline';
-            valid = false;
-        }
 
         if(email === ''){
             emailError.textContent = '*Harus diisi';

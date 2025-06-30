@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Jika tidak ditemukan sama sekali
-    $error_message = 'akun_tidak_terdaftar';
+    $error_message = 'akun tidak terdafrar';
     break;
 
 
@@ -190,7 +190,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .login-form-container {
             width: 100%;
             max-width: 380px;
+            margin-top: 40px; /* atau padding-top: 40px; */
         }
+
 
         .login-form-title {
             color: #fff;
@@ -260,14 +262,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 12px 0;
-            font-size: 1.1rem;
+            padding: 8px 0;
+            font-size: 1rem;
             font-weight: 600;
-            width: 180px;
-            display: block; /* Agar bisa diatur margin auto */
-            margin: 0 auto 15px auto; /* Memberi margin bawah 15px */
+            width: 150px;
+            display: block;
+            margin: 0 auto 15px auto;
             transition: background-color 0.3s ease;
         }
+
 
         .btn-login-submit:hover {
             background-color: #218838;
@@ -352,12 +355,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
 
-                    <button type="submit" class="btn-login-submit">Masuk</button>
-                    <div class="d-flex justify-content-center">
-                        <a href="../index.php" class="forgot-link text-white">
+                    <div class="d-flex justify-content-center" style="gap: 12px;">
+                        <a href="../index.php" class="btn-login-submit" style="background-color: #6c757d; text-align: center; line-height: normal;">
                             Kembali
                         </a>
-                    </div>
+                        <button type="submit" class="btn-login-submit">Masuk</button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -380,6 +383,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             valid = false;
         } else if (id === '') {
             idError.textContent = '*NIM/NPK tidak boleh kosong.*';
+            valid = false;
+        } else if (!/^\d+$/.test(id)) {
+            idError.textContent = '*NIM/NPK harus berupa angka.*';
             valid = false;
         } else if (pass === '') {
             passError.textContent = '*Kata Sandi tidak boleh kosong.*';
