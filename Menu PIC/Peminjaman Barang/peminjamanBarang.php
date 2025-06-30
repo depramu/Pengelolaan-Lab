@@ -16,7 +16,7 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, tglPeminjamanBrg, statusPeminjaman FROM Peminjaman_Barang ORDER BY idPeminjamanBrg OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT idPeminjamanBrg, idBarang, jumlahBrg, sisaPinjaman, tglPeminjamanBrg, statusPeminjaman FROM Peminjaman_Barang ORDER BY idPeminjamanBrg OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 
 require_once '../../function/pagination.php';
@@ -62,6 +62,10 @@ include '../../templates/sidebar.php';
                         $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                         $altText = 'Sedang Dipinjam';
                         $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=' . $idPeminjaman;
+                    } elseif ($statusPeminjaman == 'Sebagian Dikembalikan') {
+                        $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                        $altText = 'Sebagian Dikembalikan';
+                        $linkDetail = BASE_URL . '/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=' . $idPeminjaman;
                     } elseif ($statusPeminjaman == 'Ditolak') {
                         $iconSrc = BASE_URL . '/icon/silang.svg';
                         $altText = 'Ditolak';
@@ -76,7 +80,7 @@ include '../../templates/sidebar.php';
                         $linkDetail = '#';
                     }
                 ?>
-                    <tr class="text-center">
+                    <tr>
                         <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
                         <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
                         <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
