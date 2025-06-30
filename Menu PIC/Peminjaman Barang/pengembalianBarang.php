@@ -1,11 +1,7 @@
 <?php
-<<<<<<< HEAD
 require_once __DIR__ . '/../../auth.php';
 authorize_role('PIC Aset');
 require_once '../../koneksi.php';
-=======
-include '../../templates/header.php';
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
 
 $showModal = false;
 $idPeminjamanBrg = $_GET['id'] ?? '';

@@ -1,19 +1,12 @@
 <?php
-<<<<<<< HEAD
 $showModal = false;
-=======
-$showSuccessModal = false;
-if (isset($_GET['upload']) && $_GET['upload'] == 'sukses') {
-    $showSuccessModal = true;
-}
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
+
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 
 $data = [];
 $error_message = null;
 
-<<<<<<< HEAD
 // Cek baik POST maupun GET untuk idPeminjamanRuangan
 if (isset($_POST['idPeminjamanRuangan'])) {
     $idPeminjamanRuangan = $_POST['idPeminjamanRuangan'];
@@ -25,13 +18,6 @@ if (isset($_POST['idPeminjamanRuangan'])) {
 
 if ($idPeminjamanRuangan !== null) {
     $sql = "SELECT 
-=======
-if (!empty($_GET['idPeminjamanRuangan'])) {
-    $idPeminjamanRuangan = $_GET['idPeminjamanRuangan'];
-    $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
-
-    $query = "SELECT 
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
                 p.alasanPeminjamanRuangan, p.statusPeminjaman,
@@ -130,15 +116,9 @@ if ($currentStatus == 'Ditolak') {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-<<<<<<< HEAD
                                             <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?></div>
                                             <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
-=======
-                                            <label class="form-label fw-bold">Tanggal Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanRuangan) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($tglPeminjamanRuangan) ?>">
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                         </div>
                                         <div class="mb-3">
                                             <div class="row">
@@ -155,17 +135,8 @@ if ($currentStatus == 'Ditolak') {
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Status Peminjaman</label>
                                             <?php
-<<<<<<< HEAD
                                             $statusClass = 'text-secondary';
                                             switch ($data['statusPeminjaman']) {
-=======
-                                            // Tambahkan status baru: Menunggu Persetujuan
-                                            $statusClass = 'text-secondary';
-                                            switch ($currentStatus) {
-                                                case 'Diajukan':
-                                                    $statusClass = 'text-primary';
-                                                    break;
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                                 case 'Menunggu Persetujuan':
                                                     $statusClass = 'text-warning';
                                                     break;
@@ -199,7 +170,6 @@ if ($currentStatus == 'Ditolak') {
                                     </div>
                                 </div>
 
-<<<<<<< HEAD
                                 <?php if (in_array($data['statusPeminjaman'], ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan'])) : ?>
                                     <hr>
                                     <?php if ($data['statusPeminjaman'] == 'Ditolak') : ?>
@@ -210,41 +180,18 @@ if ($currentStatus == 'Ditolak') {
                                         </div>
                                     <?php else: ?>
                                         <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
-=======
-                                <?php
-                                // Tambahkan 'Menunggu Persetujuan' ke daftar status yang menampilkan dokumentasi/penolakan
-                                if (in_array($currentStatus, ['Ditolak', 'Sedang Dipinjam', 'Menunggu Pengecekan', 'Telah Dikembalikan', 'Menunggu Persetujuan'])) : ?>
-                                    <hr>
-                                    <?php if ($currentStatus == 'Ditolak' && !empty($alasanPenolakan)) : ?>
-                                        <h6 class="mb-3">DETAIL PENOLAKAN</h6>
-                                        <div class="mt-3">
-                                            <label class="form-label fw-bold text-danger">Alasan Penolakan dari PIC</label>
-                                            <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($alasanPenolakan)) ?></div>
-                                        </div>
-                                    <?php elseif ($currentStatus != 'Ditolak'): ?>
-                                        <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label fw-bold">
                                                     Dokumentasi Sebelum
                                                     <span id="dokSebelumError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
-<<<<<<< HEAD
                                                 <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSebelum'])) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
-=======
-                                                <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
-                                                    <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
-                                                <?php else : ?>
-                                                    <div class="mt-1">
-                                                        <?php if (!empty($dokumentasiSebelum)) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokumentasiSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
@@ -256,21 +203,12 @@ if ($currentStatus == 'Ditolak') {
                                                     Dokumentasi Selesai
                                                     <span id="dokSesudahError" class="text-danger ms-2 fw-normal" style="font-size: 0.875em;"></span>
                                                 </label>
-<<<<<<< HEAD
                                                 <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
                                                     <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSesudah'])) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
-=======
-                                                <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
-                                                    <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
-                                                <?php else : ?>
-                                                    <div class="mt-1">
-                                                        <?php if (!empty($dokumentasiSesudah)) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokumentasiSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diupload)</em></span>
                                                         <?php endif; ?>
@@ -283,11 +221,7 @@ if ($currentStatus == 'Ditolak') {
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
-<<<<<<< HEAD
                                     <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
-=======
-                                    <?php if ($currentStatus == 'Sedang Dipinjam') : ?>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
                                         <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
                                     <?php endif; ?>
                                 </div>
@@ -297,26 +231,7 @@ if ($currentStatus == 'Ditolak') {
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
     </div>
-=======
-        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Dokumentasi berhasil terkirim
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
 </main>
 
 <script>
@@ -360,7 +275,3 @@ if ($currentStatus == 'Ditolak') {
         <?php endif; ?>
     });
 </script>
-
-<?php
-include '../../templates/footer.php';
-?>

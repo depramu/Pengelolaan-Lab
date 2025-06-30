@@ -1,9 +1,6 @@
 <?php
-<<<<<<< HEAD
 require_once __DIR__ . '/../../auth.php';
 authorize_role('PIC Aset');
-=======
->>>>>>> da99a8106382317812a99520fca98b4a7a1f956c
 include '../../templates/header.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
