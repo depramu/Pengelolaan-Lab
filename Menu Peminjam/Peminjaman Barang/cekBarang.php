@@ -35,34 +35,13 @@ $stmt = sqlsrv_query($conn, $query);
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-<<<<<<< HEAD
                         <span class="fw-bold">Cek Barang</span>
-=======
-<<<<<<< HEAD
-                        <span class="fw-semibold">Cek Barang</span>
-=======
-                        <span class="fw-bold">Cek Barang</span>
->>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
->>>>>>> 8bf5b781af0e54bd3ece0577b973d3723f6a6238
                     </div>
                     <div class="card-body">
                         <form method="POST" action="">
                             <div class="mb-2">
-<<<<<<< HEAD
                                 <label class="form-label fw-semibold">
                                     Pilih Tanggal Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-                                <label class="form-label">
-=======
-                                <label class="form-label fw-semibold">
->>>>>>> 214511133ce34a90da4a05e4292cdc131042ab7d
-                                    Pilih Tanggal Peminjaman
-                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
->>>>>>> 8bf5b781af0e54bd3ece0577b973d3723f6a6238
->>>>>>> f6f3b3b105ad620e126d8e8a3fa74e6e3595b58d
                                 </label>
                                 <div class="d-flex gap-2">
                                     <select id="tglHari" class="form-select" style="width: 80px;"></select>
