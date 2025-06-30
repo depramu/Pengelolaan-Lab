@@ -170,11 +170,11 @@ include '../../templates/sidebar.php';
                                 <label for="catatanPengembalianBarang" class="form-label fw-semibold">Catatan Pengembalian
                                     <span id="catatanError" class="text-danger small mt-1 fw-normal" style="font: size 0.95em;display:none;">*Harus Diisi</span>
                                 </label>
-                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"></textarea>
+                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;"  placeholder="Masukkan Catatan Pengembalian"></textarea>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-primary" <?= $sisaPinjaman == 0 ? 'disabled' : '' ?>>Kirim</button>
+                                <button type="submit" class="btn btn-primary">Kirim</button>
                             </div>
                         </form>
                     </div>
