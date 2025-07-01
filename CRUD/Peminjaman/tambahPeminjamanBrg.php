@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Peminjaman Barang</span>
+                        <span class="fw-bold">Peminjaman BarangG</span>
                     </div>
                     <div class="card-body">
 
