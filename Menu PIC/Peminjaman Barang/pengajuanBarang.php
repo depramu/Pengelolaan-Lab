@@ -1,25 +1,20 @@
 <?php
-require_once __DIR__ . '/../../auth.php'; // Muat fungsi otorisasi
-authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+require_once __DIR__ . '/../../auth.php';
+authorize_role('PIC Aset');
 include '../../templates/header.php';
+include '../../koneksi.php';
 
 $idPeminjamanBrg = $_GET['id'] ?? '';
-$data = [];
-
-$showRejectedModal = false;
-$showModal = false;
+$data = []; // Inisialisasi $data sebagai array kosong
 $error = '';
-$alasanPenolakan = '';
-$showAlasanPenolakan = false; // Default: sembunyikan
+$showModal = false;
 
 if (!empty($idPeminjamanBrg)) {
-    $_SESSION['idPeminjamanBrg'] = $idPeminjamanBrg;
-
-    // Ambil data peminjaman beserta nama peminjam (Mahasiswa/Karyawan) dan info nim/npk
     $query = "SELECT
                 pb.*,
                 b.namaBarang,
-                COALESCE(m.nama, k.nama) AS namaPeminjam
+                COALESCE(m.nama, k.nama) AS namaPeminjam,
+                pb.statusPeminjaman
             FROM
                 Peminjaman_Barang pb
             JOIN
@@ -29,70 +24,33 @@ if (!empty($idPeminjamanBrg)) {
             LEFT JOIN
                 Karyawan k ON pb.npk = k.npk
             WHERE
-                pb.idPeminjamanBrg = ?";
+                pb.idPeminjamanBrg = ?";          
     $params = array($idPeminjamanBrg);
     $stmt = sqlsrv_query($conn, $query, $params);
 
-    if ($stmt && sqlsrv_has_rows($stmt)) {
-        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-        // Jika status sudah Ditolak, tampilkan alasan penolakan yang tersimpan
-        if (($data['statusPeminjaman'] ?? '') === 'Ditolak') {
-            $showAlasanPenolakan = true;
-            $alasanPenolakan = $data['alasanPenolakan'] ?? '';
-        }
-    }
-}
-
-// Proses form
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($idPeminjamanBrg)) {
-    if (isset($_POST['setuju'])) {
-        // Setujui peminjaman
-        $query = "UPDATE Peminjaman_Barang
-                    SET statusPeminjaman = 'Sedang Dipinjam'
-                    WHERE idPeminjamanBrg = ?";
-        $params = array($idPeminjamanBrg);
-        $stmt = sqlsrv_query($conn, $query, $params);
-
-        if ($stmt) {
-            $showModal = true;
-        } else {
-            $error = "Gagal menyetujui peminjaman barang.";
-            // Tampilkan error
-        }
-    } elseif (isset($_POST['tolak_submit'])) {
-        // Tolak peminjaman (submit alasan penolakan)
-        $alasanPenolakan = trim($_POST['alasanPenolakan'] ?? '');
-        $showAlasanPenolakan = true; // Agar field tetap terlihat jika ada error
-        if ($alasanPenolakan === '') {
-            $error = "Alasan penolakan harus diisi.";
-            // $showRejectedModal = true; // Ini mungkin tidak perlu jika validasi di client-side sudah bekerja
-        } else {
-            // Update status dan alasan penolakan di Peminjaman_Barang
-            $query = "UPDATE Peminjaman_Barang
-                        SET statusPeminjaman = 'Ditolak'
-                        WHERE idPeminjamanBrg = ?";
-            $params = array($idPeminjamanBrg);
-            $stmt = sqlsrv_query($conn, $query, $params);
-
-            // Simpan alasan penolakan ke tabel Penolakan (pastikan tabel Penolakan ada dan strukturnya sesuai)
-            $queryPenolakan = "INSERT INTO Penolakan (idPeminjamanBrg, alasanPenolakan) VALUES (?, ?)"; // Tambahkan tglPenolakan
-            $paramsPenolakan = array($idPeminjamanBrg, $alasanPenolakan);
-            $stmtPenolakan = sqlsrv_query($conn, $queryPenolakan, $paramsPenolakan);
-
-            if ($stmt && $stmtPenolakan) {
-                $showModal = true;
-            } else {
-                $error = "Gagal menolak pengajuan barang.";
-                // Tampilkan error
+    if ($stmt === false) {
+        // Ini akan menangkap error dari query SELECT
+        $error_details = sqlsrv_errors();
+        $error_message = "Error saat mengambil data peminjaman. ";
+        if ($error_details) {
+            foreach ($error_details as $err) {
+                $error_message .= $err['message'] . " ";
             }
         }
-    } elseif (isset($_POST['tolak'])) {
-        // Klik tombol tolak, tampilkan kolom alasan penolakan (ini harusnya tidak akan terjadi karena kita akan pakai JS)
-        // Ini hanya sebagai fallback jika JS tidak bekerja
-        $showAlasanPenolakan = true;
+        die($error_message); // Hentikan eksekusi dan tampilkan error
     }
+
+    if (sqlsrv_has_rows($stmt)) { // Cek apakah ada baris yang dikembalikan
+        $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+    } else {
+        $error = "Data peminjaman tidak ditemukan untuk ID: " . htmlspecialchars($idPeminjamanBrg);
+    }
+} else {
+    $error = "ID Peminjaman tidak valid.";
 }
 
+// Pastikan semua variabel diinisialisasi SETELAH mencoba mengambil data
+// Gunakan operator null coalescing (??) untuk default nilai kosong jika $data tidak memiliki kunci
 $idBarang = $data['idBarang'] ?? '';
 $nim = $data['nim'] ?? '';
 $npk = $data['npk'] ?? '';
@@ -101,12 +59,44 @@ $namaPeminjam = $data['namaPeminjam'] ?? '';
 $tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
 $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
-$statusPeminjaman = $data['statusPeminjaman'] ?? ''; // Ambil status peminjaman untuk disable tombol
+$statusPeminjaman = $data['statusPeminjaman'] ?? '';
 
+// Proses form untuk menyetujui peminjaman (tetap seperti sebelumnya, sudah benar)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    if (!empty($idPeminjamanBrg)) {
+        sqlsrv_begin_transaction($conn);
+
+        $updateQuery = "UPDATE Peminjaman_Barang
+                        SET statusPeminjaman = 'Sedang Dipinjam'
+                        WHERE idPeminjamanBrg = ?";
+        $updateParams = array($idPeminjamanBrg);
+        $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
+
+        if ($stmtUpdate) {
+            sqlsrv_commit($conn);
+            $showModal = true;
+            // Penting: Setelah sukses, Anda mungkin perlu memuat ulang data atau mengarahkan pengguna
+            // Tapi untuk modal di halaman yang sama, ini sudah cukup.
+            // Data di form akan terlihat berubah setelah refresh atau redirect.
+        } else {
+            sqlsrv_rollback($conn);
+            $errors = sqlsrv_errors();
+            $error = "Gagal menyetujui peminjaman barang. Detail: ";
+            if ($errors) {
+                foreach ($errors as $err) {
+                    $error .= $err['message'] . "; ";
+                }
+            } else {
+                $error .= "Kesalahan tidak diketahui.";
+            }
+        }
+    } else {
+        $error = "ID Peminjaman tidak ditemukan untuk persetujuan.";
+    }
+}
 include '../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -125,102 +115,110 @@ include '../../templates/sidebar.php';
                         <span class="fw-semibold">Pengajuan Peminjaman Barang</span>
                     </div>
                     <div class="card-body">
-                        <?php if ($error) : ?>
-                            <div class="alert alert-danger" role="alert">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                        <?php endif; ?>
-                        <form method="POST" id="formPengajuanBarang">
+                        <form method="POST">
+                            <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="idBarang" class="form-label fw-bold">ID Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="tglPeminjamanBrg" class="form-label fw-bold">Tanggal Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label fw-bold">NIM / NPK</label>
-                                        <div class="form-control-plaintext">
-                                            <?php
-                                            if (!empty($nim)) {
-                                                echo htmlspecialchars($nim);
-                                            } elseif (!empty($npk)) {
-                                                echo htmlspecialchars($npk);
-                                            } else {
-                                                echo "-";
-                                            }
-                                            ?>
-                                        </div>
-                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
-                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="alasanPeminjamanBrg" class="form-label fw-bold">Alasan Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
-                                    </div>
+
+                    <!-- Kolom Kiri -->
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                           <label for="idBarang" class="form-label fw-bold">ID Barang</label>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
+                                <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
+                        </div>
+                        <div class="mb-2">
+                            <label for="tglPeminjamanBrg" class="form-label fw-bold">Tanggal Peminjaman</label>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
+                                <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
+                        </div>                       
+                        <div class="mb-2">
+                            <label class="form-label fw-bold">NIM / NPK</label>
+                                <div class="form-control-plaintext">
+                                    <?php
+                                        if (!empty($nim)) {
+                                            echo htmlspecialchars($nim);
+                                        } elseif (!empty($npk)) {
+                                            echo htmlspecialchars($npk);
+                                        } else {
+                                             echo "-";
+                                        }
+                                    ?>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="namaBarang" class="form-label fw-bold">Nama Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="namaPeminjam" class="form-label fw-bold">Nama Peminjam</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaPeminjam) ?></div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="jumlahBrg" class="form-label fw-bold">Jumlah Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mb-2" id="alasanPenolakanGroup" style="<?= $showAlasanPenolakan ? '' : 'display:none;' ?>">
-                                        <label for="alasanPenolakan" class="form-label fw-bold">Alasan Penolakan</label>
-                                        <?php if ($statusPeminjaman === 'Ditolak') : ?>
-                                            <div class="form-control-plaintext border p-2 bg-light rounded"><?= nl2br(htmlspecialchars($alasanPenolakan)) ?></div>
-                                        <?php else : ?>
-                                            <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="3" placeholder="Isi alasan penolakan jika ingin menolak" style="background: #f5f5f5;"><?= htmlspecialchars($alasanPenolakan) ?></textarea>
-                                        <?php endif; ?>
-                                        <div class="form-text text-danger" id="alasanPenolakanError" style="display: none;">Alasan penolakan harus diisi jika menolak.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <div class="d-flex justify-content-between w-100 gap-2">
-                                    <div>
-                                        <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
-                                    </div>
-                                    <div class="d-flex gap-2">
-                                        <?php if ($statusPeminjaman === 'Menunggu Persetujuan') : ?>
-                                            <button type="button" class="btn btn-danger" id="btnTolakShowField">Tolak</button>
-                                            <button type="submit" name="tolak_submit" class="btn btn-danger" id="btnTolakSubmit" style="display:none;">Submit Penolakan</button>
-                                            <button type="submit" name="setuju" class="btn btn-primary">Setuju</button>
-                                        <?php else : ?>
-                                            <button type="button" class="btn btn-danger" disabled>Tolak</button>
-                                            <button type="button" class="btn btn-primary" disabled>Setuju</button>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </form> 
+                            <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                            <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                        </div>
+                        <div class="mb-2">
+                            <label for="alasanPeminjamanBrg" class="form-label fw-bold">Alasan Peminjaman</label>
+                                <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
+                        </div>                       
+                    </div>
+
+                    <!-- Kolom Kanan -->
+                    <div class="col-md-6">
+                        <div class="mb-2">         
+                          <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
+                                <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
+                                <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+                        </div>
+                    <div class="mb-2">         
+                          <label for="namaBarang" class="form-label fw-bold">Nama Barang</label>
+                            <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
+                            <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                        </div>
+                    <div class="mb-2">         
+                          <label for="namaPeminjam" class="form-label fw-bold">Nama Peminjam</label>
+                            <div class="form-control-plaintext"><?= htmlspecialchars($namaPeminjam) ?></div>
+                            <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($namaPeminjam) ?>">
+                        </div>
+                    <div class="mb-2">         
+                          <label for="jumlahBrg" class="form-label fw-bold">Jumlah Barang</label>
+                            <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
+                            <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
+                    </div>
+                    </div>
+                    </div>
+                             <!-- Tombol Aksi -->
+                    <div class="d-flex justify-content-between mt-4">
+                    <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
+                    <div>
+                        <a href="penolakanBarang.php?id=<?= htmlspecialchars($idPeminjamanBrg) ?>" class="btn btn-danger">Tolak</a>
+                        <button type="submit" name="submit" class="btn btn-primary">Setuju</button>
+                    </div>
+                    </div>
+
+
+ <?php if ($showModal): ?>
+        <div class="modal fade" id="successModalPersetujuan" tabindex="-1" aria-labelledby="successModalPersetujuanLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalPersetujuanLabel">Berhasil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        Peminjaman barang <strong><?= htmlspecialchars($idPeminjamanBrg) ?></strong> telah disetujui.
+                    </div>
+                    <div class="modal-footer">
+                        <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-primary">OK</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var modal = new bootstrap.Modal(document.getElementById('successModalPersetujuan'));
+                modal.show();
+                // Setelah modal ditampilkan, kita bisa menghapus ID dari URL agar tidak muncul lagi saat refresh
+                // (Ini opsional, tapi bagus untuk UX)
+                if (window.history.replaceState) {
+                    window.history.replaceState(null, null, window.location.pathname);
+                }
+            });
+        </script>
+    <?php endif; ?>
+
 </main>
+                  
 
 <?php
 include '../../templates/footer.php';

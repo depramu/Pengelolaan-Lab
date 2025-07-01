@@ -1,5 +1,5 @@
 <?php
-$error = null;
+// $error = null;
 $showModal = false;
 
 include '../../templates/header.php';
@@ -49,49 +49,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanBrg = $_POST['alasanPeminjamanBrg'];
     $jumlahBrg = (int)$_POST['jumlahBrg']; // Pastikan integer
 
-    // Validasi input
-    if ($jumlahBrg <= 0) {
-        $error = "Jumlah peminjaman harus lebih dari 0.";
-    } elseif ($jumlahBrg > $stokTersedia) {
-        $error = "*Jumlah peminjaman melebihi stok yang tersedia.";
+    // Ubah format tanggal sebelum insert
+    if ($tglPeminjamanBrg) {
+        $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
+        $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('Y-m-d') : null;
     } else {
-        // Ubah format tanggal sebelum insert
-        if ($tglPeminjamanBrg) {
-            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
-            $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('Y-m-d') : null;
+        $tglPeminjamanBrgSQL = null;
+    }
+
+    // 1. Insert data peminjaman    
+    $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, sisaPinjaman, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
+    $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
+
+    if ($stmtInsert) {
+        // 2. Jika insert berhasil, update stok barang
+        $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
+        $paramsUpdate = [$jumlahBrg, $idBarang];
+        $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
+
+        if ($stmtUpdate) {
+            $showModal = true;
         } else {
-            $tglPeminjamanBrgSQL = null;
+            $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
         }
-
-        // 1. Insert data peminjaman    
-        $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, sisaPinjaman, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
-        $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
-
-        if ($stmtInsert) {
-            // 2. Jika insert berhasil, update stok barang
-            $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
-            $paramsUpdate = [$jumlahBrg, $idBarang];
-            $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
-
-            if ($stmtUpdate) {
-                $showModal = true;
-            } else {
-                $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
-            }
-        } else {
-            $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
-        }
+    } else {
+        $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
     }
 }
 ?>
-
-<!-- <style>
-    .protect-input {
-        background-color: #e9ecef;
-        color: #6c757d;
-    }
-</style> -->
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Peminjaman Barang</h3>
@@ -111,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
                     <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Peminjaman BarangG</span>
+                        <span class="fw-bold">Peminjaman Barang</span>
                     </div>
                     <div class="card-body">
 
@@ -121,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST">
+                            <form id="formTambahPeminjamanBrg"  method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
@@ -177,10 +163,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </label>
                                     <div class="input-group" style="max-width: 140px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                        <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" required style="max-width: 70px;">
+                                        <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" style="max-width: 70px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                     </div>
-                                    <small class="text-muted">Stok tersedia: <?= $stokTersedia ?></small>
+                                    <small class="text-muted">Stok tersedia: <span id="stokBarang"><?= $stokTersedia ?></span></small>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-2">
@@ -201,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 </main>
+
 
 <?php
 include '../../templates/footer.php';

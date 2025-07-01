@@ -93,10 +93,10 @@ include '../../templates/sidebar.php';
                             </div>
                             <div class="mb-2 row">
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label fw-semibold">Email
-                                        <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
+                                        <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= isset($email) ? htmlspecialchars($data['email']) : '' ?>">
+                                    <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= htmlspecialchars($data['email']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label fw-semibold">Jenis Role</label>

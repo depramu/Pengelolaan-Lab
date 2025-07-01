@@ -34,7 +34,7 @@ include __DIR__ . '/../../templates/sidebar.php';
                         <span class="fw-bold">Cek Ruangan</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST" id="form-peminjaman" action="">
+                        <form method="POST" id="formCekKetersediaanRuangan" action="">
                             <div class="mb-2">
                                 <label class="form-label fw-semibold">
                                     Pilih Tanggal Peminjaman

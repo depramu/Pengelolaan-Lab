@@ -115,7 +115,7 @@ include '../../templates/sidebar.php';
                         <span class="fw-bold">Pengajuan Peminjaman Ruangan</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form id="formTambahPeminjamanRuangan" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
@@ -196,6 +196,8 @@ include '../../templates/sidebar.php';
     </div>
 
 </main>
+
+
 
 <?php
 include '../../templates/footer.php';
