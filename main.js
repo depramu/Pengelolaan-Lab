@@ -1571,49 +1571,70 @@ function setupFormTambahPeminjamanBrg() {
   setupStockStepper("stepperContainerPeminjaman", "jumlahBrg", "stokTersedia");
 
   form.addEventListener("submit", function (e) {
-    let valid = true;
+    e.preventDefault();
+    let isValid = true;
 
-    const jumlahInput = document.getElementById("jumlahBrg");
+    const jumlahInputEl = document.getElementById("jumlahBrg");
+    const alasanInputEl = document.getElementById("alasanPeminjamanBrg");
     const jumlahError = document.getElementById("jumlahError");
-    // Ambil stok tersedia dari elemen (misal hidden input atau data attribute)
-    let stokTersedia = 0;
-    // Coba ambil dari elemen dengan id 'stokTersedia', jika ada
-    const stokElem = document.getElementById("stokBarang");
-    if (stokElem) {
-      stokTersedia = parseInt(stokElem.value || stokElem.textContent || "0");
-    } else if (window.stokTersedia !== undefined) {
-      stokTersedia = parseInt(window.stokTersedia);
-    } else {
-      // fallback: coba ambil dari data attribute pada input jumlahBrg
-      stokTersedia = parseInt(jumlahInput.getAttribute("data-stok") || "0");
-    }
-    let jumlahValue = parseInt(jumlahInput.value) || 0;
+    const alasanError = document.getElementById("alasanError");
 
-    if (jumlahValue <= 0) {
-      jumlahError.textContent = "*Jumlah harus lebih dari 0.";
+    // Reset error messages
+    jumlahError.style.display = "none";
+    alasanError.style.display = "none";
+
+    // Validasi jumlah barang
+    let jumlahValue = parseInt(jumlahInputEl.value, 10) || 0;
+    if (!jumlahInputEl.value.trim()) {
+      jumlahError.textContent = "*Harus diisi";
       jumlahError.style.display = "inline";
-      valid = false;
-    } else if (jumlahValue > stokTersedia) {
-      jumlahError.textContent = "*Jumlah melebihi stok tersedia.";
-      jumlahError.style.display = "inline";
-      valid = false;
-    } else {
-      jumlahError.style.display = "none";
+      isValid = false;
     }
 
     // Validasi alasan peminjaman
-    const alasanInput = document.getElementById("alasanPeminjamanBrg");
-    const alasanError = document.getElementById("alasanError");
-    if (alasanInput.value.trim() === "") {
+    if (!alasanInputEl.value.trim()) {
       alasanError.textContent = "*Harus diisi";
       alasanError.style.display = "inline";
-      valid = false;
-    } else {
-      alasanError.style.display = "none";
+      isValid = false;
     }
 
-    if (!valid) {
-      e.preventDefault();
+    // Ambil stok tersedia dari elemen (misal hidden input atau data attribute)
+    let stokTersedia = 0;
+    const stokElem = document.getElementById("stokBarang");
+    if (stokElem) {
+      stokTersedia = parseInt(
+        stokElem.value || stokElem.textContent || "0",
+        10
+      );
+    } else if (window.stokTersedia !== undefined) {
+      stokTersedia = parseInt(window.stokTersedia, 10);
+    } else {
+      stokTersedia = parseInt(
+        jumlahInputEl.getAttribute("data-stok") || "0",
+        10
+      );
+    }
+    if (isNaN(stokTersedia)) stokTersedia = 0;
+
+    // Validasi jumlah terhadap stok
+    if (jumlahValue <= 0) {
+      jumlahError.textContent = "*Jumlah harus lebih dari 0.";
+      jumlahError.style.display = "inline";
+      isValid = false;
+    } else if (jumlahValue > stokTersedia) {
+      jumlahError.textContent = "*Jumlah melebihi stok tersedia.";
+      jumlahError.style.display = "inline";
+      isValid = false;
+    }
+
+    if (isValid) {
+      const confirmModal = new bootstrap.Modal(
+        document.getElementById("confirmModal")
+      );
+      document.getElementById("confirmAction").textContent =
+        "menambah peminjaman barang";
+      document.getElementById("confirmYes").onclick = () => form.submit();
+      confirmModal.show();
     }
   });
 }
