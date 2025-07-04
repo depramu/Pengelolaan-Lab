@@ -51,7 +51,7 @@ switch ($user_role) {
                 </a>
             </div>
             <div class="d-flex align-items-center">
-            <div class="d-none d-md-block ps-3 ps-md-4" style="margin-right: 1vw;">
+                <div class="d-none d-md-block ps-3 ps-md-4" style="margin-right: 1vw;">
                     <div class="d-flex flex-column align-items-end">
                         <span class="fw-semibold fs-5">Halo Sobat,</span>
                     </div>
