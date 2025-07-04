@@ -1,10 +1,8 @@
 <?php
-// $error = null;
+require_once __DIR__ . '/../../function/init.php';
+authorize_role(['Peminjam']);
+
 $showModal = false;
-
-include '../../templates/header.php';
-include '../../templates/sidebar.php';
-
 // Auto-generate ID Peminjaman Barang
 $idPeminjamanBrg = 'PJB001';
 $stmtId = sqlsrv_query($conn, "SELECT TOP 1 idPeminjamanBrg FROM Peminjaman_Barang WHERE idPeminjamanBrg LIKE 'PJB%' ORDER BY idPeminjamanBrg DESC");
@@ -52,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ubah format tanggal sebelum insert
     if ($tglPeminjamanBrg) {
         $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
-        $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('Y-m-d') : null;
+        $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('d-m-y') : null;
     } else {
         $tglPeminjamanBrgSQL = null;
     }
@@ -77,6 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
     }
 }
+
+include '../../templates/header.php';
+include '../../templates/sidebar.php';
+
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
@@ -84,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/cekBarang.php">Cek Barang</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/lihatBarang.php">Lihat Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php">Cek Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/lihatBarang.php">Lihat Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Barang</li>
             </ol>
         </nav>
@@ -111,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <label for="idPeminjamanBrg" class="form-label fw-bold">ID Peminjaman Barang</label>
+                                        <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg_display" value="<?= $idPeminjamanBrg ?>">
                                     </div>
                                 </div>
@@ -132,8 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="nim" class="form-label fw-semibold">NIM</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim_display"
-                                            value="<?= isset($_SESSION['nim']) ? htmlspecialchars($_SESSION['nim']) : '' ?>">
+                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="mb-2">
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
-                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanBrg);
+                                                                                                                                            $dateObj = DateTime::createFromFormat('d-m=y', $tglPeminjamanBrg);
                                                                                                                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
                                                                                                                                         } ?>">
                                     </div>
@@ -150,8 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="npk" class="form-label fw-semibold">NPK</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk_display"
-                                            value="<?= isset($_SESSION['npk']) ? htmlspecialchars($_SESSION['npk']) : '' ?>">
+                                        <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= BASE_URL ?>/Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-secondary">Kembali</a>
+                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                             </div>
                         </form>
