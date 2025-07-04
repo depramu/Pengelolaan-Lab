@@ -13,7 +13,7 @@ $profil = [];
 $error_message = '';
 
 if ($user_id && $user_role) {
-    if ($user_role === 'Mahasiswa') {
+    if ($user_role === 'Peminjam') {
         // Ambil data Mahasiswa
         $query = "SELECT nim, nama, email FROM Mahasiswa WHERE nim = ?";
         $stmt = sqlsrv_query($conn, $query, array($user_id));
@@ -22,11 +22,11 @@ if ($user_id && $user_role) {
         } else {  
             $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
             if ($profil) {
-                $profil['role'] = 'Mahasiswa';
+                $profil['role'] = 'Peminjam (Mahasiswa)';
             }
         }
     } elseif (
-        $user_role === 'Karyawan' ||
+        $user_role === 'Peminjam' ||
         $user_role === 'PIC Aset' ||
         $user_role === 'KA UPT'
     ) {
@@ -42,7 +42,7 @@ if ($user_id && $user_role) {
                 if (!empty($profil['jenisRole'])) {
                     $profil['role'] = $profil['jenisRole'];
                 } else {
-                    $profil['role'] = 'Karyawan';
+                    $profil['role'] = 'Peminjam (Karyawan)';
                 }
             }
         }

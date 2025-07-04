@@ -78,18 +78,7 @@ include '../../templates/sidebar.php';
                                     <label for="idRuangan" class="form-label fw-semibold d-flex align-items-center">ID Ruangan</label>
                                     <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
-                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                        <?php if (!empty($namaError)): ?>
-                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
-                                        <?php endif; ?>
-                                    </label>
-                                    <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>" placeholder="Masukkan nama ruangan..">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col-md-6">
+                               <div class="col-md-6">
                                     <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan
                                         <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
@@ -101,6 +90,17 @@ include '../../templates/sidebar.php';
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
+                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($namaError)): ?>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                        <?php endif; ?>
+                                    </label>
+                                    <input type="text" class="form-control" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : '' ?>" placeholder="Masukkan nama ruangan..">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="ketersediaan" class="form-label fw-semibold d-flex align-items-center">Ketersediaan Ruangan

@@ -71,6 +71,7 @@ include '../../templates/sidebar.php';
 
                             <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
+
                                     <form action="<?= BASE_URL ?>/CRUD/Barang/hapusBarang.php" method="POST">
                                         <input type="hidden" name="idBarang" value="<?= $row['idBarang'] ?>">
                                         <div class="modal-content">
@@ -87,6 +88,7 @@ include '../../templates/sidebar.php';
                                             </div>
                                         </div>
                                     </form>
+                                    
                                 </div>
                             </div>
                         </td>

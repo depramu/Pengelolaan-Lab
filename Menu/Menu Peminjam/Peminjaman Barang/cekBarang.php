@@ -37,7 +37,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
     <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Cek Barang</li>
             </ol>
         </nav>
@@ -98,6 +98,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </div>
         </div>
     </div> -->
+    
     <!-- Area Barang yang Tersedia -->
     <div id="areaBarangTersedia" style="display:none;">
         <div class="d-flex justify-content-between align-items-center mb-3">

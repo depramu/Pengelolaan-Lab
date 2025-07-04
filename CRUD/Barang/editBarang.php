@@ -93,28 +93,6 @@ include '../../templates/sidebar.php';
                                     <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang" value="<?= htmlspecialchars($data['idBarang']) ?>" readonly>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="namaBarang" class="form-label fw-semibold d-flex align-items-center">
-                                        Nama Barang
-                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?>" placeholder="Masukkan nama barang..">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col-md-6">
-                                    <label for="stokBarang" class="form-label fw-semibold d-flex align-items-center">
-                                        Stok Barang
-                                        <span id="stokError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <div class="input-group" style="max-width: 180px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                        <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
-                                            min="0" style="max-width: 70px;"
-                                            value="<?= isset($data['stokBarang']) ? htmlspecialchars($data['stokBarang']) : '0' ?>">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
                                     <label for="lokasiBarang" class="form-label fw-semibold d-flex align-items-center">
                                         Lokasi Barang
                                         <span id="lokasiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
@@ -128,6 +106,28 @@ include '../../templates/sidebar.php';
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="mb-2 row">
+                                <div class="col-md-6">
+                                    <label for="namaBarang" class="form-label fw-semibold d-flex align-items-center">
+                                        Nama Barang
+                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?>" placeholder="Masukkan nama barang..">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="stokBarang" class="form-label fw-semibold d-flex align-items-center">
+                                        Stok Barang
+                                        <span id="stokError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                    </label>
+                                    <div class="input-group" style="max-width: 180px;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                        <input type="text" class="form-control text-center" id="stokBarang" name="stokBarang"
+                                            min="0" style="max-width: 70px;"
+                                            value="<?= isset($data['stokBarang']) ? htmlspecialchars($data['stokBarang']) : '0' ?>">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">

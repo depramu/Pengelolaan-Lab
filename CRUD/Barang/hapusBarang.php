@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../function/koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idBarang = $_POST['idBarang'] ?? null;
 
@@ -8,12 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = sqlsrv_query($conn, $query, [$idBarang]);
 
         if ($stmt) {
-            header("Location: ../../Menu PIC/manajemenBarang.php");
+            header("Location: ../../Menu/Menu PIC/manajemenBarang.php");
             exit;
         } else {
             echo "<script>
             alert('Gagal menghapus Barang. Silahkan coba lagi.');
-            window.location.href = /Menu PIC/manajemenBarang.php';
+            window.location.href = '../../Menu/Menu PIC/manajemenBarang.php';
             </script>";
             exit;
         }

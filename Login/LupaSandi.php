@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($email)) {
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
-        require_once __DIR__ . '/../koneksi.php';
+        require_once __DIR__ . '/../function/koneksi.php';
         require_once __DIR__ . '/../function/reset_password_helper.php';
         [$success, $msg] = resetUserPassword($conn, $email);
         if ($success) {
