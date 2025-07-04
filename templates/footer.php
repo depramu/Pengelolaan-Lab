@@ -112,57 +112,57 @@
             </div>
             <div class="modal-footer">
                 <a href="<?php
-                    $currentFile = basename($_SERVER['PHP_SELF']);
-                    switch ($currentFile) {
-                        case 'tambahBarang.php':
-                        case 'editBarang.php':
-                            echo BASE_URL . '/Menu/Menu PIC/manajemenBarang.php';
-                            break;
-                        case 'tambahRuangan.php':
-                        case 'editRuangan.php':
-                            echo BASE_URL . '/Menu/Menu PIC/manajemenRuangan.php';
-                            break;
-                        case 'tambahPeminjamanBrg.php':
-                            echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Barang/riwayatBarang.php';
-                            break;
-                        case 'tambahPeminjamanRuangan.php':
-                            echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
-                            break;
-                        case 'tambahPengembalian.php':
-                        case 'editPengembalian.php':
-                            echo BASE_URL . 'Menu/Menu PIC/manajemenPengembalian.php';
-                            break;
-                        case 'tambahAkunKry.php':
-                        case 'editAkunKry.php':
-                            echo BASE_URL . 'Menu/Menu PIC/manajemenAkunKry.php';
-                            break;
-                        case 'tambahAkunMhs.php':
-                        case 'editAkunMhs.php':
-                            echo BASE_URL . 'Menu/Menu PIC/manajemenAkunMhs.php';
-                            break;
-                        case 'pengajuanBarang.php':
-                            echo BASE_URL . 'Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
-                            break;
-                        case 'pengajuanRuangan.php':
-                        case 'pengembalianRuangan.php':
-                        case 'formDetailRuangan.php':
-                            echo BASE_URL . 'Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
-                            break;
-                        case 'formDetailRiwayatRuangan.php':
-                            echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
-                            break;
-                        case 'pengembalianBarang.php':
-                        case 'penolakanBarang.php':
-                            echo BASE_URL . 'Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
-                            break;
-                        case 'penolakanRuangan.php':
-                            echo BASE_URL . 'Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
-                            break;
-                        default:
-                            echo BASE_URL . '/';
-                            break;
-                    }
-                ?>" class="btn btn-primary">OK</a>
+                            $currentFile = basename($_SERVER['PHP_SELF']);
+                            switch ($currentFile) {
+                                case 'tambahBarang.php':
+                                case 'editBarang.php':
+                                    echo BASE_URL . '/Menu/Menu PIC/manajemenBarang.php';
+                                    break;
+                                case 'tambahRuangan.php':
+                                case 'editRuangan.php':
+                                    echo BASE_URL . '/Menu/Menu PIC/manajemenRuangan.php';
+                                    break;
+                                case 'tambahPeminjamanBrg.php':
+                                    echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Barang/riwayatBarang.php';
+                                    break;
+                                case 'tambahPeminjamanRuangan.php':
+                                    echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
+                                    break;
+                                case 'tambahPengembalian.php':
+                                case 'editPengembalian.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/manajemenPengembalian.php';
+                                    break;
+                                case 'tambahAkunKry.php':
+                                case 'editAkunKry.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/manajemenAkunKry.php';
+                                    break;
+                                case 'tambahAkunMhs.php':
+                                case 'editAkunMhs.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/manajemenAkunMhs.php';
+                                    break;
+                                case 'pengajuanBarang.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
+                                    break;
+                                case 'pengajuanRuangan.php':
+                                case 'pengembalianRuangan.php':
+                                case 'formDetailRuangan.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                                    break;
+                                case 'formDetailRiwayatRuangan.php':
+                                    echo BASE_URL . 'Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php';
+                                    break;
+                                case 'pengembalianBarang.php':
+                                case 'penolakanBarang.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
+                                    break;
+                                case 'penolakanRuangan.php':
+                                    echo BASE_URL . 'Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
+                                    break;
+                                default:
+                                    echo BASE_URL . '/';
+                                    break;
+                            }
+                            ?>" class="btn btn-primary">OK</a>
             </div>
         </div>
     </div>
