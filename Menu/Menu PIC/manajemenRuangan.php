@@ -68,14 +68,14 @@ include '../../templates/sidebar.php';
                             <a href="<?= BASE_URL ?>/CRUD/Ruangan/editRuangan.php?id=<?= $row['idRuangan'] ?>">
                                 <img src="<?= BASE_URL ?>/icon/edit.svg" alt="Edit" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;">
                             </a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idRuangan'] ?>">
+                            <a href="<?= BASE_URL ?>/CRUD/Ruangan/hapusRuangan.php?id=<?= $row['idRuangan'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idRuangan'] ?>">
                                 <img src="<?= BASE_URL ?>/icon/hapus.svg" alt="Hapus" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;">
                             </a>
 
                             <div class="modal fade" id="deleteModal<?= $row['idRuangan'] ?>"
                                 tabindex="-1" aria-labelledby="modalLabel<?= $row['idRuangan'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
-                                    <form action="../CRUD/Ruangan/hapusRuangan.php" method="POST">
+                                    <form action="../../CRUD/Ruangan/hapusRuangan.php" method="POST">
                                         <input type="hidden" name="idRuangan" value="<?= $row['idRuangan'] ?>">
                                         <div class="modal-content">
                                             <div class="modal-header">

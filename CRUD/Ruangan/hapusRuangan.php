@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../function/koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idRuangan = $_POST['idRuangan'] ?? null;
 
@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = sqlsrv_query($conn, $query, [$idRuangan]);
 
         if ($stmt) {
-            header("Location: ../../Menu PIC/manajemenRuangan.php");
+            header("Location: ../../Menu/Menu PIC/manajemenRuangan.php");
             exit;
         } else {
             echo "<script>
@@ -20,6 +20,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-header("Location: ../../Menu PIC/manajemenRuangan.php");
 include '../../templates/header.php';
 exit;

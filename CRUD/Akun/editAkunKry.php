@@ -84,17 +84,17 @@ include '../../templates/sidebar.php';
                                     <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                </div>
-                            </div>
-                            <div class="mb-2 row">
-                                <div class="col-md-6">
                                     <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
                                         <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= htmlspecialchars($data['email']) ?>">
+                                </div>
+                            </div>
+                            <div class="mb-2 row">
+                            <div class="col-md-6">
+                                    <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="jenisRole" class="form-label fw-semibold">Jenis Role</label>

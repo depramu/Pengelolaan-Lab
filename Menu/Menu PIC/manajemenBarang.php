@@ -67,7 +67,7 @@ include '../../templates/sidebar.php';
                         <td><?= htmlspecialchars($row['lokasiBarang']) ?></td>
                         <td class="text-center">
                             <a href="<?= BASE_URL ?>/CRUD/Barang/editBarang.php?id=<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
+                            <a href="<?= BASE_URL ?>/CRUD/Barang/hapusBarang.php?id=<?= $row['idBarang'] ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['idBarang'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 10px;"></a>
 
                             <div class="modal fade" id="deleteModal<?= $row['idBarang'] ?>" tabindex="-1" aria-labelledby="modalLabel<?= $row['idBarang'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
