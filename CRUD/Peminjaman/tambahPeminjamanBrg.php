@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../function/init.php';
 authorize_role(['Peminjam']);
 
+
 $showModal = false;
 // Auto-generate ID Peminjaman Barang
 $idPeminjamanBrg = 'PJB001';
@@ -55,21 +56,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $tglPeminjamanBrgSQL = null;
     }
 
-    // 1. Insert data peminjaman    
-    $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, sisaPinjaman, alasanPeminjamanBrg, statusPeminjaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg, 'Menunggu Persetujuan'];
+    // 1. Insert data peminjaman (tanpa statusPeminjaman)    
+    $queryInsert = "INSERT INTO Peminjaman_Barang (idPeminjamanBrg, idBarang, tglPeminjamanBrg, nim, npk, jumlahBrg, sisaPinjaman, alasanPeminjamanBrg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg];
     $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
     if ($stmtInsert) {
-        // 2. Jika insert berhasil, update stok barang
-        $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
-        $paramsUpdate = [$jumlahBrg, $idBarang];
-        $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
+        // 2. Insert status peminjaman ke tabel Status_Peminjaman
+        $queryInsertStatus = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman) VALUES (?, ?)";
+        $paramsInsertStatus = [$idPeminjamanBrg, 'Menunggu Persetujuan'];
+        $stmtInsertStatus = sqlsrv_query($conn, $queryInsertStatus, $paramsInsertStatus);
 
-        if ($stmtUpdate) {
-            $showModal = true;
+        if ($stmtInsertStatus) {
+            // 3. Jika insert berhasil, update stok barang
+            $queryUpdate = "UPDATE Barang SET stokBarang = stokBarang - ? WHERE idBarang = ?";
+            $paramsUpdate = [$jumlahBrg, $idBarang];
+            $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
+
+            if ($stmtUpdate) {
+                $showModal = true;
+            } else {
+                $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
+            }
         } else {
-            $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
+            $error = "Peminjaman tercatat, tetapi gagal mencatat status. Error: " . print_r(sqlsrv_errors(), true);
         }
     } else {
         $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
@@ -178,7 +188,7 @@ include '../../templates/sidebar.php';
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/lihatBarang.php" class="btn btn-secondary">Kembali</a>
+                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                             </div>
                         </form>

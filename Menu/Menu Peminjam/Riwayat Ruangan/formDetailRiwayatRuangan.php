@@ -17,12 +17,13 @@ if (isset($_POST['idPeminjamanRuangan'])) {
 }
 
 if ($idPeminjamanRuangan !== null) {
+    // Query untuk mendapatkan data peminjaman ruangan
     $sql = "SELECT
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
-                p.alasanPeminjamanRuangan, p.statusPeminjaman,
+                p.alasanPeminjamanRuangan,
+                sp.statusPeminjaman, sp.alasanPenolakan,
                 peng.dokumentasiSebelum, peng.dokumentasiSesudah,
-                tolak.alasanPenolakan,
                 r.namaRuangan,
                 COALESCE(m.nama, k.nama) AS namaPeminjam
             FROM 
@@ -30,9 +31,9 @@ if ($idPeminjamanRuangan !== null) {
             JOIN 
                 Ruangan r ON p.idRuangan = r.idRuangan
             LEFT JOIN 
-                Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
+                Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
             LEFT JOIN 
-                Penolakan tolak ON p.idPeminjamanRuangan = tolak.idPeminjamanRuangan
+                Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
             LEFT JOIN 
                 Mahasiswa m ON p.nim = m.nim
             LEFT JOIN 
@@ -51,6 +52,25 @@ if ($idPeminjamanRuangan !== null) {
             $error_message = "Data peminjaman dengan ID '" . htmlspecialchars($idPeminjamanRuangan) . "' tidak ditemukan.";
         }
         // $showModal tidak di-set di sini, hanya di POST
+    }
+    
+    // Query untuk mendapatkan status peminjaman dari tabel Status_Peminjaman
+    if ($data && !$error_message) {
+        $statusSql = "SELECT statusPeminjaman, alasanPenolakan
+                      FROM Status_Peminjaman 
+                      WHERE idPeminjamanRuangan = ?";
+        $statusParams = [$idPeminjamanRuangan];
+        $statusStmt = sqlsrv_query($conn, $statusSql, $statusParams);
+        
+        if ($statusStmt === false) {
+            $error_message = "Gagal mengambil status peminjaman. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";
+        } else {
+            $statusData = sqlsrv_fetch_array($statusStmt, SQLSRV_FETCH_ASSOC);
+            if ($statusData) {
+                $data['statusPeminjaman'] = $statusData['statusPeminjaman'];
+                $data['alasanPenolakan'] = $statusData['alasanPenolakan'];
+            }
+        }
     }
 } else {
     $error_message = "ID Peminjaman Ruangan tidak valid atau tidak disertakan.";

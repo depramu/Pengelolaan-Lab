@@ -14,14 +14,17 @@ if (!empty($idPeminjamanRuangan)) {
     $query = "SELECT 
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
-                p.alasanPeminjamanRuangan, p.statusPeminjaman,
-                COALESCE(m.nama, k.nama) AS namaPeminjam
+                p.alasanPeminjamanRuangan,
+                COALESCE(m.nama, k.nama) AS namaPeminjam,
+                sp.statusPeminjaman
             FROM 
                 Peminjaman_Ruangan p
             LEFT JOIN 
                 Mahasiswa m ON p.nim = m.nim
             LEFT JOIN 
                 Karyawan k ON p.npk = k.npk
+            LEFT JOIN
+                Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
             WHERE 
                 p.idPeminjamanRuangan = ?";
     $params = array($idPeminjamanRuangan);
@@ -51,7 +54,7 @@ if (!empty($idPeminjamanRuangan)) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['setuju'])) {
         // Setujui peminjaman
-        $query = "UPDATE Peminjaman_Ruangan 
+        $query = "UPDATE Status_Peminjaman 
                   SET statusPeminjaman = 'Sedang Dipinjam'
                   WHERE idPeminjamanRuangan = ?";
         $params = array($idPeminjamanRuangan);

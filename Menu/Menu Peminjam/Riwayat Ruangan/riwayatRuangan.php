@@ -2,6 +2,7 @@
     require_once __DIR__ . '/../../../function/init.php';
     require_once __DIR__ . '/../../../function/pagination.php';
     authorize_role(['Peminjam']);
+
     // Pagination setup
     $perPage = 7;
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -16,8 +17,9 @@
             $nim = $_SESSION['nim'];
             // Hitung total data
             $countQuery = "SELECT COUNT(*) AS total
-                           FROM Peminjaman_Ruangan
-                           WHERE nim = ?";
+                           FROM Peminjaman_Ruangan pr
+                           LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
+                           WHERE pr.nim = ?";
             $countParams = [$nim];
             $countResult = sqlsrv_query($conn, $countQuery, $countParams);
             $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
@@ -26,9 +28,10 @@
 
             // Ambil data sesuai halaman
             $offset = ($page - 1) * $perPage;
-            $query = "SELECT pr.*, r.namaRuangan
+            $query = "SELECT pr.*, r.namaRuangan, sp.statusPeminjaman
                       FROM Peminjaman_Ruangan pr
                       JOIN Ruangan r ON pr.idRuangan = r.idRuangan
+                      LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
                       WHERE pr.nim = ?
                       ORDER BY pr.tglPeminjamanRuangan DESC, pr.waktuMulai DESC
                       OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -38,8 +41,9 @@
             $npk = $_SESSION['npk'];
             // Hitung total data
             $countQuery = "SELECT COUNT(*) AS total
-                           FROM Peminjaman_Ruangan
-                           WHERE npk = ?";
+                           FROM Peminjaman_Ruangan pr
+                           LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
+                           WHERE pr.npk = ?";
             $countParams = [$npk];
             $countResult = sqlsrv_query($conn, $countQuery, $countParams);
             $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
@@ -48,9 +52,10 @@
 
             // Ambil data sesuai halaman
             $offset = ($page - 1) * $perPage;
-            $query = "SELECT pr.*, r.namaRuangan
+            $query = "SELECT pr.*, r.namaRuangan, sp.statusPeminjaman
                       FROM Peminjaman_Ruangan pr
                       JOIN Ruangan r ON pr.idRuangan = r.idRuangan
+                      LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
                       WHERE pr.npk = ?
                       ORDER BY pr.tglPeminjamanRuangan DESC, pr.waktuMulai DESC
                       OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -94,7 +99,7 @@
                     } else {
                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                             $statusPeminjaman = $row['statusPeminjaman'] ?? '';
-                            $idPeminjaman = htmlspecialchars($row['idPeminjamanRuangan'] ?? '');
+                            $idPeminjaman = htmlspecialchars(string: $row['idPeminjamanRuangan'] ?? '');
 
                             $linkDetail = "formDetailRiwayatRuangan.php?idPeminjamanRuangan=" . $idPeminjaman;
 

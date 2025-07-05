@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-authorize_role('PIC Aset');
+require_once __DIR__ . '/../../../function/init.php';
+authorize_role(['PIC Aset']);
 
 $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -13,11 +13,12 @@ $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 
-// Ambil data sesuai halaman
+// Ambil data sesuai halaman dengan JOIN ke tabel Status_Peminjaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT pr.*, r.namaRuangan 
+$query = "SELECT pr.*, r.namaRuangan, sp.statusPeminjaman 
           FROM Peminjaman_Ruangan pr 
           JOIN Ruangan r ON pr.idRuangan = r.idRuangan 
+          LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
           ORDER BY pr.idPeminjamanRuangan 
           OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
@@ -29,6 +30,7 @@ if ($result === false) {
 include '../../../templates/header.php';
 include '../../../templates/sidebar.php';
 ?>
+
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
   <h3 class="fw-semibold mb-3">Peminjaman Ruangan</h3>
   <div class="mb-4">

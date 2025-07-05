@@ -13,7 +13,8 @@ if (!empty($idPeminjamanRuangan)) {
     $query = "SELECT
             pr.*,
             r.namaRuangan,
-            COALESCE(m.nama, k.nama) AS namaPeminjam
+            COALESCE(m.nama, k.nama) AS namaPeminjam,
+            sp.statusPeminjaman
         FROM
             Peminjaman_Ruangan pr
         JOIN
@@ -22,6 +23,8 @@ if (!empty($idPeminjamanRuangan)) {
             Mahasiswa m ON pr.nim = m.nim
         LEFT JOIN
             Karyawan k ON pr.npk = k.npk
+        LEFT JOIN
+            Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
         WHERE
             pr.idPeminjamanRuangan = ?";
     $params = array($idPeminjamanRuangan);
@@ -40,17 +43,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanRuangan) && !empty($alasanPenolakan)) {
         sqlsrv_begin_transaction($conn);
 
-        $updateQuery = "UPDATE Peminjaman_Ruangan 
-                        SET statusPeminjaman = 'Ditolak'
-                        WHERE idPeminjamanRuangan = ?";
-        $updateParams = array($idPeminjamanRuangan);
-        $updateStmt = sqlsrv_query($conn, $updateQuery, $updateParams);
+        // Cek apakah sudah ada status peminjaman untuk id ini
+        $cekStatusSql = "SELECT COUNT(*) as jumlah FROM Status_Peminjaman WHERE idPeminjamanRuangan = ?";
+        $cekStatusParams = [$idPeminjamanRuangan];
+        $cekStatusStmt = sqlsrv_query($conn, $cekStatusSql, $cekStatusParams);
+        $sudahAdaStatus = false;
+        if ($cekStatusStmt && ($cekStatusRow = sqlsrv_fetch_array($cekStatusStmt, SQLSRV_FETCH_ASSOC))) {
+            $sudahAdaStatus = $cekStatusRow['jumlah'] > 0;
+        }
+
+        if ($sudahAdaStatus) {
+            // Update status peminjaman menjadi 'Ditolak'
+            $updateStatusQuery = "UPDATE Status_Peminjaman 
+                                SET statusPeminjaman = 'Ditolak'
+                                WHERE idPeminjamanRuangan = ?";
+            $updateStatusParams = array($idPeminjamanRuangan);
+            $updateStatusStmt = sqlsrv_query($conn, $updateStatusQuery, $updateStatusParams);
+        } else {
+            // Insert status peminjaman baru
+            $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanRuangan, statusPeminjaman) VALUES (?, 'Ditolak')";
+            $insertStatusParams = array($idPeminjamanRuangan);
+            $updateStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
+        }
 
         $insertQuery = "INSERT INTO PenolakanRuangan (idPeminjamanRuangan, alasanPenolakan) VALUES (?, ?)";
         $insertParams = array($idPeminjamanRuangan, $alasanPenolakan);
         $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
 
-        if ($updateStmt && $insertStmt) {
+        if ($updateStatusStmt && $insertStmt) {
             sqlsrv_commit($conn);
             $showModal = true;
         } else {

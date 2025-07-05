@@ -17,17 +17,25 @@ $idBarang = null;
 $sisaPinjaman = 0;
 $namaBarang = '';
 
-$query_get = "SELECT pb.jumlahBrg, pb.sisaPinjaman, pb.idBarang, b.namaBarang
-              FROM Peminjaman_Barang pb
-              JOIN Barang b ON pb.idBarang = b.idBarang
-              WHERE pb.idPeminjamanBrg = ?";
-$params_get = [$idPeminjamanBrg];
-$stmt_get = sqlsrv_query($conn, $query_get, $params_get);
+if (!empty($idPeminjamanBrg)) {
+    // Query detail peminjaman barang beserta data terkait, join namaBarang dari tabel Barang
+    $query_get = "SELECT pb.jumlahBrg, pb.sisaPinjaman, pb.idBarang, b.namaBarang
+                  FROM Peminjaman_Barang pb
+                  JOIN Barang b ON pb.idBarang = b.idBarang
+                  WHERE pb.idPeminjamanBrg = ?";
+    $params_get = [$idPeminjamanBrg];
+    $stmt_get = sqlsrv_query($conn, $query_get, $params_get);
 
-if ($stmt_get && ($data = sqlsrv_fetch_array($stmt_get, SQLSRV_FETCH_ASSOC))) {
-    // Data ditemukan
+    if ($stmt_get === false) {
+        $error_message = "Gagal mengambil data. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";
+    } else {
+        $data = sqlsrv_fetch_array($stmt_get, SQLSRV_FETCH_ASSOC);
+        if (!$data) {
+            $error_message = "Data peminjaman dengan ID '" . htmlspecialchars($idPeminjamanBrg) . "' tidak ditemukan.";
+        }
+    }
 } else {
-    $data = null;
+    $error_message = "ID Peminjaman Barang tidak valid atau tidak disertakan.";
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -47,23 +55,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         sqlsrv_begin_transaction($conn);
 
-        // Insert ke pengembalian_barang
-        $query_insert_pengembalian = "INSERT INTO pengembalian_barang 
+        // Insert ke Pengembalian_Barang
+    
+        $query_insert_pengembalian = "INSERT INTO Pengembalian_Barang 
             (idPeminjamanBrg, jumlahPengembalian, kondisiBrg, catatanPengembalianBarang) 
             VALUES (?, ?, ?, ?)";
         $params_insert_pengembalian = [$idPeminjamanBrg, $jumlahPengembalian, $kondisiBrg, $catatan];
         $stmt_insert_pengembalian = sqlsrv_query($conn, $query_insert_pengembalian, $params_insert_pengembalian);
 
-        // Update sisaPinjaman dan statusPeminjaman
+        // Update sisaPinjaman
         $sisaBaru = $sisaPinjaman - $jumlahPengembalian;
         if ($sisaBaru < 0) $sisaBaru = 0;
-        $statusPeminjaman = ($sisaBaru == 0) ? 'Telah Dikembalikan' : 'Sebagian Dikembalikan';
-
+        
         $query_update_peminjaman = "UPDATE Peminjaman_Barang 
-            SET sisaPinjaman = ?, statusPeminjaman = ?
+            SET sisaPinjaman = ?
             WHERE idPeminjamanBrg = ?";
-        $params_update_peminjaman = [$sisaBaru, $statusPeminjaman, $idPeminjamanBrg];
+        $params_update_peminjaman = [$sisaBaru, $idPeminjamanBrg];
         $stmt_update_peminjaman = sqlsrv_query($conn, $query_update_peminjaman, $params_update_peminjaman);
+
+        // Insert ke Status_Peminjaman
+        $statusPeminjaman = ($sisaBaru == 0) ? 'Telah Dikembalikan' : 'Sebagian Dikembalikan';
+        $query_insert_status = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, status) VALUES (?, ?)";
+        $params_insert_status = [$idPeminjamanBrg, $statusPeminjaman];
+        $stmt_insert_status = sqlsrv_query($conn, $query_insert_status, $params_insert_status);
 
         // Update stok barang
         $query_update_stok = "UPDATE Barang SET stokBarang = stokBarang + ? WHERE idBarang = ?";
@@ -71,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_update_stok = sqlsrv_query($conn, $query_update_stok, $params_update_stok);
 
         // Commit/rollback
-        if ($stmt_insert_pengembalian && $stmt_update_peminjaman && $stmt_update_stok) {
+        if ($stmt_insert_pengembalian && $stmt_update_peminjaman && $stmt_insert_status && $stmt_update_stok) {
             sqlsrv_commit($conn);
             header("Location: pengembalianBarang.php?id=" . urlencode($idPeminjamanBrg) . "&success=1");
             exit;

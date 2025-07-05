@@ -82,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $waktuSelesaiForSQL = $waktuSelesai;
         }
 
-        // Query INSERT ke tabel Peminjaman_Ruangan
+        // Query INSERT ke tabel Peminjaman_Ruangan (tanpa statusPeminjaman)
         $queryInsert = "INSERT INTO Peminjaman_Ruangan 
-            (idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, nim, npk, waktuMulai, waktuSelesai, alasanPeminjamanRuangan, statusPeminjaman) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            (idPeminjamanRuangan, idRuangan, tglPeminjamanRuangan, nim, npk, waktuMulai, waktuSelesai, alasanPeminjamanRuangan) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $paramsInsert = [
             $idPeminjamanRuangan,
             $idRuangan,
@@ -94,20 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $npk,
             $waktuMulaiForSQL,
             $waktuSelesaiForSQL,
-            $alasanPeminjamanRuangan,
-            'Menunggu Persetujuan'
+            $alasanPeminjamanRuangan
         ];
 
         $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
         if ($stmtInsert) {
-            // Update status ketersediaan ruangan jika insert berhasil
-            $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
-            $stmtUpdate = sqlsrv_query($conn, $ketersediaanQuery, [$idRuangan]);
-            if ($stmtUpdate) {
-                $showModal = true;
+            // Insert status peminjaman ke tabel Status_Peminjaman
+            $queryInsertStatus = "INSERT INTO Status_Peminjaman (idPeminjamanRuangan, statusPeminjaman) VALUES (?, ?)";
+            $paramsInsertStatus = [$idPeminjamanRuangan, 'Menunggu Persetujuan'];
+            $stmtInsertStatus = sqlsrv_query($conn, $queryInsertStatus, $paramsInsertStatus);
+
+            if ($stmtInsertStatus) {
+                // Update status ketersediaan ruangan jika insert berhasil
+                $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
+                $stmtUpdate = sqlsrv_query($conn, $ketersediaanQuery, [$idRuangan]);
+                if ($stmtUpdate) {
+                    $showModal = true;
+                } else {
+                    $error = "Peminjaman berhasil dicatat, tetapi gagal memperbarui status ruangan. Error: " . print_r(sqlsrv_errors(), true);
+                }
             } else {
-                $error = "Peminjaman berhasil dicatat, tetapi gagal memperbarui status ruangan. Error: " . print_r(sqlsrv_errors(), true);
+                $error = "Peminjaman berhasil dicatat, tetapi gagal mencatat status. Error: " . print_r(sqlsrv_errors(), true);
             }
         } else {
             $error = "Gagal mengajukan peminjaman ruangan. Error: " . print_r(sqlsrv_errors(), true);

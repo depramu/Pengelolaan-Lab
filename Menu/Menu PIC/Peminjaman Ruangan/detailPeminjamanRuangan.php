@@ -1,39 +1,34 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-include '../../../templates/header.php';
-include '../../../templates/sidebar.php';
+require_once __DIR__ . '/../../../function/init.php';
+authorize_role(['PIC Aset']);
 
 $data = null;
 $error_message = null;
 
-$idPeminjamanRuangan = $_GET['id'] ?? '';
+if (isset($_GET['id'])) {
+    $idPeminjamanRuangan = $_GET['id'];
+    $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
 
-if (!empty($idPeminjamanRuangan)) {
-    // Query detail peminjaman ruangan beserta nama ruangan, dokumentasi, alasan penolakan, dan nama peminjam
-    $sql = "SELECT 
+    $query = "SELECT 
                 pr.idPeminjamanRuangan, pr.idRuangan, pr.nim, pr.npk,
                 pr.tglPeminjamanRuangan, pr.waktuMulai, pr.waktuSelesai,
-                pr.alasanPeminjamanRuangan, pr.statusPeminjaman,
-                peng.dokumentasiSebelum, peng.dokumentasiSesudah,
-                tolak.alasanPenolakan,
+                pr.alasanPeminjamanRuangan,
                 r.namaRuangan,
-                COALESCE(m.nama, k.nama) AS namaPeminjam
+                sp.statusPeminjaman,
+                sp.alasanPenolakan,
+                peng.dokumentasiSebelum, peng.dokumentasiSesudah
             FROM 
                 Peminjaman_Ruangan pr
             JOIN 
                 Ruangan r ON pr.idRuangan = r.idRuangan
             LEFT JOIN 
+                Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
+            LEFT JOIN 
                 Pengembalian_Ruangan peng ON pr.idPeminjamanRuangan = peng.idPeminjamanRuangan
-            LEFT JOIN 
-                Penolakan tolak ON pr.idPeminjamanRuangan = tolak.idPeminjamanRuangan
-            LEFT JOIN 
-                Mahasiswa m ON pr.nim = m.nim
-            LEFT JOIN 
-                Karyawan k ON pr.npk = k.npk
             WHERE 
                 pr.idPeminjamanRuangan = ?";
     $params = [$idPeminjamanRuangan];
-    $stmt = sqlsrv_query($conn, $sql, $params);
+    $stmt = sqlsrv_query($conn, $query, $params);
 
     if ($stmt === false) {
         $error_message = "Gagal mengambil data. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";
@@ -46,6 +41,9 @@ if (!empty($idPeminjamanRuangan)) {
 } else {
     $error_message = "ID Peminjaman Ruangan tidak valid atau tidak disertakan.";
 }
+
+include '../../../templates/header.php';
+include '../../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
@@ -124,13 +122,7 @@ if (!empty($idPeminjamanRuangan)) {
                                             <?php
                                             $statusClass = 'text-secondary';
                                             switch ($data['statusPeminjaman']) {
-                                                case 'Diajukan':
-                                                    $statusClass = 'text-primary';
-                                                    break;
                                                 case 'Menunggu Persetujuan':
-                                                    $statusClass = 'text-warning';
-                                                    break;
-                                                case 'Menunggu Pengecekan':
                                                     $statusClass = 'text-warning';
                                                     break;
                                                 case 'Sedang Dipinjam':
@@ -149,9 +141,38 @@ if (!empty($idPeminjamanRuangan)) {
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <?php if ($data['statusPeminjaman'] == 'Telah Dikembalikan') : ?>
+                                    <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">Dokumentasi Sebelum</label>
+                                            <div class="mt-1">
+                                                <?php if (!empty($data['dokumentasiSebelum'])) : ?>
+                                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                <?php else : ?>
+                                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">Dokumentasi Selesai</label>
+                                            <div class="mt-1">
+                                                <?php if (!empty($data['dokumentasiSesudah'])) : ?>
+                                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                <?php else : ?>
+                                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>
                                 </div>
+
                             </form>
                         <?php endif; ?>
                     </div>
@@ -160,6 +181,7 @@ if (!empty($idPeminjamanRuangan)) {
         </div>
     </div>
 </main>
+
 
 <?php
 include '../../../templates/footer.php';

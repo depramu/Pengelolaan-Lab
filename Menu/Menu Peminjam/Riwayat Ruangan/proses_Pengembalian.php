@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../../function/koneksi.php';
 
 if (isset($_POST['submit_pengembalian'])) {
 
@@ -57,8 +57,25 @@ if (isset($_POST['submit_pengembalian'])) {
         $stmt_db = sqlsrv_query($conn, $sql_query_db, $params_db);
 
         if ($stmt_db) {
-            $sql_update_status = "UPDATE Peminjaman_Ruangan SET statusPeminjaman = 'Menunggu Pengecekan' WHERE idPeminjamanRuangan = ?";
-            $params_update = [$idPeminjaman];
+            // Cek apakah sudah ada status peminjaman untuk id ini
+            $cekStatusSql = "SELECT COUNT(*) as jumlah FROM Status_Peminjaman WHERE idPeminjamanRuangan = ?";
+            $cekStatusParams = [$idPeminjaman];
+            $cekStatusStmt = sqlsrv_query($conn, $cekStatusSql, $cekStatusParams);
+            $sudahAdaStatus = false;
+            if ($cekStatusStmt && ($cekStatusRow = sqlsrv_fetch_array($cekStatusStmt, SQLSRV_FETCH_ASSOC))) {
+                $sudahAdaStatus = $cekStatusRow['jumlah'] > 0;
+            }
+
+            if ($sudahAdaStatus) {
+                // Update status peminjaman menjadi 'Menunggu Pengecekan'
+                $sql_update_status = "UPDATE Status_Peminjaman SET statusPeminjaman = ? WHERE idPeminjamanRuangan = ?";
+                $params_update = ['Menunggu Pengecekan', $idPeminjaman];
+            } else {
+                // Insert status peminjaman baru
+                $sql_update_status = "INSERT INTO Status_Peminjaman (idPeminjamanRuangan, statusPeminjaman) VALUES (?, ?)";
+                $params_update = [$idPeminjaman, 'Menunggu Pengecekan'];
+            }
+            
             $stmt_update = sqlsrv_query($conn, $sql_update_status, $params_update);
 
             if ($stmt_update) {

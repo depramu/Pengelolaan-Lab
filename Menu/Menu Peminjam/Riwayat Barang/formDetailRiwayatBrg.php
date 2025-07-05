@@ -11,13 +11,16 @@ if (isset($_GET['idPeminjamanBrg'])) {
 
     $query = "SELECT 
                 pb.idPeminjamanBrg, pb.idBarang, pb.nim, pb.npk,
-                pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg, pb.statusPeminjaman,
+                pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
                 b.namaBarang,
+                sp.statusPeminjaman,
                 tolak.alasanPenolakan
             FROM 
                 Peminjaman_Barang pb
             JOIN 
                 Barang b ON pb.idBarang = b.idBarang
+            LEFT JOIN 
+                Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
             LEFT JOIN 
                 Penolakan tolak ON pb.idPeminjamanBrg = tolak.idPeminjamanBrg
             WHERE 

@@ -8,8 +8,6 @@ if (isset($_POST['submit'])) {
     exit();
 }
 
-// Pagination setup
-$tglPeminjamanBrg = $_SESSION['tglPeminjamanBrg'] ?? '';
 $perPage = 2;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $perPage;

@@ -33,9 +33,10 @@ if (isset($_SESSION['user_role'])) {
 
         // Ambil data sesuai halaman
         $offset = ($page - 1) * $perPage;
-        $query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.tglPeminjamanBrg, pb.jumlahBrg, pb.statusPeminjaman, b.namaBarang 
+        $query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.tglPeminjamanBrg, pb.jumlahBrg, sp.statusPeminjaman, b.namaBarang 
                   FROM Peminjaman_Barang pb 
                   JOIN Barang b ON pb.idBarang = b.idBarang 
+                  LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
                   WHERE pb.$peminjam_field = ? 
                   ORDER BY pb.tglPeminjamanBrg DESC
                   OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";

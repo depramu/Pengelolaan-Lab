@@ -9,10 +9,9 @@ $showModal = false;
 
 if (!empty($idPeminjamanBrg)) {
     $query = "SELECT
-                pb.*,
-                b.namaBarang,
-                COALESCE(m.nama, k.nama) AS namaPeminjam,
-                pb.statusPeminjaman
+                pb.idPeminjamanBrg, pb.idBarang, pb.nim, pb.npk,
+                pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
+                b.namaBarang, sp.statusPeminjaman
             FROM
                 Peminjaman_Barang pb
             JOIN
@@ -21,6 +20,8 @@ if (!empty($idPeminjamanBrg)) {
                 Mahasiswa m ON pb.nim = m.nim
             LEFT JOIN
                 Karyawan k ON pb.npk = k.npk
+            LEFT JOIN
+                Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
             WHERE
                 pb.idPeminjamanBrg = ?";
     $params = array($idPeminjamanBrg);
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     if (!empty($idPeminjamanBrg)) {
         sqlsrv_begin_transaction($conn);
 
-        $updateQuery = "UPDATE Peminjaman_Barang
+        $updateQuery = "UPDATE Status_Peminjaman
                         SET statusPeminjaman = 'Sedang Dipinjam'
                         WHERE idPeminjamanBrg = ?";
         $updateParams = array($idPeminjamanBrg);

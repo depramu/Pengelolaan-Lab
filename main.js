@@ -951,8 +951,34 @@ function setupPengembalianRuanganPage() {
   const form = document.getElementById("formPengembalianRuangan");
   if (!form) return;
 
-  form.addEventListener("submit", function (e) {
-    // Tambahkan logika validasi untuk pengembalian ruangan jika ada
+  document.addEventListener("submit", function (e) {
+    let isValid = true;
+
+    // Validasi kondisi ruangan
+    const kondisiSelect = document.getElementById("kondisiRuangan");
+    const kondisiError = document.getElementById("kondisiError");
+    if (!kondisiSelect.value || kondisiSelect.value === "") {
+      kondisiError.textContent = "*Kondisi ruangan harus dipilih";
+      kondisiError.style.display = "inline";
+      isValid = false;
+    } else {
+      kondisiError.style.display = "none";
+    }
+
+    // Validasi catatan pengembalian
+    const catatanInput = document.getElementById("catatanPengembalianRuangan");
+    const catatanError = document.getElementById("catatanError");
+    if (!catatanInput.value.trim()) {
+      catatanError.textContent = "*Catatan pengembalian wajib diisi";
+      catatanError.style.display = "inline";
+      isValid = false;
+    } else {
+      catatanError.style.display = "none";
+    }
+
+    if (!isValid) {
+      e.preventDefault();
+    }
   });
 }
 

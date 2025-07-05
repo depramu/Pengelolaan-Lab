@@ -14,11 +14,12 @@ $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 
-// Ambil data sesuai halaman
+// Ambil data sesuai halaman dengan JOIN ke tabel Status_Peminjaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT pr.*, b.namaBarang 
+$query = "SELECT pr.*, b.namaBarang, sp.statusPeminjaman 
           FROM Peminjaman_Barang pr 
           JOIN Barang b ON pr.idBarang = b.idBarang 
+          LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanBrg = sp.idPeminjamanBrg
           ORDER BY pr.idPeminjamanBrg 
           OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);

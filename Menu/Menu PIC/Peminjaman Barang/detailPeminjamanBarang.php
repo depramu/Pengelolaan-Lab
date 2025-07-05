@@ -7,19 +7,24 @@
     $idPeminjamanBrg = $_GET['id'] ?? '';
 
     if (!empty($idPeminjamanBrg)) {
-        // Query detail peminjaman barang beserta data terkait, join namaBarang dari tabel Barang
-        $sql = "SELECT 
+        $_SESSION['idPeminjamanBrg'] = $idPeminjamanBrg;
+
+        $query = "SELECT 
                     pb.idPeminjamanBrg, pb.idBarang, pb.nim, pb.npk,
-                    pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg, pb.statusPeminjaman,
-                    b.namaBarang
+                    pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
+                    b.namaBarang,
+                    sp.statusPeminjaman,
+                    sp.alasanPenolakan
                 FROM 
                     Peminjaman_Barang pb
-                JOIN
+                JOIN 
                     Barang b ON pb.idBarang = b.idBarang
+                LEFT JOIN 
+                    Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
                 WHERE 
                     pb.idPeminjamanBrg = ?";
         $params = [$idPeminjamanBrg];
-        $stmt = sqlsrv_query($conn, $sql, $params);
+        $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt === false) {
             $error_message = "Gagal mengambil data. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";

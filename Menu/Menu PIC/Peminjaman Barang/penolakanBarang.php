@@ -45,21 +45,18 @@ $npk = $data['npk'] ?? '';
 $tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('d-m-y') : '';
 $jumlahBrg = $data['jumlahBrg'] ?? '';
 $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanBrg) && !empty($alasanPenolakan)) {
         sqlsrv_begin_transaction($conn);
 
-        $updateQuery = "UPDATE Peminjaman_Barang 
-                        SET statusPeminjaman = 'Ditolak'
-                        WHERE idPeminjamanBrg = ?";
-        $updateParams = array($idPeminjamanBrg);
-        $updateStmt = sqlsrv_query($conn, $updateQuery, $updateParams);
+        // Insert ke tabel Status_Peminjaman dengan status 'Ditolak' dan alasan penolakan
+        $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, status, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
+        $insertStatusParams = array($idPeminjamanBrg, $alasanPenolakan);
+        $insertStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
 
-        $insertQuery = "INSERT INTO Penolakan (idPeminjamanBrg, alasanPenolakan) VALUES (?, ?)";
-        $insertParams = array($idPeminjamanBrg, $alasanPenolakan);
-        $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
-
-        if ($updateStmt && $insertStmt) {
+        if ($insertStatusStmt) {
             sqlsrv_commit($conn);
             $showModal = true;
         } else {
