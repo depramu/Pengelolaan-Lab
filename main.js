@@ -865,6 +865,8 @@ function setupPenolakanBarang() {
   if (!form) return;
 
   form.addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent default submission untuk menampilkan confirm modal
+    
     let isValid = true;
     const alasanInput = document.getElementById("alasanPenolakan");
     const alasanError = document.getElementById("alasanPenolakanError");
@@ -889,8 +891,18 @@ function setupPenolakanBarang() {
     }
 
     if (!isValid) {
-      e.preventDefault();
+      return; // Stop jika validasi gagal
     }
+
+    // Tampilkan confirm modal
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const confirmMessage = document.getElementById('confirmMessage');
+    if (confirmMessage) {
+      confirmMessage.textContent = "Apakah Anda yakin ingin menolak peminjaman ini?";
+    }
+    
+    confirmModal.show();
+
   });
 }
 

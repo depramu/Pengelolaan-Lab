@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         sqlsrv_begin_transaction($conn);
 
         // Insert ke tabel Status_Peminjaman dengan status 'Ditolak' dan alasan penolakan
-        $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, status, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
+        $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
         $insertStatusParams = array($idPeminjamanBrg, $alasanPenolakan);
         $insertStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
 
@@ -62,10 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             sqlsrv_rollback($conn);
             $errors = sqlsrv_errors();
-            $error = "Gagal memproses penolakan: ";
-            foreach ($errors as $err) {
-                $error .= $err['message'] . "; ";
-            }
+           
         }
     } else {
     }
@@ -96,7 +93,7 @@ include '../../../templates/sidebar.php';
                         <span class="fw-bold">Penolakan Peminjaman Barang</span>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body scrollable-card-content">
                         <form id="formPenolakanBarang" method="POST">
                             <div class="row">
                                 <div class="col-md-6">

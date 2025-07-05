@@ -47,8 +47,8 @@
         <div class="mb-1">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman Barang</li>
                 </ol>
             </nav>
@@ -180,7 +180,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12 d-flex justify-content-between mt-3">
-                                            <a href="<?= BASE_URL ?>/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary me-2">Kembali</a>
+                                            <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary me-2">Kembali</a>
                                         </div>
                                     </div>
                                 </form>

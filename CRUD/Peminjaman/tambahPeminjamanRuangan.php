@@ -137,7 +137,6 @@ include '../../templates/sidebar.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php">Cek Ruangan</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php">Lihat Ruangan</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Ruangan</li>
             </ol>
         </nav>

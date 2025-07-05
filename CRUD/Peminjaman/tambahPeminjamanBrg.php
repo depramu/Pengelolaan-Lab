@@ -98,7 +98,6 @@ include '../../templates/sidebar.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php">Cek Barang</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/lihatBarang.php">Lihat Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Barang</li>
             </ol>
         </nav>
