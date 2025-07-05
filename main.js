@@ -902,6 +902,8 @@ function setupPengembalianBarangPage() {
   setupStockStepper("stepperContainer", "jumlahPengembalian", "sisaPinjaman");
 
   form.addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent default submission
+    
     let isValid = true;
 
     const jumlahInput = document.getElementById("jumlahPengembalian");
@@ -943,7 +945,21 @@ function setupPengembalianBarangPage() {
     }
     catatanError.style.display = !catatanInput.value.trim() ? "inline" : "none";
 
-    if (!isValid) e.preventDefault();
+    if (!isValid) return;
+
+    // Show confirmation modal
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const confirmAction = document.getElementById('confirmAction');
+    const confirmYes = document.getElementById('confirmYes');
+    
+    confirmAction.textContent = 'mengembalikan barang ini';
+    
+    confirmYes.onclick = function() {
+      confirmModal.hide();
+      form.submit(); // Submit form after confirmation
+    };
+    
+    confirmModal.show();
   });
 }
 
@@ -951,7 +967,8 @@ function setupPengembalianRuanganPage() {
   const form = document.getElementById("formPengembalianRuangan");
   if (!form) return;
 
-  document.addEventListener("submit", function (e) {
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
     let isValid = true;
 
     // Validasi kondisi ruangan
@@ -976,9 +993,21 @@ function setupPengembalianRuanganPage() {
       catatanError.style.display = "none";
     }
 
-    if (!isValid) {
-      e.preventDefault();
-    }
+    if (!isValid) return;
+
+    // Show confirmation modal
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const confirmAction = document.getElementById('confirmAction');
+    const confirmYes = document.getElementById('confirmYes');
+    
+    confirmAction.textContent = 'mengembalikan ruangan ini';
+    
+    confirmYes.onclick = function() {
+      confirmModal.hide();
+      form.submit(); // Submit form after confirmation
+    };
+    
+    confirmModal.show();
   });
 }
 
@@ -1653,15 +1682,21 @@ function setupFormTambahPeminjamanBrg() {
       isValid = false;
     }
 
-    if (isValid) {
-      const confirmModal = new bootstrap.Modal(
-        document.getElementById("confirmModal")
-      );
-      document.getElementById("confirmAction").textContent =
-        "menambah peminjaman barang";
-      document.getElementById("confirmYes").onclick = () => form.submit();
-      confirmModal.show();
-    }
+    if (!isValid) return;
+
+    // Show confirmation modal
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const confirmAction = document.getElementById('confirmAction');
+    const confirmYes = document.getElementById('confirmYes');
+    
+    confirmAction.textContent = 'menambah peminjaman barang';
+    
+    confirmYes.onclick = function() {
+      confirmModal.hide();
+      form.submit(); // Submit form after confirmation
+    };
+    
+    confirmModal.show();
   });
 }
 
@@ -1670,6 +1705,8 @@ function setupFormTambahPeminjamanRuangan() {
   if (!form) return;
 
   form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    
     let isValid = true;
     const alasanInput = document.getElementById("alasanPeminjamanRuangan");
     const alasanError = document.getElementById("error-message");
@@ -1682,6 +1719,20 @@ function setupFormTambahPeminjamanRuangan() {
       alasanError.style.display = "none";
     }
 
-    if (!isValid) event.preventDefault();
+    if (!isValid) return;
+
+    // Show confirmation modal
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    const confirmAction = document.getElementById('confirmAction');
+    const confirmYes = document.getElementById('confirmYes');
+    
+    confirmAction.textContent = 'menambah peminjaman ruangan';
+    
+    confirmYes.onclick = function() {
+      confirmModal.hide();
+      form.submit(); // Submit form after confirmation
+    };
+    
+    confirmModal.show();
   });
 }

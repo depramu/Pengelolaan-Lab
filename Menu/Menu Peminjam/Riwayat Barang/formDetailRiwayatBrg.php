@@ -14,15 +14,13 @@ if (isset($_GET['idPeminjamanBrg'])) {
                 pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
                 b.namaBarang,
                 sp.statusPeminjaman,
-                tolak.alasanPenolakan
+                sp.alasanPenolakan
             FROM 
                 Peminjaman_Barang pb
             JOIN 
                 Barang b ON pb.idBarang = b.idBarang
             LEFT JOIN 
                 Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
-            LEFT JOIN 
-                Penolakan tolak ON pb.idPeminjamanBrg = tolak.idPeminjamanBrg
             WHERE 
                 pb.idPeminjamanBrg = ?";
     $params = [$idPeminjamanBrg];
@@ -49,8 +47,8 @@ include __DIR__ . '/../../../templates/sidebar.php';
     <div class="mb-1">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Peminjam/Riwayat Barang/riwayatBarang.php">Riwayat Peminjaman Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Barang/riwayatBarang.php">Riwayat Peminjaman Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Detail Peminjaman Barang</li>
             </ol>
         </nav>

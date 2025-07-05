@@ -65,7 +65,7 @@ include '../../../templates/sidebar.php';
                     <div class="card-header bg-white border-bottom border-dark">
                         <span class="fw-bold">Detail Peminjaman Ruangan</span>
                     </div>
-                    <div class="card-body scrollable-card-content" style="max-height: 75vh; overflow-y: auto;">
+                    <div class="card-body scrollable-card-content">
                         <?php if ($error_message) : ?>
                             <div class="alert alert-danger" role="alert">
                                 <?= $error_message ?>
@@ -141,7 +141,7 @@ include '../../../templates/sidebar.php';
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <?php if ($data['statusPeminjaman'] == 'Telah Dikembalikan') : ?>
                                     <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
                                     <div class="row">
@@ -175,10 +175,10 @@ include '../../../templates/sidebar.php';
 
                             </form>
                         <?php endif; ?>
-                    </div>
-                </div>
+                </>
             </div>
         </div>
+    </div>
     </div>
 </main>
 
