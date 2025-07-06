@@ -112,18 +112,34 @@ include '../../../templates/sidebar.php';
                     <div class="card-body">
                         <form id="formPenolakanRuangan" method="POST">
                             <div class="row">
+                                <!-- Kolom Kiri -->
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
-                                        <input type="hidden" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>">
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
+                                        <div class="form-control-plaintext"><?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?></div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="tglPeminjamanRuangan" class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime ? htmlspecialchars($data['tglPeminjamanRuangan']->format('d-m-y')) : '' ?></div>
-                                        <input type="hidden" class="form-control" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan" value="<?= isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime ? htmlspecialchars($data['tglPeminjamanRuangan']->format('d-m-y')) : '' ?>">
                                     </div>
-                                    <div class="mb-2">
+                                </div>
+                                <!-- Kolom Kanan -->
+                                <div class="col-md-6">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
+                                            <div class="form-control-plaintext"><?= $data && isset($data['waktuMulai']) && $data['waktuMulai'] instanceof DateTime ? htmlspecialchars($data['waktuMulai']->format('H:i')) : '' ?></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
+                                            <div class="form-control-plaintext"><?= $data && isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime ? htmlspecialchars($data['waktuSelesai']->format('H:i')) : '' ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
                                             <?php
@@ -136,44 +152,24 @@ include '../../../templates/sidebar.php';
                                             }
                                             ?>
                                         </div>
-                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= $data && isset($data['nim']) ? htmlspecialchars($data['nim']) : '' ?>">
-                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= $data && isset($data['npk']) ? htmlspecialchars($data['npk']) : '' ?>">
                                     </div>
-                                </div>
-
-                                <!-- Kolom Kanan -->
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
-                                        <div class="form-control-plaintext"><?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?></div>
-                                        <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?>">
+                                    <div class="mb-3">
+                                        <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
+                                        <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
                                     </div>
-                                    <div class="row mb-2">
-                                        <div class="col-md-6">
-                                            <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
-                                            <div class="form-control-plaintext"><?= $data && isset($data['waktuMulai']) && $data['waktuMulai'] instanceof DateTime ? htmlspecialchars($data['waktuMulai']->format('H:i')) : '' ?></div>
-                                            <input type="hidden" class="form-control" id="waktuMulai" name="waktuMulai" value="<?= $data && isset($data['waktuMulai']) && $data['waktuMulai'] instanceof DateTime ? htmlspecialchars($data['waktuMulai']->format('H:i')) : '' ?>">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
-                                            <div class="form-control-plaintext"><?= $data && isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime ? htmlspecialchars($data['waktuSelesai']->format('H:i')) : '' ?></div>
-                                            <input type="hidden" class="form-control" id="waktuSelesai" name="waktuSelesai" value="<?= $data && isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime ? htmlspecialchars($data['waktuSelesai']->format('H:i')) : '' ?>">
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">Alasan Peminjaman</label>
                                         <div class="form-control-plaintext"><?= $data && isset($data['alasanPeminjamanRuangan']) ? nl2br(htmlspecialchars($data['alasanPeminjamanRuangan'])) : '' ?></div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="mb-3">
                                 <label for="alasanPenolakan" class="form-label fw-semibold">Alasan Penolakan
                                     <span id="alasanPenolakanError" class="fw-normal text-danger ms-2" style="font-size:0.95em; display:none;"></span>
                                 </label>
                                 <textarea class="form-control" id="alasanPenolakan" name="alasanPenolakan" rows="2" style="resize: none;" placeholder="Masukkan alasan penolakan..."><?= htmlspecialchars($_POST['alasanPenolakan'] ?? '') ?></textarea>
                             </div>
-
                             <div class="d-flex justify-content-between">
                                 <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=<?= urlencode($idPeminjamanRuangan) ?>" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-danger">Tolak</button>

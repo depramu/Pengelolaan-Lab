@@ -127,9 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
-                $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan menunggu persetujuan.";
-                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+$pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan menunggu persetujuan.";
+$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
 
 
 include '../../templates/header.php';
@@ -157,82 +157,64 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form id="formTambahPeminjamanRuangan" method="POST">
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <input type="text" class="form-control protect-input" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                         <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
-                                        <input type="text" class="form-control protect-input" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>">
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
-                                        <input type="text" class="form-control protect-input" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Tanggal Peminjaman</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanRuangan)) {
+                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanRuangan);
+                                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanRuangan);
+                                                                                                                                        } ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
+                                                <input type="text" class="form-control protect-input" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
+                                                <input type="text" class="form-control protect-input" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="nim" class="form-label fw-semibold">NIM</label>
                                         <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control protect-input" name="tglDisplay" value="<?php if (!empty($tglPeminjamanRuangan)) {
-                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanRuangan);
-                                                                                                                            echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanRuangan);
-                                                                                                                        } ?>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="npk" class="form-label fw-semibold">NPK</label>
                                         <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
-                                        <input type="text" class="form-control protect-input" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>">
+                                    <div class="mb-3">
+                                        <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">
+                                            Alasan Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
+                                        </label>
+                                        <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" placeholder="Masukkan alasan peminjaman.."></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
-                                        <input type="text" class="form-control protect-input" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">Alasan Peminjaman</label>
-                                    <span id="error-message" style="color: red; display: none; margin-left: 10px;">*Harus Diisi</span>
-                                    <textarea class="form-control" id="alasanPeminjamanRuangan" name="alasanPeminjamanRuangan" rows="1" placeholder="Masukkan alasan peminjaman.."></textarea>
 
-
+                                <div class="d-flex justify-content-between mt-3">
+                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                 </div>
                             </div>
-
-                            <div class="d-flex justify-content-between mt-5">
-                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
-                            </div>
-                            </fobuat>
+                        </form>
                     </div>
                 </div>
             </div>

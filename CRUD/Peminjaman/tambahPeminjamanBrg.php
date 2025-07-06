@@ -124,37 +124,21 @@ include '../../templates/sidebar.php';
                         <?php endif; ?>
 
                         <form id="formTambahPeminjamanBrg" method="POST">
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg_display" value="<?= $idPeminjamanBrg ?>">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="nim" class="form-label fw-semibold">NIM</label>
-                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
                                                                                                                                             $dateObj = DateTime::createFromFormat('d-m=y', $tglPeminjamanBrg);
@@ -163,37 +147,39 @@ include '../../templates/sidebar.php';
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label fw-semibold">NIM</label>
+                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="npk" class="form-label fw-semibold">NPK</label>
                                         <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="jumlahBrg" class="form-label w-100 fw-semibold">
-                                        Jumlah Peminjaman
-                                        <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Jumlah harus lebih dari 0.</span>
-                                    </label>
-                                    <div class="input-group" style="max-width: 140px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                        <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" style="max-width: 70px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
-                                    </div>
-                                    <small class="text-muted">Stok tersedia: <span id="stokBarang"><?= $stokTersedia ?></span></small>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
                                         <textarea class="form-control" id="alasanPeminjamanBrg" name="alasanPeminjamanBrg" rows="1" placeholder="Masukkan alasan peminjaman.."></textarea>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="jumlahBrg" class="form-label w-100 fw-semibold">
+                                            Jumlah Peminjaman
+                                            <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Jumlah harus lebih dari 0.</span>
+                                        </label>
+                                        <div class="input-group" style="max-width: 140px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                            <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" style="max-width: 70px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                        </div>
+                                        <small class="text-muted">Stok tersedia: <span id="stokBarang"><?= $stokTersedia ?></span></small>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-4">
-                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
+
+
+                                <div class="d-flex justify-content-between mt-3">
+                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
+                                </div>
                             </div>
                         </form>
                     </div>

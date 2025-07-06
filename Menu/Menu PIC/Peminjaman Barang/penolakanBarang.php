@@ -62,16 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             sqlsrv_rollback($conn);
             $errors = sqlsrv_errors();
-           
         }
     } else {
     }
 }
 
-$untuk = $nim; 
-            $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
-            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+$untuk = $nim;
+$pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
+$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
 
 
 
@@ -84,8 +83,8 @@ include '../../../templates/sidebar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="peminjamanBarang.php">Peminjaman Barang</a></li>
-                <li class="breadcrumb-item"><a href="pengajuanBarang.php">Pengajuan Peminjaman Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/pengajuanBarang.php">Pengajuan Peminjaman Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Penolakan Peminjaman Barang</li>
             </ol>
         </nav>
@@ -103,18 +102,33 @@ include '../../../templates/sidebar.php';
                     <div class="card-body scrollable-card-content">
                         <form id="formPenolakanBarang" method="POST">
                             <div class="row">
+                                <!-- Kolom Kiri -->
                                 <div class="col-md-6">
-                                <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
                                         <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
+                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
+                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="tglPeminjamanBrg" class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
                                         <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                     </div>
-                                    <div class="mb-2">
+                                </div>
+
+                                <!-- Kolom Kanan -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
                                             <?php
@@ -127,36 +141,20 @@ include '../../../templates/sidebar.php';
                                             }
                                             ?>
                                         </div>
-                                        <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
-                                        <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     </div>
-                                    <div class="mb-2">
-                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">Alasan Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
-                                    </div>
-                                </div>
-
-                                <!-- Kolom Kanan -->
-                                <div class="col-md-6">
-                                <div class="mb-2">
-                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
-                                    </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($namaPeminjam) ?></div>
                                         <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($namaPeminjam) ?>">
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Barang</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
                                         <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">Alasan Peminjaman</label>
+                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
                                     </div>
                                 </div>
                             </div>

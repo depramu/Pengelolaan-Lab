@@ -136,7 +136,7 @@ include '../../../templates/sidebar.php';
                         <span class="fw-bold">Pengembalian Barang</span>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body scrollable-card-content">
                         <form id="formPengembalianBarang" method="POST">
                             <div class='mb-2 row'>
                                 <div class="col-md-6">

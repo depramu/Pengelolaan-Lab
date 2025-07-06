@@ -11,7 +11,8 @@ if (!empty($idPeminjamanBrg)) {
     $query = "SELECT
                 pb.idPeminjamanBrg, pb.idBarang, pb.nim, pb.npk,
                 pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
-                b.namaBarang, sp.statusPeminjaman
+                b.namaBarang, sp.statusPeminjaman,
+                COALESCE(m.nama, k.nama) AS namaPeminjam
             FROM
                 Peminjaman_Barang pb
             JOIN
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
 
         if ($stmtUpdate) {
-            
+
             sqlsrv_commit($conn);
             $showModal = true;
         } else {
@@ -104,24 +105,38 @@ include '../../../templates/sidebar.php';
                     <div class="card-header bg-white border-bottom border-dark">
                         <span class="fw-bold">Pengajuan Peminjaman Barang</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body scrollable-card-content">
                         <form method="POST">
                             <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                             <div class="row">
 
                                 <!-- Kolom Kiri -->
                                 <div class="col-md-6">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanBrg'] ?? '') ?></div>
                                         <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($data['idPeminjamanBrg'] ?? '') ?>">
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idBarang'] ?? '') ?></div>
+                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($data['idBarang'] ?? '') ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang'] ?? '') ?></div>
+                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($data['namaBarang'] ?? '') ?>">
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="tglPeminjamanBrg" class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= isset($data['tglPeminjamanBrg']) ? htmlspecialchars($data['tglPeminjamanBrg']->format('d-m-y')) : '' ?></div>
                                         <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= isset($data['tglPeminjamanBrg']) ? htmlspecialchars($data['tglPeminjamanBrg']->format('Y-m-d')) : '' ?>">
                                     </div>
-                                    <div class="mb-2">
+                                </div>
+
+                                <!-- Kolom Kanan -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
                                             <?php
@@ -137,30 +152,16 @@ include '../../../templates/sidebar.php';
                                         <input type="hidden" class="form-control" id="nim" name="nim" value="<?= htmlspecialchars($data['nim'] ?? '') ?>">
                                         <input type="hidden" class="form-control" id="npk" name="npk" value="<?= htmlspecialchars($data['npk'] ?? '') ?>">
                                     </div>
-                                    <div class="mb-2">
-                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">Alasan Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($data['alasanPeminjamanBrg'] ?? '')) ?></div>
-                                    </div>
-                                </div>
-
-                                <!-- Kolom Kanan -->
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idBarang'] ?? '') ?></div>
-                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($data['idBarang'] ?? '') ?>">
-                                    </div>
-                                    <div class="mb-2">
-                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang'] ?? '') ?></div>
-                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($data['namaBarang'] ?? '') ?>">
-                                    </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
                                         <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
+                                        <label for="alasanPeminjamanBrg" class="form-label fw-semibold">Alasan Peminjaman</label>
+                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($data['alasanPeminjamanBrg'] ?? '')) ?></div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Barang</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['jumlahBrg'] ?? '') ?></div>
                                         <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($data['jumlahBrg'] ?? '') ?>">

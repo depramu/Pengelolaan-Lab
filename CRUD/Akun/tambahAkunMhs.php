@@ -80,8 +80,8 @@ include '../../templates/sidebar.php';
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../../Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="../../Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenAkunMhs.php">Manajemen Akun Mahasiswa</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Tambah Akun Mahasiswa</li>
             </ol>
         </nav>

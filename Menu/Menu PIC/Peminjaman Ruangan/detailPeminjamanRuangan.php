@@ -16,7 +16,8 @@ if (isset($_GET['id'])) {
                 r.namaRuangan,
                 sp.statusPeminjaman,
                 sp.alasanPenolakan,
-                peng.dokumentasiSebelum, peng.dokumentasiSesudah
+                peng.dokumentasiSebelum, peng.dokumentasiSesudah,
+                COALESCE(m.nama, k.nama) AS namaPeminjam
             FROM 
                 Peminjaman_Ruangan pr
             JOIN 
@@ -25,6 +26,10 @@ if (isset($_GET['id'])) {
                 Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
             LEFT JOIN 
                 Pengembalian_Ruangan peng ON pr.idPeminjamanRuangan = peng.idPeminjamanRuangan
+            LEFT JOIN 
+                Mahasiswa m ON pr.nim = m.nim
+            LEFT JOIN 
+                Karyawan k ON pr.npk = k.npk
             WHERE 
                 pr.idPeminjamanRuangan = ?";
     $params = [$idPeminjamanRuangan];
@@ -73,30 +78,13 @@ include '../../../templates/sidebar.php';
                         <?php elseif ($data) : ?>
                             <form id="formDetail" method="POST">
                                 <div class="row mb-3">
+                                    <!-- Kolom Kiri -->
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">ID Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
                                             <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">NIM / NPK</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime ? $data['tglPeminjamanRuangan']->format('d-m-Y')
-                                                                                    : $data['tglPeminjamanRuangan']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Alasan Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></div>
-                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">ID Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
@@ -108,14 +96,47 @@ include '../../../templates/sidebar.php';
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['namaRuangan'] ?? '-') ?>">
                                         </div>
                                         <div class="mb-3">
-                                            <div class="row">
-                                                <div class="col-6"> <label class="form-label fw-semibold">Waktu Mulai:</label>
-                                                    <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?></p>
-                                                </div>
-                                                <div class="col-6"> <label class="form-label fw-semibold">Waktu Selesai:</label>
-                                                    <p class="form-control-plaintext"><?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?></p>
+                                            <label class="form-label fw-semibold">Tanggal Peminjaman</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime ? $data['tglPeminjamanRuangan']->format('d-m-Y') : $data['tglPeminjamanRuangan']) ?>
+                                            </div>
+                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
+                                        </div>
+                                    </div>
+                                    <!-- Kolom Kanan -->
+                                    <div class="col-md-6">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Waktu Mulai</label>
+                                                <div class="form-control-plaintext">
+                                                    <?= htmlspecialchars($data['waktuMulai'] instanceof DateTime ? $data['waktuMulai']->format('H:i') : '') ?>
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold">Waktu Selesai</label>
+                                                <div class="form-control-plaintext">
+                                                    <?= htmlspecialchars($data['waktuSelesai'] instanceof DateTime ? $data['waktuSelesai']->format('H:i') : '') ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">NIM / NPK</label>
+                                            <div class="form-control-plaintext">
+                                                <?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>
+                                            </div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
+                                            <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Alasan Peminjaman</label>
+                                            <div class="form-control-plaintext">
+                                                <?= nl2br(htmlspecialchars($data['alasanPeminjamanRuangan'])) ?>
+                                            </div>
+                                            <textarea class="form-control w-100" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Status Peminjaman</label>
@@ -136,7 +157,9 @@ include '../../../templates/sidebar.php';
                                                     break;
                                             }
                                             ?>
-                                            <div class="form-control-plaintext <?= $statusClass ?>"><?= htmlspecialchars($data['statusPeminjaman']) ?></div>
+                                            <div class="form-control-plaintext <?= $statusClass ?>">
+                                                <?= htmlspecialchars($data['statusPeminjaman']) ?>
+                                            </div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['statusPeminjaman']) ?>">
                                         </div>
                                     </div>
@@ -155,7 +178,6 @@ include '../../../templates/sidebar.php';
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold">Dokumentasi Selesai</label>
                                             <div class="mt-1">
@@ -172,14 +194,14 @@ include '../../../templates/sidebar.php';
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>
                                 </div>
-
+                            </form>
                             </form>
                         <?php endif; ?>
-                </>
+                        </>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
 </main>
 
 
