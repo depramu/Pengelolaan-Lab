@@ -20,14 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
-    $kataSandi = $_POST['kataSandi'];
 
-    if (!empty($kataSandi)) {
-        $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ?, kataSandi = ? WHERE nim = ?";
-        $params_update = [$nama, $email, $jenisRole, $kataSandi, $nim];
-    } else {
+    if (!empty($email)) {
         $query_update = "UPDATE Mahasiswa SET nama = ?, email = ?, jenisRole = ? WHERE nim = ?";
         $params_update = [$nama, $email, $jenisRole, $nim];
+    } else {
+        $query_update = "UPDATE Mahasiswa SET nama = ?, jenisRole = ? WHERE nim = ?";
+        $params_update = [$nama, $jenisRole, $nim];
     }
 
     $stmt_update = sqlsrv_query($conn, $query_update, $params_update);
@@ -77,43 +76,48 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form id="formEditAkunMhs" method="POST">
-                            <div class="mb-2 row">
+                            <div class="mb-3 row">
                                 <div class="col-md-6">
-                                    <label for="nim" class="form-label fw-semibold">NIM</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
-                                    <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label fw-semibold d-flex align-items-center">
+                                            NIM
+                                        </label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                        <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nama" class="form-label fw-semibold d-flex align-items-center">
+                                            Nama Lengkap
+                                        </label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                        <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
-                                        <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= htmlspecialchars($data['email']) ?>">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-semibold d-flex align-items-center">
+                                            Email
+                                            <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        </label>
+                                        <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= htmlspecialchars($data['email']) ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">
+                                            Jenis Role
+                                        </label>
+                                        <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
+                                            <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
+                                            <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
+                                            <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
+                                        </select>
+                                        <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-2 row">
-                            <div class="col-md-6">
-                                    <label for="nama" class="form-label fw-semibold">Nama Lengkap</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                    <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label fw-semibold">Jenis Role</label>
-                                    <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
-                                        <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
-                                        <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
-                                        <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
-                                    </select>
-                                    <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
-                                </div>
-                                <div class="mb-2">
-                                    <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi
-                                    </label>
-                                    <input type="password" class="form-control protect-input d-block bg-light" id="kataSandi" name="kataSandi" value="<?= htmlspecialchars($data['kataSandi']) ?>">
-                                </div>
-                                <div class="d-flex justify-content-between mt-4">
-                                    <a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
                         </form>
                     </div>
                 </div>

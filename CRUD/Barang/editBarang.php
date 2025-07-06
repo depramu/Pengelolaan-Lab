@@ -109,7 +109,7 @@ include '../../templates/sidebar.php';
                                             <span id="lokasiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                         </label>
                                         <select class="form-select" id="lokasiBarang" name="lokasiBarang">
-                                            <option value="" disabled <?= !isset($data['lokasiBarang']) || $data['lokasiBarang'] == '' ? 'selected' : '' ?>>Pilih Lokasi</option>
+                                            <option value="" hidden <?= !isset($data['lokasiBarang']) || $data['lokasiBarang'] == '' ? 'selected' : '' ?>>Pilih Lokasi</option>
                                             <?php foreach ($lokasiList as $lokasi) : ?>
                                                 <option value="<?= htmlspecialchars($lokasi) ?>"
                                                     <?= (isset($data['lokasiBarang']) && $data['lokasiBarang'] == $lokasi) ? 'selected' : '' ?>>

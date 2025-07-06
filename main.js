@@ -1242,15 +1242,11 @@ function setupFormTambahAkunMhs() {
     let nama = document.getElementById("nama").value.trim();
     let email = document.getElementById("email").value.trim();
     let jenisRole = document.getElementById("jenisRole").value;
-    let pass = document.getElementById("kataSandi").value;
-    let conf = document.getElementById("konfirmasiSandi").value;
 
     let nimError = document.getElementById("nimError");
     let namaError = document.getElementById("namaError");
     let emailError = document.getElementById("emailError");
     let roleError = document.getElementById("roleError");
-    let passError = document.getElementById("passError");
-    let confPassError = document.getElementById("confPassError");
     let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
     // Reset error messages
@@ -1258,8 +1254,6 @@ function setupFormTambahAkunMhs() {
     namaError.style.display = "none";
     emailError.style.display = "none";
     roleError.style.display = "none";
-    passError.style.display = "none";
-    confPassError.style.display = "none";
 
     if (nim === "") {
       nimError.textContent = "*Harus diisi";
@@ -1297,29 +1291,6 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     }
 
-    if (pass === "") {
-      passError.textContent = "*Harus diisi";
-      passError.style.display = "inline";
-      isValid = false;
-    } else if (pass.length > 0 && pass.length < 8) {
-      passError.textContent = "*Minimal 8 karakter";
-      passError.style.display = "inline";
-      isValid = false;
-    } else if (!passPattern.test(pass)) {
-      passError.textContent = "*Harus mengandung huruf dan angka";
-      passError.style.display = "inline";
-      isValid = false;
-    }
-
-    if (conf === "") {
-      confPassError.textContent = "*Harus diisi";
-      confPassError.style.display = "inline";
-      isValid = false;
-    } else if (pass !== "" && conf !== "" && pass !== conf) {
-      confPassError.textContent = "*Tidak sesuai";
-      confPassError.style.display = "inline";
-      isValid = false;
-    }
 
     if (isValid) {
       const confirmModal = new bootstrap.Modal(
@@ -1398,24 +1369,17 @@ function setupFormTambahAkunKry() {
     const nama = document.getElementById("nama").value.trim();
     const email = document.getElementById("email").value.trim();
     const jenisRole = document.getElementById("jenisRole").value;
-    const pass = document.getElementById("kataSandi").value;
-    const conf = document.getElementById("konfirmasiSandi").value;
 
     const npkError = document.getElementById("npkError");
     const namaError = document.getElementById("namaError");
     const emailError = document.getElementById("emailError");
     const roleError = document.getElementById("roleError");
-    const passError = document.getElementById("passError");
-    const confPassError = document.getElementById("confPassError");
-    const passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
     // Reset error messages
     npkError.style.display = "none";
     namaError.style.display = "none";
     emailError.style.display = "none";
     roleError.style.display = "none";
-    passError.style.display = "none";
-    confPassError.style.display = "none";
 
     // Validasi NPK
     if (!npk) {
@@ -1457,32 +1421,7 @@ function setupFormTambahAkunKry() {
       isValid = false;
     }
 
-    // Validasi password
-    if (!pass) {
-      passError.textContent = "*Harus diisi";
-      passError.style.display = "inline";
-      isValid = false;
-    } else if (pass.length < 8) {
-      passError.textContent = "*Minimal 8 karakter";
-      passError.style.display = "inline";
-      isValid = false;
-    } else if (!passPattern.test(pass)) {
-      passError.textContent = "*Harus mengandung huruf dan angka";
-      passError.style.display = "inline";
-      isValid = false;
-    }
-
-    // Validasi konfirmasi password
-    if (!conf) {
-      confPassError.textContent = "*Harus diisi";
-      confPassError.style.display = "inline";
-      isValid = false;
-    } else if (pass && conf && pass !== conf) {
-      confPassError.textContent = "*Tidak sesuai";
-      confPassError.style.display = "inline";
-      isValid = false;
-    }
-
+    
     if (isValid) {
       const confirmModal = new bootstrap.Modal(
         document.getElementById("confirmModal")

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+require_once __DIR__ . '/../../function/init.php';
+authorize_role('PIC Aset');
 
 $showModal = false;
 
@@ -9,15 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
-    $kataSandi = $_POST['kataSandi'];
-    $konfirmasiSandi = $_POST['konfirmasiSandi'];
 
     $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
         $nimError = "*NIM sudah terdaftar";
     } else {
-        $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
-        $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
+        $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole) VALUES (?, ?, ?, ?)";
+        $params = [$nim, $nama, $email, $jenisRole];
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
@@ -59,53 +57,46 @@ include '../../templates/sidebar.php';
                     </div>
                     <div class="card-body">
                         <form id="formTambahAkunMhs" method="POST">
-                            <div class="mb-2 row">
+                            <div class="mb-3 row">
                                 <div class="col-md-6">
-                                    <label for="nim" class="form-label fw-semibold d-flex align-items-center">NIM
-                                        <span id="nimError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                        <?php if (!empty($nimError)): ?>
-                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $nimError ?></span>
-                                        <?php endif; ?>
-                                    </label>
-                                    <input type="text" class="form-control" id="nim" name="nim" placeholder="Masukkan NIM.." value="<?= isset($nim) ? htmlspecialchars($nim) : '' ?>">
+                                    <div class="mb-3">
+                                        <label for="nim" class="form-label fw-semibold d-flex align-items-center">
+                                            NIM
+                                            <span id="nimError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($nimError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $nimError ?></span>
+                                            <?php endif; ?>
+                                        </label>
+                                        <input type="text" class="form-control" id="nim" name="nim" placeholder="Masukkan NIM.." value="<?= isset($nim) ? htmlspecialchars($nim) : '' ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nama" class="form-label fw-semibold d-flex align-items-center">
+                                            Nama Lengkap
+                                            <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        </label>
+                                        <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama lengkap.." value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="email" class="form-label fw-semibold d-flex align-items-center">Email
-                                        <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-semibold d-flex align-items-center">
+                                            Email
+                                            <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        </label>
+                                        <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">
+                                            Role
+                                            <span id="roleError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        </label>
+                                        <select class="form-select" id="jenisRole" name="jenisRole">
+                                            <option hidden value="" <?= (!isset($jenisRole) || $jenisRole == '') ? 'selected' : '' ?>>Pilih Role</option>
+                                            <option value="Peminjam" <?= (isset($jenisRole) && $jenisRole == 'Peminjam') ? 'selected' : '' ?>>Peminjam</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-2 row">
-                                <div class="col-md-6">
-                                    <label for="nama" class="form-label fw-semibold d-flex align-items-center">Nama Lengkap
-                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama lengkap.." value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">Role
-                                        <span id="roleError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                    </label>
-                                    <select class="form-select" id="jenisRole" name="jenisRole">
-                                        <option value="" disabled>Pilih Role</option>
-                                        <option value="Peminjam">Peminjam</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kataSandi" class="form-label fw-semibold d-flex align-items-center">Kata Sandi
-                                    <span id="passError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                </label>
-                                <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan kata sandi.." value="<?= isset($kataSandi) ? htmlspecialchars($kataSandi) : '' ?>">
-                            </div>
-                            <div class="mb-2">
-                                <label for="konfirmasiSandi" class="form-label fw-semibold d-flex align-items-center">Konfirmasi Kata Sandi
-                                    <span id="confPassError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                </label>
-                                <input type="password" class="form-control" id="konfirmasiSandi" name="konfirmasiSandi" placeholder="Masukkan konfirmasi kata sandi.." value="<?= isset($konfirmasiSandi) ? htmlspecialchars($konfirmasiSandi) : '' ?>">
-                            </div>
-
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenAkunMhs.php" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-primary">Tambah</button>

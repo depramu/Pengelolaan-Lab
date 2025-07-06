@@ -96,7 +96,7 @@ include '../../templates/sidebar.php';
                                             <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                         </label>
                                         <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
-                                            <option value="" disabled <?= !isset($kondisiRuangan) || $kondisiRuangan == '' ? 'selected' : '' ?>>Pilih Kondisi</option>
+                                            <option value="" hidden <?= !isset($kondisiRuangan) || $kondisiRuangan == '' ? 'selected' : '' ?>>Pilih Kondisi</option>
                                             <?php foreach ($kondisiRuanganList as $kondisi): ?>
                                                 <option value="<?= htmlspecialchars($kondisi) ?>" <?= (isset($kondisiRuangan) && $kondisiRuangan == $kondisi) ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($kondisi) ?>
@@ -110,7 +110,7 @@ include '../../templates/sidebar.php';
                                             <span id="ketersediaanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                         </label>
                                         <select class="form-select" id="ketersediaan" name="ketersediaan">
-                                            <option value="" disabled <?= !isset($ketersediaan) || $ketersediaan == '' ? 'selected' : '' ?>>Pilih Ketersediaan</option>
+                                            <option value="" hidden <?= !isset($ketersediaan) || $ketersediaan == '' ? 'selected' : '' ?>>Pilih Ketersediaan</option>
                                             <?php foreach ($ketersediaanList as $tersedia): ?>
                                                 <option value="<?= htmlspecialchars($tersedia) ?>" <?= (isset($ketersediaan) && $ketersediaan == $tersedia) ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($tersedia) ?>
