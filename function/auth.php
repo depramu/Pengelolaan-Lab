@@ -13,7 +13,7 @@ function authorize_role($allowed_roles) {
 
     // 1. Cek jika pengguna belum login
     if (!isset($_SESSION['user_id'])) {
-        header('Location: ' . BASE_URL . 'Login/login.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
 

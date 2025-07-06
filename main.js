@@ -297,377 +297,221 @@ function setupLaporanPage() {
   const btnTampilkan = document.getElementById("tampilkanLaporanBtn");
   if (!btnTampilkan) return;
 
-  const jenisLaporanSelect = document.getElementById("jenisLaporan");
-  const bulanLaporanSelect = document.getElementById("bulanLaporan");
-  const tahunLaporanSelect = document.getElementById("tahunLaporan");
-  const areaKontenLaporanDiv = document.getElementById("areaKontenLaporan");
-  const judulKontenLaporanSpan = document.getElementById("judulKontenLaporan");
-  const wadahLaporanDiv = document.getElementById("wadahLaporan");
-  const exportExcelBtn = document.getElementById("exportExcelBtn");
-  const validationModalElement = document.getElementById("validationModal");
-  const validationModal = validationModalElement
-    ? new bootstrap.Modal(validationModalElement)
-    : null;
-  const validationMessageEl = document.getElementById("validationMessage");
-  const paginationControlsContainer = document.getElementById(
-    "paginationControlsContainer"
-  );
-  const paginationUl = document.getElementById("paginationUl");
+  btnTampilkan.addEventListener("click", () => {
+    const jenisLaporanSelect = document.getElementById("jenisLaporan");
+    const areaKontenDiv = document.getElementById("areaKontenLaporan");
+    const wadahLaporanDiv = document.getElementById("wadahLaporan");
+    const validationModalEl = document.getElementById("validationModal");
+    const validationModal = validationModalEl
+      ? new bootstrap.Modal(validationModalEl)
+      : null;
+    const validationMsg = document.getElementById("validationMessage");
+    const bottomControlsContainer = document.getElementById("bottomControlsContainer");
+    const laporanSummaryText = document.getElementById("laporanSummaryText");
 
-  let currentPage = 1;
-  const rowsPerPage = 5;
-  let currentTableFullData = [];
-  let currentReportTypeForPaging = "";
+    const type = jenisLaporanSelect.value;
+    const bln = document.getElementById("bulanLaporan").value;
+    const thn = document.getElementById("tahunLaporan").value;
 
-  const currentYear = new Date().getFullYear();
-  for (let i = 0; i < 5; i++) {
-    const year = currentYear - i;
-    const option = document.createElement("option");
-    option.value = year;
-    option.textContent = year;
-    tahunLaporanSelect.appendChild(option);
-  }
-
-  btnTampilkan.addEventListener("click", function () {
-    const jenisLaporan = jenisLaporanSelect.value;
-    const bulan = bulanLaporanSelect.value;
-    const tahun = tahunLaporanSelect.value;
-
-    if (!jenisLaporan || !bulan || !tahun) {
-      if (validationModal && validationMessageEl) {
-        validationMessageEl.textContent =
-          "Silakan lengkapi semua filter (Jenis Laporan, Bulan, dan Tahun).";
-        validationModal.show();
-      } else {
-        alert(
-          "Silakan lengkapi semua filter (Jenis Laporan, Bulan, dan Tahun)."
-        );
-      }
+    // Validasi filter
+    if (
+      !type ||
+      (type !== "dataBarang" && type !== "dataRuangan" && (!bln || !thn))
+    ) {
+      validationMsg.textContent = "Silakan lengkapi filter yang diperlukan.";
+      if (validationModal) validationModal.show();
       return;
     }
 
+    // UI Loading state
     wadahLaporanDiv.innerHTML =
-      '<p class="text-center py-5"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memuat data...</p>';
-    paginationControlsContainer.style.display = "none";
-    areaKontenLaporanDiv.style.display = "none";
-    currentPage = 1;
+      '<p class="text-center py-5"><span class="spinner-border spinner-border-sm"></span> Memuat data...</p>';
+    areaKontenDiv.style.display = "block";
+    bottomControlsContainer.style.display = "none";
+    laporanSummaryText.innerHTML = "";
 
-    const fetchUrl = `../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${jenisLaporan}&bulan=${bulan}&tahun=${tahun}`;
+    // Fetch data
+    let url = `../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}`;
+    if (type !== "dataBarang" && type !== "dataRuangan") {
+      url += `&bulan=${bln}&tahun=${thn}`;
+    }
 
-    fetch(fetchUrl)
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(
-              `HTTP error! status: ${response.status}, message: ${text}`
-            );
-          });
-        }
-        return response.json();
+    fetch(url)
+      .then((res) => {
+        if (!res.ok)
+          throw new Error(res.statusText || "Gagal terhubung ke server");
+        return res.json();
       })
-      .then((result) => {
-        wadahLaporanDiv.innerHTML = "";
-        if (result.status === "success") {
-          currentTableFullData = result.data || [];
-          currentReportTypeForPaging = jenisLaporan;
-          const namaBulanDipilih =
-            bulanLaporanSelect.options[bulanLaporanSelect.selectedIndex].text;
-          const tahunDipilih = tahunLaporanSelect.value;
-
-          if (currentTableFullData.length > 0) {
-            areaKontenLaporanDiv.style.display = "block";
-            let judulText = `Laporan (${
-              jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text
-            }) - ${namaBulanDipilih} ${tahunDipilih}`;
-            // ... (logika penentuan judul tetap sama)
-            judulKontenLaporanSpan.textContent = judulText;
-            displayPage(currentPage);
-            setupPagination();
+      .then((res) => {
+        if (res.status === "success") {
+          const fullData = res.data || [];
+          if (fullData.length > 0) {
+            areaKontenDiv.style.display = "block";
+            bottomControlsContainer.style.display = "flex";
+            updateLaporanSummary(fullData, type);
+            renderLaporanTable(fullData, type);
           } else {
-            areaKontenLaporanDiv.style.display = "none";
-            paginationControlsContainer.style.display = "none";
-            wadahLaporanDiv.innerHTML = "";
-            if (validationModal && validationMessageEl) {
-              validationMessageEl.textContent =
-                "Tidak Ada Data Laporan untuk periode yang dipilih.";
-              validationModal.show();
-            } else {
-              alert("Tidak Ada Data Laporan untuk periode yang dipilih.");
-            }
+            areaKontenDiv.style.display = "none";
+            validationMsg.textContent =
+              "Tidak Ada Data Laporan untuk periode yang dipilih.";
+            if (validationModal) validationModal.show();
           }
         } else {
-          areaKontenLaporanDiv.style.display = "block";
-          judulKontenLaporanSpan.textContent = "Kesalahan Sistem";
-          wadahLaporanDiv.innerHTML = `<p class="text-danger text-center">Gagal memuat data: ${result.message}</p>`;
-          console.error("Server Error:", result.message);
-          paginationControlsContainer.style.display = "none";
+          throw new Error(res.message || "Gagal memuat data dari server.");
         }
       })
-      .catch((error) => {
-        areaKontenLaporanDiv.style.display = "block";
-        console.error("Fetch Error:", error);
-        judulKontenLaporanSpan.textContent = "Kesalahan Jaringan";
-        wadahLaporanDiv.innerHTML = `<p class="text-danger text-center">Terjadi kesalahan saat mengambil data. Detail: ${error.message}</p>`;
-        paginationControlsContainer.style.display = "none";
+      .catch((err) => {
+        wadahLaporanDiv.innerHTML = `<p class="text-danger text-center"><strong>Kesalahan:</strong> ${err.message}</p>`;
+        areaKontenDiv.style.display = "block";
+        bottomControlsContainer.style.display = "none";
       });
   });
 
-  function displayPage(page) {
-    currentPage = page;
-    wadahLaporanDiv.innerHTML = "";
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const paginatedItems = currentTableFullData.slice(startIndex, endIndex);
+  // Fungsi untuk menyesuaikan tampilan filter
+  function adjustFilters() {
+    const jenisLaporanSelect = document.getElementById("jenisLaporan");
+    const bulanSelect = document.getElementById("bulanLaporan");
+    const tahunSelect = document.getElementById("tahunLaporan");
+    const colBulan = document.getElementById("colBulan");
+    const colTahun = document.getElementById("colTahun");
+    const colJenis = document.getElementById("colJenis");
 
-    if (
-      paginatedItems.length === 0 &&
-      currentTableFullData.length > 0 &&
-      currentPage > 1
-    ) {
-      displayPage(currentPage - 1);
-      return;
+    const val = jenisLaporanSelect.value;
+    if (val === "dataBarang" || val === "dataRuangan") {
+      colBulan.style.display = "none";
+      colTahun.style.display = "none";
+      colJenis.className = "col-md-10";
+      if (bulanSelect) bulanSelect.value = "";
+      if (tahunSelect) tahunSelect.value = "";
+    } else {
+      colBulan.style.display = "block";
+      colTahun.style.display = "block";
+      colJenis.className = "col-md-4";
     }
-    if (paginatedItems.length === 0) return;
+  }
 
-    const table = document.createElement("table");
-    table.className = "table table-striped table-bordered table-hover";
+  // Event listener untuk perubahan jenis laporan
+  const jenisLaporanSelect = document.getElementById("jenisLaporan");
+  if (jenisLaporanSelect) {
+    jenisLaporanSelect.addEventListener("change", adjustFilters);
+    adjustFilters(); // Panggil sekali untuk inisialisasi
+  }
+
+  // Fungsi untuk update summary laporan
+  function updateLaporanSummary(fullData, reportType) {
+    const laporanSummaryText = document.getElementById("laporanSummaryText");
+    if (!laporanSummaryText || fullData.length === 0) return;
+
+    let summaryText = "";
+    switch (reportType) {
+      case "dataBarang":
+        const totalJenisBarang = fullData.length;
+        const totalStokBarang = fullData.reduce(
+          (sum, item) => sum + parseInt(item.stokBarang || 0),
+          0
+        );
+        summaryText = `<strong>Total Jenis Barang:</strong> ${totalJenisBarang}, <strong>Total Stok Barang:</strong> ${totalStokBarang}`;
+        break;
+      case "dataRuangan":
+        const totalJenisRuangan = fullData.length;
+        const totalRuanganTersedia = fullData.filter(
+          (item) =>
+            item.ketersediaan && item.ketersediaan.toLowerCase() === "tersedia"
+        ).length;
+        summaryText = `<strong>Total Jenis Ruangan:</strong> ${totalJenisRuangan}, <strong>Total Ruangan yang Tersedia:</strong> ${totalRuanganTersedia}`;
+        break;
+      case "peminjamSeringMeminjam":
+        const totalPeminjaman = fullData.reduce(
+          (sum, item) => sum + parseInt(item.JumlahPeminjaman || 0),
+          0
+        );
+        summaryText = `<strong>Total Peminjam yang Sering Pinjam:</strong> ${totalPeminjaman}`;
+        break;
+      case "barangSeringDipinjam":
+        const totalKuantitasBarang = fullData.reduce(
+          (sum, item) => sum + parseInt(item.TotalKuantitasDipinjam || 0),
+          0
+        );
+        summaryText = `<strong>Total Barang yang Dipinjam:</strong> ${totalKuantitasBarang}`;
+        break;
+      case "ruanganSeringDipinjam":
+        const totalRuanganDipinjam = fullData.reduce(
+          (sum, item) => sum + parseInt(item.JumlahDipinjam || 0),
+          0
+        );
+        summaryText = `<strong>Total Ruangan yang Dipinjam:</strong> ${totalRuanganDipinjam}`;
+        break;
+    }
+    laporanSummaryText.innerHTML = summaryText;
+  }
+
+  // Fungsi untuk render tabel laporan
+  function renderLaporanTable(fullData, reportType) {
+    const wadahLaporanDiv = document.getElementById("wadahLaporan");
+    if (!wadahLaporanDiv) return;
+
+    const tbl = document.createElement("table");
+    tbl.className = "table table-striped table-bordered table-hover";
     let headers = [],
-      dataKeys = [];
-    // ... (Logika penentuan header dan keys tabel tetap sama)
-    if (currentReportTypeForPaging === "dataBarang") {
-      table.id = "tabelLaporanDataBarang";
-      headers = ["ID Barang", "Nama Barang", "Stok Barang", "Lokasi Barang"];
-      dataKeys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
-    } else if (currentReportTypeForPaging === "dataRuangan") {
-      table.id = "tabelLaporanDataRuangan";
-      headers = [
-        "ID Ruangan",
-        "Nama Ruangan",
-        "Kondisi Ruangan",
-        "Ketersediaan",
-      ];
-      dataKeys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
-    } else if (currentReportTypeForPaging === "peminjamSeringMeminjam") {
-      table.id = "tabelLaporanPeminjamSeringMeminjam";
-      headers = [
-        "ID Peminjam",
-        "Nama Peminjam",
-        "Jenis Peminjam",
-        "Jumlah Peminjaman",
-      ];
-      dataKeys = [
-        "IDPeminjam",
-        "NamaPeminjam",
-        "JenisPeminjam",
-        "JumlahPeminjaman",
-      ];
-    } else if (currentReportTypeForPaging === "barangSeringDipinjam") {
-      table.id = "tabelLaporanBarangSeringDipinjam";
-      headers = ["ID Barang", "Nama Barang", "Total Kuantitas Dipinjam"];
-      dataKeys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-    } else if (currentReportTypeForPaging === "ruanganSeringDipinjam") {
-      table.id = "tabelLaporanRuanganSeringDipinjam";
-      headers = ["ID Ruangan", "Nama Ruangan", "Jumlah Dipinjam"];
-      dataKeys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-    } else {
-      wadahLaporanDiv.innerHTML =
-        '<p class="text-center">Tampilan tabel untuk jenis laporan ini belum didukung.</p>';
-      return;
+      keys = [];
+
+    switch (reportType) {
+      case "dataBarang":
+        headers = ["ID", "Nama", "Stok", "Lokasi"];
+        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+        break;
+      case "dataRuangan":
+        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
+        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+        break;
+      case "peminjamSeringMeminjam":
+        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
+        keys = [
+          "IDPeminjam",
+          "NamaPeminjam",
+          "JenisPeminjam",
+          "JumlahPeminjaman",
+        ];
+        break;
+      case "barangSeringDipinjam":
+        headers = ["ID Barang", "Nama", "Total Dipinjam"];
+        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+        break;
+      case "ruanganSeringDipinjam":
+        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
+        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+        break;
     }
 
-    const thead = table.createTHead();
-    const headerRow = thead.insertRow();
-    headers.forEach((text) => {
-      let th = document.createElement("th");
-      th.textContent = text;
-      headerRow.appendChild(th);
-    });
+    const thead = tbl.createTHead().insertRow();
+    headers.forEach((h) => (thead.insertCell().textContent = h));
 
-    const tbody = table.createTBody();
-    paginatedItems.forEach((item) => {
-      const row = tbody.insertRow();
-      dataKeys.forEach((key) => {
-        row.insertCell().textContent = item[key] != null ? item[key] : "";
+    const tbody = tbl.createTBody();
+    fullData.forEach((item) => {
+      const r = tbody.insertRow();
+      keys.forEach((k) => {
+        r.insertCell().textContent = item[k] ?? "";
       });
     });
-    wadahLaporanDiv.appendChild(table);
-    updatePaginationButtonsActiveState();
-  }
 
-  function setupPagination() {
-    paginationUl.innerHTML = "";
-    const pageCount = Math.ceil(currentTableFullData.length / rowsPerPage);
+    wadahLaporanDiv.innerHTML = "";
+    wadahLaporanDiv.append(tbl);
 
-    if (pageCount <= 1) {
-      paginationControlsContainer.style.display = "none";
-      return;
-    }
-    paginationControlsContainer.style.display = "block";
-
-    // ... (Logika pembuatan tombol paginasi tetap sama)
-    let prevLi = document.createElement("li");
-    prevLi.className = "page-item";
-    let prevLink = document.createElement("a");
-    prevLink.className = "page-link";
-    prevLink.href = "#";
-    prevLink.innerHTML = "«";
-    prevLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage > 1) displayPage(currentPage - 1);
-    });
-    prevLi.appendChild(prevLink);
-    paginationUl.appendChild(prevLi);
-
-    for (let i = 1; i <= pageCount; i++) {
-      let pageLi = document.createElement("li");
-      pageLi.className = "page-item";
-      pageLi.dataset.page = i;
-      let pageLink = document.createElement("a");
-      pageLink.className = "page-link";
-      pageLink.href = "#";
-      pageLink.textContent = i;
-      pageLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        displayPage(parseInt(e.target.closest("li").dataset.page));
+    // Setup export Excel button
+    const exportBtn = document.getElementById("exportExcelBtn");
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        const jenisLaporanSelect = document.getElementById("jenisLaporan");
+        const bulanSelect = document.getElementById("bulanLaporan");
+        const tahunSelect = document.getElementById("tahunLaporan");
+        const validationModalEl = document.getElementById("validationModal");
+        const validationModal = validationModalEl
+          ? new bootstrap.Modal(validationModalEl)
+          : null;
+        const validationMsg = document.getElementById("validationMessage");
       });
-      pageLi.appendChild(pageLink);
-      paginationUl.appendChild(pageLi);
     }
-
-    let nextLi = document.createElement("li");
-    nextLi.className = "page-item";
-    let nextLink = document.createElement("a");
-    nextLink.className = "page-link";
-    nextLink.href = "#";
-    nextLink.innerHTML = "»";
-    nextLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentPage < pageCount) displayPage(currentPage + 1);
-    });
-    nextLi.appendChild(nextLink);
-    paginationUl.appendChild(nextLi);
-
-    updatePaginationButtonsActiveState();
   }
-
-  function updatePaginationButtonsActiveState() {
-    const pageCount = Math.ceil(currentTableFullData.length / rowsPerPage);
-    const pageItems = paginationUl.querySelectorAll(".page-item");
-
-    pageItems.forEach((item) => {
-      item.classList.remove("active", "disabled");
-      const link = item.querySelector(".page-link");
-      const pageNumData = item.dataset.page;
-
-      if (link) {
-        if (link.innerHTML.includes("«")) {
-          // Previous
-          if (currentPage === 1) item.classList.add("disabled");
-        } else if (link.innerHTML.includes("»")) {
-          // Next
-          if (currentPage === pageCount || pageCount === 0)
-            item.classList.add("disabled");
-        } else if (pageNumData && parseInt(pageNumData) === currentPage) {
-          // Nomor halaman
-          item.classList.add("active");
-        }
-      }
-    });
-
-    paginationControlsContainer.style.display =
-      pageCount <= 1 ? "none" : "block";
-  }
-
-  exportExcelBtn.addEventListener("click", function () {
-    if (!currentTableFullData || currentTableFullData.length === 0) {
-      alert("Tidak ada data untuk diexport.");
-      return;
-    }
-
-    const jenisLaporan = jenisLaporanSelect.value;
-    const bulanText =
-      bulanLaporanSelect.options[bulanLaporanSelect.selectedIndex].text;
-    const tahunText = tahunLaporanSelect.value;
-    const dataToExport = currentTableFullData;
-
-    let headersDisplay = [],
-      dataKeysForExport = [],
-      fileName = "Laporan.xlsx",
-      sheetName = "Laporan";
-    // ... (Logika penentuan data export tetap sama)
-    if (jenisLaporan === "dataBarang") {
-      headersDisplay = [
-        "ID Barang",
-        "Nama Barang",
-        "Stok Barang",
-        "Lokasi Barang",
-      ];
-      dataKeysForExport = [
-        "idBarang",
-        "namaBarang",
-        "stokBarang",
-        "lokasiBarang",
-      ];
-      fileName = `Laporan_Data_Barang_${bulanText}_${tahunText}.xlsx`;
-      sheetName = "Data Barang";
-    } else if (jenisLaporan === "dataRuangan") {
-      headersDisplay = [
-        "ID Ruangan",
-        "Nama Ruangan",
-        "Kondisi Ruangan",
-        "Ketersediaan",
-      ];
-      dataKeysForExport = [
-        "idRuangan",
-        "namaRuangan",
-        "kondisiRuangan",
-        "ketersediaan",
-      ];
-      fileName = `Laporan_Data_Ruangan_${bulanText}_${tahunText}.xlsx`;
-      sheetName = "Data Ruangan";
-    } else if (jenisLaporan === "peminjamSeringMeminjam") {
-      headersDisplay = [
-        "ID Peminjam",
-        "Nama Peminjam",
-        "Jenis Peminjam",
-        "Jumlah Peminjaman",
-      ];
-      dataKeysForExport = [
-        "IDPeminjam",
-        "NamaPeminjam",
-        "JenisPeminjam",
-        "JumlahPeminjaman",
-      ];
-      fileName = `Laporan_Peminjam_Sering_Meminjam_${bulanText}_${tahunText}.xlsx`;
-      sheetName = "Peminjam Sering Meminjam";
-    } else if (jenisLaporan === "barangSeringDipinjam") {
-      headersDisplay = ["ID Barang", "Nama Barang", "Total Kuantitas Dipinjam"];
-      dataKeysForExport = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-      fileName = `Laporan_Barang_Sering_Dipinjam_${bulanText}_${tahunText}.xlsx`;
-      sheetName = "Barang Sering Dipinjam";
-    } else if (jenisLaporan === "ruanganSeringDipinjam") {
-      headersDisplay = ["ID Ruangan", "Nama Ruangan", "Jumlah Dipinjam"];
-      dataKeysForExport = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-      fileName = `Laporan_Ruangan_Sering_Dipinjam_${bulanText}_${tahunText}.xlsx`;
-      sheetName = "Ruangan Sering Dipinjam";
-    } else {
-      alert("Jenis laporan tidak dikenal untuk export.");
-      return;
-    }
-
-    const ws_data = [headersDisplay];
-    dataToExport.forEach((item) => {
-      const rowData = dataKeysForExport.map((key) =>
-        item[key] != null ? item[key] : ""
-      );
-      ws_data.push(rowData);
-    });
-
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    XLSX.writeFile(wb, fileName);
-  });
 }
 
 // =================================================================
@@ -678,13 +522,13 @@ function setupCekKetersediaanBarangPage() {
   const form = document.getElementById("formCekKetersediaanBarang");
   if (!form) return;
 
-  const container = document.querySelector('[data-day]');
+  const container = document.querySelector("[data-day]");
   if (!container) return;
 
-  const hariSelect = document.getElementById('tglHari');
-  const bulanSelect = document.getElementById('tglBulan');
-  const tahunSelect = document.getElementById('tglTahun');
-  
+  const hariSelect = document.getElementById("tglHari");
+  const bulanSelect = document.getElementById("tglBulan");
+  const tahunSelect = document.getElementById("tglTahun");
+
   // Baca data tanggal yang sudah dipilih dari atribut HTML
   const preselectedDay = container.dataset.day;
   const preselectedMonth = container.dataset.month;
@@ -709,9 +553,9 @@ function setupCekKetersediaanBarangPage() {
     const bulan = parseInt(bulanSelect.value);
     const tahun = parseInt(tahunSelect.value);
     const daysInMonth = new Date(tahun, bulan, 0).getDate();
-    
+
     const currentSelectedDay = hariSelect.value;
-    hariSelect.innerHTML = '';
+    hariSelect.innerHTML = "";
     for (let i = 1; i <= daysInMonth; i++) {
       hariSelect.innerHTML += `<option value="${i}">${i}</option>`;
     }
@@ -723,7 +567,7 @@ function setupCekKetersediaanBarangPage() {
 
   // --- INISIALISASI ---
   populateSelectors();
-  
+
   // Tentukan nilai default: dari PHP atau tanggal hari ini
   if (preselectedYear && preselectedMonth && preselectedDay) {
     // Jika ada tanggal yang di-submit, gunakan itu
@@ -739,10 +583,10 @@ function setupCekKetersediaanBarangPage() {
     updateDays();
     hariSelect.value = now.getDate();
   }
-  
+
   // Tambahkan listener untuk perubahan
-  bulanSelect.addEventListener('change', updateDays);
-  tahunSelect.addEventListener('change', updateDays);
+  bulanSelect.addEventListener("change", updateDays);
+  tahunSelect.addEventListener("change", updateDays);
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
@@ -929,7 +773,7 @@ function setupPenolakanBarang() {
 
   form.addEventListener("submit", function (e) {
     e.preventDefault(); // Prevent default submission untuk menampilkan confirm modal
-    
+
     let isValid = true;
     const alasanInput = document.getElementById("alasanPenolakan");
     const alasanError = document.getElementById("alasanPenolakanError");
@@ -958,14 +802,16 @@ function setupPenolakanBarang() {
     }
 
     // Tampilkan confirm modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmMessage = document.getElementById("confirmMessage");
     if (confirmMessage) {
-      confirmMessage.textContent = "Apakah Anda yakin ingin menolak peminjaman ini?";
+      confirmMessage.textContent =
+        "Apakah Anda yakin ingin menolak peminjaman ini?";
     }
-    
-    confirmModal.show();
 
+    confirmModal.show();
   });
 }
 
@@ -978,7 +824,7 @@ function setupPengembalianBarangPage() {
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    
+
     let isValid = true;
 
     const jumlahInput = document.getElementById("jumlahPengembalian");
@@ -1023,17 +869,19 @@ function setupPengembalianBarangPage() {
     if (!isValid) return;
 
     // Show confirmation modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const confirmAction = document.getElementById('confirmAction');
-    const confirmYes = document.getElementById('confirmYes');
-    
-    confirmAction.textContent = 'mengembalikan barang ini';
-    
-    confirmYes.onclick = function() {
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    confirmAction.textContent = "mengembalikan barang ini";
+
+    confirmYes.onclick = function () {
       confirmModal.hide();
       form.submit(); // Submit form after confirmation
     };
-    
+
     confirmModal.show();
   });
 }
@@ -1071,17 +919,19 @@ function setupPengembalianRuanganPage() {
     if (!isValid) return;
 
     // Show confirmation modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const confirmAction = document.getElementById('confirmAction');
-    const confirmYes = document.getElementById('confirmYes');
-    
-    confirmAction.textContent = 'mengembalikan ruangan ini';
-    
-    confirmYes.onclick = function() {
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    confirmAction.textContent = "mengembalikan ruangan ini";
+
+    confirmYes.onclick = function () {
       confirmModal.hide();
       form.submit(); // Submit form after confirmation
     };
-    
+
     confirmModal.show();
   });
 }
@@ -1760,17 +1610,19 @@ function setupFormTambahPeminjamanBrg() {
     if (!isValid) return;
 
     // Show confirmation modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const confirmAction = document.getElementById('confirmAction');
-    const confirmYes = document.getElementById('confirmYes');
-    
-    confirmAction.textContent = 'menambah peminjaman barang';
-    
-    confirmYes.onclick = function() {
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    confirmAction.textContent = "menambah peminjaman barang";
+
+    confirmYes.onclick = function () {
       confirmModal.hide();
       form.submit(); // Submit form after confirmation
     };
-    
+
     confirmModal.show();
   });
 }
@@ -1781,7 +1633,7 @@ function setupFormTambahPeminjamanRuangan() {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
-    
+
     let isValid = true;
     const alasanInput = document.getElementById("alasanPeminjamanRuangan");
     const alasanError = document.getElementById("error-message");
@@ -1797,17 +1649,19 @@ function setupFormTambahPeminjamanRuangan() {
     if (!isValid) return;
 
     // Show confirmation modal
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const confirmAction = document.getElementById('confirmAction');
-    const confirmYes = document.getElementById('confirmYes');
-    
-    confirmAction.textContent = 'menambah peminjaman ruangan';
-    
-    confirmYes.onclick = function() {
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    confirmAction.textContent = "menambah peminjaman ruangan";
+
+    confirmYes.onclick = function () {
       confirmModal.hide();
       form.submit(); // Submit form after confirmation
     };
-    
+
     confirmModal.show();
   });
 }

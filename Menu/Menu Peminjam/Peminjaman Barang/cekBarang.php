@@ -62,7 +62,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="<?= BASE_URL ?>/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a>
+                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">Cek Barang</li>
             </ol>
@@ -71,11 +71,11 @@ include __DIR__ . '/../../../templates/sidebar.php';
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3 fw-bold">Cek Ketersediaan Barang</h5>
+            <h5 class="card-title mb-3 fw-semibold">Cek Ketersediaan Barang</h5>
 
             <form method="POST" id="formCekKetersediaanBarang" action="">
                 <div class="mb-2">
-                    <label class="form-label fw-semibold">
+                    <label class="form-label">
                         Pilih Tanggal Peminjaman
                         <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal"></span>
                     </label>
@@ -98,7 +98,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
     </div>
 
     <div id="areaBarangTersedia" style="<?= $showTable ? 'display:block;' : 'display:none;' ?>">
-        <h5 class="card-title mb-3 fw-bold">Daftar Barang yang Tersedia</h5>
+        <h5 class="card-title mb-3 fw-senibold">Daftar Barang yang Tersedia</h5>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">

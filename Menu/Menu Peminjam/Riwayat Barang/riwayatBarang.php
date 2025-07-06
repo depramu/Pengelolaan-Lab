@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../function/init.php';
 authorize_role(['Peminjam']);
 
 // Pagination setup
-$perPage = 7;
+$perPage = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
