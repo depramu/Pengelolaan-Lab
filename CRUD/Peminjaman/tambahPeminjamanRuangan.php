@@ -126,6 +126,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
+                $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan menunggu persetujuan.";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+
+
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 ?>

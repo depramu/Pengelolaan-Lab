@@ -68,6 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$untuk = $nim; 
+            $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
+            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+
+
+
 include '../../../templates/header.php';
 include '../../../templates/sidebar.php';
 ?>

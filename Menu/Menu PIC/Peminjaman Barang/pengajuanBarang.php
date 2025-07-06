@@ -78,6 +78,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $error = "ID Peminjaman tidak ditemukan untuk persetujuan.";
     }
 }
+
+$untuk = $nim;
+$pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg disetujui oleh PIC.";
+$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+
+
 include '../../../templates/header.php';
 include '../../../templates/sidebar.php';
 ?>

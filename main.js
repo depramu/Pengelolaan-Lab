@@ -678,14 +678,77 @@ function setupCekKetersediaanBarangPage() {
   const form = document.getElementById("formCekKetersediaanBarang");
   if (!form) return;
 
-  // Inisialisasi date picker
-  dateTimeHelpers.fillSelects("tglHari", "tglBulan", "tglTahun");
+  const container = document.querySelector('[data-day]');
+  if (!container) return;
+
+  const hariSelect = document.getElementById('tglHari');
+  const bulanSelect = document.getElementById('tglBulan');
+  const tahunSelect = document.getElementById('tglTahun');
+  
+  // Baca data tanggal yang sudah dipilih dari atribut HTML
+  const preselectedDay = container.dataset.day;
+  const preselectedMonth = container.dataset.month;
+  const preselectedYear = container.dataset.year;
+
+  // --- FUNGSI UNTUK MENGISI DROPDOWN ---
+  function populateSelectors() {
+    const now = new Date();
+    // Isi tahun
+    for (let y = now.getFullYear(); y <= now.getFullYear() + 5; y++) {
+      tahunSelect.innerHTML += `<option value="${y}">${y}</option>`;
+    }
+    // Isi bulan
+    for (let m = 1; m <= 12; m++) {
+      const monthText = m < 10 ? `0${m}` : `${m}`;
+      bulanSelect.innerHTML += `<option value="${m}">${monthText}</option>`;
+    }
+  }
+
+  // --- FUNGSI UNTUK UPDATE HARI ---
+  function updateDays() {
+    const bulan = parseInt(bulanSelect.value);
+    const tahun = parseInt(tahunSelect.value);
+    const daysInMonth = new Date(tahun, bulan, 0).getDate();
+    
+    const currentSelectedDay = hariSelect.value;
+    hariSelect.innerHTML = '';
+    for (let i = 1; i <= daysInMonth; i++) {
+      hariSelect.innerHTML += `<option value="${i}">${i}</option>`;
+    }
+    // Coba pertahankan hari yang dipilih jika masih valid
+    if (currentSelectedDay <= daysInMonth) {
+      hariSelect.value = currentSelectedDay;
+    }
+  }
+
+  // --- INISIALISASI ---
+  populateSelectors();
+  
+  // Tentukan nilai default: dari PHP atau tanggal hari ini
+  if (preselectedYear && preselectedMonth && preselectedDay) {
+    // Jika ada tanggal yang di-submit, gunakan itu
+    tahunSelect.value = preselectedYear;
+    bulanSelect.value = preselectedMonth;
+    updateDays(); // Update jumlah hari sesuai bulan/tahun yang dipilih
+    hariSelect.value = preselectedDay;
+  } else {
+    // Jika tidak, baru gunakan tanggal hari ini
+    const now = new Date();
+    tahunSelect.value = now.getFullYear();
+    bulanSelect.value = now.getMonth() + 1;
+    updateDays();
+    hariSelect.value = now.getDate();
+  }
+  
+  // Tambahkan listener untuk perubahan
+  bulanSelect.addEventListener('change', updateDays);
+  tahunSelect.addEventListener('change', updateDays);
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    const hari = document.getElementById("tglHari").value;
-    const bulan = document.getElementById("tglBulan").value;
-    const tahun = document.getElementById("tglTahun").value;
+    const hari = hariSelect.value;
+    const bulan = bulanSelect.value;
+    const tahun = tahunSelect.value;
     const errorTanggal = document.getElementById("error-message");
 
     if (!hari || !bulan || !tahun) {
@@ -914,7 +977,7 @@ function setupPengembalianBarangPage() {
   setupStockStepper("stepperContainer", "jumlahPengembalian", "sisaPinjaman");
 
   form.addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent default submission
+    e.preventDefault();
     
     let isValid = true;
 

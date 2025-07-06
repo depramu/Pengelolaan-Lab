@@ -74,6 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmtUpdate = sqlsrv_query($conn, $queryUpdate, $paramsUpdate);
 
             if ($stmtUpdate) {
+                $untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
+                $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg menunggu persetujuan.";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
                 $showModal = true;
             } else {
                 $error = "Peminjaman tercatat, tetapi gagal mengupdate stok. Error: " . print_r(sqlsrv_errors(), true);
@@ -85,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Gagal menambahkan peminjaman barang. Error: " . print_r(sqlsrv_errors(), true);
     }
 }
+
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
@@ -118,7 +123,7 @@ include '../../templates/sidebar.php';
                             </div>
                         <?php endif; ?>
 
-                            <form id="formTambahPeminjamanBrg"  method="POST">
+                        <form id="formTambahPeminjamanBrg" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-2">
