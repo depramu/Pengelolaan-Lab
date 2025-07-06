@@ -180,7 +180,49 @@ document.addEventListener("DOMContentLoaded", function () {
   setupInputProtection();
   setupModalChaining();
   setupSuccessModalFromPHP();
+
+  // Setup Profil
+  setupProfil();
 });
+
+function setupProfil() {
+  const profilForm = document.getElementById("profilForm");
+  if (!profilForm) return;
+
+  // Hanya validasi passError
+  const passInput = profilForm.querySelector("[name='kataSandi']");
+  const passError = profilForm.document.getElementById("kataSandiError");
+
+  profilForm.addEventListener("submit", function (e) {
+    let isValid = true;
+
+    // Reset pesan error
+    if (passError) passError.textContent = "";
+
+    // Validasi password
+    if (passInput && !passInput.value.trim()) {
+      if (passError) passError.textContent = "*Kata Sandi tidak boleh kosong.";
+      isValid = false;
+    }
+
+    if (!isValid) {
+      e.preventDefault();
+      return;
+    }
+
+    // Tampilkan confirm modal
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmMessage = document.getElementById("confirmMessage");
+    if (confirmMessage) {
+      confirmMessage.textContent =
+        "Apakah Anda yakin ingin mengubah kata sandi?";
+    }
+
+    confirmModal.show();
+  });
+}
 
 function setupSuccessModalFromPHP() {
   const successModalElement = document.getElementById("successModal");
@@ -306,7 +348,9 @@ function setupLaporanPage() {
       ? new bootstrap.Modal(validationModalEl)
       : null;
     const validationMsg = document.getElementById("validationMessage");
-    const bottomControlsContainer = document.getElementById("bottomControlsContainer");
+    const bottomControlsContainer = document.getElementById(
+      "bottomControlsContainer"
+    );
     const laporanSummaryText = document.getElementById("laporanSummaryText");
 
     const type = jenisLaporanSelect.value;
@@ -1291,7 +1335,6 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     }
 
-
     if (isValid) {
       const confirmModal = new bootstrap.Modal(
         document.getElementById("confirmModal")
@@ -1421,7 +1464,6 @@ function setupFormTambahAkunKry() {
       isValid = false;
     }
 
-    
     if (isValid) {
       const confirmModal = new bootstrap.Modal(
         document.getElementById("confirmModal")
