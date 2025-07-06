@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         sqlsrv_begin_transaction($conn);
 
         // Insert ke pengembalian_barang
-        $query_insert_pengembalian = "INSERT INTO pengembalian_barang 
+        $query_insert_pengembalian = "INSERT INTO Pengembalian_Barang
             (idPeminjamanBrg, jumlahPengembalian, kondisiBrg, catatanPengembalianBarang) 
             VALUES (?, ?, ?, ?)";
         $params_insert_pengembalian = [$idPeminjamanBrg, $jumlahPengembalian, $kondisiBrg, $catatan];
@@ -59,11 +59,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($sisaBaru < 0) $sisaBaru = 0;
         $statusPeminjaman = ($sisaBaru == 0) ? 'Telah Dikembalikan' : 'Sebagian Dikembalikan';
 
+        // Update sisaPinjaman di tabel Peminjaman_Barang
         $query_update_peminjaman = "UPDATE Peminjaman_Barang 
-            SET sisaPinjaman = ?, statusPeminjaman = ?
+            SET sisaPinjaman = ?
             WHERE idPeminjamanBrg = ?";
-        $params_update_peminjaman = [$sisaBaru, $statusPeminjaman, $idPeminjamanBrg];
+        $params_update_peminjaman = [$sisaBaru, $idPeminjamanBrg];
         $stmt_update_peminjaman = sqlsrv_query($conn, $query_update_peminjaman, $params_update_peminjaman);
+
+        // Update status di tabel Status_Peminjaman
+        $query_update_status = "UPDATE Status_Peminjaman 
+            SET statusPeminjaman = ?
+            WHERE idPeminjamanBrg = ?";
+        $params_update_status = [$statusPeminjaman, $idPeminjamanBrg];
+        $stmt_update_status = sqlsrv_query($conn, $query_update_status, $params_update_status);
 
         // Update stok barang
         $query_update_stok = "UPDATE Barang SET stokBarang = stokBarang + ? WHERE idBarang = ?";
@@ -71,13 +79,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_update_stok = sqlsrv_query($conn, $query_update_stok, $params_update_stok);
 
         // Commit/rollback
-        if ($stmt_insert_pengembalian && $stmt_update_peminjaman && $stmt_update_stok) {
+        if ($stmt_insert_pengembalian && $stmt_update_peminjaman && $stmt_update_status && $stmt_update_stok) {
             sqlsrv_commit($conn);
-            header("Location: pengembalianBarang.php?id=" . urlencode($idPeminjamanBrg) . "&success=1");
-            exit;
+            $showModal = true;
         } else {
             sqlsrv_rollback($conn);
-            $error = "Gagal memproses pengembalian barang. Silakan coba lagi.";
+            $errors = sqlsrv_errors();
+            $error = "Gagal memproses pengembalian barang. Detail: ";
+            if ($errors) {
+                foreach ($errors as $err) {
+                    $error .= $err['message'] . "; ";
+                }
+            } else {
+                $error .= "Kesalahan tidak diketahui.";
+            }
         }
     }
 } else {
@@ -159,7 +174,7 @@ include '../../../templates/sidebar.php';
                                         <span id="kondisiError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
                                     </label>
                                     <select class="form-select" id="txtKondisi" name="kondisiBrg">
-                                        <option selected>Pilih Kondisi Barang</option>
+                                        <option hidden selected>Pilih Kondisi Barang</option>
                                         <option value="Baik">Baik</option>
                                         <option value="Rusak">Rusak</option>
                                     </select>
