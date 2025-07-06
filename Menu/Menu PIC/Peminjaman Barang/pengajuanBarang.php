@@ -60,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
 
         if ($stmtUpdate) {
+            
             sqlsrv_commit($conn);
             $showModal = true;
         } else {
@@ -79,10 +80,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 }
 
-$untuk = $nim;
-$pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg disetujui oleh PIC.";
-$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
 
 
 include '../../../templates/header.php';

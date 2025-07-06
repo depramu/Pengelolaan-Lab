@@ -98,8 +98,8 @@ include '../../../templates/sidebar.php';
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="peminjamanBarang.php">Peminjaman Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php">Peminjaman Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengembalian Barang</li>
             </ol>
         </nav>
