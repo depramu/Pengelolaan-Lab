@@ -152,7 +152,7 @@
                         <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
                             <span class="fw-semibold">Pengembalian Ruangan</span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body scrollable-card-content">
                             <form method="POST" id="formPengembalianRuangan" enctype="multipart/form-data">
                                 <div class="mb-3 row">
                                     <div class="col-md-6">

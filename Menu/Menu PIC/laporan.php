@@ -7,10 +7,10 @@ include '../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-  
+
   <!-- Judul Statis Halaman -->
   <h3 class="fw-semibold mb-3">Laporan</h3>
-  
+
   <!-- Breadcrumb -->
   <div class="mb-3">
     <nav aria-label="breadcrumb">
@@ -29,7 +29,7 @@ include '../../templates/sidebar.php';
         <div class="col-md-4" id="colJenis">
           <label for="jenisLaporan" class="form-label">Jenis Laporan</label>
           <select class="form-select" id="jenisLaporan">
-            <option selected disabled value="">Pilih Jenis Laporan...</option>
+            <option selected hidden value="">Pilih Jenis Laporan...</option>
             <option value="dataBarang">Data Barang</option>
             <option value="dataRuangan">Data Ruangan</option>
             <option value="peminjamSeringMeminjam">Peminjam yang Sering Meminjam</option>
@@ -40,20 +40,20 @@ include '../../templates/sidebar.php';
         <div class="col-md-3" id="colBulan">
           <label for="bulanLaporan" class="form-label">Bulan</label>
           <select class="form-select" id="bulanLaporan">
-            <option selected disabled value="">Pilih Bulan...</option>
+            <option selected hidden value="">Pilih Bulan...</option>
             <?php
-              $bulan = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
-              foreach($bulan as $num => $nama) echo "<option value=\"{$num}\">{$nama}</option>";
+            $bulan = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
+            foreach ($bulan as $num => $nama) echo "<option value=\"{$num}\">{$nama}</option>";
             ?>
           </select>
         </div>
         <div class="col-md-3" id="colTahun">
           <label for="tahunLaporan" class="form-label">Tahun</label>
           <select class="form-select" id="tahunLaporan">
-            <option selected disabled value="">Pilih Tahun...</option>
+            <option selected hidden value="">Pilih Tahun...</option>
             <?php
-              $currentYear = date('Y');
-              for($i=0;$i<5;$i++) echo "<option value=\"".($currentYear-$i)."\">".($currentYear-$i)."</option>";
+            $currentYear = date('Y');
+            for ($i = 0; $i < 5; $i++) echo "<option value=\"" . ($currentYear - $i) . "\">" . ($currentYear - $i) . "</option>";
             ?>
           </select>
         </div>
@@ -70,25 +70,25 @@ include '../../templates/sidebar.php';
   <!-- Area Konten Laporan (Wadah untuk Tabel) -->
   <div id="areaKontenLaporan" style="display:none;">
     <div id="wadahLaporan" class="table-responsive">
-        <!-- Tabel akan dirender oleh JavaScript di sini -->
+      <!-- Tabel akan dirender oleh JavaScript di sini -->
     </div>
   </div>
 
- <div id="bottomControlsContainer" class="d-flex justify-content-between align-items-end mt-0" style="display:none;">
-  <div id="leftControls">
-        <div id="laporanSummaryText" class="mb-0" style="font-weight: 500;">
-            <!-- Keterangan summary akan muncul di sini -->
-        </div>
-        <nav aria-label="Page navigation" id="paginationControlsContainer">
-            <ul class="pagination mb-0" id="paginationUl">
-                <!-- Tombol paginasi akan muncul di sini -->
-            </ul>
-        </nav>
+  <div id="bottomControlsContainer" class="d-flex justify-content-between align-items-end mt-0">
+    <div id="leftControls">
+      <div id="laporanSummaryText" class="mb-0" style="font-weight: 500;">
+        <!-- Keterangan summary akan muncul di sini -->
+      </div>
+      <nav aria-label="Page navigation" id="paginationControlsContainer">
+        <ul class="pagination mb-0" id="paginationUl">
+          <!-- Tombol paginasi akan muncul di sini -->
+        </ul>
+      </nav>
     </div>
     <div id="rightControls">
-        <button class="btn btn-success" id="exportExcelBtn">
-            <i class="bi bi-file-earmark-excel me-0"></i> Export ke Excel
-        </button>
+      <button class="btn btn-success" id="exportExcelBtn" style="display:none;">
+        <i class="bi bi-file-earmark-excel me-0"></i> Export ke Excel
+      </button>
     </div>
   </div>
 </main>

@@ -114,8 +114,7 @@ include '../../../templates/sidebar.php';
                     <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
                         <span class="fw-semibold">Penolakan Peminjaman Ruangan</span>
                     </div>
-
-                    <div class="card-body">
+                    <div class="card-body scrollable-card-content">
                         <form id="formPenolakanRuangan" method="POST">
                             <div class="row">
                                 <div class="col-md-6">
@@ -126,6 +125,10 @@ include '../../../templates/sidebar.php';
                                     <div class="mb-3">
                                         <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                         <div class="form-control-plaintext"><?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
+                                        <div class="form-control-plaintext"><?= $data && isset($data['namaRuangan']) ? htmlspecialchars($data['namaRuangan']) : '' ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tglPeminjamanRuangan" class="form-label fw-semibold">Tanggal Peminjaman</label>

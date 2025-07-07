@@ -16,7 +16,7 @@ if (!empty($idPeminjamanRuangan)) {
     $query = "SELECT 
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
-                p.alasanPeminjamanRuangan,
+                p.alasanPeminjamanRuangan, r.namaRuangan,
                 COALESCE(m.nama, k.nama) AS namaPeminjam,
                 sp.statusPeminjaman
             FROM 
@@ -25,6 +25,8 @@ if (!empty($idPeminjamanRuangan)) {
                 Mahasiswa m ON p.nim = m.nim
             LEFT JOIN 
                 Karyawan k ON p.npk = k.npk
+            LEFT JOIN 
+                Ruangan r ON p.idRuangan = r.idRuangan
             LEFT JOIN
                 Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
             WHERE 
@@ -101,7 +103,7 @@ include '../../../templates/sidebar.php';
 
                         <span class="fw-semibold">Pengajuan Peminjaman Ruangan</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body scrollable-card-content">
                         <?php if ($error): ?>
                             <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                         <?php endif; ?>
@@ -112,12 +114,14 @@ include '../../../templates/sidebar.php';
                                     <div class="mb-3">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
-                                        <input type="hidden" class="form-control" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= htmlspecialchars($idPeminjamanRuangan) ?>" style="background: #f5f5f5;">
                                     </div>
                                     <div class="mb-3">
                                         <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
                                         <div class="form-control-plaintext"><?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?></div>
-                                        <input type="hidden" class="form-control" id="idRuangan" name="idRuangan" value="<?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?>" style="background: #f5f5f5;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
+                                        <div class="form-control-plaintext"><?= $data && isset($data['namaRuangan']) ? htmlspecialchars($data['namaRuangan']) : '' ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tglPeminjamanRuangan" class="form-label fw-semibold">Tanggal Peminjaman</label>
@@ -171,7 +175,6 @@ include '../../../templates/sidebar.php';
                                     <div class="mb-3">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
-                                        <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="alasanPeminjaman" class="form-label fw-semibold">Alasan Peminjaman</label>

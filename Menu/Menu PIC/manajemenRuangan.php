@@ -37,11 +37,11 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-    <!-- Table Manajemen Ruangan -->
     <div class="d-flex justify-content-start mb-2">
         <a href="<?= BASE_URL ?>/CRUD/Ruangan/tambahRuangan.php" class="btn btn-primary">
             <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="tambah" class="me-2">Tambah Ruangan</a>
     </div>
+    
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">

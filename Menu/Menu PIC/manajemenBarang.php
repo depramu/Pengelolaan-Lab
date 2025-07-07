@@ -43,7 +43,6 @@ include '../../templates/sidebar.php';
             <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="tambah" class="me-2">Tambah Barang</a>
     </div>
 
-    <div class="container">
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
@@ -108,7 +107,6 @@ include '../../templates/sidebar.php';
             generatePagination($page, $totalPages);
         }
         ?>
-    </div>
 </main>
 
 <?php

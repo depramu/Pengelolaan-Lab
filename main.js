@@ -545,55 +545,57 @@ function setupLaporanPage() {
     function exportToCsv(filename, data, headers, keys) {
       const csvRows = [];
       // Tambahkan header
-      csvRows.push(headers.join(','));
-    
+      csvRows.push(headers.join(","));
+
       // Tambahkan baris data
       for (const row of data) {
-        const values = keys.map(key => {
-          const escaped = ('' + (row[key] ?? '')).replace(/"/g, '""');
+        const values = keys.map((key) => {
+          const escaped = ("" + (row[key] ?? "")).replace(/"/g, '""');
           return `"${escaped}"`;
         });
-        csvRows.push(values.join(','));
+        csvRows.push(values.join(","));
       }
-    
-      const csvString = csvRows.join('\n');
-      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      if (link.download !== undefined) { // Deteksi fitur
+
+      const csvString = csvRows.join("\n");
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      if (link.download !== undefined) {
+        // Deteksi fitur
         const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = "hidden";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     }
-    
+
     // Di dalam fungsi renderLaporanTable Anda, di dalam event listener klik exportBtn:
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-      // PENTING: Hapus event listener yang mungkin sudah ada untuk mencegah pengikatan ganda
-      // Dalam aplikasi nyata, Anda mungkin ingin mengelola ini secara berbeda,
-      // tetapi untuk perbaikan cepat, menghapus dan menambahkan kembali memastikan keadaan bersih.
+      exportBtn.style.display = "block"; // Tampilkan tombol export setiap kali tabel dirender
+
+      // Remove previous event listeners by replacing the node
       const oldExportBtn = exportBtn.cloneNode(true);
       exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
       const newExportBtn = document.getElementById("exportExcelBtn"); // Dapatkan elemen baru
-    
+
       newExportBtn.addEventListener("click", () => {
         const jenisLaporanSelect = document.getElementById("jenisLaporan");
         const type = jenisLaporanSelect.value;
         const bln = document.getElementById("bulanLaporan").value;
         const thn = document.getElementById("tahunLaporan").value;
-    
+
         // Data untuk ekspor (gunakan fullData yang dilewatkan ke renderLaporanTable)
         let filename = `Laporan_${type}`;
         if (type !== "dataBarang" && type !== "dataRuangan") {
           filename += `_${bln}_${thn}`;
         }
         filename += `.csv`; // Atau .xlsx jika menggunakan library
-    
-        let headers = [], keys = [];
+
+        let headers = [],
+          keys = [];
         switch (type) {
           case "dataBarang":
             headers = ["ID", "Nama", "Stok", "Lokasi"];
@@ -601,11 +603,21 @@ function setupLaporanPage() {
             break;
           case "dataRuangan":
             headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-            keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+            keys = [
+              "idRuangan",
+              "namaRuangan",
+              "kondisiRuangan",
+              "ketersediaan",
+            ];
             break;
           case "peminjamSeringMeminjam":
             headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-            keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"];
+            keys = [
+              "IDPeminjam",
+              "NamaPeminjam",
+              "JenisPeminjam",
+              "JumlahPeminjaman",
+            ];
             break;
           case "barangSeringDipinjam":
             headers = ["ID Barang", "Nama", "Total Dipinjam"];
@@ -616,7 +628,7 @@ function setupLaporanPage() {
             keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
             break;
         }
-    
+
         // Lewatkan fullData, headers, dan keys ke fungsi ekspor
         // fullData di sini mengacu pada parameter 'fullData' dari renderLaporanTable
         exportToCsv(filename, fullData, headers, keys);
@@ -826,7 +838,6 @@ function setupCekKetersediaanRuanganPage() {
       isValid = false;
       e.preventDefault();
     }
-
 
     // Jika semua valid, set hidden input
     if (isValid) {
