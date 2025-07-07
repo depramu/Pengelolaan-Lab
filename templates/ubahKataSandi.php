@@ -103,7 +103,7 @@ if ($user_id && $user_role) {
         </nav>
     </div>
     <div>
-        <h2 class="fw-semibold display-5 ms-1 fs-4">Detail Akun</h2>
+        <h2 class="fw-semibold display-5 ms-1 fs-4">Ubah Kata Sandi</h2>
         <div class="card-body ms-5 mt-4">
             <div class="d-flex align-items-center pb-1">
                 <div class="me-4 mb-5">
@@ -125,40 +125,42 @@ if ($user_id && $user_role) {
                                     } elseif (isset($profil['npk'])) {
                                         echo 'NPK';
                                     } else {
+                                        echo 'ID';
                                     }
                                     ?>
-                                    <span class="float-end">:</span>
+                                     <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?></div>
+                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap
-                                    <span class="float-end">:</span>
+                                     <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['nama'] ?? '') ?></div>
+                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nama']) ?>">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Role
-                                    <span class="float-end">:</span>
+                                     <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['role'] ?? '') ?></div>
+                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['role']) ?>">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Email
-                                    <span class="float-end">:</span>
+                                     <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['email'] ?? '') ?></div>
+                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['email']) ?>">
                                 </div>
                             </div>
-                            <div class="d-flex mt-5 justify-content-end">
-                                <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">Ubah Kata Sandi</a>
+                            <div class="d-flex justify-content-end mt-5 gap-3">
+                                <a href='<?= BASE_URL ?>/templates/profil.php' class="btn btn-secondary">Kembali</a>
+                                <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">Simpan</a>
                             </div>
                         <?php else: ?>
                             <div class="alert alert-warning">Data profil tidak ditemukan.</div>
