@@ -1,5 +1,5 @@
 <?php
-include '../../koneksi.php';
+include '../../function/koneksi.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $npk = $_POST['npk'] ?? null;
     
@@ -8,19 +8,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = sqlsrv_query($conn, $query, [$npk]);
 
         if ($stmt) {
-            header("Location: ../../Menu PIC/manajemenAkunKry.php");
+            header("Location: ../../Menu/Menu PIC/manajemenAkunKry.php");
             exit;
         } else {
             echo "<script>
             alert ('Gagal menghapus akun. Silahkan coba lagi.');
-            window.location.href = '../../Menu PIC/manajemenAkunKry.php'
+            window.location.href = '../../Menu/Menu PIC/manajemenAkunKry.php'
             </script>";
             exit;
         }
     }
 }
 
-header("Location: ../../Menu PIC/manajemenAkunKry.php");
 include '../../templates/header.php';
 exit;
 ?>

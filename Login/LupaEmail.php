@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center mt-5">
                     <button type="button" class="btn-login-submit" style="background-color: #6c757d; text-align: center; line-height: normal;" onclick="window.location.href='login.php'">Kembali</button>
                 </div>
             </div>

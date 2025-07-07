@@ -72,7 +72,7 @@ include '../../templates/sidebar.php';
                         <div class="modal fade" id="deleteModal<?= $row['npk'] ?>"
                             tabindex="-1" aria-labelledby="modalLabel<?= $row['npk'] ?>" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <form action="../CRUD/Akun/hapusAkunKry.php" method="POST">
+                                <form action="../../CRUD/Akun/hapusAkunKry.php" method="POST">
                                     <input type="hidden" name="npk" value="<?= htmlspecialchars($row['npk']) ?>">
                                     <div class="modal-content">
                                         <div class="modal-header">

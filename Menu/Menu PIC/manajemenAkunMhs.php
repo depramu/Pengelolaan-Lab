@@ -72,7 +72,7 @@ include '../../templates/sidebar.php';
                             <div class="modal fade" id="deleteModal<?= $row['nim'] ?>"
                                 tabindex="-1" aria-labelledby="modalLabel<?= $row['nim'] ?>" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
-                                    <form action="../CRUD/Akun/hapusAkunMhs.php" method="POST">
+                                    <form action="../../CRUD/Akun/hapusAkunMhs.php" method="POST">
                                         <input type="hidden" name="nim" value="<?= $row['nim'] ?>">
                                         <div class="modal-content">
                                             <div class="modal-header">
