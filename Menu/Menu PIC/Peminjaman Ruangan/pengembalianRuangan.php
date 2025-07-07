@@ -122,7 +122,7 @@
         }
     }
 
-    
+
 
     include '../../../templates/header.php';
     include '../../../templates/sidebar.php';
@@ -149,12 +149,12 @@
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                     <div class="card border border-dark">
-                        <div class="card-header bg-white border-bottom border-dark">
-                            <span class="fw-bold">Pengembalian Ruangan</span>
+                        <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                            <span class="fw-semibold">Pengembalian Ruangan</span>
                         </div>
                         <div class="card-body">
                             <form method="POST" id="formPengembalianRuangan" enctype="multipart/form-data">
-                                <div class="mb-2 row">
+                                <div class="mb-3 row">
                                     <div class="col-md-6">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>">
@@ -171,28 +171,32 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="mb-2">
+                                <div class="mb-3">
                                     <label for="catatanPengembalianRuangan" class="form-label fw-semibold d-flex align-items-center">
                                         Catatan Pengembalian
                                         <span id="catatanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
                                     <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="3" style="resize: none;" placeholder="Masukkan catatan pengembalian.."><?= htmlspecialchars($data['catatanPengembalianRuangan'] ?? '') ?></textarea>
                                 </div>
-                                <div class="mb-2">
-                                    <label for="dokumentasiSebelum" class="fw-semibold">Dokumentasi sebelum pemakaian</label><br>
-                                    <?php if (!empty($dokSebelum)): ?>
-                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
-                                    <?php else: ?>
-                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="mb-2">
-                                    <label for="dokumentasiSesudah" class="fw-semibold">Dokumentasi sesudah pemakaian</label><br>
-                                    <?php if (!empty($dokSesudah)): ?>
-                                        <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
-                                    <?php else: ?>
-                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
-                                    <?php endif; ?>
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="dokumentasiSebelum" class="fw-semibold">Dokumentasi sebelum pemakaian</label><br>
+                                            <?php if (!empty($dokSebelum)): ?>
+                                                <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
+                                            <?php else: ?>
+                                                <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="dokumentasiSesudah" class="fw-semibold">Dokumentasi sesudah pemakaian</label><br>
+                                            <?php if (!empty($dokSesudah)): ?>
+                                                <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
+                                            <?php else: ?>
+                                                <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary">Kembali</a>

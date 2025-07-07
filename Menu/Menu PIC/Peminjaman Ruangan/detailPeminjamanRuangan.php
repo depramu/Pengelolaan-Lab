@@ -67,8 +67,8 @@ include '../../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                    <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Detail Peminjaman Ruangan</span>
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Detail Peminjaman Ruangan</span>
                     </div>
                     <div class="card-body scrollable-card-content">
                         <?php if ($error_message) : ?>
@@ -126,11 +126,11 @@ include '../../../templates/sidebar.php';
                                             </div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
-                                            <div class="mb-3">
-                                                <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
-                                                <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
-                                                <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
-                                            </div>
+                                        <div class="mb-3">
+                                            <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
+                                            <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                        </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Alasan Peminjaman</label>
                                             <div class="form-control-plaintext">

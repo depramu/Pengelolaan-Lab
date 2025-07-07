@@ -119,25 +119,17 @@ include '../../../templates/sidebar.php';
         </nav>
     </div>
 
-    <!-- <div class="container mt-4 px-3 px-md-4">
-        <?php if (isset($error)) : ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?php echo $error; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?> -->
-
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                    <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Pengembalian Barang</span>
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Pengembalian Barang</span>
                     </div>
 
                     <div class="card-body scrollable-card-content">
                         <form id="formPengembalianBarang" method="POST">
-                            <div class='mb-2 row'>
+                            <div class='mb-3 row'>
                                 <div class="col-md-6">
                                     <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
                                     <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
@@ -147,7 +139,7 @@ include '../../../templates/sidebar.php';
                                     <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
                                 </div>
                             </div>
-                            <div class="mb-2 row">
+                            <div class="mb-3 row">
                                 <div class="col-md-3">
                                     <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
                                     <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
@@ -159,10 +151,10 @@ include '../../../templates/sidebar.php';
                                     <?php endif; ?>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="jumlahPengembalian" class="form-label w-100 text-center fw-semibold">Jumlah Pengembalian
+                                    <label for="jumlahPengembalian" class="form-label w-100 fw-semibold">Jumlah Pengembalian
                                         <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
                                     </label>
-                                    <div class="input-group mx-auto" style="max-width: 140px;">
+                                    <div class="input-group" style="max-width: 140px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
                                         <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" max="<?= $sisaPinjaman ?>" style="max-width: 70px;">
                                         <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
@@ -179,7 +171,7 @@ include '../../../templates/sidebar.php';
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label for="catatanPengembalianBarang" class="form-label fw-semibold">Catatan Pengembalian
                                     <span id="catatanError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
                                 </label>

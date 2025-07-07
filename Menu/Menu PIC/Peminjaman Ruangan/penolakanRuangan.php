@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
 
         if ($updateStatusStmt && $insertStmt) {
-            $untuk = $nim; 
+            $untuk = $nim;
             $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan ditolak oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
             sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
@@ -111,14 +111,13 @@ include '../../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
-                    <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Penolakan Peminjaman Ruangan</span>
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Penolakan Peminjaman Ruangan</span>
                     </div>
 
                     <div class="card-body">
                         <form id="formPenolakanRuangan" method="POST">
                             <div class="row">
-                                <!-- Kolom Kiri -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
@@ -133,7 +132,6 @@ include '../../../templates/sidebar.php';
                                         <div class="form-control-plaintext"><?= isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime ? htmlspecialchars($data['tglPeminjamanRuangan']->format('d-m-y')) : '' ?></div>
                                     </div>
                                 </div>
-                                <!-- Kolom Kanan -->
                                 <div class="col-md-6">
                                     <div class="row mb-3">
                                         <div class="col-md-6">

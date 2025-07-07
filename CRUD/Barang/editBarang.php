@@ -66,7 +66,7 @@ include '../../templates/sidebar.php';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenBarang.php">Manajemen Barang</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Edit Barang</li>
+                <li class="breadcrumb-item active" aria-current="page">Ubah Barang</li>
             </ol>
         </nav>
     </div>
@@ -82,8 +82,8 @@ include '../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                    <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Edit Barang</span>
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Ubah Barang</span>
                     </div>
                     <div class="card-body">
                         <form id="formEditBarang" method="POST">
