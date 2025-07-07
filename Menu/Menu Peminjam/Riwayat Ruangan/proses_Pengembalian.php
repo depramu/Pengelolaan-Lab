@@ -1,6 +1,8 @@
 <?php
 include '../../../function/koneksi.php';
 
+$showModal = false; // Tambahkan variabel showModal
+
 if (isset($_POST['submit_pengembalian'])) {
 
     $idPeminjaman = $_POST['idPeminjamanRuangan'];
@@ -79,7 +81,12 @@ if (isset($_POST['submit_pengembalian'])) {
             $stmt_update = sqlsrv_query($conn, $sql_update_status, $params_update);
 
             if ($stmt_update) {
-                header("Location: riwayatRuangan.php");
+                $untuk = 'PIC Aset';
+                $pesanNotif = "Pengembalian ruangan dengan ID $idPeminjaman telah diajukan oleh peminjam.";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+                // Sukses, showModal true (bisa digunakan di halaman redirect)
+                header("Location: riwayatRuangan.php?showModal=1");
                 exit();
             } else {
                 echo "Data pengembalian berhasil disimpan, TAPI gagal update status peminjaman. Error: <pre>";

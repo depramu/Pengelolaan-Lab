@@ -7,6 +7,8 @@ $data = null;
 $error = '';
 $showModal = false;
 
+
+
 // Ambil data peminjaman beserta nama peminjam (Mahasiswa/Karyawan) dan info nim/npk
 if (!empty($idPeminjamanRuangan)) {
     $_SESSION['idPeminjamanRuangan'] = $idPeminjamanRuangan;
@@ -50,6 +52,8 @@ if (!empty($idPeminjamanRuangan)) {
     $error = "ID Peminjaman tidak valid.";
 }
 
+$nim = $data['nim'] ?? ''; // Pastikan $nim diinisialisasi, bisa dari session atau data yang diambil    
+
 // Proses form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['setuju'])) {
@@ -61,6 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
+            $untuk = $nim; 
+            $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan disetujui oleh PIC.";
+            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+
             $showModal = true;
         } else {
             $error = "Gagal melakukan pengajuan ruangan.";

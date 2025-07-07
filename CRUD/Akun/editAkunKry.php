@@ -83,14 +83,12 @@ include '../../templates/sidebar.php';
                                             NPK
                                         </label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
-                                        <input type="hidden" name="npk" value="<?= htmlspecialchars($npk) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label fw-semibold d-flex align-items-center">
                                             Nama Lengkap
                                         </label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                        <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -110,7 +108,6 @@ include '../../templates/sidebar.php';
                                             <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
                                             <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
                                         </select>
-                                        <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                     </div>
                                 </div>
                             </div>

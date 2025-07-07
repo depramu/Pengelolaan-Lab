@@ -3,24 +3,28 @@ require_once __DIR__ . '/../../../function/init.php'; // Penyesuaian: gunakan in
 authorize_role('PIC Aset');
 
 // Pagination setup
+$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Barang";
+$countQuery = "SELECT COUNT(*) AS total 
+              FROM Peminjaman_Barang pb
+              LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 
-// Ambil data sesuai halaman dengan JOIN ke tabel Status_Peminjaman
+// Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT pr.*, b.namaBarang, sp.statusPeminjaman 
-          FROM Peminjaman_Barang pr 
-          JOIN Barang b ON pr.idBarang = b.idBarang 
-          LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanBrg = sp.idPeminjamanBrg
-          ORDER BY pr.idPeminjamanBrg 
+$query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.jumlahBrg, 
+                 pb.tglPeminjamanBrg, sp.statusPeminjaman, b.namaBarang
+          FROM Peminjaman_Barang pb
+          JOIN Barang b ON pb.idBarang = b.idBarang 
+          LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
+          ORDER BY pb.tglPeminjamanBrg
           OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 
@@ -33,7 +37,7 @@ include '../../../templates/sidebar.php';
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Peminjaman Barang</li>
             </ol>
         </nav>

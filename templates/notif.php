@@ -27,44 +27,56 @@ if (empty($user_role)) {
     die("<script>alert('Anda belum login!'); window.location='login.php';</script>");
 }
 
+// PAGINATION SETUP
+$perPage = 9;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
 // Query notifikasi berdasarkan role
 if ($user_role === 'PIC Aset') {
-    $query = "SELECT * FROM Notifikasi WHERE untuk IN ('PIC Aset') AND status = 'Belum Dibaca' ORDER BY waktu DESC";
+    $query_base = "SELECT * FROM Notifikasi WHERE untuk IN ('PIC Aset') AND status = 'Belum Dibaca'";
     $params = array();
+    $query_count = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk IN ('PIC Aset') AND status = 'Belum Dibaca'";
 } elseif ($user_role === 'Peminjam' && !empty($nim)) {
-    $query = "SELECT * FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca' ORDER BY waktu DESC";
+    $query_base = "SELECT * FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
     $params = array($nim);
+    $query_count = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
 } else {
-    $query = "SELECT * FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca' ORDER BY waktu DESC";
+    $query_base = "SELECT * FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
     $params = array($user_role);
+    $query_count = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
 }
+
+// Hitung total data untuk pagination
+$stmt_count = sqlsrv_query($conn, $query_count, $params);
+$totalData = 0;
+if ($stmt_count && $row = sqlsrv_fetch_array($stmt_count, SQLSRV_FETCH_ASSOC)) {
+    $totalData = $row['total'];
+}
+$totalPages = max(1, ceil($totalData / $perPage));
+$offset = ($page - 1) * $perPage;
+
+// Query data notifikasi dengan limit dan offset
+$query = $query_base . " ORDER BY waktu DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$params_paged = array_merge($params, array($offset, $perPage));
 
 // Debugging query
 echo "<!-- Query: $query -->";
-echo "<!-- Params: " . print_r($params, true) . " -->";
+echo "<!-- Params: " . print_r($params_paged, true) . " -->";
 
-$stmt = sqlsrv_query($conn, $query, $params);
+$stmt = sqlsrv_query($conn, $query, $params_paged);
 
 if ($stmt === false) {
     echo "<!-- Error: " . print_r(sqlsrv_errors(), true) . " -->";
     die("Terjadi kesalahan saat mengambil notifikasi");
 }
 
-// Hitung jumlah notifikasi
-$notif_count = 0;
-if (sqlsrv_has_rows($stmt)) {
-    $query_count = "SELECT COUNT(*) as total FROM ($query) AS temp";
-    $stmt_count = sqlsrv_query($conn, $query_count, $params);
-    if ($stmt_count && $row = sqlsrv_fetch_array($stmt_count, SQLSRV_FETCH_ASSOC)) {
-        $notif_count = $row['total'];
-    }
-}
 ?>
 
 <!-- Tampilan HTML -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Notifikasi</h3>
-    <div class="mb-5">
+    <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
@@ -74,9 +86,9 @@ if (sqlsrv_has_rows($stmt)) {
     </div>
     <div class="container">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
-                    <tr>
+                    <tr class="text-center">
                         <th>Waktu</th>
                         <th>Pesan</th>
                         <th>Status</th>
@@ -84,9 +96,13 @@ if (sqlsrv_has_rows($stmt)) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)): ?>
+                    <?php
+                    $hasData = false;
+                    while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)):
+                        $hasData = true;
+                    ?>
                         <tr>
-                            <td>
+                            <td class="text-center">
                                 <?php
                                 if ($row['waktu'] instanceof DateTime) {
                                     echo $row['waktu']->format('d-m-y');
@@ -96,8 +112,8 @@ if (sqlsrv_has_rows($stmt)) {
                                 ?>
                             </td>
                             <td><?= htmlspecialchars($row['pesan']) ?></td>
-                            <td><?= htmlspecialchars($row['status']) ?></td>
-                            <td>
+                            <td class="text-center"><?= htmlspecialchars($row['status']) ?></td>
+                            <td class="text-center">
                                 <?php if ($row['status'] == 'Belum Dibaca'): ?>
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="notif_id" value="<?= $row['id']; ?>">
@@ -109,12 +125,21 @@ if (sqlsrv_has_rows($stmt)) {
                             </td>
                         </tr>
                     <?php endwhile; ?>
+                    <?php if (!$hasData): ?>
+                        <tr>
+                            <td colspan="4" class="text-center">Tidak ada notifikasi.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
+        <!-- Pagination -->
+        <?php if ($totalPages > 1) {
+            generatePagination($page, $totalPages);
+        }
+        ?>
     </div>
 </main>
-
 
 <?php
 include 'footer.php';

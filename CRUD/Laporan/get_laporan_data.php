@@ -6,8 +6,8 @@ header('Content-Type: application/json');
 
 // Memanggil file koneksi.php.
 // Diasumsikan file ini ada 2 level di atas, relatif terhadap root project.
-if (file_exists(__DIR__ . '/../../koneksi.php')) {
-    include __DIR__ . '/../../koneksi.php';
+if (file_exists(__DIR__ . '/../../function/koneksi.php')) {
+    include __DIR__ . '/../../function/koneksi.php';
 } else {
     // Jika koneksi tidak ditemukan, kirim respons error dan hentikan.
     echo json_encode(['status' => 'error', 'message' => 'File koneksi.php tidak ditemukan.']);

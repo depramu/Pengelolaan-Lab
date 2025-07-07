@@ -7,12 +7,13 @@ $data = null; // Inisialisasi $data sebagai null
 $error = '';
 $showModal = false;
 
+
 if (!empty($idPeminjamanBrg)) {
     $query = "SELECT
-                pb.idPeminjamanBrg, pb.idBarang, pb.nim, pb.npk,
-                pb.tglPeminjamanBrg, pb.jumlahBrg, pb.alasanPeminjamanBrg,
-                b.namaBarang, sp.statusPeminjaman,
-                COALESCE(m.nama, k.nama) AS namaPeminjam
+                pb.*,
+                b.namaBarang,
+                COALESCE(m.nama, k.nama) AS namaPeminjam,
+                sp.statusPeminjaman
             FROM
                 Peminjaman_Barang pb
             JOIN
@@ -48,6 +49,16 @@ if (!empty($idPeminjamanBrg)) {
 } else {
     $error = "ID Peminjaman tidak valid.";
 }
+// Ambil data dari $data dengan aman
+$idBarang = $data['idBarang'] ?? '';
+$nim = $data['nim'] ?? '';
+$npk = $data['npk'] ?? '';
+$namaBarang = $data['namaBarang'] ?? '';
+$namaPeminjam = $data['namaPeminjam'] ?? '';
+$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
+$jumlahBrg = $data['jumlahBrg'] ?? '';
+$alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
+$statusPeminjaman = $data['statusPeminjaman'] ?? '';
 
 // Proses form untuk menyetujui peminjaman 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
@@ -61,7 +72,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
 
         if ($stmtUpdate) {
-
+            $untuk = $nim; 
+            $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg disetujui oleh PIC.";
+            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);
             $showModal = true;
         } else {

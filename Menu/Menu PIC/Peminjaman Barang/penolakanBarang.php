@@ -57,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
 
         if ($insertStatusStmt) {
+            $untuk = $nim; 
+            $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
+            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);
             $showModal = true;
         } else {
@@ -66,12 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
     }
 }
-
-$untuk = $nim;
-$pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
-$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
-
 
 
 include '../../../templates/header.php';

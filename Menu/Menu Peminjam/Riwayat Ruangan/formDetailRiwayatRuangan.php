@@ -7,7 +7,7 @@ $data = null;
 $error_message = null;
 
 // Cek baik POST maupun GET untuk idPeminjamanRuangan
-if (isset($_POST['idPeminjamanRuangan'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idPeminjamanRuangan = $_POST['idPeminjamanRuangan'];
     $showModal = true; // hanya set true jika POST
 } else if (isset($_GET['idPeminjamanRuangan'])) {

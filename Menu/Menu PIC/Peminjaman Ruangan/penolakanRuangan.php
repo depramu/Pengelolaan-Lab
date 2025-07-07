@@ -39,6 +39,8 @@ if (!empty($idPeminjamanRuangan)) {
     }
 }
 
+$nim = $data['nim'] ?? ''; // Pastikan $nim diinisialisasi, bisa dari session atau data yang diambil    
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanRuangan) && !empty($alasanPenolakan)) {
         sqlsrv_begin_transaction($conn);
@@ -71,6 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
 
         if ($updateStatusStmt && $insertStmt) {
+            $untuk = $nim; 
+            $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan ditolak oleh PIC.";
+            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);
             $showModal = true;
         } else {

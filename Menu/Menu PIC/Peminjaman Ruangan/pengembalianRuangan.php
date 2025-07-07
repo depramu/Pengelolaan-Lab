@@ -6,6 +6,44 @@
     $idPeminjamanRuangan = $_GET['id'] ?? '';
     $error = null;
 
+    // Ambil data pengembalian ruangan dan dokumentasi
+    $data = null;
+    $dokSebelum = null;
+    $dokSesudah = null;
+    if ($idPeminjamanRuangan) {
+        $sql = "SELECT 
+                p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
+                p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
+                p.alasanPeminjamanRuangan,
+                sp.statusPeminjaman,
+                peng.kondisiRuangan, peng.catatanPengembalianRuangan
+            FROM 
+                Peminjaman_Ruangan p
+            LEFT JOIN 
+                Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
+            LEFT JOIN 
+                Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
+            WHERE 
+                p.idPeminjamanRuangan = ?";
+        $params = [$idPeminjamanRuangan];
+        $stmt = sqlsrv_query($conn, $sql, $params);
+        if ($stmt && ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC))) {
+            $data = $row;
+        }
+
+        // Ambil dokumentasi sebelum dan sesudah dari database
+        $sqlDok = "SELECT dokumentasiSebelum, dokumentasiSesudah FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
+        $paramsDok = [$idPeminjamanRuangan];
+        $stmtDok = sqlsrv_query($conn, $sqlDok, $paramsDok);
+        if ($stmtDok && ($rowDok = sqlsrv_fetch_array($stmtDok, SQLSRV_FETCH_ASSOC))) {
+            $dokSebelum = $rowDok['dokumentasiSebelum'] ?? null;
+            $dokSesudah = $rowDok['dokumentasiSesudah'] ?? null;
+        }
+    }
+
+    $nim = $data['nim'] ?? ''; // Pastikan $nim diinisialisasi, bisa dari session atau data yang diambil    
+
+
     // Proses POST untuk simpan ke database
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && $idPeminjamanRuangan) {
         $kondisiRuangan = $_POST['kondisiRuangan'] ?? '';
@@ -71,6 +109,10 @@
                     $stmtUpdateKetersediaan = sqlsrv_query($conn, $sqlUpdateKetersediaan, $paramsUpdateKetersediaan);
                 }
 
+                $untuk = $nim; // atau $_SESSION['user_role'] untuk peminjam
+                $pesanNotif = "Ruangan dengan ID $idPeminjamanRuangan telah dikembalikan.";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
                 $showModal = true;
             } else {
                 $error = "Gagal mengubah status peminjaman.";
@@ -80,40 +122,7 @@
         }
     }
 
-    // Ambil data pengembalian ruangan dan dokumentasi
-    $data = null;
-    $dokSebelum = null;
-    $dokSesudah = null;
-    if ($idPeminjamanRuangan) {
-        $sql = "SELECT 
-                p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
-                p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
-                p.alasanPeminjamanRuangan,
-                sp.statusPeminjaman,
-                peng.kondisiRuangan, peng.catatanPengembalianRuangan
-            FROM 
-                Peminjaman_Ruangan p
-            LEFT JOIN 
-                Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
-            LEFT JOIN 
-                Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
-            WHERE 
-                p.idPeminjamanRuangan = ?";
-        $params = [$idPeminjamanRuangan];
-        $stmt = sqlsrv_query($conn, $sql, $params);
-        if ($stmt && ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC))) {
-            $data = $row;
-        }
-
-        // Ambil dokumentasi sebelum dan sesudah dari database
-        $sqlDok = "SELECT dokumentasiSebelum, dokumentasiSesudah FROM Pengembalian_Ruangan WHERE idPeminjamanRuangan = ?";
-        $paramsDok = [$idPeminjamanRuangan];
-        $stmtDok = sqlsrv_query($conn, $sqlDok, $paramsDok);
-        if ($stmtDok && ($rowDok = sqlsrv_fetch_array($stmtDok, SQLSRV_FETCH_ASSOC))) {
-            $dokSebelum = $rowDok['dokumentasiSebelum'] ?? null;
-            $dokSesudah = $rowDok['dokumentasiSesudah'] ?? null;
-        }
-    }
+    
 
     include '../../../templates/header.php';
     include '../../../templates/sidebar.php';

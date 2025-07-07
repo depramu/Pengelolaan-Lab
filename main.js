@@ -375,7 +375,7 @@ function setupLaporanPage() {
     laporanSummaryText.innerHTML = "";
 
     // Fetch data
-    let url = `../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}`;
+    let url = `../../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}`;
     if (type !== "dataBarang" && type !== "dataRuangan") {
       url += `&bulan=${bln}&tahun=${thn}`;
     }
@@ -542,17 +542,84 @@ function setupLaporanPage() {
     wadahLaporanDiv.append(tbl);
 
     // Setup export Excel button
+    function exportToCsv(filename, data, headers, keys) {
+      const csvRows = [];
+      // Tambahkan header
+      csvRows.push(headers.join(','));
+    
+      // Tambahkan baris data
+      for (const row of data) {
+        const values = keys.map(key => {
+          const escaped = ('' + (row[key] ?? '')).replace(/"/g, '""');
+          return `"${escaped}"`;
+        });
+        csvRows.push(values.join(','));
+      }
+    
+      const csvString = csvRows.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) { // Deteksi fitur
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+    
+    // Di dalam fungsi renderLaporanTable Anda, di dalam event listener klik exportBtn:
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-      exportBtn.addEventListener("click", () => {
+      // PENTING: Hapus event listener yang mungkin sudah ada untuk mencegah pengikatan ganda
+      // Dalam aplikasi nyata, Anda mungkin ingin mengelola ini secara berbeda,
+      // tetapi untuk perbaikan cepat, menghapus dan menambahkan kembali memastikan keadaan bersih.
+      const oldExportBtn = exportBtn.cloneNode(true);
+      exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
+      const newExportBtn = document.getElementById("exportExcelBtn"); // Dapatkan elemen baru
+    
+      newExportBtn.addEventListener("click", () => {
         const jenisLaporanSelect = document.getElementById("jenisLaporan");
-        const bulanSelect = document.getElementById("bulanLaporan");
-        const tahunSelect = document.getElementById("tahunLaporan");
-        const validationModalEl = document.getElementById("validationModal");
-        const validationModal = validationModalEl
-          ? new bootstrap.Modal(validationModalEl)
-          : null;
-        const validationMsg = document.getElementById("validationMessage");
+        const type = jenisLaporanSelect.value;
+        const bln = document.getElementById("bulanLaporan").value;
+        const thn = document.getElementById("tahunLaporan").value;
+    
+        // Data untuk ekspor (gunakan fullData yang dilewatkan ke renderLaporanTable)
+        let filename = `Laporan_${type}`;
+        if (type !== "dataBarang" && type !== "dataRuangan") {
+          filename += `_${bln}_${thn}`;
+        }
+        filename += `.csv`; // Atau .xlsx jika menggunakan library
+    
+        let headers = [], keys = [];
+        switch (type) {
+          case "dataBarang":
+            headers = ["ID", "Nama", "Stok", "Lokasi"];
+            keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+            break;
+          case "dataRuangan":
+            headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
+            keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+            break;
+          case "peminjamSeringMeminjam":
+            headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
+            keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"];
+            break;
+          case "barangSeringDipinjam":
+            headers = ["ID Barang", "Nama", "Total Dipinjam"];
+            keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+            break;
+          case "ruanganSeringDipinjam":
+            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
+            keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+            break;
+        }
+    
+        // Lewatkan fullData, headers, dan keys ke fungsi ekspor
+        // fullData di sini mengacu pada parameter 'fullData' dari renderLaporanTable
+        exportToCsv(filename, fullData, headers, keys);
       });
     }
   }

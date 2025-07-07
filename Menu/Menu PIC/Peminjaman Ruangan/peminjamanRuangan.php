@@ -53,7 +53,7 @@ include '../../../templates/sidebar.php';
           <th>Tanggal Peminjaman</th>
           <th>Waktu Mulai</th>
           <th>Waktu Selesai</th>
-          <th class="text-center">Aksi</th>
+          <th>Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -107,7 +107,7 @@ include '../../../templates/sidebar.php';
           <tr class="text-center">
             <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
             <td><?= htmlspecialchars($row['idRuangan']) ?></td>
-            <td><?= htmlspecialchars($row['namaRuangan']) ?></td>
+            <td class="text-start"><?= htmlspecialchars($row['namaRuangan']) ?></td>
             <td>
               <?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?>
             </td>

@@ -16,7 +16,7 @@ if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
 $idBarang = $_GET['idBarang'] ?? null;
 if (empty($idBarang)) {
     die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
-}
+}   
 
 // Ambil detail barang
 $stmtDetail = sqlsrv_query($conn, "SELECT namaBarang, stokBarang FROM Barang WHERE idBarang = ?", [$idBarang]);
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ubah format tanggal sebelum insert
     if ($tglPeminjamanBrg) {
         $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
-        $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('d-m-y') : null;
+        $tglPeminjamanBrgSQL = $dateObj ? $dateObj->format('Y-m-d') : null;
     } else {
         $tglPeminjamanBrgSQL = null;
     }
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg];
     $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
-    if ($   ) {
+    if ($stmtInsert) {
         // 2. Insert status peminjaman ke tabel Status_Peminjaman
         $queryInsertStatus = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman) VALUES (?, ?)";
         $paramsInsertStatus = [$idPeminjamanBrg, 'Menunggu Persetujuan'];
@@ -141,7 +141,7 @@ include '../../templates/sidebar.php';
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
-                                                                                                                                            $dateObj = DateTime::createFromFormat('d-m=y', $tglPeminjamanBrg);
+                                                                                                                                            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
                                                                                                                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
                                                                                                                                         } ?>">
                                     </div>

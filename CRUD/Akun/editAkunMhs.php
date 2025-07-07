@@ -106,11 +106,8 @@ include '../../templates/sidebar.php';
                                             Jenis Role
                                         </label>
                                         <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
-                                            <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
-                                            <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
                                             <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
                                         </select>
-                                        <input type="hidden" name="jenisRole" value="<?= htmlspecialchars($data['jenisRole']) ?>">
                                     </div>
                                 </div>
                             </div>
