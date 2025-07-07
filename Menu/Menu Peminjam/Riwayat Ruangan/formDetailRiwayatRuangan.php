@@ -201,7 +201,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                         <?php if (!empty($data['dokumentasiSebelum'])) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
                                                         <?php else : ?>
-                                                            <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                            <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endif; ?>
@@ -219,7 +219,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                         <?php if (!empty($data['dokumentasiSesudah'])) : ?>
                                                             <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
                                                         <?php else : ?>
-                                                            <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                            <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endif; ?>
@@ -228,15 +228,15 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <?php endif; ?>
                                 <?php endif; ?>
 
-                                <div class="d-flex justify-content-between mt-3">
-                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
-                                    <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
-                                        <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
-                                    <?php endif; ?>
-                                </div>
-                            </form>
-                        <?php endif; ?>
-                    </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
+                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
+                                <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
+                                    <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
+                                <?php endif; ?>
+                            </div>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

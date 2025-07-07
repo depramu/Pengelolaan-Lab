@@ -827,6 +827,7 @@ function setupCekKetersediaanRuanganPage() {
       e.preventDefault();
     }
 
+
     // Jika semua valid, set hidden input
     if (isValid) {
       const tglPeminjamanInput = document.getElementById(

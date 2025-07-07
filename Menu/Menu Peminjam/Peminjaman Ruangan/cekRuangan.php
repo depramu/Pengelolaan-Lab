@@ -45,9 +45,11 @@ if (!empty($_SESSION['waktuSelesai'])) {
     list($selectedJamSelesai, $selectedMenitSelesai) = explode(':', $_SESSION['waktuSelesai']);
 }
 
-$perPage = 3;
+$perPage = 2;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
+
+
 
 // Hitung total data ruangan yang tersedia
 $countQuery = "SELECT COUNT(*) AS total FROM Ruangan WHERE ketersediaan = 'Tersedia'";
@@ -55,6 +57,8 @@ $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'] ?? 0;
 $totalPages = ceil($totalData / $perPage);
+
+generatePagination($page, $totalPages);
 
 // Ambil data ruangan sesuai halaman
 $offset = ($page - 1) * $perPage;
@@ -86,6 +90,25 @@ include __DIR__ . '/../../../templates/sidebar.php';
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title mb-3 fw-semibold">Cek Ketersediaan Ruangan</h5>
+
+            <?php
+            // Ambil tanggal dari $_POST, kalau kosong pakai $_SESSION
+            if (!empty($_POST['tglHari']) && !empty($_POST['tglBulan']) && !empty($_POST['tglTahun'])) {
+                $tglHari = $_POST['tglHari'];
+                $tglBulan = $_POST['tglBulan'];
+                $tglTahun = $_POST['tglTahun'];
+            } elseif (!empty($_SESSION['tglPeminjamanRuangan'])) {
+                list($tglHari, $tglBulan, $tglTahun) = explode('-', $_SESSION['tglPeminjamanRuangan']);
+            } else {
+                $tglHari = $tglBulan = $tglTahun = '';
+            }
+
+            $jamDari = $_POST['jam_dari'] ?? ($selectedJamMulai ?? '');
+            $menitDari = $_POST['menit_dari'] ?? ($selectedMenitMulai ?? '');
+            $jamSampai = $_POST['jam_sampai'] ?? ($selectedJamSelesai ?? '');
+            $menitSampai = $_POST['menit_sampai'] ?? ($selectedMenitSelesai ?? '');
+            ?>
+
             <form method="POST" id="formCekKetersediaanRuangan" action="">
                 <div class="mb-2">
                     <label class="form-label">
@@ -179,7 +202,35 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </table>
         </div>
 
-        <div class="mt-3">
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                const jamDari = "<?= $jamDari ?>";
+                const menitDari = "<?= $menitDari ?>";
+                const jamSampai = "<?= $jamSampai ?>";
+                const menitSampai = "<?= $menitSampai ?>";
+
+
+                // Jam & menit
+                const jam_dari = document.getElementById('jam_dari');
+                const menit_dari = document.getElementById('menit_dari');
+                const jam_sampai = document.getElementById('jam_sampai');
+                const menit_sampai = document.getElementById('menit_sampai');
+
+                for (let i = 0; i <= 23; i++) {
+                    let jam = i.toString().padStart(2, '0');
+                    jam_dari.add(new Option(jam, jam, false, jam === jamDari));
+                    jam_sampai.add(new Option(jam, jam, false, jam === jamSampai));
+                }
+
+                for (let i = 0; i <= 59; i += 5) {
+                    let menit = i.toString().padStart(2, '0');
+                    menit_dari.add(new Option(menit, menit, false, menit === menitDari));
+                    menit_sampai.add(new Option(menit, menit, false, menit === menitSampai));
+                }
+            });
+        </script>
+
+        <div>
             <?php
             if ($totalPages > 1) {
                 generatePagination($page, $totalPages);

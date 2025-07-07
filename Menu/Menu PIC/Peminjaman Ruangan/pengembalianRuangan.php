@@ -185,7 +185,7 @@
                                             <?php if (!empty($dokSebelum)): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">Lihat Dokumentasi</a>
                                             <?php else: ?>
-                                                <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                <span class="text-danger"><em>(Tidak Unggah)</em></span>
                                             <?php endif; ?>
                                         </div>
                                         <div class="col-md-6">
@@ -193,7 +193,7 @@
                                             <?php if (!empty($dokSesudah)): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">Lihat Dokumentasi</a>
                                             <?php else: ?>
-                                                <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                <span class="text-danger"><em>(Tidak Unggah)</em></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
