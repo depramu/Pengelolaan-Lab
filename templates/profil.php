@@ -103,7 +103,7 @@ if ($user_id && $user_role) {
         </nav>
     </div>
     <div>
-        <h2 class="fw-semibold display-5 ms-1 fs-4">Detail Akun</h2>
+        <h2 class="fw-semibold display-5 ms-1 fs-5">Detail Akun</h2>
         <div class="card-body ms-5 mt-4">
             <div class="d-flex align-items-center pb-1">
                 <div class="me-4 mb-5">

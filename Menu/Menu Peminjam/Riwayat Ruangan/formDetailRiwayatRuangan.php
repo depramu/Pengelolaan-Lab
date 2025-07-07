@@ -53,7 +53,7 @@ if ($idPeminjamanRuangan !== null) {
         }
         // $showModal tidak di-set di sini, hanya di POST
     }
-    
+
     // Query untuk mendapatkan status peminjaman dari tabel Status_Peminjaman
     if ($data && !$error_message) {
         $statusSql = "SELECT statusPeminjaman, alasanPenolakan
@@ -61,7 +61,7 @@ if ($idPeminjamanRuangan !== null) {
                       WHERE idPeminjamanRuangan = ?";
         $statusParams = [$idPeminjamanRuangan];
         $statusStmt = sqlsrv_query($conn, $statusSql, $statusParams);
-        
+
         if ($statusStmt === false) {
             $error_message = "Gagal mengambil status peminjaman. Error: <pre>" . print_r(sqlsrv_errors(), true) . "</pre>";
         } else {
@@ -96,8 +96,8 @@ include __DIR__ . '/../../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                    <div class="card-header bg-white border-bottom border-dark">
-                        <span class="fw-bold">Detail Peminjaman Ruangan</span>
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Detail Peminjaman Ruangan</span>
                     </div>
                     <div class="card-body scrollable-card-content">
                         <?php if ($error_message) : ?>

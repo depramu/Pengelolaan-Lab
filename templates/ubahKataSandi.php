@@ -103,14 +103,14 @@ if ($user_id && $user_role) {
         </nav>
     </div>
     <div>
-        <h2 class="fw-semibold display-5 ms-1 fs-4">Ubah Kata Sandi</h2>
+        <h2 class="fw-semibold display-5 ms-1 fs-5">Ubah Kata Sandi</h2>
         <div class="card-body ms-5 mt-4">
             <div class="d-flex align-items-center pb-1">
                 <div class="me-4 mb-5">
                     <i class="bi bi-person-circle" style="font-size: 8rem; color: #343a40;"></i>
                 </div>
                 <div class="col-md-9 ps-5">
-                    <form method="POST" id="profilForm">
+                    <form method="POST">
                         <?php if ($error_message): ?>
                             <div class="alert alert-danger"><?= htmlspecialchars($error_message) ?></div>
                         <?php elseif ($success_message): ?>
@@ -128,7 +128,7 @@ if ($user_id && $user_role) {
                                         echo 'ID';
                                     }
                                     ?>
-                                     <span class="float-end">:</span>
+                                    <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?>">
@@ -136,7 +136,7 @@ if ($user_id && $user_role) {
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap
-                                     <span class="float-end">:</span>
+                                    <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nama']) ?>">
@@ -144,7 +144,7 @@ if ($user_id && $user_role) {
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Role
-                                     <span class="float-end">:</span>
+                                    <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['role']) ?>">
@@ -152,23 +152,31 @@ if ($user_id && $user_role) {
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label fw-semibold">Email
-                                     <span class="float-end">:</span>
+                                    <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['email']) ?>">
                                 </div>
                             </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-4 col-form-label fw-semibold">Kata sandi
+                                    <span class="float-end">:</span>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="kataSandi" value="<?= htmlspecialchars($profil['kataSandi'] ?? '') ?>">
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-end mt-5 gap-3">
                                 <a href='<?= BASE_URL ?>/templates/profil.php' class="btn btn-secondary">Kembali</a>
-                                <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">Simpan</a>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
                         <?php else: ?>
                             <div class="alert alert-warning">Data profil tidak ditemukan.</div>
                         <?php endif; ?>
                     </form>
                 </div>
-            </div>
+            </div>  
         </div>
 </main>
 
-<?php include 'footer.php'; ?>
+<?php include 'footer.php'; ?>  

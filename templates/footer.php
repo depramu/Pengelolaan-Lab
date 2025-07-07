@@ -57,8 +57,8 @@
                                 echo BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php';
                             } else if ($currentFile == 'penolakanRuangan.php') {
                                 echo BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
-                            } else if ($currentFile == 'profil.php') {
-                                echo BASE_URL . '/templates/profil.php';
+                            } else if ($currentFile == 'ubahKataSandi.php') {
+                                echo BASE_URL . '/templates/ubahKataSandi.php';
                             }
                             ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
@@ -108,7 +108,7 @@
                         echo 'Peminjaman barang telah ditolak.';
                     } else if ($currentFile == 'penolakanRuangan.php') {
                         echo 'Peminjaman ruangan telah ditolak.';
-                    } else if ($currentFile == 'profil.php') {
+                    } else if ($currentFile == 'ubahKataSandi.php') {
                         echo 'Kata Sandi profil berhasil diperbarui.';
                     }
                     ?>
@@ -162,7 +162,7 @@
                                 case 'penolakanRuangan.php':
                                     echo BASE_URL . 'Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                                     break;
-                                case 'profil.php':
+                                case 'ubahKataSandi.php':
                                     echo BASE_URL . '/templates/profil.php';
                                     break;
                                 default:
