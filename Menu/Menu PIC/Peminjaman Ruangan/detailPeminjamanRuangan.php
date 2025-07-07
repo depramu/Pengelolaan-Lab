@@ -126,11 +126,11 @@ include '../../../templates/sidebar.php';
                                             </div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
-                                            <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
-                                        </div>
+                                            <div class="mb-3">
+                                                <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
+                                                <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
+                                                <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                            </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Alasan Peminjaman</label>
                                             <div class="form-control-plaintext">

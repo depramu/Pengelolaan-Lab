@@ -210,7 +210,7 @@ include '../../templates/sidebar.php';
                                 </div>
 
                                 <div class="d-flex justify-content-between mt-3">
-                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/lihatRuangan.php" class="btn btn-secondary">Kembali</a>
+                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="btn btn-secondary">Kembali</a>
                                     <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                 </div>
                             </div>

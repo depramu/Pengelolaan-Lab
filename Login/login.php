@@ -171,7 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="LupaSandi.php" class="forgot-link text-white">Lupa Kata Sandi?</a>
+                        <a href="LupaEmail.php" class="forgot-link text-white">Lupa Email?</a>
+                    </div>
 
                     <div class="d-flex justify-content-center" style="gap: 12px;">
                         <button type="button" class="btn-login-submit w-50" style="background-color: #6c757d; text-align: center; line-height: normal;" onclick="window.location.href='../index.php'">

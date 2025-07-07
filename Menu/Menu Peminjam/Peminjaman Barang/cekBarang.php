@@ -66,7 +66,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">Cek Barang</li>
             </ol>
-        </nav>`
+        </nav>
     </div>
 
     <div class="card shadow-sm mb-4">

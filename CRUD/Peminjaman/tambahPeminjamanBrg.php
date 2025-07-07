@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $paramsInsert = [$idPeminjamanBrg, $idBarang, $tglPeminjamanBrgSQL, $nim, $npk, $jumlahBrg, $jumlahBrg, $alasanPeminjamanBrg];
     $stmtInsert = sqlsrv_query($conn, $queryInsert, $paramsInsert);
 
-    if ($stmtInsert) {
+    if ($   ) {
         // 2. Insert status peminjaman ke tabel Status_Peminjaman
         $queryInsertStatus = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman) VALUES (?, ?)";
         $paramsInsertStatus = [$idPeminjamanBrg, 'Menunggu Persetujuan'];
