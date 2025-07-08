@@ -1,217 +1,150 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php';
+require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
+$idRuangan = $_GET['id'] ?? null;
 
-authorize_role(['Peminjam']);
+if (!$idRuangan) {
+    header('Location: ../../Menu PIC/manajemenRuangan.php');
+    exit;
+}
 
-$showTable = false;
-$selectedDay = '';
-$selectedMonth = '';
-$selectedYear = '';
-$selectedJamMulai = '';
-$selectedMenitMulai = '';
-$selectedJamSelesai = '';
-$selectedMenitSelesai = '';
+$query = "SELECT * FROM Ruangan WHERE idRuangan = ?";
+$stmt = sqlsrv_query($conn, $query, [$idRuangan]);
+$data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-// 1. Handle form submission (jika ada)
-if (isset($_POST['submit'])) {
-    $tglPeminjaman = $_POST['tglPeminjamanRuangan'] ?? '';
-    $jamMulai = $_POST['jam_dari'] ?? '';
-    $menitMulai = $_POST['menit_dari'] ?? '';
-    $jamSelesai = $_POST['jam_sampai'] ?? '';
-    $menitSelesai = $_POST['menit_sampai'] ?? '';
+if (!$data) {
+    header('Location: ../../Menu PIC/manajemenRuangan.php');
+    exit;
+}
 
-    if (!empty($tglPeminjaman) && $jamMulai !== '' && $menitMulai !== '' && $jamSelesai !== '' && $menitSelesai !== '') {
-        $_SESSION['tglPeminjamanRuangan'] = $tglPeminjaman;
-        $_SESSION['waktuMulai'] = $jamMulai . ':' . $menitMulai;
-        $_SESSION['waktuSelesai'] = $jamSelesai . ':' . $menitSelesai;
-    } else {
-        unset($_SESSION['tglPeminjamanRuangan'], $_SESSION['waktuMulai'], $_SESSION['waktuSelesai']);
+$showModal = false;
+$error = '';
+$kondisiRuanganList = ['Baik', 'Rusak'];
+$ketersediaanList = ['Tersedia', 'Tidak Tersedia'];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $namaRuangan = $_POST['namaRuangan'] ?? '';
+    $kondisiRuangan = $_POST['kondisiRuangan'] ?? '';
+    $ketersediaan = $_POST['ketersediaan'] ?? '';
+
+    // Validasi
+    if ($namaRuangan === '') {
+        $namaError = "*Harus diisi";
+    }
+    if ($kondisiRuangan === '') {
+        $kondisiError = "*Harus diisi";
+    }
+    if ($ketersediaan === '') {
+        $ketersediaanError = "*Harus diisi";
+    }
+
+    if (empty($namaError) && empty($kondisiError) && empty($ketersediaanError)) {
+        $updateQuery = "UPDATE Ruangan SET namaRuangan = ?, kondisiRuangan = ?, ketersediaan = ? WHERE idRuangan= ?";
+        $params = [$namaRuangan, $kondisiRuangan, $ketersediaan, $idRuangan];
+        $updateStmt = sqlsrv_query($conn, $updateQuery, $params);
+
+        if ($updateStmt) {
+            $showModal = true;
+            $stmt = sqlsrv_query($conn, $query, [$idRuangan]);
+            $data = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        } else {
+            $error = "Gagal mengubah data ruangan.";
+        }
     }
 }
 
-// 2. Cek session untuk menentukan state halaman
-if (!empty($_SESSION['tglPeminjamanRuangan'])) {
-    $showTable = true;
-    // Ambil kembali tanggal dari session untuk mengisi ulang form date picker
-    list($day, $month, $year) = explode('-', $_SESSION['tglPeminjamanRuangan']);
-    $selectedDay = (int)$day;
-    $selectedMonth = (int)$month;
-    $selectedYear = (int)$year;
-}
-if (!empty($_SESSION['waktuMulai'])) {
-    list($selectedJamMulai, $selectedMenitMulai) = explode(':', $_SESSION['waktuMulai']);
-}
-if (!empty($_SESSION['waktuSelesai'])) {
-    list($selectedJamSelesai, $selectedMenitSelesai) = explode(':', $_SESSION['waktuSelesai']);
-}
-
-$perPage = 1;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
-
-
-
-// Hitung total data ruangan yang tersedia
-$countQuery = "SELECT COUNT(*) AS total FROM Ruangan WHERE ketersediaan = 'Tersedia'";
-$countResult = sqlsrv_query($conn, $countQuery);
-$countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
-$totalData = $countRow['total'] ?? 0;
-$totalPages = ceil($totalData / $perPage);
-
-generatePagination($page, $totalPages);
-
-// Ambil data ruangan sesuai halaman
-$offset = ($page - 1) * $perPage;
-$query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan 
-          FROM Ruangan 
-          WHERE ketersediaan = 'Tersedia'
-          ORDER BY idRuangan
-          OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-$params = [$offset, $perPage];
-$result = sqlsrv_query($conn, $query, $params);
-
-
-
-include _DIR_ . '/../../../templates/header.php';
-include _DIR_ . '/../../../templates/sidebar.php';
+include '../../templates/header.php';
+include '../../templates/sidebar.php';
 ?>
 
-<main class="col bg-white px-3 px-md-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Peminjaman Ruangan</h3>
-    <div class="mb-4">
+<main class="col bg-white px-4 py-3 position-relative">
+    <h3 class="fw-semibold mb-3">Manajemen Ruangan</h3>
+    <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Cek Ruangan</li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenRuangan.php">Manajemen Ruangan</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ubah Ruangan</li>
             </ol>
         </nav>
     </div>
+    <div class="container mt-4">
+        <?php if (!empty($error)) : ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($error); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <h5 class="card-title mb-3 fw-semibold">Cek Ketersediaan Ruangan</h5>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
+                <div class="card border border-dark">
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                        <span class="fw-semibold">Ubah Ruangan</span>
+                    </div>
+                    <div class="card-body">
+                        <form id="formEditRuangan" method="POST">
+                            <div class="mb-3 row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="idRuangan" class="form-label fw-semibold d-flex align-items-center">ID Ruangan</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
+                                            <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($namaError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                            <?php endif; ?>
+                                        </label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : htmlspecialchars($data['namaRuangan']) ?>" placeholder="Masukkan nama ruangan..">
+                                    </div>
 
-            <?php
-            // Ambil tanggal dari $_POST, kalau kosong pakai $_SESSION
-            if (!empty($_POST['tglHari']) && !empty($_POST['tglBulan']) && !empty($_POST['tglTahun'])) {
-                $tglHari = $_POST['tglHari'];
-                $tglBulan = $_POST['tglBulan'];
-                $tglTahun = $_POST['tglTahun'];
-            } elseif (!empty($_SESSION['tglPeminjamanRuangan'])) {
-                list($tglHari, $tglBulan, $tglTahun) = explode('-', $_SESSION['tglPeminjamanRuangan']);
-            } else {
-                $tglHari = $tglBulan = $tglTahun = '';
-            }
-
-            $jamDari = $_POST['jam_dari'] ?? ($selectedJamMulai ?? '');
-            $menitDari = $_POST['menit_dari'] ?? ($selectedMenitMulai ?? '');
-            $jamSampai = $_POST['jam_sampai'] ?? ($selectedJamSelesai ?? '');
-            $menitSampai = $_POST['menit_sampai'] ?? ($selectedMenitSelesai ?? '');
-            ?>
-
-            <form method="POST" id="formCekKetersediaanRuangan" action="">
-                <div class="mb-2">
-                    <label class="form-label">
-                        Pilih Tanggal Peminjaman
-                        <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal"></span>
-                    </label>
-                    <div class="d-flex gap-2"
-                        data-day="<?= htmlspecialchars($selectedDay) ?>"
-                        data-month="<?= htmlspecialchars($selectedMonth) ?>"
-                        data-year="<?= htmlspecialchars($selectedYear) ?>">
-                        <select id="tglHari" name="tglHari" class="form-select" style="width: 80px;"></select>
-                        <select id="tglBulan" name="tglBulan" class="form-select" style="width: 100px;"></select>
-                        <select id="tglTahun" name="tglTahun" class="form-select" style="width: 100px;"></select>
-                        <input type="hidden" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan
+                                            <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($kondisiError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $kondisiError ?></span>
+                                            <?php endif; ?>
+                                        </label>
+                                        <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                            <option value="" hidden <?= (!isset($kondisiRuangan) && (!isset($data['kondisiRuangan']) || $data['kondisiRuangan'] == '')) ? 'selected' : '' ?>>Pilih Kondisi</option>
+                                            <?php foreach ($kondisiRuanganList as $kondisi): ?>
+                                                <option value="<?= htmlspecialchars($kondisi) ?>" <?= ((isset($kondisiRuangan) && $kondisiRuangan == $kondisi) || (!isset($kondisiRuangan) && isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == $kondisi)) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($kondisi) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ketersediaan" class="form-label fw-semibold d-flex align-items-center">Ketersediaan Ruangan
+                                            <span id="ketersediaanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($ketersediaanError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $ketersediaanError ?></span>
+                                            <?php endif; ?>
+                                        </label>
+                                        <select class="form-select" id="ketersediaan" name="ketersediaan">
+                                            <option value="" hidden <?= (!isset($ketersediaan) && (!isset($data['ketersediaan']) || $data['ketersediaan'] == '')) ? 'selected' : '' ?>>Pilih Ketersediaan</option>
+                                            <?php foreach ($ketersediaanList as $tersedia): ?>
+                                                <option value="<?= htmlspecialchars($tersedia) ?>" <?= ((isset($ketersediaan) && $ketersediaan == $tersedia) || (!isset($ketersediaan) && isset($data['ketersediaan']) && $data['ketersediaan'] == $tersedia)) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($tersedia) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="jam_dari">
-                            Waktu Mulai
-                            <span id="error-waktu-mulai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                        </label>
-                        <div class="d-flex gap-2"
-                            data-jam="<?= htmlspecialchars($selectedJamMulai) ?>"
-                            data-menit="<?= htmlspecialchars($selectedMenitMulai) ?>">
-                            <select id="jam_dari" name="jam_dari" class="form-select" style="width: 100px;"></select>
-                            <select id="menit_dari" name="menit_dari" class="form-select" style="width: 100px;"></select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="jam_sampai">
-                            Waktu Selesai
-                            <span id="error-waktu-selesai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                        </label>
-                        <div class="d-flex gap-2"
-                            data-jam="<?= htmlspecialchars($selectedJamSelesai) ?>"
-                            data-menit="<?= htmlspecialchars($selectedMenitSelesai) ?>">
-                            <select id="jam_sampai" name="jam_sampai" class="form-select" style="width: 100px;"></select>
-                            <select id="menit_sampai" name="menit_sampai" class="form-select" style="width: 100px;"></select>
-                            <button type="submit" class="btn btn-primary align-items-end ms-auto" name="submit">Cek Ketersediaan</button>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <span id="error-waktu" style="color: red; display: none;" class="fw-normal"></span>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="areaRuanganTersedia" style="<?= $showTable ? 'display:block;' : 'display:none;' ?>">
-        <h5 class="card-title mb-3 fw-semibold">Daftar Ruangan yang Tersedia</h5>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle table-bordered">
-                <thead class="table-light">
-                    <tr class="text-center">
-                        <th>ID Ruangan</th>
-                        <th>Nama Ruangan</th>
-                        <th>Kondisi</th>
-                        <th>Ketersediaan</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $hasData = false;
-                    if ($result && sqlsrv_has_rows($result)) {
-                        $hasData = true;
-                        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                    ?>
-                            <tr class="text-center">
-                                <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
-                                <td class="text-center"><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
-                                <td class="text-center"><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
-                                <td class="td-aksi text-center align-middle">
-                                    <a href="<?= BASE_URL ?>/CRUD/Peminjaman/tambahPeminjamanRuangan.php?idRuangan=<?= urlencode($row['idRuangan']) ?>" class="d-inline-block">
-                                        <img src="<?= BASE_URL ?>/icon/tandaplus.svg" class="plus-tambah w-25" alt="Tambah Peminjaman Ruangan" style="display: inline-block; vertical-align: middle;">
-                                    </a>
-                                </td>
-                            </tr>
-                    <?php
-                        }
-                    }
-                    if (!$hasData) {
-                        echo '<tr><td colspan="5" class="text-center">Tidak ada ruangan yang tersedia</td></tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="mt-3">
-            <?php
-            if ($totalPages > 1) {
-                generatePagination($page, $totalPages);
-                $showTable = true;
-            }
-            ?>
+            </div>
         </div>
     </div>
 </main>
 
-<?php
-include __DIR__ . '/../../../templates/footer.php';
-?>
+<?php include '../../templates/footer.php'; ?>

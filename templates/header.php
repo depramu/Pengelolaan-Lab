@@ -65,8 +65,8 @@ switch ($user_role) {
                     </span>
                     </span>
                 </div>
-                <a href="<?= BASE_URL ?>/templates/notif.php" class="me-0 me-2"><img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
                 <a href="<?= BASE_URL ?>/templates/profil.php" class="me-2"><img src="<?= BASE_URL ?>/icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
+                <a href="<?= BASE_URL ?>/templates/notif.php" class="me-0 me-2"><img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>

@@ -111,5 +111,7 @@ include '../../templates/sidebar.php';
     </div>
   </div>
 </div>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
 
 <?php include '../../templates/footer.php';

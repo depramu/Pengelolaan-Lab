@@ -488,6 +488,73 @@ function setupLaporanPage() {
     }
     laporanSummaryText.innerHTML = summaryText;
   }
+  
+  /**
+   * Fungsi untuk mengekspor data ke file Excel (.xlsx) dengan judul dan summary.
+   * @param {string} filename - Nama file yang akan diunduh.
+   * @param {string} title - Judul utama laporan.
+   * @param {string} summary - Teks ringkasan laporan.
+   * @param {Array<string>} headers - Array header tabel.
+   * @param {Array<Object>} data - Array objek data.
+   * @param {Array<string>} keys - Array kunci objek yang sesuai dengan header.
+   */
+  function exportToExcel(filename, title, summary, headers, data, keys) {
+    // 1. Siapkan data untuk worksheet
+    const sheetData = [];
+    
+    // Baris Judul
+    sheetData.push([title]);
+    // Baris Summary
+    sheetData.push([summary]);
+    // Baris Kosong
+    sheetData.push([]);
+    // Baris Header Tabel
+    sheetData.push(headers);
+
+    // Baris Data
+    data.forEach(item => {
+        const row = keys.map(key => item[key] ?? "");
+        sheetData.push(row);
+    });
+
+    // 2. Buat worksheet dari array data
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+    // 3. Atur format
+    // Merge sel untuk judul dan summary
+    const merge = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }, // Merge Judul
+        { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } }  // Merge Summary
+    ];
+    ws['!merges'] = merge;
+
+    // Atur style (Bold untuk judul dan header)
+    const boldStyle = { font: { bold: true } };
+    ws['A1'].s = boldStyle; // Judul
+    // Style untuk header
+    for (let i = 0; i < headers.length; i++) {
+        const cellRef = XLSX.utils.encode_cell({c: i, r: 3}); // Baris header ada di row 3 (0-indexed)
+        if (ws[cellRef]) ws[cellRef].s = boldStyle;
+    }
+
+    // Atur lebar kolom secara otomatis
+    const colWidths = headers.map((_, i) => {
+        const key = keys[i];
+        const maxLength = Math.max(
+            headers[i]?.length || 0,
+            ...data.map(item => String(item[key] ?? "").length)
+        );
+        return { wch: maxLength + 2 }; // +2 untuk padding
+    });
+    ws['!cols'] = colWidths;
+    
+    // 4. Buat workbook dan tambahkan worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Laporan');
+
+    // 5. Trigger download file
+    XLSX.writeFile(wb, filename);
+  }
 
   // Fungsi untuk render tabel laporan
   function renderLaporanTable(fullData, reportType) {
@@ -497,34 +564,29 @@ function setupLaporanPage() {
     const tbl = document.createElement("table");
     tbl.className = "table table-striped table-bordered table-hover";
     let headers = [],
-      keys = [];
+        keys = [];
 
     switch (reportType) {
-      case "dataBarang":
-        headers = ["ID", "Nama", "Stok", "Lokasi"];
-        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
-        break;
-      case "dataRuangan":
-        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
-        break;
-      case "peminjamSeringMeminjam":
-        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-        keys = [
-          "IDPeminjam",
-          "NamaPeminjam",
-          "JenisPeminjam",
-          "JumlahPeminjaman",
-        ];
-        break;
-      case "barangSeringDipinjam":
-        headers = ["ID Barang", "Nama", "Total Dipinjam"];
-        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-        break;
-      case "ruanganSeringDipinjam":
-        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
-        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-        break;
+        case "dataBarang":
+            headers = ["ID", "Nama", "Stok", "Lokasi"];
+            keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+            break;
+        case "dataRuangan":
+            headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
+            keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+            break;
+        case "peminjamSeringMeminjam":
+            headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
+            keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"];
+            break;
+        case "barangSeringDipinjam":
+            headers = ["ID Barang", "Nama", "Total Dipinjam"];
+            keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+            break;
+        case "ruanganSeringDipinjam":
+            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
+            keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+            break;
     }
 
     const thead = tbl.createTHead().insertRow();
@@ -532,107 +594,47 @@ function setupLaporanPage() {
 
     const tbody = tbl.createTBody();
     fullData.forEach((item) => {
-      const r = tbody.insertRow();
-      keys.forEach((k) => {
-        r.insertCell().textContent = item[k] ?? "";
-      });
+        const r = tbody.insertRow();
+        keys.forEach((k) => {
+            r.insertCell().textContent = item[k] ?? "";
+        });
     });
 
     wadahLaporanDiv.innerHTML = "";
     wadahLaporanDiv.append(tbl);
 
     // Setup export Excel button
-    function exportToCsv(filename, data, headers, keys) {
-      const csvRows = [];
-      // Tambahkan header
-      csvRows.push(headers.join(","));
-
-      // Tambahkan baris data
-      for (const row of data) {
-        const values = keys.map((key) => {
-          const escaped = ("" + (row[key] ?? "")).replace(/"/g, '""');
-          return `"${escaped}"`;
-        });
-        csvRows.push(values.join(","));
-      }
-
-      const csvString = csvRows.join("\n");
-      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      if (link.download !== undefined) {
-        // Deteksi fitur
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", filename);
-        link.style.visibility = "hidden";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-
-    // Di dalam fungsi renderLaporanTable Anda, di dalam event listener klik exportBtn:
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-      exportBtn.style.display = "block"; // Tampilkan tombol export setiap kali tabel dirender
+        exportBtn.style.display = "block";
 
-      // Remove previous event listeners by replacing the node
-      const oldExportBtn = exportBtn.cloneNode(true);
-      exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
-      const newExportBtn = document.getElementById("exportExcelBtn"); // Dapatkan elemen baru
+        const oldExportBtn = exportBtn.cloneNode(true);
+        exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
+        const newExportBtn = document.getElementById("exportExcelBtn");
 
-      newExportBtn.addEventListener("click", () => {
-        const jenisLaporanSelect = document.getElementById("jenisLaporan");
-        const type = jenisLaporanSelect.value;
-        const bln = document.getElementById("bulanLaporan").value;
-        const thn = document.getElementById("tahunLaporan").value;
+        newExportBtn.addEventListener("click", () => {
+            const jenisLaporanSelect = document.getElementById("jenisLaporan");
+            const jenisLaporanText = jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text;
+            const bln = document.getElementById("bulanLaporan").value;
+            const thn = document.getElementById("tahunLaporan").value;
 
-        // Data untuk ekspor (gunakan fullData yang dilewatkan ke renderLaporanTable)
-        let filename = `Laporan_${type}`;
-        if (type !== "dataBarang" && type !== "dataRuangan") {
-          filename += `_${bln}_${thn}`;
-        }
-        filename += `.csv`; // Atau .xlsx jika menggunakan library
+            // Dapatkan teks ringkasan yang bersih (tanpa tag HTML)
+            const summaryText = document.getElementById("laporanSummaryText").innerText;
+            
+            // Buat judul dan nama file yang dinamis
+            let reportTitle = `Laporan ${jenisLaporanText}`;
+            let filename = `Laporan_${reportType}`;
 
-        let headers = [],
-          keys = [];
-        switch (type) {
-          case "dataBarang":
-            headers = ["ID", "Nama", "Stok", "Lokasi"];
-            keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
-            break;
-          case "dataRuangan":
-            headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-            keys = [
-              "idRuangan",
-              "namaRuangan",
-              "kondisiRuangan",
-              "ketersediaan",
-            ];
-            break;
-          case "peminjamSeringMeminjam":
-            headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-            keys = [
-              "IDPeminjam",
-              "NamaPeminjam",
-              "JenisPeminjam",
-              "JumlahPeminjaman",
-            ];
-            break;
-          case "barangSeringDipinjam":
-            headers = ["ID Barang", "Nama", "Total Dipinjam"];
-            keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-            break;
-          case "ruanganSeringDipinjam":
-            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
-            keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-            break;
-        }
-
-        // Lewatkan fullData, headers, dan keys ke fungsi ekspor
-        // fullData di sini mengacu pada parameter 'fullData' dari renderLaporanTable
-        exportToCsv(filename, fullData, headers, keys);
-      });
+            if (reportType !== "dataBarang" && reportType !== "dataRuangan") {
+                const namaBulan = new Date(2000, bln - 1, 1).toLocaleString('id-ID', { month: 'long' });
+                reportTitle += ` - Bulan ${namaBulan} Tahun ${thn}`;
+                filename += `_${bln}_${thn}`;
+            }
+            filename += `.xlsx`;
+            
+            // Panggil fungsi export yang baru
+            exportToExcel(filename, reportTitle, summaryText, headers, fullData, keys);
+        });
     }
   }
 }
@@ -1370,7 +1372,6 @@ function setupFormTambahAkunMhs() {
     let namaError = document.getElementById("namaError");
     let emailError = document.getElementById("emailError");
     let roleError = document.getElementById("roleError");
-    let passPattern = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
     // Reset error messages
     nimError.style.display = "none";
@@ -1384,6 +1385,10 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     } else if (!/^\d+$/.test(nim)) {
       nimError.textContent = "*Harus berupa angka";
+      nimError.style.display = "inline";
+      isValid = false;
+    } else if (nim.length < 10) {
+      nimError.textContent = "*Minimal 10 digit";
       nimError.style.display = "inline";
       isValid = false;
     }
@@ -1512,6 +1517,10 @@ function setupFormTambahAkunKry() {
       npkError.textContent = "*Harus berupa angka";
       npkError.style.display = "inline";
       isValid = false;
+    } else if (npk.length < 5) {
+      npkError.textContent = "*Minimal 5 digit";
+      npkError.style.display = "inline";
+      isValid = false;    
     }
 
     // Validasi nama
