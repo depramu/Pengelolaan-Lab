@@ -44,13 +44,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanBrg) && !empty($alasanPenolakan)) {
         sqlsrv_begin_transaction($conn);
 
-        // Insert ke tabel Status_Peminjaman dengan status 'Ditolak' dan alasan penolakan
-        $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
-        $insertStatusParams = array($idPeminjamanBrg, $alasanPenolakan);
-        $insertStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
+        // Cek apakah sudah ada status peminjaman untuk id ini
+        $cekStatusSql = "SELECT COUNT(*) as jumlah FROM Status_Peminjaman WHERE idPeminjamanBrg = ?";
+        $cekStatusParams = [$idPeminjamanBrg];
+        $cekStatusStmt = sqlsrv_query($conn, $cekStatusSql, $cekStatusParams);
+        $sudahAdaStatus = false;
+        if ($cekStatusStmt && ($cekStatusRow = sqlsrv_fetch_array($cekStatusStmt, SQLSRV_FETCH_ASSOC))) {
+            $sudahAdaStatus = $cekStatusRow['jumlah'] > 0;
+        }
 
-        if ($insertStatusStmt) {
-            $untuk = $nim; 
+        if ($sudahAdaStatus) {
+            $updateStatusQuery = "UPDATE Status_Peminjaman 
+                                  SET statusPeminjaman = 'Ditolak', alasanPenolakan = ?
+                                  WHERE idPeminjamanBrg = ?";
+            $updateStatusParams = array($alasanPenolakan, $idPeminjamanBrg);
+            $updateStatusStmt = sqlsrv_query($conn, $updateStatusQuery, $updateStatusParams);
+        } else {
+            // Insert status peminjaman baru
+            $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
+            $insertStatusParams = array($idPeminjamanBrg, $alasanPenolakan);
+            $updateStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
+        }
+
+        if ($updateStatusStmt) {
+            $untuk = $nim;
             $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg ditolak oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
             sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
@@ -61,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors = sqlsrv_errors();
         }
     } else {
+        // Validasi gagal, bisa tambahkan pesan error jika perlu
     }
 }
 
