@@ -926,17 +926,22 @@ function setupPenolakanBarang() {
       return; // Stop jika validasi gagal
     }
 
-    // Tampilkan confirm modal
+    // Show confirmation modal
     const confirmModal = new bootstrap.Modal(
       document.getElementById("confirmModal")
     );
-    const confirmMessage = document.getElementById("confirmMessage");
-    if (confirmMessage) {
-      confirmMessage.textContent =
-        "Apakah Anda yakin ingin menolak peminjaman ini?";
-    }
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    confirmAction.textContent = "menolak peminjaman ini";
+
+    confirmYes.onclick = function () {
+      confirmModal.hide();
+      form.submit(); // Submit form after confirmation
+    };
 
     confirmModal.show();
+
   });
 }
 

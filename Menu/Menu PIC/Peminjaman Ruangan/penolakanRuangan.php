@@ -55,24 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($sudahAdaStatus) {
-            // Update status peminjaman menjadi 'Ditolak'
             $updateStatusQuery = "UPDATE Status_Peminjaman 
-                                SET statusPeminjaman = 'Ditolak'
+                                SET statusPeminjaman = 'Ditolak', alasanPenolakan = ?
                                 WHERE idPeminjamanRuangan = ?";
-            $updateStatusParams = array($idPeminjamanRuangan);
+            $updateStatusParams = array($alasanPenolakan, $idPeminjamanRuangan);
             $updateStatusStmt = sqlsrv_query($conn, $updateStatusQuery, $updateStatusParams);
         } else {
             // Insert status peminjaman baru
-            $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanRuangan, statusPeminjaman) VALUES (?, 'Ditolak')";
-            $insertStatusParams = array($idPeminjamanRuangan);
+            $insertStatusQuery = "INSERT INTO Status_Peminjaman (idPeminjamanRuangan, statusPeminjaman, alasanPenolakan) VALUES (?, 'Ditolak', ?)";
+            $insertStatusParams = array($idPeminjamanRuangan, $alasanPenolakan);
             $updateStatusStmt = sqlsrv_query($conn, $insertStatusQuery, $insertStatusParams);
         }
 
-        $insertQuery = "INSERT INTO PenolakanRuangan (idPeminjamanRuangan, alasanPenolakan) VALUES (?, ?)";
-        $insertParams = array($idPeminjamanRuangan, $alasanPenolakan);
-        $insertStmt = sqlsrv_query($conn, $insertQuery, $insertParams);
 
-        if ($updateStatusStmt && $insertStmt) {
+        if ($updateStatusStmt) {
             $untuk = $nim;
             $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan ditolak oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
@@ -81,11 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $showModal = true;
         } else {
             sqlsrv_rollback($conn);
-            $errors = sqlsrv_errors();
-            $error = "Gagal memproses penolakan: ";
-            foreach ($errors as $err) {
-                $error .= $err['message'] . "; ";
-            }
         }
     }
 }

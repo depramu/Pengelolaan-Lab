@@ -37,15 +37,8 @@ if (!empty($idPeminjamanBrg)) {
     }
 }
 
-$idBarang = $data['idBarang'] ?? '';
 $nim = $data['nim'] ?? '';
-$namaBarang = $data['namaBarang'] ?? '';
-$namaPeminjam = $data['namaPeminjam'] ?? '';
-$npk = $data['npk'] ?? '';
-$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('d-m-y') : '';
-$jumlahBrg = $data['jumlahBrg'] ?? '';
-$alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
-
+$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanBrg) && !empty($alasanPenolakan)) {
@@ -104,23 +97,19 @@ include '../../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanBrg'] ?? '') ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idBarang'] ?? '') ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
-                                        <input type="hidden" class="form-control" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang'] ?? '') ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tglPeminjamanBrg" class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="tglPeminjamanBrg" name="tglPeminjamanBrg" value="<?= htmlspecialchars($tglPeminjamanBrg) ?>">
                                     </div>
                                 </div>
 
@@ -142,17 +131,15 @@ include '../../../templates/sidebar.php';
                                     </div>
                                     <div class="mb-3">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaPeminjam) ?></div>
-                                        <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($namaPeminjam) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($jumlahBrg) ?></div>
-                                        <input type="hidden" class="form-control" id="jumlahBrg" name="jumlahBrg" value="<?= htmlspecialchars($jumlahBrg) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['jumlahBrg'] ?? '') ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-semibold">Alasan Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($alasanPeminjamanBrg)) ?></div>
+                                        <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($data['alasanPeminjamanBrg'] ?? '')) ?></div>
                                     </div>
                                 </div>
                             </div>
