@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php'; // Pastikan path ke init.php sudah benar
+require_once __DIR__ . '/../../function/init.php'; // Pastikan path ke init.php sudah benar
 
 authorize_role(['Peminjam']);
 
@@ -12,22 +12,15 @@ $selectedYear = '';
 if (isset($_POST['submit'])) {
     $tglPeminjaman = $_POST['tglPeminjamanBrg'] ?? '';
     if (!empty($tglPeminjaman)) {
-        // Simpan tanggal yang baru di-submit ke session
         $_SESSION['tglPeminjamanBrg'] = $tglPeminjaman;
     } else {
-        // Jika submit tapi kosong, hapus session agar kembali ke awal
         unset($_SESSION['tglPeminjamanBrg']);
     }
 }
 
-// 2. PERBAIKAN UTAMA: Cek session untuk menentukan state halaman
-// Logika ini berjalan untuk GET (pagination) dan POST
 if (!empty($_SESSION['tglPeminjamanBrg'])) {
-    // Jika ada tanggal di session, berarti tabel harus selalu ditampilkan
     $showTable = true;
 
-    // Ambil kembali tanggal dari session untuk mengisi ulang form date picker
-    // agar pilihan tanggal tidak kembali ke hari ini.
     list($day, $month, $year) = explode('-', $_SESSION['tglPeminjamanBrg']);
     $selectedDay = (int)$day;
     $selectedMonth = (int)$month;
@@ -51,8 +44,8 @@ $params = [$offset, $perPage];
 $result = sqlsrv_query($conn, $query, $params);
 
 
-include __DIR__ . '/../../../templates/header.php';
-include __DIR__ . '/../../../templates/sidebar.php';
+include __DIR__ . '/../../templates/header.php';
+include __DIR__ . '/../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
@@ -152,5 +145,5 @@ include __DIR__ . '/../../../templates/sidebar.php';
 </main>
 
 <?php
-include __DIR__ . '/../../../templates/footer.php';
+include __DIR__ . '/../../templates/footer.php';
 ?>

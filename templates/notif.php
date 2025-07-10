@@ -28,7 +28,7 @@ if (empty($user_role)) {
 }
 
 // PAGINATION SETUP
-$perPage = 9;
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -89,7 +89,7 @@ if ($stmt === false) {
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
-                        <th>Waktu</th>
+                        <th>Tanggal</th>
                         <th>Pesan</th>
                         <th>Status</th>
                         <th>Aksi</th>

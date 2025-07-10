@@ -584,7 +584,7 @@ function setupLaporanPage() {
             keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
             break;
         case "ruanganSeringDipinjam":
-            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
+            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjafm"];
             keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
             break;
     }
@@ -701,7 +701,6 @@ function setupCekKetersediaanBarangPage() {
     updateDays(); // Update jumlah hari sesuai bulan/tahun yang dipilih
     hariSelect.value = preselectedDay;
   } else {
-    // Jika tidak, baru gunakan tanggal hari ini
     const now = new Date();
     tahunSelect.value = now.getFullYear();
     bulanSelect.value = now.getMonth() + 1;
@@ -952,17 +951,62 @@ function setupPengembalianBarangPage() {
   // Gunakan helper stepper yang sudah dibuat
   setupStockStepper("stepperContainer", "jumlahPengembalian", "sisaPinjaman");
 
+  const jumlahInput = document.getElementById("jumlahPengembalian");
+  const jumlahError = document.getElementById("jumlahError");
+  const sisaPinjaman = parseInt(
+    document.getElementById("sisaPinjaman")?.value || "0",
+    10
+  );
+
+  const kondisiSelect = document.getElementById("txtKondisi");
+  const kondisiError = document.getElementById("kondisiError");
+
+  const catatanInput = document.getElementById("catatanPengembalianBarang");
+  const catatanError = document.getElementById("catatanError");
+
+  // Validasi live: jumlahPengembalian
+  jumlahInput.addEventListener("input", function () {
+    const nilai = parseInt(jumlahInput.value, 10);
+    if (!jumlahInput.value || nilai <= 0) {
+      jumlahError.textContent = "*Jumlah harus lebih dari 0.";
+    } else if (nilai > sisaPinjaman) {
+      jumlahError.textContent = "*Melebihi sisa pinjaman.";
+    } else {
+      jumlahError.textContent = "";
+    }
+    jumlahError.style.display =
+      jumlahError.textContent !== "" ? "inline" : "none";
+  });
+
+  // Validasi live: kondisi barang
+  kondisiSelect.addEventListener("change", function () {
+    if (
+      !kondisiSelect.value ||
+      kondisiSelect.value === "Pilih Kondisi Barang"
+    ) {
+      kondisiError.textContent = "*Harus Dipilih";
+    } else {
+      kondisiError.textContent = "";
+    }
+    kondisiError.style.display =
+      kondisiError.textContent !== "" ? "inline" : "none";
+  });
+
+  // Validasi live: catatan
+  catatanInput.addEventListener("input", function () {
+    if (!catatanInput.value.trim()) {
+      catatanError.textContent = "*Harus Diisi";
+    } else {
+      catatanError.textContent = "";
+    }
+    catatanError.style.display =
+      catatanError.textContent !== "" ? "inline" : "none";
+  });
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     let isValid = true;
-
-    const jumlahInput = document.getElementById("jumlahPengembalian");
-    const jumlahError = document.getElementById("jumlahError");
-    const sisaPinjaman = parseInt(
-      document.getElementById("sisaPinjaman")?.value || "0",
-      10
-    );
 
     if (!jumlahInput.value || parseInt(jumlahInput.value, 10) <= 0) {
       jumlahError.textContent = "*Jumlah harus lebih dari 0.";
@@ -974,8 +1018,6 @@ function setupPengembalianBarangPage() {
     jumlahError.style.display =
       jumlahError.textContent !== "" ? "inline" : "none";
 
-    const kondisiSelect = document.getElementById("txtKondisi");
-    const kondisiError = document.getElementById("kondisiError");
     if (
       !kondisiSelect.value ||
       kondisiSelect.value === "Pilih Kondisi Barang"
@@ -988,8 +1030,6 @@ function setupPengembalianBarangPage() {
         ? "inline"
         : "none";
 
-    const catatanInput = document.getElementById("catatanPengembalianBarang");
-    const catatanError = document.getElementById("catatanError");
     if (!catatanInput.value.trim()) {
       catatanError.textContent = "*Harus Diisi";
       isValid = false;

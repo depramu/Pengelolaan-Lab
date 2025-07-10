@@ -133,8 +133,8 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
                 <i class="bi bi-chevron-down transition-chevron ps-3"></i>
             </a>
             <div class="collapse ps-4<?= $isPeminjamanActive ? ' show' : '' ?>" id="peminjamanSubmenu">
-                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php', 'pengembalianBarang.php', 'detailPeminjamanBarang.php'])) ? 'active' : '' ?>">Barang</a>
-                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php', 'pengembalianRuangan.php', 'detailPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
+                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekBarang.php" class="nav-link <?= (in_array($currentPage, ['cekBarang.php', 'lihatBarang.php', 'tambahPeminjamanBrg.php', 'pengembalianBarang.php', 'detailPeminjamanBarang.php'])) ? 'active' : '' ?>">Barang</a>
+                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekRuangan.php" class="nav-link <?= (in_array($currentPage, ['cekRuangan.php', 'lihatRuangan.php', 'tambahPeminjamanRuangan.php', 'pengembalianRuangan.php', 'detailPeminjamanRuangan.php'])) ? 'active' : '' ?>">Ruangan</a>
             </div>
         </li>
         <li class="nav-item mb-2">
@@ -170,7 +170,7 @@ function renderSidebarMenu($role, $isPeminjam, $currentPage)
         </ul>
     </nav>
 
-    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+    <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
         <div class="offcanvas-header">
             <div class="d-flex align-items-center gap-2">
                 <h5 class="offcanvas-title mb-0 ms-2" id="offcanvasSidebarLabel">Sistem Pengelolaan Lab</h5>

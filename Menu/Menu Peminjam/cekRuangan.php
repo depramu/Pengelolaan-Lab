@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php';
+require_once __DIR__ . '/../../function/init.php';
 
 authorize_role(['Peminjam']);
 
@@ -71,9 +71,8 @@ $params = [$offset, $perPage];
 $result = sqlsrv_query($conn, $query, $params);
 
 
-
-include __DIR__ . '/../../../templates/header.php';
-include __DIR__ . '/../../../templates/sidebar.php';
+include __DIR__ . '/../../templates/header.php';
+include __DIR__ . '/../../templates/sidebar.php';
 ?>
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
@@ -204,11 +203,40 @@ include __DIR__ . '/../../../templates/sidebar.php';
 
         <script>
             window.addEventListener('DOMContentLoaded', () => {
+                // Isi ulang tanggal
+                const tglHari = "<?= $tglHari ?>";
+                const tglBulan = "<?= $tglBulan ?>";
+                const tglTahun = "<?= $tglTahun ?>";
+
                 const jamDari = "<?= $jamDari ?>";
                 const menitDari = "<?= $menitDari ?>";
                 const jamSampai = "<?= $jamSampai ?>";
                 const menitSampai = "<?= $menitSampai ?>";
 
+                // Inisialisasi select tanggal
+                const hariSelect = document.getElementById('tglHari');
+                const bulanSelect = document.getElementById('tglBulan');
+                const tahunSelect = document.getElementById('tglTahun');
+
+                for (let i = 1; i <= 31; i++) {
+                    let option = new Option(i.toString().padStart(2, '0'), i.toString().padStart(2, '0'));
+                    if (option.value === tglHari) option.selected = true;
+                    hariSelect.add(option);
+                }
+
+                const bulanNama = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+                for (let i = 0; i < 12; i++) {
+                    let option = new Option(bulanNama[i], bulanNama[i]);
+                    if (option.value === tglBulan) option.selected = true;
+                    bulanSelect.add(option);
+                }
+
+                const currentYear = new Date().getFullYear();
+                for (let i = currentYear; i <= currentYear + 2; i++) {
+                    let option = new Option(i, i);
+                    if (option.value === tglTahun) option.selected = true;
+                    tahunSelect.add(option);
+                }
 
                 // Jam & menit
                 const jam_dari = document.getElementById('jam_dari');
@@ -242,5 +270,5 @@ include __DIR__ . '/../../../templates/sidebar.php';
 </main>
 
 <?php
-include __DIR__ . '/../../../templates/footer.php';
+include __DIR__ . '/../../templates/footer.php';
 ?>

@@ -53,8 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $update_query = "UPDATE Pengembalian_Barang 
                                 SET jumlahPengembalian = ?,
                                     kondisiBrg = ?,
-                                    catatanPengembalianBarang = ?,
-                                    tanggalPengembalian = GETDATE()
+                                    catatanPengembalianBarang = ?
                                 WHERE idPeminjamanBrg = ?";
                 $update_params = [$jumlahPengembalian, $kondisiBrg, $catatan, $idPeminjamanBrg];
                 $stmt = sqlsrv_query($conn, $update_query, $update_params);

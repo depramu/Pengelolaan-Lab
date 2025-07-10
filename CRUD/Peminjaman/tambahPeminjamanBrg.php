@@ -102,7 +102,7 @@ include '../../templates/sidebar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php">Cek Barang</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekBarang.php">Cek Barang</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Barang</li>
             </ol>
         </nav>
@@ -177,7 +177,7 @@ include '../../templates/sidebar.php';
 
 
                                 <div class="d-flex justify-content-between mt-3">
-                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Barang/cekBarang.php" class="btn btn-secondary">Kembali</a>
+                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekBarang.php" class="btn btn-secondary">Kembali</a>
                                     <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                 </div>
                             </div>

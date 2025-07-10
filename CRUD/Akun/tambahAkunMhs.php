@@ -9,6 +9,7 @@ ob_start();
 require_once __DIR__ . '/../../function/src/PHPMailer.php';
 require_once __DIR__ . '/../../function/src/SMTP.php';
 require_once __DIR__ . '/../../function/src/Exception.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -23,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Auto-generate secure random password
     require_once __DIR__ . '/../../function/reset_password_helper.php';
     $kataSandi = generateSecurePassword();
-    $konfirmasiSandi = $kataSandi;
 
     $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mail->addAddress($email, $nama);
 
                 $mail->Subject = 'Pembuatan Akun Baru - Sistem Pengelolaan Laboratorium';
-                $mail->Body    = "Halo $nama,\n\nAkun Anda telah dibuat oleh PIC Aset. Berikut detail login:\nNIM : $nim\nPassword : $kataSandi\n\nSilakan login ke Sistem Pengelolaan Laboratorium dan segera ubah password Anda.";
+                $mail->Body    = "Halo $nama,\n\nAkun Anda telah berhasil dibuat oleh PIC Aset. Berikut detail login:\nNIM : $nim\nKata Sandi : $kataSandi\n\nSilakan login ke Sistem Pengelolaan Laboratorium dan segera lakukan perubahan kata sandi untuk keamanan akun Anda.";
 
                 $mail->send();
             } catch (Exception $e) {

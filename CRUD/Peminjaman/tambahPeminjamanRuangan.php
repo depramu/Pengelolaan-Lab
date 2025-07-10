@@ -130,12 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
-$pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan menunggu persetujuan.";
-$queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
-
-
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 ?>
@@ -146,7 +140,7 @@ include '../../templates/sidebar.php';
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/dashboardPeminjam.php">Sistem Pengelolaan Lab</a></li>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php">Cek Ruangan</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekRuangan.php">Cek Ruangan</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Pengajuan Peminjaman Ruangan</li>
             </ol>
         </nav>
@@ -214,7 +208,7 @@ include '../../templates/sidebar.php';
                                 </div>
 
                                 <div class="d-flex justify-content-between mt-3">
-                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="btn btn-secondary">Kembali</a>
+                                    <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekRuangan.php" class="btn btn-secondary">Kembali</a>
                                     <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
                                 </div>
                             </div>

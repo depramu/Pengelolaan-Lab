@@ -396,8 +396,8 @@ body {
   
   /* Offcanvas (Sidebar mobile) */
   @media (max-width: 991.98px) {
-    .offcanvas-start {
-      background: linear-gradient(135deg, rgb(18, 99, 180) 60%, #e0e7ef 100%);
+    .offcanvas-end {
+    background: #065ba6;
       border-right: 1.5px solid #d1d5db;
       min-width: 220px;
       max-width: 85vw;

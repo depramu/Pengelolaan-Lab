@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Auto-generate secure random password
     require_once __DIR__ . '/../../function/reset_password_helper.php';
     $kataSandi = generateSecurePassword();
-    $konfirmasiSandi = $kataSandi; // For consistency, not used further
 
     $cekNpk = sqlsrv_query($conn, "SELECT npk FROM Karyawan WHERE npk = ?", [$npk]);
     if ($cekNpk && sqlsrv_has_rows($cekNpk)) {

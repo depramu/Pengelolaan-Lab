@@ -5,5 +5,5 @@ return [
     'username'   => 'pramudyamiftah@gmail.com',
     'password'   => 'vrom nhec sxlo gfxp',   // use a Gmail App Password (not your normal password)
     'from_email' => 'pramudyamiftah@gmail.com',
-    'from_name'  => 'Sistem Lab',
+    'from_name'  => 'Sistem Pengelolaan Lab',
 ];
