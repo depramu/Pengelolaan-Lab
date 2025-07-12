@@ -79,39 +79,41 @@ if ($stmt === false) {
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Notifikasi</li>
             </ol>
         </nav>
     </div>
-    <div class="container">
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
-                        <th>Tanggal</th>
+                        <th>No</th>
                         <th>Pesan</th>
+                        <th>Tanggal</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    $no = $offset + 1;
                     $hasData = false;
                     while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)):
                         $hasData = true;
                     ?>
-                        <tr>
+                        <tr class="text-center">
+                            <td><?= $no ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['pesan']) ?></td>
                             <td class="text-center">
                                 <?php
                                 if ($row['waktu'] instanceof DateTime) {
-                                    echo $row['waktu']->format('d-m-y');
+                                    echo $row['waktu']->format('d M Y');
                                 } else {
                                     echo htmlspecialchars($row['waktu']);
                                 }
                                 ?>
                             </td>
-                            <td><?= htmlspecialchars($row['pesan']) ?></td>
                             <td class="text-center"><?= htmlspecialchars($row['status']) ?></td>
                             <td class="text-center">
                                 <?php if ($row['status'] == 'Belum Dibaca'): ?>
@@ -124,7 +126,7 @@ if ($stmt === false) {
                                 <?php endif; ?>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php $no++; endwhile; ?>
                     <?php if (!$hasData): ?>
                         <tr>
                             <td colspan="4" class="text-center">Tidak ada notifikasi.</td>
@@ -134,11 +136,9 @@ if ($stmt === false) {
             </table>
         </div>
         <!-- Pagination -->
-        <?php if ($totalPages > 1) {
-            generatePagination($page, $totalPages);
-        }
+        <?php
+        generatePagination($page, $totalPages);
         ?>
-    </div>
 </main>
 
 <?php

@@ -121,21 +121,19 @@ function setupStockStepper(containerId, inputId, maxLimitId = null) {
  * @description Jika kondisi ruangan 'Rusak', ketersediaan otomatis menjadi 'Tidak Tersedia'.
  */
 function setupKondisiRuanganLogic() {
-  const kondisiSelect = document.getElementById("kondisiRuangan");
-  const ketersediaanSelect = document.getElementById("ketersediaan");
-  if (!kondisiSelect || !ketersediaanSelect) return;
+  document
+    .getElementById("kondisiRuangan")
+    .addEventListener("change", function () {
+      const kondisi = this.value;
+      const ketersediaan = document.getElementById("ketersediaan");
 
-  const updateKetersediaan = () => {
-    if (kondisiSelect.value === "Rusak") {
-      ketersediaanSelect.value = "Tidak Tersedia";
-      ketersediaanSelect.disabled = true;
-    } else {
-      ketersediaanSelect.disabled = false;
-    }
-  };
-
-  kondisiSelect.addEventListener("change", updateKetersediaan);
-  updateKetersediaan(); // Panggil saat init
+      if (kondisi === "Rusak") {
+        ketersediaan.value = "Tidak Tersedia";
+        ketersediaan.disabled = true;
+      } else {
+        ketersediaan.disabled = false;
+      }
+    });
 }
 
 // =================================================================
@@ -488,7 +486,7 @@ function setupLaporanPage() {
     }
     laporanSummaryText.innerHTML = summaryText;
   }
-  
+
   /**
    * Fungsi untuk mengekspor data ke file Excel (.xlsx) dengan judul dan summary.
    * @param {string} filename - Nama file yang akan diunduh.
@@ -501,7 +499,7 @@ function setupLaporanPage() {
   function exportToExcel(filename, title, summary, headers, data, keys) {
     // 1. Siapkan data untuk worksheet
     const sheetData = [];
-    
+
     // Baris Judul
     sheetData.push([title]);
     // Baris Summary
@@ -512,9 +510,9 @@ function setupLaporanPage() {
     sheetData.push(headers);
 
     // Baris Data
-    data.forEach(item => {
-        const row = keys.map(key => item[key] ?? "");
-        sheetData.push(row);
+    data.forEach((item) => {
+      const row = keys.map((key) => item[key] ?? "");
+      sheetData.push(row);
     });
 
     // 2. Buat worksheet dari array data
@@ -523,34 +521,34 @@ function setupLaporanPage() {
     // 3. Atur format
     // Merge sel untuk judul dan summary
     const merge = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }, // Merge Judul
-        { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } }  // Merge Summary
+      { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }, // Merge Judul
+      { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } }, // Merge Summary
     ];
-    ws['!merges'] = merge;
+    ws["!merges"] = merge;
 
     // Atur style (Bold untuk judul dan header)
     const boldStyle = { font: { bold: true } };
-    ws['A1'].s = boldStyle; // Judul
+    ws["A1"].s = boldStyle; // Judul
     // Style untuk header
     for (let i = 0; i < headers.length; i++) {
-        const cellRef = XLSX.utils.encode_cell({c: i, r: 3}); // Baris header ada di row 3 (0-indexed)
-        if (ws[cellRef]) ws[cellRef].s = boldStyle;
+      const cellRef = XLSX.utils.encode_cell({ c: i, r: 3 }); // Baris header ada di row 3 (0-indexed)
+      if (ws[cellRef]) ws[cellRef].s = boldStyle;
     }
 
     // Atur lebar kolom secara otomatis
     const colWidths = headers.map((_, i) => {
-        const key = keys[i];
-        const maxLength = Math.max(
-            headers[i]?.length || 0,
-            ...data.map(item => String(item[key] ?? "").length)
-        );
-        return { wch: maxLength + 2 }; // +2 untuk padding
+      const key = keys[i];
+      const maxLength = Math.max(
+        headers[i]?.length || 0,
+        ...data.map((item) => String(item[key] ?? "").length)
+      );
+      return { wch: maxLength + 2 }; // +2 untuk padding
     });
-    ws['!cols'] = colWidths;
-    
+    ws["!cols"] = colWidths;
+
     // 4. Buat workbook dan tambahkan worksheet
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Laporan');
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan");
 
     // 5. Trigger download file
     XLSX.writeFile(wb, filename);
@@ -564,29 +562,34 @@ function setupLaporanPage() {
     const tbl = document.createElement("table");
     tbl.className = "table table-striped table-bordered table-hover";
     let headers = [],
-        keys = [];
+      keys = [];
 
     switch (reportType) {
-        case "dataBarang":
-            headers = ["ID", "Nama", "Stok", "Lokasi"];
-            keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
-            break;
-        case "dataRuangan":
-            headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-            keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
-            break;
-        case "peminjamSeringMeminjam":
-            headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-            keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"];
-            break;
-        case "barangSeringDipinjam":
-            headers = ["ID Barang", "Nama", "Total Dipinjam"];
-            keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-            break;
-        case "ruanganSeringDipinjam":
-            headers = ["ID Ruangan", "Nama", "Jumlah Dipinjafm"];
-            keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-            break;
+      case "dataBarang":
+        headers = ["ID", "Nama", "Stok", "Lokasi"];
+        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+        break;
+      case "dataRuangan":
+        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
+        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+        break;
+      case "peminjamSeringMeminjam":
+        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
+        keys = [
+          "IDPeminjam",
+          "NamaPeminjam",
+          "JenisPeminjam",
+          "JumlahPeminjaman",
+        ];
+        break;
+      case "barangSeringDipinjam":
+        headers = ["ID Barang", "Nama", "Total Dipinjam"];
+        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+        break;
+      case "ruanganSeringDipinjam":
+        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjafm"];
+        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+        break;
     }
 
     const thead = tbl.createTHead().insertRow();
@@ -594,10 +597,10 @@ function setupLaporanPage() {
 
     const tbody = tbl.createTBody();
     fullData.forEach((item) => {
-        const r = tbody.insertRow();
-        keys.forEach((k) => {
-            r.insertCell().textContent = item[k] ?? "";
-        });
+      const r = tbody.insertRow();
+      keys.forEach((k) => {
+        r.insertCell().textContent = item[k] ?? "";
+      });
     });
 
     wadahLaporanDiv.innerHTML = "";
@@ -606,35 +609,46 @@ function setupLaporanPage() {
     // Setup export Excel button
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-        exportBtn.style.display = "block";
+      exportBtn.style.display = "block";
 
-        const oldExportBtn = exportBtn.cloneNode(true);
-        exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
-        const newExportBtn = document.getElementById("exportExcelBtn");
+      const oldExportBtn = exportBtn.cloneNode(true);
+      exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
+      const newExportBtn = document.getElementById("exportExcelBtn");
 
-        newExportBtn.addEventListener("click", () => {
-            const jenisLaporanSelect = document.getElementById("jenisLaporan");
-            const jenisLaporanText = jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text;
-            const bln = document.getElementById("bulanLaporan").value;
-            const thn = document.getElementById("tahunLaporan").value;
+      newExportBtn.addEventListener("click", () => {
+        const jenisLaporanSelect = document.getElementById("jenisLaporan");
+        const jenisLaporanText =
+          jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text;
+        const bln = document.getElementById("bulanLaporan").value;
+        const thn = document.getElementById("tahunLaporan").value;
 
-            // Dapatkan teks ringkasan yang bersih (tanpa tag HTML)
-            const summaryText = document.getElementById("laporanSummaryText").innerText;
-            
-            // Buat judul dan nama file yang dinamis
-            let reportTitle = `Laporan ${jenisLaporanText}`;
-            let filename = `Laporan_${reportType}`;
+        // Dapatkan teks ringkasan yang bersih (tanpa tag HTML)
+        const summaryText =
+          document.getElementById("laporanSummaryText").innerText;
 
-            if (reportType !== "dataBarang" && reportType !== "dataRuangan") {
-                const namaBulan = new Date(2000, bln - 1, 1).toLocaleString('id-ID', { month: 'long' });
-                reportTitle += ` - Bulan ${namaBulan} Tahun ${thn}`;
-                filename += `_${bln}_${thn}`;
-            }
-            filename += `.xlsx`;
-            
-            // Panggil fungsi export yang baru
-            exportToExcel(filename, reportTitle, summaryText, headers, fullData, keys);
-        });
+        // Buat judul dan nama file yang dinamis
+        let reportTitle = `Laporan ${jenisLaporanText}`;
+        let filename = `Laporan_${reportType}`;
+
+        if (reportType !== "dataBarang" && reportType !== "dataRuangan") {
+          const namaBulan = new Date(2000, bln - 1, 1).toLocaleString("id-ID", {
+            month: "long",
+          });
+          reportTitle += ` - Bulan ${namaBulan} Tahun ${thn}`;
+          filename += `_${bln}_${thn}`;
+        }
+        filename += `.xlsx`;
+
+        // Panggil fungsi export yang baru
+        exportToExcel(
+          filename,
+          reportTitle,
+          summaryText,
+          headers,
+          fullData,
+          keys
+        );
+      });
     }
   }
 }
@@ -940,7 +954,6 @@ function setupPenolakanBarang() {
     };
 
     confirmModal.show();
-
   });
 }
 
@@ -1424,7 +1437,7 @@ function setupFormTambahAkunMhs() {
     emailError.style.display = "none";
     roleError.style.display = "none";
 
-    if (nim === "") {
+    if (!nim) {
       nimError.textContent = "*Harus diisi";
       nimError.style.display = "inline";
       isValid = false;
@@ -1438,7 +1451,7 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     }
 
-    if (nama === "") {
+    if (!nama) {
       namaError.textContent = "*Harus diisi";
       namaError.style.display = "inline";
       isValid = false;
@@ -1448,7 +1461,7 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     }
 
-    if (email === "") {
+    if (!email) {
       emailError.textContent = "*Harus diisi";
       emailError.style.display = "inline";
       isValid = false;
@@ -1458,8 +1471,8 @@ function setupFormTambahAkunMhs() {
       isValid = false;
     }
 
-    if (jenisRole === "") {
-      roleError.textContent = "*Harus diisi";
+    if (!jenisRole) {
+      roleError.textContent = "*Harus dipilih";
       roleError.style.display = "inline";
       isValid = false;
     }
@@ -1565,7 +1578,7 @@ function setupFormTambahAkunKry() {
     } else if (npk.length < 5) {
       npkError.textContent = "*Minimal 5 digit";
       npkError.style.display = "inline";
-      isValid = false;    
+      isValid = false;
     }
 
     // Validasi nama
@@ -1592,7 +1605,7 @@ function setupFormTambahAkunKry() {
 
     // Validasi role
     if (!jenisRole) {
-      roleError.textContent = "*Harus diisi";
+      roleError.textContent = "*Harus dipilih";
       roleError.style.display = "inline";
       isValid = false;
     }

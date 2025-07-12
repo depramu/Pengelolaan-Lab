@@ -43,6 +43,19 @@ $npk = $_SESSION['npk'] ?? null;
 $waktuMulai = $_SESSION['waktuMulai'] ?? null;
 $waktuSelesai = $_SESSION['waktuSelesai'] ?? null;
 
+// Ambil nama peminjam (mahasiswa/karyawan) dari database
+$nama = '';
+if (!empty($nim)) {
+    $stmtNama = sqlsrv_query($conn, "SELECT nama FROM Mahasiswa WHERE nim = ?", [$nim]);
+    if ($stmtNama && $rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
+        $nama = $rowNama['nama'];
+    }
+} elseif (!empty($npk)) {
+    $stmtNama = sqlsrv_query($conn, "SELECT nama FROM Karyawan WHERE npk = ?", [$npk]);
+    if ($stmtNama && $rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
+        $nama = $rowNama['nama'];
+    }
+}
 
 
 // Auto-generate id Peminjaman Ruangan
@@ -158,15 +171,6 @@ include '../../templates/sidebar.php';
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= $idPeminjamanRuangan ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
-                                        <input type="hidden" name="idRuangan" value="<?= $idRuangan ?>">
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= $idRuangan ?>">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
                                     </div>
@@ -177,8 +181,6 @@ include '../../templates/sidebar.php';
                                                                                                                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanRuangan);
                                                                                                                                         } ?>">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -191,13 +193,15 @@ include '../../templates/sidebar.php';
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="nim" class="form-label fw-semibold">NIM</label>
-                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
+                                        <label class="form-label fw-semibold">NIM / NPK</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nim ?? $npk ?? '-') ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="npk" class="form-label fw-semibold">NPK</label>
-                                        <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
+                                        <label class="form-label fw-semibold">Nama Peminjam</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nama) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">

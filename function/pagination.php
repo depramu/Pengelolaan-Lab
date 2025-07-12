@@ -11,7 +11,7 @@
 function generatePagination($currentPage, $totalPages, $baseUrl = '?')
 {
     // Jangan tampilkan pagination jika hanya ada satu halaman
-    if ($totalPages <= 1) {
+    if ($totalPages < 1) {
         return;
     }
 ?>

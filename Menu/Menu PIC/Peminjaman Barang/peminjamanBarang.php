@@ -4,14 +4,16 @@ authorize_role('PIC Aset');
 
 // Pagination setup
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
-$perPage = 7;
+$perPage = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
 $countQuery = "SELECT COUNT(*) AS total 
               FROM Peminjaman_Barang pb
-              LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg";
+              LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
+              LEFT JOIN Mahasiswa m ON pb.nim = m.nim
+              LEFT JOIN Karyawan k ON pb.npk = k.npk";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
@@ -20,10 +22,13 @@ $totalPages = ceil($totalData / $perPage);
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
 $query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.jumlahBrg, 
-                 pb.tglPeminjamanBrg, sp.statusPeminjaman, b.namaBarang
+                 pb.tglPeminjamanBrg, sp.statusPeminjaman, b.namaBarang,
+                 COALESCE(m.nama, k.nama) AS namaPeminjam
           FROM Peminjaman_Barang pb
           JOIN Barang b ON pb.idBarang = b.idBarang 
           LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
+          LEFT JOIN Mahasiswa m ON pb.nim = m.nim
+          LEFT JOIN Karyawan k ON pb.npk = k.npk
           ORDER BY pb.tglPeminjamanBrg
           OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
@@ -43,21 +48,22 @@ include '../../../templates/sidebar.php';
         </nav>
     </div>
 
-
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
                 <tr class="text-center">
-                    <th>ID Peminjaman</th>
-                    <th>ID Barang</th>
+                    <th>No</th>
                     <th>Nama Barang</th>
+                    <th>Nama Peminjam</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah Peminjaman</th>
+                    <th>Status Peminjaman</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
+                $no = $offset + 1;
                 $hasData = false;
                 while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     $hasData = true;
@@ -91,11 +97,12 @@ include '../../../templates/sidebar.php';
                     }
                 ?>
                     <tr class="text-center">
-                        <td><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                        <td><?= $no ?></td>
                         <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                        <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['namaPeminjam'] ?? '') ?></td>
+                        <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                         <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman']) ?></td>
                         <td class="td-aksi">
                             <a href="<?= $linkDetail ?>">
                                 <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -106,6 +113,7 @@ include '../../../templates/sidebar.php';
                         </td>
                     </tr>
                 <?php
+                $no++;
                 }
 
                 if (!$hasData) {
@@ -116,9 +124,7 @@ include '../../../templates/sidebar.php';
         </table>
     </div>
     <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
+    generatePagination($page, $totalPages);
     ?>
 </main>
 

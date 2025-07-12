@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../function/init.php'; // Pastikan path ke init.php sudah benar
-
 authorize_role(['Peminjam']);
 
 $showTable = false; // Defaultnya, tabel tidak ditampilkan
@@ -28,7 +27,7 @@ if (!empty($_SESSION['tglPeminjamanBrg'])) {
 }
 
 // 3. Logika pagination dan query data (tidak ada perubahan di sini)
-$perPage = 3; // Saya kembalikan ke 7, sesuaikan jika perlu
+$perPage = 3;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
@@ -91,13 +90,13 @@ include __DIR__ . '/../../templates/sidebar.php';
     </div>
 
     <div id="areaBarangTersedia" style="<?= $showTable ? 'display:block;' : 'display:none;' ?>">
-        <h5 class="card-title mb-3 fw-senibold">Daftar Barang yang Tersedia</h5>
+        <h5 class="card-title mb-3 fw-semibold">Daftar Barang yang Tersedia</h5>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
-                        <th>ID Barang</th>
+                        <th>No</th>
                         <th>Nama Barang</th>
                         <th>Stok Barang</th>
                         <th>Lokasi Barang</th>
@@ -106,13 +105,14 @@ include __DIR__ . '/../../templates/sidebar.php';
                 </thead>
                 <tbody>
                     <?php
+                    $no = $offset + 1;
                     $hasData = false;
                     if ($result && sqlsrv_has_rows($result)) {
                         $hasData = true;
                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     ?>
                             <tr class="text-center">
-                                <td><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
+                                <td><?= $no ?></td>
                                 <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($row['stokBarang'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($row['lokasiBarang'] ?? '') ?></td>
@@ -123,6 +123,7 @@ include __DIR__ . '/../../templates/sidebar.php';
                                 </td>
                             </tr>
                     <?php
+                            $no++;
                         }
                     }
                     if (!$hasData) {
@@ -133,12 +134,10 @@ include __DIR__ . '/../../templates/sidebar.php';
             </table>
         </div>
 
-        <div class="mt-3">
+        <div>
             <?php
-            if ($totalPages > 1) {
-                generatePagination($page, $totalPages);
-                $showTable = true;
-            }
+            generatePagination($page, $totalPages);
+            $showTable = true;
             ?>
         </div>
     </div>

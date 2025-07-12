@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-authorize_role('PIC Aset'); 
+authorize_role('PIC Aset');
 
 // Pagination setup
 $perPage = 7;
@@ -46,6 +46,7 @@ include '../../templates/sidebar.php';
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
                 <tr class="text-center">
+                    <th>No</th>
                     <th>NIM</th>
                     <th>Nama Lengkap</th>
                     <th>Email</th>
@@ -56,15 +57,17 @@ include '../../templates/sidebar.php';
             <tbody>
                 <?php
                 $hasData = false;
+                $no = $offset + 1;
                 while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     $hasData = true;
                 ?>
-                    <tr>
-                        <td class="text-center"><?= htmlspecialchars($row['nim']) ?></td>
-                        <td><?= htmlspecialchars($row['nama']) ?></td>
-                        <td><?= htmlspecialchars($row['email']) ?></td>
-                        <td><?= htmlspecialchars($row['jenisRole']) ?></td>
-                        <td class="text-center">
+                    <tr class="text-center">
+                        <td><?= $no ?></td>
+                        <td><?= htmlspecialchars($row['nim']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['nama']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['email']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['jenisRole']) ?></td>
+                        <td>
                             <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
                             <a href="<?= BASE_URL ?>/CRUD/Akun/hapusAkunMhs.php?id=<?= urlencode($row['nim']) ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
 
@@ -93,6 +96,7 @@ include '../../templates/sidebar.php';
                         </td>
                     </tr>
                 <?php
+                    $no++;
                 }
                 if (!$hasData) {
                     echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
@@ -100,14 +104,9 @@ include '../../templates/sidebar.php';
                 ?>
             </tbody>
         </table>
-
-
-
     </div>
     <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
+    generatePagination($page, $totalPages);
     ?>
 </main>
 

@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../function/init.php';
 authorize_role(['Peminjam']);
 
-
 $showModal = false;
 // Auto-generate ID Peminjaman Barang
 $idPeminjamanBrg = 'PJB001';
@@ -16,7 +15,7 @@ if ($stmtId && $rowId = sqlsrv_fetch_array($stmtId, SQLSRV_FETCH_ASSOC)) {
 $idBarang = $_GET['idBarang'] ?? null;
 if (empty($idBarang)) {
     die("Error: ID Barang tidak ditemukan. Silakan kembali dan pilih barang yang ingin dipinjam.");
-}   
+}
 
 // Ambil detail barang
 $stmtDetail = sqlsrv_query($conn, "SELECT namaBarang, stokBarang FROM Barang WHERE idBarang = ?", [$idBarang]);
@@ -32,6 +31,20 @@ if ($stmtDetail && $dataBarang = sqlsrv_fetch_array($stmtDetail, SQLSRV_FETCH_AS
     $_SESSION['npk'] ?? null,
     $_SESSION['tglPeminjamanBrg'] ?? null
 ];
+
+// Ambil nama peminjam (mahasiswa/karyawan) dari database
+$nama = '';
+if (!empty($nim)) {
+    $stmtNama = sqlsrv_query($conn, "SELECT nama FROM Mahasiswa WHERE nim = ?", [$nim]);
+    if ($stmtNama && $rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
+        $nama = $rowNama['nama'];
+    }
+} elseif (!empty($npk)) {
+    $stmtNama = sqlsrv_query($conn, "SELECT nama FROM Karyawan WHERE npk = ?", [$npk]);
+    if ($stmtNama && $rowNama = sqlsrv_fetch_array($stmtNama, SQLSRV_FETCH_ASSOC)) {
+        $nama = $rowNama['nama'];
+    }
+}
 
 /// Inisialisasi variabel
 $error = null;
@@ -112,7 +125,7 @@ include '../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
                         <span class="fw-semibold">Peminjaman Barang</span>
                     </div>
                     <div class="card-body">
@@ -127,14 +140,6 @@ include '../../templates/sidebar.php';
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg_display" value="<?= $idPeminjamanBrg ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang_display" value="<?= $idBarang ?>">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="namaBarang_display" value="<?= $namaBarang ?>">
                                     </div>
@@ -145,15 +150,15 @@ include '../../templates/sidebar.php';
                                                                                                                                             echo $dateObj ? $dateObj->format('d-m-Y') : htmlspecialchars($tglPeminjamanBrg);
                                                                                                                                         } ?>">
                                     </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">NIM / NPK</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nim ?? $npk ?? '-') ?>">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="nim" class="form-label fw-semibold">NIM</label>
-                                        <input type="text" class="form-control protect-input" id="nim" name="nim" value="<?= $nim ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="npk" class="form-label fw-semibold">NPK</label>
-                                        <input type="text" class="form-control protect-input" id="npk" name="npk" value="<?= $npk ?>">
+                                        <label class="form-label fw-semibold">Nama Peminjam</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nama) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-semibold">

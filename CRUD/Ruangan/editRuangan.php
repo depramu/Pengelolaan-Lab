@@ -26,6 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kondisiRuangan = $_POST['kondisiRuangan'] ?? '';
     $ketersediaan = $_POST['ketersediaan'] ?? '';
 
+    if ($kondisiRuangan === 'Rusak') {
+        $ketersediaan = 'Tidak Tersedia';
+    } elseif ($kondisiRuangan === 'Baik') {
+        if (!in_array($ketersediaan, $ketersediaanList)) {
+            $errors[] = "Ketersediaan ruangan tidak valid.";
+        }
+    } else {
+        $errors[] = "Kondisi ruangan tidak valid.";
+    }
+
     // Validasi
     if ($namaRuangan === '') {
         $namaError = "*Harus diisi";
@@ -36,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($ketersediaan === '') {
         $ketersediaanError = "*Harus diisi";
     }
+
 
     if (empty($namaError) && empty($kondisiError) && empty($ketersediaanError)) {
         $updateQuery = "UPDATE Ruangan SET namaRuangan = ?, kondisiRuangan = ?, ketersediaan = ? WHERE idRuangan= ?";
@@ -84,55 +95,46 @@ include '../../templates/sidebar.php';
                     <div class="card-body">
                         <form id="formEditRuangan" method="POST">
                             <div class="mb-3 row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="idRuangan" class="form-label fw-semibold d-flex align-items-center">ID Ruangan</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idRuangan" name="idRuangan" value="<?= htmlspecialchars($idRuangan) ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
-                                            <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                            <?php if (!empty($namaError)): ?>
-                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
-                                            <?php endif; ?>
-                                        </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : htmlspecialchars($data['namaRuangan']) ?>" placeholder="Masukkan nama ruangan..">
-                                    </div>
-
+                                <div class="mb-3">
+                                    <label for="namaRuangan" class="form-label fw-semibold d-flex align-items-center">Nama Ruangan
+                                        <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($namaError)): ?>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
+                                        <?php endif; ?>
+                                    </label>
+                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : htmlspecialchars($data['namaRuangan']) ?>" placeholder="Masukkan nama ruangan..">
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan
-                                            <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                            <?php if (!empty($kondisiError)): ?>
-                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $kondisiError ?></span>
-                                            <?php endif; ?>
-                                        </label>
-                                        <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
-                                            <option value="" hidden <?= (!isset($kondisiRuangan) && (!isset($data['kondisiRuangan']) || $data['kondisiRuangan'] == '')) ? 'selected' : '' ?>>Pilih Kondisi</option>
-                                            <?php foreach ($kondisiRuanganList as $kondisi): ?>
-                                                <option value="<?= htmlspecialchars($kondisi) ?>" <?= ((isset($kondisiRuangan) && $kondisiRuangan == $kondisi) || (!isset($kondisiRuangan) && isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == $kondisi)) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($kondisi) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="ketersediaan" class="form-label fw-semibold d-flex align-items-center">Ketersediaan Ruangan
-                                            <span id="ketersediaanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                            <?php if (!empty($ketersediaanError)): ?>
-                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $ketersediaanError ?></span>
-                                            <?php endif; ?>
-                                        </label>
-                                        <select class="form-select" id="ketersediaan" name="ketersediaan">
-                                            <option value="" hidden <?= (!isset($ketersediaan) && (!isset($data['ketersediaan']) || $data['ketersediaan'] == '')) ? 'selected' : '' ?>>Pilih Ketersediaan</option>
-                                            <?php foreach ($ketersediaanList as $tersedia): ?>
-                                                <option value="<?= htmlspecialchars($tersedia) ?>" <?= ((isset($ketersediaan) && $ketersediaan == $tersedia) || (!isset($ketersediaan) && isset($data['ketersediaan']) && $data['ketersediaan'] == $tersedia)) ? 'selected' : '' ?>>
-                                                    <?= htmlspecialchars($tersedia) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan
+                                        <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($kondisiError)): ?>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $kondisiError ?></span>
+                                        <?php endif; ?>
+                                    </label>
+                                    <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                        <option value="" hidden <?= (!isset($kondisiRuangan) && (!isset($data['kondisiRuangan']) || $data['kondisiRuangan'] == '')) ? 'selected' : '' ?>>Pilih Kondisi</option>
+                                        <?php foreach ($kondisiRuanganList as $kondisi): ?>
+                                            <option value="<?= htmlspecialchars($kondisi) ?>" <?= ((isset($kondisiRuangan) && $kondisiRuangan == $kondisi) || (!isset($kondisiRuangan) && isset($data['kondisiRuangan']) && $data['kondisiRuangan'] == $kondisi)) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($kondisi) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ketersediaan" class="form-label fw-semibold d-flex align-items-center">Ketersediaan Ruangan
+                                        <span id="ketersediaanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                        <?php if (!empty($ketersediaanError)): ?>
+                                            <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $ketersediaanError ?></span>
+                                        <?php endif; ?>
+                                    </label>
+                                    <select class="form-select" id="ketersediaan" name="ketersediaan">
+                                        <option value="" hidden <?= (!isset($ketersediaan) && (!isset($data['ketersediaan']) || $data['ketersediaan'] == '')) ? 'selected' : '' ?>>Pilih Ketersediaan</option>
+                                        <?php foreach ($ketersediaanList as $tersedia): ?>
+                                            <option value="<?= htmlspecialchars($tersedia) ?>" <?= ((isset($ketersediaan) && $ketersediaan == $tersedia) || (!isset($ketersediaan) && isset($data['ketersediaan']) && $data['ketersediaan'] == $tersedia)) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($tersedia) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/manajemenRuangan.php" class="btn btn-secondary">Kembali</a>

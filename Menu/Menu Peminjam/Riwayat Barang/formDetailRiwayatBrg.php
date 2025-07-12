@@ -58,7 +58,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12" style="margin-right: 20px;">
                 <div class="card border border-dark">
-                <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
                         <span class="fw-semibold">Detail Peminjaman Barang</span>
                     </div>
                     <div class="card-body scrollable-card-content">
@@ -71,14 +71,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanBrg']) ?></div>
-                                            <input type="hidden" name="idPeminjamanBrg" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanBrg']) ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">NIM / NPK</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?: $data['npk'] ?: '-') ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?: $data['npk'] ?: '-') ?>">
+                                            <label class="form-label fw-semibold">Nama Barang</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['namaBarang']) ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Tanggal Peminjaman</label>
@@ -96,26 +91,16 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                                                                 ) ?>">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">Alasan Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($data['alasanPeminjamanBrg'])) ?></div>
-                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanBrg']) ?></textarea>
+                                            <label class="form-label fw-semibold">Jumlah Barang</label>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['jumlahBrg']) ?></div>
+                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Barang</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idBarang']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idBarang']) ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Nama Barang</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['namaBarang']) ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Jumlah Barang</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['jumlahBrg']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
+                                            <label class="form-label fw-semibold">Alasan Peminjaman</label>
+                                            <div class="form-control-plaintext"><?= nl2br(htmlspecialchars($data['alasanPeminjamanBrg'])) ?></div>
+                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanBrg']) ?></textarea>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Status Peminjaman</label>

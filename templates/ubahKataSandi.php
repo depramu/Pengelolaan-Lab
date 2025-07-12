@@ -163,7 +163,7 @@ if ($user_id && $user_role) {
                                     <span class="float-end">:</span>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" name="kataSandi" value="<?= htmlspecialchars($profil['kataSandi'] ?? '') ?>">
+                                    <input type="password" class="form-control" name="kataSandi" placeholder="Masukkan kata sandi baru..">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end mt-5 gap-3">

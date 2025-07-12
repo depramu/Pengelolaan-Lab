@@ -138,9 +138,7 @@
                             </tr>
                     <?php
                         }
-                        if ($totalPages > 1) {
-                            generatePagination($page, $totalPages);
-                        }
+                        generatePagination($page, $totalPages);
                     }
                     ?>
                 </tbody>

@@ -38,7 +38,7 @@ if (!empty($idPeminjamanBrg)) {
 }
 
 $nim = $data['nim'] ?? '';
-$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '';
+$tglPeminjamanBrg = isset($data['tglPeminjamanBrg']) ? $data['tglPeminjamanBrg']->format('d M Y') : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($idPeminjamanBrg) && !empty($alasanPenolakan)) {
@@ -104,7 +104,7 @@ include '../../../templates/sidebar.php';
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-12 " style="margin-right: 20px;">
                 <div class="card border border-dark">
-                <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
+                    <div class="card-header border-bottom border-dark text-white" style="background-color:rgb(9, 103, 185);">
                         <span class="fw-semibold">Penolakan Peminjaman Barang</span>
                     </div>
 
@@ -114,14 +114,6 @@ include '../../../templates/sidebar.php';
                                 <!-- Kolom Kiri -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanBrg'] ?? '') ?></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="idBarang" class="form-label fw-semibold">ID Barang</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['idBarang'] ?? '') ?></div>
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang'] ?? '') ?></div>
                                     </div>
@@ -129,10 +121,6 @@ include '../../../templates/sidebar.php';
                                         <label for="tglPeminjamanBrg" class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($tglPeminjamanBrg) ?></div>
                                     </div>
-                                </div>
-
-                                <!-- Kolom Kanan -->
-                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
@@ -147,6 +135,10 @@ include '../../../templates/sidebar.php';
                                             ?>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- Kolom Kanan -->
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
                                         <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>

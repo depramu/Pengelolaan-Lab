@@ -13,7 +13,7 @@ if (isset($_SESSION['user_role'])) {
     if ($_SESSION['user_role'] == 'Peminjam' && isset($_SESSION['nim'])) {
         $peminjam_field = 'nim';
         $peminjam_value = $_SESSION['nim'];
-    // Jika role adalah Karyawan dan session 'npk' ada
+        // Jika role adalah Karyawan dan session 'npk' ada
     } elseif ($_SESSION['user_role'] == 'Peminjam' && isset($_SESSION['npk'])) {
         $peminjam_field = 'npk';
         $peminjam_value = $_SESSION['npk'];
@@ -62,16 +62,17 @@ include __DIR__ . '/../../../templates/sidebar.php';
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
                 <tr class="text-center">
-                    <th>ID Peminjaman</th>
-                    <th>ID Barang</th>
+                    <th>No</th>
                     <th>Nama Barang</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah</th>
+                    <th>Status Peminjaman</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
+                $no = $offset + 1;
                 if ($result === false) {
                     echo "<tr><td colspan='7' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
                 } elseif (sqlsrv_has_rows($result) === false) {
@@ -100,12 +101,12 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             $altText = 'Ditolak';
                         }
                 ?>
-                        <tr>
-                            <td class="text-center"><?= htmlspecialchars($row['idPeminjamanBrg'] ?? '') ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['idBarang'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                            <td class="text-center"><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
-                            <td class="text-center"><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                        <tr class="text-center">
+                            <td><?= $no ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                            <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                            <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman'] ?? '') ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -116,6 +117,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             </td>
                         </tr>
                 <?php
+                    $no++;
                     }
                 }
                 ?>
@@ -123,9 +125,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
         </table>
     </div>
     <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
+    generatePagination($page, $totalPages);
     ?>
 </main>
 <?php

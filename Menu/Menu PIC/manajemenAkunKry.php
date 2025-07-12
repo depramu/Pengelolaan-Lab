@@ -19,7 +19,7 @@ $totalPages = ceil($totalData / $perPage);
 $offset = ($page - 1) * $perPage;
 $query = "SELECT npk, nama, email, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); 
+$currentPage = basename($_SERVER['PHP_SELF']);
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
@@ -43,69 +43,71 @@ include '../../templates/sidebar.php';
         </a>
     </div>
     <div class="table-responsive">
-    <table class="table table-hover align-middle table-bordered">
-        <thead class="table-light">
-            <tr class="text-center">
-                <th>NPK</th>
-                <th>Nama Lengkap</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th class="text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $hasData = false;
-            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                $hasData = true;
-            ?>
-                <tr>
-                    <td class="text-center"><?= htmlspecialchars($row['npk']) ?></td>
-                    <td><?= htmlspecialchars($row['nama']) ?></td>
-                    <td><?= htmlspecialchars($row['email']) ?></td>
-                    <td><?= htmlspecialchars($row['jenisRole']) ?></td>
-                    <td class="text-center">
-                        <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunKry.php?id=<?= urlencode($row['npk']) ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-                        <a href="<?= BASE_URL ?>/CRUD/Akun/hapusAkunKry.php?id=<?= urlencode($row['npk']) ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['npk'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-
-                        <!-- delete -->
-                        <div class="modal fade" id="deleteModal<?= $row['npk'] ?>"
-                            tabindex="-1" aria-labelledby="modalLabel<?= $row['npk'] ?>" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <form action="../../CRUD/Akun/hapusAkunKry.php" method="POST">
-                                    <input type="hidden" name="npk" value="<?= htmlspecialchars($row['npk']) ?>">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel<?= $row['npk'] ?>">Konfirmasi Hapus</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Apakah Anda yakin ingin menghapus akun <br>"<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-danger">Ya, hapus</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </td>
+        <table class="table table-hover align-middle table-bordered">
+            <thead class="table-light">
+                <tr class="text-center">
+                    <th>No</th>
+                    <th>NPK</th>
+                    <th>Nama Lengkap</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
-            <?php
-            }
-            if (!$hasData) {
-                echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
-            }
-            ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php
+                $hasData = false;
+                $no = $offset + 1;
+                while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                    $hasData = true;
+                ?>
+                    <tr class="text-center">
+                        <td><?= $no ?></td>
+                        <td><?= htmlspecialchars($row['npk']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['nama']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['email']) ?></td>
+                        <td class="text-start"><?= htmlspecialchars($row['jenisRole']) ?></td>
+                        <td>
+                            <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunKry.php?id=<?= urlencode($row['npk']) ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                            <a href="<?= BASE_URL ?>/CRUD/Akun/hapusAkunKry.php?id=<?= urlencode($row['npk']) ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['npk'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+
+                            <!-- delete -->
+                            <div class="modal fade" id="deleteModal<?= $row['npk'] ?>"
+                                tabindex="-1" aria-labelledby="modalLabel<?= $row['npk'] ?>" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <form action="../../CRUD/Akun/hapusAkunKry.php" method="POST">
+                                        <input type="hidden" name="npk" value="<?= htmlspecialchars($row['npk']) ?>">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel<?= $row['npk'] ?>">Konfirmasi Hapus</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Apakah Anda yakin ingin menghapus akun <br>"<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-danger">Ya, hapus</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                <?php
+                $no++;
+                }
+                if (!$hasData) {
+                    echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
 
     </div>
     <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
+    generatePagination($page, $totalPages);
     ?>
 </main>
 

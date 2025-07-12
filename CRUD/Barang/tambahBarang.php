@@ -79,11 +79,6 @@ include '../../templates/sidebar.php';
                     <div class="card-body">
                         <form id="formTambahBarang" method="POST">
                             <div class="mb-3 row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="idBarang" class="form-label fw-semibold d-flex align-items-center">ID Barang</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idBarang" name="idBarang" value="<?= htmlspecialchars($idBarang) ?>">
-                                    </div>
                                     <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold d-flex align-items-center">
                                             Nama Barang
@@ -94,8 +89,6 @@ include '../../templates/sidebar.php';
                                         </label>
                                         <input type="text" class="form-control" id="namaBarang" name="namaBarang" value="<?= isset($namaBarang) ? htmlspecialchars($namaBarang) : '' ?>" placeholder="Masukkan nama barang..">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="lokasiBarang" class="form-label fw-semibold d-flex align-items-center">
                                             Lokasi Barang
@@ -124,11 +117,11 @@ include '../../templates/sidebar.php';
                                             <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-4">
-                                    <a href="../../../Menu/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
-                                    <button type="submit" class="btn btn-primary">Tambah</button>
-                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="../../../Menu/Menu PIC/manajemenBarang.php" class="btn btn-secondary">Kembali</a>
+                                <button type="submit" class="btn btn-primary">Tambah</button>
+                            </div>
                         </form>
                     </div>
                 </div>

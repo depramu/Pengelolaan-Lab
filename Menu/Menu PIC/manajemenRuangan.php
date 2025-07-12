@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-authorize_role('PIC Aset'); 
+authorize_role('PIC Aset');
 
 // Pagination setup
 $perPage = 7;
@@ -41,12 +41,12 @@ include '../../templates/sidebar.php';
         <a href="<?= BASE_URL ?>/CRUD/Ruangan/tambahRuangan.php" class="btn btn-primary">
             <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="tambah" class="me-2">Tambah Ruangan</a>
     </div>
-    
+
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
             <thead class="table-light">
                 <tr class="text-center">
-                    <th>ID Ruangan</th>
+                    <th>No</th>
                     <th>Nama Ruangan</th>
                     <th>Kondisi</th>
                     <th>Ketersediaan</th>
@@ -56,12 +56,13 @@ include '../../templates/sidebar.php';
             <tbody>
                 <?php
                 $hasData = false;
+                $no = $offset + 1;
                 while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     $hasData = true;
                 ?>
-                    <tr>
-                        <td class="text-center"><?= $row['idRuangan'] ?></td>
-                        <td><?= $row['namaRuangan'] ?></td>
+                    <tr class="text-center">
+                        <td><?= $no ?></td>
+                        <td class="text-start"><?= $row['namaRuangan'] ?></td>
                         <td><?= $row['kondisiRuangan'] ?></td>
                         <td><?= $row['ketersediaan'] ?></td>
                         <td class="text-center">
@@ -96,6 +97,7 @@ include '../../templates/sidebar.php';
                         </td>
                     </tr>
                 <?php
+                    $no++;
                 }
                 if (!$hasData) {
                     echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
@@ -106,10 +108,8 @@ include '../../templates/sidebar.php';
 
     </div>
     <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
-    ?>  
+    generatePagination($page, $totalPages);
+    ?>
 </main>
 
 <?php

@@ -130,44 +130,43 @@ include '../../../templates/sidebar.php';
                         <form id="formPengembalianBarang" method="POST">
                             <div class='mb-3 row'>
                                 <div class="col-md-6">
-                                    <label for="idPeminjamanBrg" class="form-label fw-semibold">ID Peminjaman</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanBrg" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <div class="col-md-3">
-                                    <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
-                                    <input type="hidden" id="sisaPinjaman" value="<?= $sisaPinjaman ?>">
-                                    <?php if ($sisaPinjaman == 0): ?>
-                                        <span class="text-success small">Semua barang sudah dikembalikan.</span>
-                                    <?php else: ?>
-                                        <span class="text-primary small">Sisa yang harus dikembalikan: <?= $sisaPinjaman ?></span>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="jumlahPengembalian" class="form-label w-100 fw-semibold">Jumlah Pengembalian
-                                        <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
-                                    </label>
-                                    <div class="input-group" style="max-width: 140px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
-                                        <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" max="<?= $sisaPinjaman ?>" style="max-width: 70px;">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                    <div class="mb-4">
+                                        <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="txtKondisi" class="form-label fw-semibold">Kondisi Barang
+                                            <span id="kondisiError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
+                                        </label>
+                                        <select class="form-select" id="txtKondisi" name="kondisiBrg">
+                                            <option hidden selected>Pilih Kondisi Barang</option>
+                                            <option value="Baik">Baik</option>
+                                            <option value="Rusak">Rusak</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="txtKondisi" class="form-label fw-semibold">Kondisi Barang
-                                        <span id="kondisiError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
-                                    </label>
-                                    <select class="form-select" id="txtKondisi" name="kondisiBrg">
-                                        <option hidden selected>Pilih Kondisi Barang</option>
-                                        <option value="Baik">Baik</option>
-                                        <option value="Rusak">Rusak</option>
-                                    </select>
+                                    <div class="mb-1">
+                                        <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
+                                        <input type="hidden" id="sisaPinjaman" value="<?= $sisaPinjaman ?>">
+                                        <?php if ($sisaPinjaman == 0): ?>
+                                            <span class="text-success small">Semua barang sudah dikembalikan.</span>
+                                        <?php else: ?>
+                                            <span class="text-primary small">Sisa yang harus dikembalikan: <?= $sisaPinjaman ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="jumlahPengembalian" class="form-label w-100 fw-semibold">Jumlah Pengembalian
+                                            <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
+                                        </label>
+                                        <div class="input-group" style="max-width: 140px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(-1)">-</button>
+                                            <input class="form-control text-center" id="jumlahPengembalian" name="jumlahPengembalian" value="0" min="0" max="<?= $sisaPinjaman ?>" style="max-width: 70px;">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="mb-3">

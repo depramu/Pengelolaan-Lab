@@ -81,16 +81,6 @@ include '../../../templates/sidebar.php';
                                     <!-- Kolom Kiri -->
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
-                                            <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Ruangan</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
-                                        </div>
-                                        <div class="mb-3">
                                             <label class="form-label fw-semibold">Nama Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['namaRuangan'] ?? '-') ?></div>
                                             <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['namaRuangan'] ?? '-') ?>">
@@ -100,11 +90,7 @@ include '../../../templates/sidebar.php';
                                             <div class="form-control-plaintext">
                                                 <?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime ? $data['tglPeminjamanRuangan']->format('d-m-Y') : $data['tglPeminjamanRuangan']) ?>
                                             </div>
-                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d F Y') : '' ?>">
                                         </div>
-                                    </div>
-                                    <!-- Kolom Kanan -->
-                                    <div class="col-md-6">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label class="form-label fw-semibold">Waktu Mulai</label>
@@ -119,12 +105,14 @@ include '../../../templates/sidebar.php';
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <!-- Kolom Kanan -->
+                                    <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">NIM / NPK</label>
                                             <div class="form-control-plaintext">
                                                 <?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>
                                             </div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
@@ -194,7 +182,6 @@ include '../../../templates/sidebar.php';
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>
                                 </div>
-                            </form>
                             </form>
                         <?php endif; ?>
                         </>

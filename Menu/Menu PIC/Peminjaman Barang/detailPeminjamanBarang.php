@@ -79,20 +79,6 @@
                                         <!-- Kolom Kiri -->
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">ID Peminjaman</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['idPeminjamanBrg']) ?>
-                                                </div>
-                                                <input type="hidden" name="idPeminjamanBrg" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanBrg']) ?>">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">ID Barang</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['idBarang']) ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idBarang']) ?>">
-                                            </div>
-                                            <div class="mb-3">
                                                 <label class="form-label fw-semibold">Nama Barang</label>
                                                 <div class="form-control-plaintext">
                                                     <?= htmlspecialchars($data['namaBarang']) ?>
@@ -104,11 +90,17 @@
                                                 <div class="form-control-plaintext">
                                                     <?= htmlspecialchars(
                                                         $data['tglPeminjamanBrg'] instanceof DateTime
-                                                            ? $data['tglPeminjamanBrg']->format('d-m-y')
+                                                            ? $data['tglPeminjamanBrg']->format('d M Y')
                                                             : ''
                                                     ) ?>
                                                 </div>
-                                                <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanBrg'] instanceof DateTime) ? $data['tglPeminjamanBrg']->format('Y-m-d') : '' ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Jumlah Barang</label>
+                                                <div class="form-control-plaintext">
+                                                    <?= htmlspecialchars($data['jumlahBrg']) ?>
+                                                </div>
+                                                <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
                                             </div>
                                         </div>
                                         <!-- Kolom Kanan -->
@@ -131,13 +123,6 @@
                                                 <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
                                                 <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '') ?></div>
                                                 <input type="hidden" class="form-control" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Jumlah Barang</label>
-                                                <div class="form-control-plaintext">
-                                                    <?= htmlspecialchars($data['jumlahBrg']) ?>
-                                                </div>
-                                                <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['jumlahBrg']) ?>">
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold">Alasan Peminjaman</label>

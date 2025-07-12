@@ -2,23 +2,29 @@
 require_once __DIR__ . '/../../../function/init.php';
 authorize_role(['PIC Aset']);
 
-$perPage = 7;
+$perPage = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Ruangan";
+$countQuery = "SELECT COUNT(*) AS total 
+               FROM Peminjaman_Ruangan pr
+               LEFT JOIN Mahasiswa m ON pr.nim = m.nim
+               LEFT JOIN Karyawan k ON pr.npk = k.npk";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
 $totalPages = ceil($totalData / $perPage);
 
-// Ambil data sesuai halaman dengan JOIN ke tabel Status_Peminjaman
+// Ambil data sesuai halaman dengan JOIN ke tabel Status_Peminjaman dan nama Mahasiswa/Karyawan
 $offset = ($page - 1) * $perPage;
-$query = "SELECT pr.*, r.namaRuangan, sp.statusPeminjaman 
+$query = "SELECT pr.*, r.namaRuangan, sp.statusPeminjaman, 
+                 COALESCE(m.nama, k.nama) AS namaPeminjam
           FROM Peminjaman_Ruangan pr 
           JOIN Ruangan r ON pr.idRuangan = r.idRuangan 
           LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
+          LEFT JOIN Mahasiswa m ON pr.nim = m.nim
+          LEFT JOIN Karyawan k ON pr.npk = k.npk
           ORDER BY pr.idPeminjamanRuangan 
           OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
@@ -47,18 +53,20 @@ include '../../../templates/sidebar.php';
     <table class="table table-hover align-middle table-bordered">
       <thead class="table-light">
         <tr class="text-center">
-          <th>ID Peminjaman</th>
-          <th>ID Ruangan</th>
+          <th>No</th>
           <th>Nama Ruangan</th>
+          <th>Nama Peminjam</th>
           <th>Tanggal Peminjaman</th>
           <th>Waktu Mulai</th>
           <th>Waktu Selesai</th>
+          <th>Status Peminjaman</th>
           <th>Aksi</th>
         </tr>
       </thead>
       <tbody>
         <?php
         $hasData = false;
+        $no = $offset + 1;
         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
           $hasData = true;
           $statusPeminjaman = $row['statusPeminjaman'] ?? '';
@@ -105,14 +113,15 @@ include '../../../templates/sidebar.php';
           }
         ?>
           <tr class="text-center">
-            <td><?= htmlspecialchars($row['idPeminjamanRuangan']) ?></td>
-            <td><?= htmlspecialchars($row['idRuangan']) ?></td>
+            <td><?= $no ?></td>
             <td class="text-start"><?= htmlspecialchars($row['namaRuangan']) ?></td>
+            <td class="text-start"><?= htmlspecialchars($row['namaPeminjam']) ?></td>
             <td>
-              <?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?>
+              <?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d M Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?>
             </td>
             <td><?= ($row['waktuMulai'] instanceof DateTimeInterface) ? $row['waktuMulai']->format('H:i') : 'N/A'; ?></td>
             <td><?= ($row['waktuSelesai'] instanceof DateTimeInterface) ? $row['waktuSelesai']->format('H:i') : 'N/A'; ?></td>
+            <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman']) ?></td>
             <td class="td-aksi">
               <a href="<?= $linkAksi ?>">
                 <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -122,7 +131,9 @@ include '../../../templates/sidebar.php';
               </a>
             </td>
           </tr>
-        <?php }
+        <?php
+          $no++;
+        }
 
         if (!$hasData) {
           echo '<tr><td colspan="7" class="text-center">Tidak ada data peminjaman</td></tr>';
@@ -133,10 +144,8 @@ include '../../../templates/sidebar.php';
   </div>
 
   <?php
-    if ($totalPages > 1) {
-        generatePagination($page, $totalPages);
-    }
-    ?>
+  generatePagination($page, $totalPages);
+  ?>
 </main>
 
 <?php include '../../../templates/footer.php'; ?>

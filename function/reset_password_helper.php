@@ -93,11 +93,11 @@ function resetUserPassword($conn, string $email): array
         $mail->addAddress($email, $namaLengkap);
 
         $mail->Subject = 'Reset Kata Sandi - Sistem Pengelolaan Laboratorium';
-        $mail->Body    = "Halo $namaLengkap,\n\nKata sandi sementara Anda: $newPass\n\nSegera ganti setelah login.";
+        $mail->Body    = "Halo $namaLengkap,\n\nKata sandi baru Anda.\nKata Sandi:$newPass\n.";
 
         $mail->send();
-        return [true, 'Kata sandi sementara telah dikirim ke email Anda.'];
+        return [true, 'Kata sandi baru telah dikirim ke email Anda.'];
     } catch (Exception $e) {
-        return [true, 'Kata sandi sementara berhasil dibuat, namun email gagal dikirim: ' . $mail->ErrorInfo];
+        return [true, 'Kata sandi berhasil dibuat, namun email gagal dikirim: ' . $mail->ErrorInfo];
     }
 }

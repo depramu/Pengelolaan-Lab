@@ -165,7 +165,7 @@ include __DIR__ . '/../../templates/sidebar.php';
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
-                        <th>ID Ruangan</th>
+                        <th>No</th>
                         <th>Nama Ruangan</th>
                         <th>Kondisi</th>
                         <th>Ketersediaan</th>
@@ -174,13 +174,14 @@ include __DIR__ . '/../../templates/sidebar.php';
                 </thead>
                 <tbody>
                     <?php
+                    $no = $offset + 1;
                     $hasData = false;
                     if ($result && sqlsrv_has_rows($result)) {
                         $hasData = true;
                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                     ?>
                             <tr class="text-center">
-                                <td><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                                <td><?= $no ?></td>
                                 <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
                                 <td class="text-center"><?= htmlspecialchars($row['kondisiRuangan'] ?? '') ?></td>
                                 <td class="text-center"><?= htmlspecialchars($row['ketersediaan'] ?? '') ?></td>
@@ -191,6 +192,7 @@ include __DIR__ . '/../../templates/sidebar.php';
                                 </td>
                             </tr>
                     <?php
+                            $no++;
                         }
                     }
                     if (!$hasData) {
@@ -260,10 +262,8 @@ include __DIR__ . '/../../templates/sidebar.php';
 
         <div>
             <?php
-            if ($totalPages > 1) {
-                generatePagination($page, $totalPages);
-                $showTable = true;
-            }
+            generatePagination($page, $totalPages);
+            $showTable = true;
             ?>
         </div>
     </div>
