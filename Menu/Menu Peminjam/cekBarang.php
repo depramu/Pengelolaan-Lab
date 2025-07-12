@@ -6,14 +6,44 @@ $showTable = false; // Defaultnya, tabel tidak ditampilkan
 $selectedDay = '';
 $selectedMonth = '';
 $selectedYear = '';
+$tglPeminjamanValue = ''; // Untuk mengisi value input setelah submit
+$tglPeminjamanDisplay = ''; // Untuk input text, format d M Y
 
 // 1. Handle form submission (jika ada)
 if (isset($_POST['submit'])) {
     $tglPeminjaman = $_POST['tglPeminjamanBrg'] ?? '';
     if (!empty($tglPeminjaman)) {
         $_SESSION['tglPeminjamanBrg'] = $tglPeminjaman;
+        $tglPeminjamanValue = $tglPeminjaman;
+
+        // Format untuk input text: d M Y
+        $parts = explode('-', $tglPeminjaman);
+        if (count($parts) === 3) {
+            $day = (int)$parts[0];
+            $month = (int)$parts[1];
+            $year = (int)$parts[2];
+            $dateObj = DateTime::createFromFormat('!d-m-Y', sprintf('%02d-%02d-%04d', $day, $month, $year));
+            if ($dateObj) {
+                $tglPeminjamanDisplay = $dateObj->format('j M Y');
+            }
+        }
     } else {
         unset($_SESSION['tglPeminjamanBrg']);
+        $tglPeminjamanValue = '';
+        $tglPeminjamanDisplay = '';
+    }
+} elseif (!empty($_SESSION['tglPeminjamanBrg'])) {
+    $tglPeminjamanValue = $_SESSION['tglPeminjamanBrg'];
+    // Format untuk input text: d M Y
+    $parts = explode('-', $tglPeminjamanValue);
+    if (count($parts) === 3) {
+        $day = (int)$parts[0];
+        $month = (int)$parts[1];
+        $year = (int)$parts[2];
+        $dateObj = DateTime::createFromFormat('!d-m-Y', sprintf('%02d-%02d-%04d', $day, $month, $year));
+        if ($dateObj) {
+            $tglPeminjamanDisplay = $dateObj->format('j M Y');
+        }
     }
 }
 
@@ -75,12 +105,22 @@ include __DIR__ . '/../../templates/sidebar.php';
                     </label>
 
                     <div class="d-flex gap-2 align-items-center">
-                        <input type="text" id="tglPeminjamanFlat" class="form-control" placeholder="dd-month-yyyy" style="max-width: 200px;">
-                        <input type="hidden" id="tglPeminjamanBrg" name="tglPeminjamanBrg">
+                        <input 
+                            type="text" 
+                            id="tglPeminjamanFlat" 
+                            class="form-control" 
+                            placeholder="dd-month-yyyy" 
+                            style="max-width: 200px;"
+                            value="<?= htmlspecialchars($tglPeminjamanDisplay) ?>"
+                        >
+                        <input 
+                            type="hidden" 
+                            id="tglPeminjamanBrg" 
+                            name="tglPeminjamanBrg" 
+                            value="<?= htmlspecialchars($tglPeminjamanValue) ?>"
+                        >
                         <button type="submit" class="btn btn-primary ms-2" name="submit">Cek Ketersediaan</button>
                     </div>
-
-
                 </div>
             </form>
         </div>
