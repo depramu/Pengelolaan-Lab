@@ -17,14 +17,16 @@ if (isset($_POST['submit'])) {
     }
 }
 
-if (!empty($_SESSION['tglPeminjamanBrg'])) {
+if (!empty($_SESSION['tglPeminjamanBrg']) && substr_count($_SESSION['tglPeminjamanBrg'], '-') === 2) {
     $showTable = true;
-
     list($day, $month, $year) = explode('-', $_SESSION['tglPeminjamanBrg']);
     $selectedDay = (int)$day;
     $selectedMonth = (int)$month;
     $selectedYear = (int)$year;
+} else {
+    unset($_SESSION['tglPeminjamanBrg']); // Buang session jelek biar ngga looping error
 }
+
 
 // 3. Logika pagination dan query data (tidak ada perubahan di sini)
 $perPage = 3;
@@ -72,17 +74,12 @@ include __DIR__ . '/../../templates/sidebar.php';
                         <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal"></span>
                     </label>
 
-                    <div class="d-flex gap-2"
-                        data-day="<?= htmlspecialchars($selectedDay) ?>"
-                        data-month="<?= htmlspecialchars($selectedMonth) ?>"
-                        data-year="<?= htmlspecialchars($selectedYear) ?>">
-                        <select id="tglHari" class="form-select" style="width: 80px;"></select>
-                        <select id="tglBulan" class="form-select" style="width: 100px;"></select>
-                        <select id="tglTahun" class="form-select" style="width: 100px;"></select>
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" id="tglPeminjamanFlat" class="form-control" placeholder="dd-month-yyyy" style="max-width: 200px;">
                         <input type="hidden" id="tglPeminjamanBrg" name="tglPeminjamanBrg">
-
-                        <button type="submit" class="btn btn-primary align-items-end ms-auto" name="submit">Cek Ketersediaan</button>
+                        <button type="submit" class="btn btn-primary ms-2" name="submit">Cek Ketersediaan</button>
                     </div>
+
 
                 </div>
             </form>

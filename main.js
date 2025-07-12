@@ -659,113 +659,86 @@ function setupLaporanPage() {
 
 function setupCekKetersediaanBarangPage() {
   const form = document.getElementById("formCekKetersediaanBarang");
-  if (!form) return;
+  const flatpickrInput = document.getElementById("tglPeminjamanFlat");
+  const hiddenInput = document.getElementById("tglPeminjamanBrg");
+  const errorMessage = document.getElementById("error-message");
 
-  const container = document.querySelector("[data-day]");
-  if (!container) return;
+  if (!form || !flatpickrInput || !hiddenInput) return;
 
-  const hariSelect = document.getElementById("tglHari");
-  const bulanSelect = document.getElementById("tglBulan");
-  const tahunSelect = document.getElementById("tglTahun");
+  // Ambil nilai dari hidden input (yang isinya format: dd-mm-yyyy)
+  const hiddenVal = hiddenInput.value;
+  let defaultFlatpickrDate = null;
 
-  // Baca data tanggal yang sudah dipilih dari atribut HTML
-  const preselectedDay = container.dataset.day;
-  const preselectedMonth = container.dataset.month;
-  const preselectedYear = container.dataset.year;
-
-  // --- FUNGSI UNTUK MENGISI DROPDOWN ---
-  function populateSelectors() {
-    const now = new Date();
-    // Isi tahun
-    for (let y = now.getFullYear(); y <= now.getFullYear() + 5; y++) {
-      tahunSelect.innerHTML += `<option value="${y}">${y}</option>`;
-    }
-    // Isi bulan
-    for (let m = 1; m <= 12; m++) {
-      const monthText = m < 10 ? `0${m}` : `${m}`;
-      bulanSelect.innerHTML += `<option value="${m}">${monthText}</option>`;
-    }
+  if (hiddenVal && hiddenVal.includes("-")) {
+    const [day, month, year] = hiddenVal.split("-");
+    defaultFlatpickrDate = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day)
+    );
   }
 
-  // --- FUNGSI UNTUK UPDATE HARI ---
-  function updateDays() {
-    const bulan = parseInt(bulanSelect.value);
-    const tahun = parseInt(tahunSelect.value);
-    const daysInMonth = new Date(tahun, bulan, 0).getDate();
-
-    const currentSelectedDay = hariSelect.value;
-    hariSelect.innerHTML = "";
-    for (let i = 1; i <= daysInMonth; i++) {
-      hariSelect.innerHTML += `<option value="${i}">${i}</option>`;
-    }
-    // Coba pertahankan hari yang dipilih jika masih valid
-    if (currentSelectedDay <= daysInMonth) {
-      hariSelect.value = currentSelectedDay;
-    }
-  }
-
-  // --- INISIALISASI ---
-  populateSelectors();
-
-  // Tentukan nilai default: dari PHP atau tanggal hari ini
-  if (preselectedYear && preselectedMonth && preselectedDay) {
-    // Jika ada tanggal yang di-submit, gunakan itu
-    tahunSelect.value = preselectedYear;
-    bulanSelect.value = preselectedMonth;
-    updateDays(); // Update jumlah hari sesuai bulan/tahun yang dipilih
-    hariSelect.value = preselectedDay;
-  } else {
-    const now = new Date();
-    tahunSelect.value = now.getFullYear();
-    bulanSelect.value = now.getMonth() + 1;
-    updateDays();
-    hariSelect.value = now.getDate();
-  }
-
-  // Tambahkan listener untuk perubahan
-  bulanSelect.addEventListener("change", updateDays);
-  tahunSelect.addEventListener("change", updateDays);
-
-  form.addEventListener("submit", function (event) {
-    let isValid = true;
-    const hari = hariSelect.value;
-    const bulan = bulanSelect.value;
-    const tahun = tahunSelect.value;
-    const errorTanggal = document.getElementById("error-message");
-
-    if (!hari || !bulan || !tahun) {
-      isValid = false;
-      errorTanggal.textContent = "*Harus Diisi";
-    } else {
-      const inputDate = new Date(
-        `${tahun}-${String(bulan).padStart(2, "0")}-${String(hari).padStart(
+  flatpickr(flatpickrInput, {
+    dateFormat: "d F Y",
+    defaultDate: defaultFlatpickrDate,
+    allowInput: true,
+    onChange: function (selectedDates, dateStr, instance) {
+      const selectedDate = selectedDates[0];
+      if (selectedDate) {
+        const formatted = `${String(selectedDate.getDate()).padStart(
           2,
           "0"
-        )}`
-      );
+        )}-${String(selectedDate.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${selectedDate.getFullYear()}`;
+        hiddenInput.value = formatted;
+      }
+    },
+    onReady: function (selectedDates, dateStr, instance) {
+      const selectedDate = selectedDates[0];
+      if (selectedDate) {
+        const formatted = `${String(selectedDate.getDate()).padStart(
+          2,
+          "0"
+        )}-${String(selectedDate.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${selectedDate.getFullYear()}`;
+        hiddenInput.value = formatted;
+      }
+    },
+  });
+
+  form.addEventListener("submit", function (e) {
+    let isValid = true;
+
+    const inputVal = hiddenInput.value;
+    if (!inputVal) {
+      isValid = false;
+      errorMessage.textContent = "*Harus diisi";
+    } else {
+      const [day, month, year] = inputVal.split("-");
+      const inputDate = new Date(year, month - 1, day);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+
       if (inputDate < today) {
         isValid = false;
-        errorTanggal.textContent = "*Input tanggal sudah lewat";
+        errorMessage.textContent = "*Input tanggal sudah lewat";
       }
     }
 
     if (!isValid) {
-      errorTanggal.style.display = "inline";
-      event.preventDefault();
+      errorMessage.style.display = "inline";
+      e.preventDefault();
     } else {
-      errorTanggal.style.display = "none";
-      // hidden input untuk dikirim ke PHP
-      const tglPeminjamanInput = document.getElementById("tglPeminjamanBrg");
-      if (tglPeminjamanInput) {
-        tglPeminjamanInput.value = `${String(hari).padStart(2, "0")}-${String(
-          bulan
-        ).padStart(2, "0")}-${tahun}`;
-      }
+      errorMessage.style.display = "none";
     }
   });
 }
+
+document.addEventListener("DOMContentLoaded", setupCekKetersediaanBarangPage);
 
 function setupCekKetersediaanRuanganPage() {
   const form = document.getElementById("formCekKetersediaanRuangan");
