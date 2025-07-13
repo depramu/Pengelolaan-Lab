@@ -562,20 +562,41 @@ function setupLaporanPage() {
     // Bagian rendering tabel di halaman utama tidak berubah
     const tbl = document.createElement("table");
     tbl.className = "table table-striped table-bordered table-hover";
-    let headers = [], keys = [];
+    let headers = [],
+      keys = [];
     switch (reportType) {
-        case "dataBarang": headers = ["ID", "Nama", "Stok", "Lokasi"]; keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"]; break;
-        case "dataRuangan": headers = ["ID", "Nama", "Kondisi", "Ketersediaan"]; keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"]; break;
-        case "peminjamSeringMeminjam": headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"]; keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"]; break;
-        case "barangSeringDipinjam": headers = ["ID Barang", "Nama", "Total Dipinjam"]; keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"]; break;
-        case "ruanganSeringDipinjam": headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"]; keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"]; break;
+      case "dataBarang":
+        headers = ["ID", "Nama", "Stok", "Lokasi"];
+        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+        break;
+      case "dataRuangan":
+        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
+        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+        break;
+      case "peminjamSeringMeminjam":
+        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
+        keys = [
+          "IDPeminjam",
+          "NamaPeminjam",
+          "JenisPeminjam",
+          "JumlahPeminjaman",
+        ];
+        break;
+      case "barangSeringDipinjam":
+        headers = ["ID Barang", "Nama", "Total Dipinjam"];
+        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+        break;
+      case "ruanganSeringDipinjam":
+        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
+        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+        break;
     }
     const thead = tbl.createTHead().insertRow();
     headers.forEach((h) => (thead.insertCell().textContent = h));
     const tbody = tbl.createTBody();
     fullData.forEach((item) => {
-        const r = tbody.insertRow();
-        keys.forEach((k) => (r.insertCell().textContent = item[k] ?? ""));
+      const r = tbody.insertRow();
+      keys.forEach((k) => (r.insertCell().textContent = item[k] ?? ""));
     });
     wadahLaporanDiv.innerHTML = "";
     wadahLaporanDiv.append(tbl);
@@ -583,39 +604,38 @@ function setupLaporanPage() {
     // Setup tombol Export ke Excel
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-        exportBtn.style.display = "block";
-        const newExportBtn = exportBtn.cloneNode(true);
-        exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
+      exportBtn.style.display = "block";
+      const newExportBtn = exportBtn.cloneNode(true);
+      exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
 
-        newExportBtn.addEventListener("click", () => {
-            const bln = document.getElementById("bulanLaporan").value;
-            const thn = document.getElementById("tahunLaporan").value;
-            
-            // Tentukan script mana yang akan digunakan berdasarkan path URL
-            let scriptName = 'export_laporan_excel_pic.php';
-            if (window.location.pathname.includes('/Menu Ka UPT/')) {
-                scriptName = 'export_laporan_excel_kaupt.php';
-            }
-            
-            // ================================================ //
-            // ========= PERUBAHAN UTAMA UNTUK PREVIEW ======== //
-            // ================================================ //
+      newExportBtn.addEventListener("click", () => {
+        const bln = document.getElementById("bulanLaporan").value;
+        const thn = document.getElementById("tahunLaporan").value;
 
-            // Buat URL ke script PHP, TANPA &mode=download
-            // Ini akan secara default membuka mode preview
-            let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
+        // Tentukan script mana yang akan digunakan berdasarkan path URL
+        let scriptName = "export_laporan_excel_pic.php";
+        if (window.location.pathname.includes("/Menu Ka UPT/")) {
+          scriptName = "export_laporan_excel_kaupt.php";
+        }
 
-            if (bln && thn) {
-                previewUrl += `&bulan=${bln}&tahun=${thn}`;
-            }
+        // ================================================ //
+        // ========= PERUBAHAN UTAMA UNTUK PREVIEW ======== //
+        // ================================================ //
 
-            // Buka URL preview di tab baru
-            window.open(previewUrl, '_blank');
-        });
-      }
+        // Buat URL ke script PHP, TANPA &mode=download
+        // Ini akan secara default membuka mode preview
+        let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
+
+        if (bln && thn) {
+          previewUrl += `&bulan=${bln}&tahun=${thn}`;
+        }
+
+        // Buka URL preview di tab baru
+        window.open(previewUrl, "_blank");
+      });
+    }
   }
 }
-
 
 // =================================================================
 // #4: HALAMAN CEK KETERSEDIAAN (BARANG & RUANGAN)
@@ -644,8 +664,9 @@ function setupCekKetersediaanBarangPage() {
 
   flatpickr(flatpickrInput, {
     dateFormat: "d F Y",
+    minDate: "today",
     defaultDate: defaultFlatpickrDate,
-    allowInput: true,
+    allowInput: false,
     onChange: function (selectedDates, dateStr, instance) {
       const selectedDate = selectedDates[0];
       if (selectedDate) {
@@ -686,11 +707,6 @@ function setupCekKetersediaanBarangPage() {
       const inputDate = new Date(year, month - 1, day);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      if (inputDate < today) {
-        isValid = false;
-        errorMessage.textContent = "*Input tanggal sudah lewat";
-      }
     }
 
     if (!isValid) {
