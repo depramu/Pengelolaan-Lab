@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nim = $_POST['nim'] ?? null;
 
     if ($nim) {
-        $query = "DELETE FROM Mahasiswa WHERE nim = ?";
+        $query = "UPDATE Mahasiswa SET isDeleted = 1 WHERE nim = ?";
         $stmt = sqlsrv_query($conn, $query, [$nim]);
 
         if ($stmt) {

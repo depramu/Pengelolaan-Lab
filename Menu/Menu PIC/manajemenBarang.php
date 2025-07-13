@@ -9,7 +9,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Barang";
+$countQuery = "SELECT COUNT(*) AS total FROM Barang WHERE isDeleted = 0";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
@@ -17,7 +17,9 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang
+          WHERE isDeleted = 0
+          ORDER BY idBarang OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 if ($result === false) {
     echo "Error executing query: <br>";

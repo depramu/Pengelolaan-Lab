@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $npk = $_POST['npk'] ?? null;
     
     if ($npk) {
-        $query = "DELETE FROM Karyawan WHERE npk = ?";
+        $query = "UPDATE Karyawan SET isDeleted = 1 WHERE npk = ?";
         $stmt = sqlsrv_query($conn, $query, [$npk]);
 
         if ($stmt) {

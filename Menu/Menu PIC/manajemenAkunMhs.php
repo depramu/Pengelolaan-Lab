@@ -8,7 +8,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Mahasiswa";
+$countQuery = "SELECT COUNT(*) AS total FROM Mahasiswa WHERE isDeleted = 0";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
@@ -16,7 +16,9 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa 
+            WHERE isDeleted = 0
+            ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
 

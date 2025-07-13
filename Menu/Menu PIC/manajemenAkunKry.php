@@ -9,7 +9,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
 // Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Karyawan";
+$countQuery = "SELECT COUNT(*) AS total FROM Karyawan WHERE isDeleted = 0";
 $countResult = sqlsrv_query($conn, $countQuery);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
@@ -17,7 +17,9 @@ $totalPages = ceil($totalData / $perPage);
 
 // Ambil data sesuai halaman
 $offset = ($page - 1) * $perPage;
-$query = "SELECT npk, nama, email, jenisRole FROM Karyawan ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
+$query = "SELECT npk, nama, email, jenisRole FROM Karyawan 
+            WHERE isDeleted = 0
+            ORDER BY npk OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
 $result = sqlsrv_query($conn, $query);
 $currentPage = basename($_SERVER['PHP_SELF']);
 

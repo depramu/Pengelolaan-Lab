@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idBarang = $_POST['idBarang'] ?? null;
 
     if ($idBarang) {
-        $query = "DELETE FROM Barang WHERE idBarang = ?";
+        $query = "UPDATE Barang SET isDeleted = 1 WHERE idBarang = ?";
         $stmt = sqlsrv_query($conn, $query, [$idBarang]);
 
         if ($stmt) {
