@@ -85,11 +85,11 @@
                     } else if ($currentFile == 'editPengembalian.php') {
                         echo 'Data pengembalian berhasil diperbarui.';
                     } else if ($currentFile == 'tambahAkunKry.php') {
-                        echo 'Data akun karyawan berhasil ditambahkan.';
+                        echo 'Data akun karyawan berhasil ditambahkan. Mohon tunggu beberapa saat, sistem sedang memproses pengiriman email.';
                     } else if ($currentFile == 'editAkunKry.php') {
                         echo 'Data akun karyawan berhasil diperbarui.';
                     } else if ($currentFile == 'tambahAkunMhs.php') {
-                        echo 'Data akun mahasiswa berhasil ditambahkan.';
+                        echo 'Data akun mahasiswa berhasil ditambahkan. Mohon tunggu beberapa saat, sistem sedang memproses pengiriman email.';
                     } else if ($currentFile == 'editAkunMhs.php') {
                         echo 'Data akun mahasiswa berhasil diperbarui.';
                     } else if ($currentFile == 'pengajuanBarang.php') {
@@ -205,8 +205,6 @@
     window.BASE_URL = "<?php echo BASE_URL; ?>";
 </script>
 <script src="<?php echo BASE_URL; ?>/../main.js"></script>
-
-
 
 <?php if (isset($showModal) && $showModal) : ?>
     <script>

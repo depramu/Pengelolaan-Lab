@@ -50,6 +50,8 @@ if ($user_id && $user_role) {
 
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <h3 class="fw-semibold mb-3">Profil Akun</h3>
+
+    <!-- Breadcrumb -->
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -65,53 +67,58 @@ if ($user_id && $user_role) {
                     $dashboard_link = $base_url . 'dashboardKAUPT.php';
                 }
                 ?>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/<?= $dashboard_link ?>">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Profil Akun</li>
             </ol>
         </nav>
     </div>
-    <div>
-        <h2 class="fw-semibold display-5 ms-1 fs-5">Detail Akun</h2>
-<div class="card shadow-sm p-4">
-    <div class="row g-4">
-        <!-- Kolom Kiri: Foto Profil -->
-        <div class="col-md-3 text-center">
-            <i class="bi bi-person-circle" style="font-size: 8rem; color: #282727ff;"></i>
-            <h5 class="mt-3 fw-semibold"><?= htmlspecialchars($profil['nama'] ?? '') ?></h5>
-            <p class="text-muted mb-0"><?= htmlspecialchars($profil['role'] ?? '') ?></p>
-        </div>
 
-        <!-- Kolom Kanan: Detail Info -->
-        <div class="col-md-8 mt-5">
-            <?php if ($profil): ?>
-                <div class="row mb-3">
-                    <div class="col-sm-5 fw-semibold"> <?= isset($profil['nim']) ? 'NIM' : 'NPK' ?> </div>
-                    <div class="col-sm-7">: <?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?></div>
+    <!-- Section Header -->
+    <div class="card shadow-sm mb-4 p-4">
+        <div class="d-flex align-items-center">
+            <!-- Inisial -->
+            <div class="me-4">
+                <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width: 80px; height: 80px; font-size: 28px;">
+                    <?= strtoupper(substr($profil['nama'], 0, 1)) ?>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-sm-5 fw-semibold"> Nama Lengkap </div>
-                    <div class="col-sm-7">: <?= htmlspecialchars($profil['nama'] ?? '') ?></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-5 fw-semibold"> Role </div>
-                    <div class="col-sm-7">: <?= htmlspecialchars($profil['role'] ?? '') ?></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-sm-5 fw-semibold"> Email </div>
-                    <div class="col-sm-7">: <?= htmlspecialchars($profil['email'] ?? '') ?></div>
-                </div>
-
-                <div class="d-flex justify-content-end mt-5 gap-3">
-                    <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">
-                    Ubah Kata Sandi
-                    </a>
-                </div>
-            <?php else: ?>
-                <div class="alert alert-warning">Data profil tidak ditemukan.</div>
-            <?php endif; ?>
+            </div>
+            <div>
+                <h5 class="mb-0 fw-semibold"><?= htmlspecialchars($profil['nama'] ?? '') ?></h5>
+                <p class="text-muted mb-0"><?= htmlspecialchars($profil['role'] ?? '') ?></p>
+                <p class="text-muted"><?= htmlspecialchars($profil['email'] ?? '') ?></p>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Informasi Detail -->
+    <div class="card shadow-sm mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 fw-semibold">Informasi Akun</h5>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <small class="text-muted"><?= isset($profil['nim']) ? 'NIM' : 'NPK' ?></small>
+                <div class="fw-semibold"><?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '-') ?></div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <small class="text-muted">Nama Lengkap</small>
+                <div class="fw-semibold"><?= htmlspecialchars($profil['nama'] ?? '-') ?></div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <small class="text-muted">Role</small>
+                <div class="fw-semibold"><?= htmlspecialchars($profil['role'] ?? '-') ?></div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted">Email</small>
+                <div class="fw-semibold"><?= htmlspecialchars($profil['email'] ?? '-') ?></div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">
+                Ubah Kata Sandi
+            </a>
+            </div>
+        </div>
+    </div>
 </main>
 
 <?php include 'footer.php'; ?>
