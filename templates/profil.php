@@ -9,38 +9,6 @@ $user_role = $_SESSION['user_role'] ?? null;
 $user_nama = $_SESSION['user_nama'] ?? null;
 
 $profil = [];
-$error_message = '';
-$success_message = '';
-$showModal = false;
-
-// Proses update sandi jika form disubmit
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user_id) {
-    $kataSandiBaru = $_POST['kataSandi'];
-    if (!empty($kataSandiBaru)) {
-        if ($user_role === 'Peminjam') {
-            $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
-            $params = [$kataSandiBaru, $user_id];
-        } else {
-            $query = "UPDATE Karyawan SET kataSandi = ? WHERE npk = ?";
-            $params = [$kataSandiBaru, $user_id];
-        }
-
-        $stmt = sqlsrv_query($conn, $query, $params);
-        if ($stmt) {
-            $showModal = true;
-        } else {
-            $error_message = "Gagal mengubah kata sandi.";
-            if (($errors = sqlsrv_errors()) != null) {
-                foreach ($errors as $err) {
-                    $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
-                }
-            }
-        }
-    } else {
-        $error_message = "Kata sandi tidak boleh kosong jika ingin mengubah.";
-    }
-}
-
 
 // Ambil data profil
 if ($user_id && $user_role) {
@@ -104,69 +72,46 @@ if ($user_id && $user_role) {
     </div>
     <div>
         <h2 class="fw-semibold display-5 ms-1 fs-5">Detail Akun</h2>
-        <div class="card-body ms-5 mt-4">
-            <div class="d-flex align-items-center pb-1">
-                <div class="me-4 mb-5">
-                    <i class="bi bi-person-circle" style="font-size: 8rem; color: #343a40;"></i>
-                </div>
-                <div class="col-md-9 ps-5">
-                    <form method="POST" id="profilForm">
-                        <?php if ($error_message): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($error_message) ?></div>
-                        <?php elseif ($success_message): ?>
-                            <div class="alert alert-success"><?= htmlspecialchars($success_message) ?></div>
-                        <?php endif; ?>
-                        <?php if ($profil): ?>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">
-                                    <?php
-                                    if (isset($profil['nim'])) {
-                                        echo 'NIM';
-                                    } elseif (isset($profil['npk'])) {
-                                        echo 'NPK';
-                                    } else {
-                                    }
-                                    ?>
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?></div>
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['nama'] ?? '') ?></div>
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Role
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['role'] ?? '') ?></div>
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Email
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="form-control-plaintext"><?= htmlspecialchars($profil['email'] ?? '') ?></div>
-                                </div>
-                            </div>
-                            <div class="d-flex mt-5 justify-content-end">
-                                <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">Ubah Kata Sandi</a>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-warning">Data profil tidak ditemukan.</div>
-                        <?php endif; ?>
-                    </form>
-                </div>
-            </div>
+<div class="card shadow-sm p-4">
+    <div class="row g-4">
+        <!-- Kolom Kiri: Foto Profil -->
+        <div class="col-md-3 text-center">
+            <i class="bi bi-person-circle" style="font-size: 8rem; color: #282727ff;"></i>
+            <h5 class="mt-3 fw-semibold"><?= htmlspecialchars($profil['nama'] ?? '') ?></h5>
+            <p class="text-muted mb-0"><?= htmlspecialchars($profil['role'] ?? '') ?></p>
         </div>
+
+        <!-- Kolom Kanan: Detail Info -->
+        <div class="col-md-8 mt-5">
+            <?php if ($profil): ?>
+                <div class="row mb-3">
+                    <div class="col-sm-5 fw-semibold"> <?= isset($profil['nim']) ? 'NIM' : 'NPK' ?> </div>
+                    <div class="col-sm-7">: <?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-5 fw-semibold"> Nama Lengkap </div>
+                    <div class="col-sm-7">: <?= htmlspecialchars($profil['nama'] ?? '') ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-5 fw-semibold"> Role </div>
+                    <div class="col-sm-7">: <?= htmlspecialchars($profil['role'] ?? '') ?></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-5 fw-semibold"> Email </div>
+                    <div class="col-sm-7">: <?= htmlspecialchars($profil['email'] ?? '') ?></div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-5 gap-3">
+                    <a href="<?= BASE_URL ?>/templates/ubahKataSandi.php" class="btn btn-primary">
+                    Ubah Kata Sandi
+                    </a>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-warning">Data profil tidak ditemukan.</div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 </main>
 
 <?php include 'footer.php'; ?>

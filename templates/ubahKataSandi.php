@@ -41,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user
     }
 }
 
-
 // Ambil data profil
 if ($user_id && $user_role) {
     if ($user_role === 'Peminjam') {
@@ -104,79 +103,59 @@ if ($user_id && $user_role) {
     </div>
     <div>
         <h2 class="fw-semibold display-5 ms-1 fs-5">Ubah Kata Sandi</h2>
-        <div class="card-body ms-5 mt-4">
-            <div class="d-flex align-items-center pb-1">
-                <div class="me-4 mb-5">
-                    <i class="bi bi-person-circle" style="font-size: 8rem; color: #343a40;"></i>
-                </div>
-                <div class="col-md-9 ps-5">
-                    <form method="POST">
-                        <?php if ($error_message): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($error_message) ?></div>
-                        <?php elseif ($success_message): ?>
-                            <div class="alert alert-success"><?= htmlspecialchars($success_message) ?></div>
-                        <?php endif; ?>
-                        <?php if ($profil): ?>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">
-                                    <?php
-                                    if (isset($profil['nim'])) {
-                                        echo 'NIM';
-                                    } elseif (isset($profil['npk'])) {
-                                        echo 'NPK';
-                                    } else {
-                                        echo 'ID';
-                                    }
-                                    ?>
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk'] ?? '') ?>">
-                                </div>
+        <div class="card-body ms-1 mt-3">
+            <div class="card p-4 shadow-sm">
+                <form method="POST">
+                    <?php if ($error_message): ?>
+                        <div class="alert alert-danger"><?= htmlspecialchars($error_message) ?></div>
+                    <?php elseif ($success_message): ?>
+                        <div class="alert alert-success"><?= htmlspecialchars($success_message) ?></div>
+                    <?php endif; ?>
+
+                    <?php if ($profil): ?>
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-semibold">
+                                <?= isset($profil['nim']) ? 'NIM' : (isset($profil['npk']) ? 'NPK' : 'ID') ?>
+                                <span class="float-end">:</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk']) ?>">
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['nama']) ?>">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap <span class="float-end">:</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['nama']) ?>">
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Role
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['role']) ?>">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-semibold">Role <span class="float-end">:</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['role']) ?>">
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Email
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($profil['email']) ?>">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-semibold">Email <span class="float-end">:</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['email']) ?>">
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-4 col-form-label fw-semibold">Kata sandi
-                                    <span class="float-end">:</span>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="password" class="form-control" name="kataSandi" placeholder="Masukkan kata sandi baru..">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label fw-semibold">Kata Sandi <span class="float-end">:</span></label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="kataSandi" placeholder="Masukkan kata sandi baru..">
                             </div>
-                            <div class="d-flex justify-content-end mt-5 gap-3">
-                                <a href='<?= BASE_URL ?>/templates/profil.php' class="btn btn-secondary">Kembali</a>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-warning">Data profil tidak ditemukan.</div>
-                        <?php endif; ?>
-                    </form>
-                </div>
-            </div>  
+                        </div>
+                        <div class="d-flex justify-content-end mt-4 gap-3">
+                            <a href='<?= BASE_URL ?>/templates/profil.php' class="btn btn-secondary">Kembali</a>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning">Data profil tidak ditemukan.</div>
+                    <?php endif; ?>
+                </form>
+            </div>
         </div>
 </main>
 
-<?php include 'footer.php'; ?>  
+<?php include 'footer.php'; ?>

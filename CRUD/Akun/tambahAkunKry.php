@@ -5,14 +5,6 @@ authorize_role('PIC Aset');
 // Buffer output to ensure header() redirects work even if some whitespace or HTML comes later
 ob_start();
 
-// Load PHPMailer (stand-alone, same as reset_password_helper)
-require_once __DIR__ . '/../../function/src/PHPMailer.php';
-require_once __DIR__ . '/../../function/src/SMTP.php';
-require_once __DIR__ . '/../../function/src/Exception.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 $showModal = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $npk = $_POST['npk'];
@@ -28,42 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($cekNpk && sqlsrv_has_rows($cekNpk)) {
         $npkError = "*NPK sudah terdaftar";
     } else {
+        $npkError = ''; // Reset pesan error jika sebelumnya ada error
         $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
         $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
-            // Kirim kredensial ke email pengguna
-            $configMail = require __DIR__ . '/../../function/config_email.php';
-            $mail = new PHPMailer(true);
-            try {
-                $mail->isSMTP();
-                $mail->Host       = $configMail['host'];
-                $mail->SMTPAuth   = true;
-                $mail->Username   = $configMail['username'];
-                $mail->Password   = $configMail['password'];
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = $configMail['port'];
-
-                $mail->setFrom($configMail['from_email'], $configMail['from_name']);
-                $mail->addAddress($email, $nama);
-
-                $mail->Subject = 'Pembuatan Akun Baru - Sistem Pengelolaan Laboratorium';
-                $mail->Body    = "Halo $nama,\n\nAkun Anda telah dibuat oleh PIC Aset. Berikut detail login:\nNPK : $npk\nPassword : $kataSandi\n\nSilakan login ke Sistem Pengelolaan Laboratorium dan segera ubah password Anda.";
-
-                $mail->send();
-            } catch (Exception $e) {
-                error_log('Email gagal dikirim: ' . $mail->ErrorInfo);
-            }
-
-            // Berhasil, alihkan agar tidak mengulang validasi & menampilkan pesan duplikat
-            $_SESSION['notif_sukses'] = 'Akun Karyawan berhasil ditambahkan.';
-            session_write_close(); // release session lock before redirect
-            if (ob_get_length()) {
-                ob_end_clean(); // discard any buffered output
-            }
-            header('Location: ' . BASE_URL . '/Menu/Menu%20PIC/manajemenAkunKry.php');
-            exit;
+            $showModal = true;
+            require_once __DIR__ . '/../../function/email_kry.php';
+            sendAccountUser($email, $nama, $npk, $kataSandi);
         } else {
             $error = "Gagal menambahkan akun.";
         }
@@ -156,9 +121,4 @@ include '../../templates/sidebar.php';
     </div>
 </main>
 
-
-<?php
-
-include '../../templates/footer.php';
-
-?>
+<?php include '../../templates/footer.php';?>

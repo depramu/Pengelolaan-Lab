@@ -5,14 +5,6 @@ authorize_role('PIC Aset');
 // Buffer any accidental output so header() redirect works
 ob_start();
 
-// Load PHPMailer stand-alone (same as reset helper)
-require_once __DIR__ . '/../../function/src/PHPMailer.php';
-require_once __DIR__ . '/../../function/src/SMTP.php';
-require_once __DIR__ . '/../../function/src/Exception.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 $showModal = false;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -29,42 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
         $nimError = "*NIM sudah terdaftar";
     } else {
+        $nimError = '';     // Reset pesan error jika sebelumnya ada error
         $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
         $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
         $stmt = sqlsrv_query($conn, $query, $params);
 
         if ($stmt) {
-            // Kirim kredensial ke email
-            $configMail = require __DIR__ . '/../../function/config_email.php';
-            $mail = new PHPMailer(true);
-            try {
-                $mail->isSMTP();
-                $mail->Host       = $configMail['host'];
-                $mail->SMTPAuth   = true;
-                $mail->Username   = $configMail['username'];
-                $mail->Password   = $configMail['password'];
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port       = $configMail['port'];
-
-                $mail->setFrom($configMail['from_email'], $configMail['from_name']);
-                $mail->addAddress($email, $nama);
-
-                $mail->Subject = 'Pembuatan Akun Baru - Sistem Pengelolaan Laboratorium';
-                $mail->Body    = "Halo $nama,\n\nAkun Anda telah berhasil dibuat oleh PIC Aset. Berikut detail login:\nNIM : $nim\nKata Sandi : $kataSandi\n\nSilakan login ke Sistem Pengelolaan Laboratorium dan segera lakukan perubahan kata sandi untuk keamanan akun Anda.";
-
-                $mail->send();
-            } catch (Exception $e) {
-                error_log('Email gagal dikirim: ' . $mail->ErrorInfo);
-            }
-
-            // Berhasil – alihkan agar tidak mengulang validasi & menampilkan pesan duplikat
-            $_SESSION['notif_sukses'] = 'Akun Mahasiswa berhasil ditambahkan.';
-            session_write_close(); // release session lock before redirect
-            if (ob_get_length()) {
-                ob_end_clean(); // discard any buffered output
-            }
-            header('Location: ' . BASE_URL . '/Menu/Menu%20PIC/manajemenAkunMhs.php');
-            exit;
+            $showModal = true;
+            require_once __DIR__ . '/../../function/email_mhs.php';
+            sendAccountUser($email, $nama, $nim, $kataSandi);
         } else {
             $error = "Gagal menambahkan akun.";
         }
