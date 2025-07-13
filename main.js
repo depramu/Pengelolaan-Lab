@@ -559,99 +559,63 @@ function setupLaporanPage() {
     const wadahLaporanDiv = document.getElementById("wadahLaporan");
     if (!wadahLaporanDiv) return;
 
+    // Bagian rendering tabel di halaman utama tidak berubah
     const tbl = document.createElement("table");
     tbl.className = "table table-striped table-bordered table-hover";
-    let headers = [],
-      keys = [];
-
+    let headers = [], keys = [];
     switch (reportType) {
-      case "dataBarang":
-        headers = ["ID", "Nama", "Stok", "Lokasi"];
-        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
-        break;
-      case "dataRuangan":
-        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
-        break;
-      case "peminjamSeringMeminjam":
-        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-        keys = [
-          "IDPeminjam",
-          "NamaPeminjam",
-          "JenisPeminjam",
-          "JumlahPeminjaman",
-        ];
-        break;
-      case "barangSeringDipinjam":
-        headers = ["ID Barang", "Nama", "Total Dipinjam"];
-        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
-        break;
-      case "ruanganSeringDipinjam":
-        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjafm"];
-        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
-        break;
+        case "dataBarang": headers = ["ID", "Nama", "Stok", "Lokasi"]; keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"]; break;
+        case "dataRuangan": headers = ["ID", "Nama", "Kondisi", "Ketersediaan"]; keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"]; break;
+        case "peminjamSeringMeminjam": headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"]; keys = ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"]; break;
+        case "barangSeringDipinjam": headers = ["ID Barang", "Nama", "Total Dipinjam"]; keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"]; break;
+        case "ruanganSeringDipinjam": headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"]; keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"]; break;
     }
-
     const thead = tbl.createTHead().insertRow();
     headers.forEach((h) => (thead.insertCell().textContent = h));
-
     const tbody = tbl.createTBody();
     fullData.forEach((item) => {
-      const r = tbody.insertRow();
-      keys.forEach((k) => {
-        r.insertCell().textContent = item[k] ?? "";
-      });
+        const r = tbody.insertRow();
+        keys.forEach((k) => (r.insertCell().textContent = item[k] ?? ""));
     });
-
     wadahLaporanDiv.innerHTML = "";
     wadahLaporanDiv.append(tbl);
 
-    // Setup export Excel button
+    // Setup tombol Export ke Excel
     const exportBtn = document.getElementById("exportExcelBtn");
     if (exportBtn) {
-      exportBtn.style.display = "block";
+        exportBtn.style.display = "block";
+        const newExportBtn = exportBtn.cloneNode(true);
+        exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
 
-      const oldExportBtn = exportBtn.cloneNode(true);
-      exportBtn.parentNode.replaceChild(oldExportBtn, exportBtn);
-      const newExportBtn = document.getElementById("exportExcelBtn");
+        newExportBtn.addEventListener("click", () => {
+            const bln = document.getElementById("bulanLaporan").value;
+            const thn = document.getElementById("tahunLaporan").value;
+            
+            // Tentukan script mana yang akan digunakan berdasarkan path URL
+            let scriptName = 'export_laporan_excel_pic.php';
+            if (window.location.pathname.includes('/Menu Ka UPT/')) {
+                scriptName = 'export_laporan_excel_kaupt.php';
+            }
+            
+            // ================================================ //
+            // ========= PERUBAHAN UTAMA UNTUK PREVIEW ======== //
+            // ================================================ //
 
-      newExportBtn.addEventListener("click", () => {
-        const jenisLaporanSelect = document.getElementById("jenisLaporan");
-        const jenisLaporanText =
-          jenisLaporanSelect.options[jenisLaporanSelect.selectedIndex].text;
-        const bln = document.getElementById("bulanLaporan").value;
-        const thn = document.getElementById("tahunLaporan").value;
+            // Buat URL ke script PHP, TANPA &mode=download
+            // Ini akan secara default membuka mode preview
+            let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
 
-        // Dapatkan teks ringkasan yang bersih (tanpa tag HTML)
-        const summaryText =
-          document.getElementById("laporanSummaryText").innerText;
+            if (bln && thn) {
+                previewUrl += `&bulan=${bln}&tahun=${thn}`;
+            }
 
-        // Buat judul dan nama file yang dinamis
-        let reportTitle = `Laporan ${jenisLaporanText}`;
-        let filename = `Laporan_${reportType}`;
-
-        if (reportType !== "dataBarang" && reportType !== "dataRuangan") {
-          const namaBulan = new Date(2000, bln - 1, 1).toLocaleString("id-ID", {
-            month: "long",
-          });
-          reportTitle += ` - Bulan ${namaBulan} Tahun ${thn}`;
-          filename += `_${bln}_${thn}`;
-        }
-        filename += `.xlsx`;
-
-        // Panggil fungsi export yang baru
-        exportToExcel(
-          filename,
-          reportTitle,
-          summaryText,
-          headers,
-          fullData,
-          keys
-        );
-      });
-    }
+            // Buka URL preview di tab baru
+            window.open(previewUrl, '_blank');
+        });
+      }
   }
 }
+
 
 // =================================================================
 // #4: HALAMAN CEK KETERSEDIAAN (BARANG & RUANGAN)
