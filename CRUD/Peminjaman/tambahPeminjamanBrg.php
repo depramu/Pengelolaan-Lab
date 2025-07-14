@@ -157,10 +157,6 @@ include '../../templates/sidebar.php';
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold">Nama Peminjam</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nama) ?>">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="alasanPeminjamanBrg" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="alasanError" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>

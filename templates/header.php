@@ -1,6 +1,4 @@
 <?php
-
-// Cek login
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../Login/login.php');
     exit;
@@ -24,6 +22,25 @@ switch ($user_role) {
         $dashboard_link = $base_url . 'dashboardPeminjam.php';
         break;
 }
+
+$notif_count = 0;
+$user_role = $_SESSION['user_role'] ?? '';
+$nim = $_SESSION['nim'] ?? ''; // Khusus mahasiswa
+if ($user_role === 'PIC Aset') {
+    $query = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk IN ('PIC Aset') AND status = 'Belum Dibaca'";
+    $params = [];
+} elseif ($user_role === 'Peminjam' && !empty($nim)) {
+    $query = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
+    $params = [$nim];
+} else {
+    $query = "SELECT COUNT(*) as total FROM Notifikasi WHERE untuk = ? AND status = 'Belum Dibaca'";
+    $params = [$user_role];
+}
+
+$stmt = sqlsrv_query($conn, $query, $params);
+if ($stmt && $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+    $notif_count = $row['total'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +57,8 @@ switch ($user_role) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>style.css">
 </head>
 
 <body class="bg-light">
@@ -57,16 +75,20 @@ switch ($user_role) {
                         <span class="fw-semibold fs-5">Halo Sobat,</span>
                     </div>
                     <span class="fw-normal small">
-                        <?php
-                        echo htmlspecialchars($_SESSION['user_nama'] ?? 'Pengguna');
-                        if (!empty($_SESSION['user_role'])) {
-                            echo " (" . htmlspecialchars($_SESSION['user_role']) . ")";
-                        }
-                        ?>
+                        <?= htmlspecialchars($_SESSION['user_nama'] ?? 'Pengguna') ?>
+                        <?= !empty($_SESSION['user_role']) ? " (" . htmlspecialchars($_SESSION['user_role']) . ")" : '' ?>
                     </span>
                 </div>
-                <a href="<?= BASE_URL ?>/templates/profil.php" class="me-2"><img src="<?= BASE_URL ?>/icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>
-                <a href="<?= BASE_URL ?>/templates/notif.php" class="me-0 me-2"><img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif"></a>
+                <a href="<?= BASE_URL ?>/templates/profil.php" class="me-2">
+                    <img src="<?= BASE_URL ?>/icon/vector0.svg" class="profile-img img-fluid" alt="Profil">
+                </a>
+                <a href="<?= BASE_URL ?>/templates/notif.php" class="me-0 me-2 position-relative">
+                    <img src="<?= BASE_URL ?>/icon/bell.png" class="profile-img img-fluid" alt="Notif">
+                    <span id="notifBadge" class="position-absolute top-4 translate-middle badge rounded-pill bg-danger" style="<?= $notif_count > 0 ? '' : 'display: none;' ?>">
+                        <?= $notif_count ?>
+                        <span class="visually-hidden">unread notifications</span>
+                    </span>
+                </a>
                 <button class="btn btn-primary d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
                     <i class="bi bi-list"></i>
                 </button>

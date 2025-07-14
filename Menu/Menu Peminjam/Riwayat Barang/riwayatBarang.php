@@ -66,7 +66,6 @@ include __DIR__ . '/../../../templates/sidebar.php';
                     <th>Nama Barang</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah</th>
-                    <th>Status Peminjaman</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -106,7 +105,6 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                             <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                             <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
-                            <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman'] ?? '') ?></td>
                             <td class="td-aksi">
                                 <a href="<?= $linkDetail ?>">
                                     <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -117,18 +115,33 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             </td>
                         </tr>
                 <?php
-                    $no++;
+                        $no++;
+                        generatePagination($page, $totalPages);
                     }
                 }
                 ?>
             </tbody>
         </table>
     </div>
-    <?php
-    generatePagination($page, $totalPages);
-    ?>
+    <table class="legend-status">
+        <tr>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/centang.svg" class="legend-icon"> : Telah Dikembalikan</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/silang.svg" class="legend-icon"> : Ditolak</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamhijau.svg" class="legend-icon"> : Menunggu Pengecekan</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamkuning.svg" class="legend-icon"> : Sedang Dipinjam</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p>
+            </td>
+        </tr>
+    </table>
 </main>
-<?php
 
-include __DIR__ . '/../../../templates/footer.php';
-?>
+<?php include __DIR__ . '/../../../templates/footer.php'; ?>

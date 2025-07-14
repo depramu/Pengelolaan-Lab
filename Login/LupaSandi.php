@@ -2,21 +2,31 @@
 session_start();
 $error_message = '';
 
+require_once __DIR__ . '/../function/koneksi.php';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'] ?? '';
 
     if (empty($email)) {
         $error_message = 'Kolom tidak boleh kosong.';
     } else {
-        require_once __DIR__ . '/../function/koneksi.php';
         require_once __DIR__ . '/../function/reset_password_helper.php';
-        [$success, $msg] = resetUserPassword($conn, $email);
-        if ($success) {
-            $_SESSION['flash_success'] = $msg ?: 'Reset password berhasil dikirim. Silakan cek email Anda.';
-            header('Location: LupaSandi.php');
-            exit;
-        } else {
-            $error_message = $msg;
+        try {
+            [$success, $msg] = resetUserPassword($conn, $email);
+            if ($success) {
+                $_SESSION['flash_success'] = $msg ?: 'Reset password berhasil dikirim. Silakan cek email Anda.';
+                header('Location: LupaSandi.php');
+                exit;
+            } else {
+                $error_message = $msg;
+            }
+        } catch (Exception $e) {
+            $error_message = 'Terjadi kesalahan: ' . $e->getMessage();
+            // Set session notification for error
+            $_SESSION['notifikasi'] = [
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ];
         }
     }
 }

@@ -10,6 +10,39 @@ echo "<!-- Debug Session: ";
 print_r($_SESSION);
 echo " -->";
 
+if (isset($_POST['notif_id']) && !empty($_POST['notif_id'])) {
+  $notif_id = $_POST['notif_id'];
+  $query_update = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE id = ?";
+  $params_update = array($notif_id);
+  $result = sqlsrv_query($conn, $query_update, $params_update);
+  
+  if ($result && sqlsrv_rows_affected($result) > 0) {
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+      // Jika request AJAX, kembalikan response JSON
+      header('Content-Type: application/json');
+      echo json_encode(['success' => true]);
+      exit;
+    }
+  }
+}
+
+if (isset($_POST['tandai_semua'])) {
+    if ($user_role === 'PIC Aset') {
+        $query_all_read = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE untuk IN ('PIC Aset') AND status = 'Belum Dibaca'";
+        $params_all_read = array();
+    } elseif ($user_role === 'Peminjam' && !empty($nim)) {
+        $query_all_read = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE untuk = ? AND status = 'Belum Dibaca'";
+        $params_all_read = array($nim);
+    } else {
+        $query_all_read = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE untuk = ? AND status = 'Belum Dibaca'";
+        $params_all_read = array($user_role);
+    }
+
+    sqlsrv_query($conn, $query_all_read, $params_all_read);
+    echo "<script>alert('Semua notifikasi telah ditandai sebagai sudah dibaca.'); window.location='notif.php';</script>";
+    exit;
+}
+
 // Proses update status notifikasi
 if (isset($_POST['baca']) && !empty($_POST['notif_id'])) {
     $notif_id = $_POST['notif_id'];
@@ -84,8 +117,21 @@ if ($stmt === false) {
             </ol>
         </nav>
     </div>
+
+    <div class="d-flex justify-content-end">
+        <form id="formSetRead" action="notif.php" method="post" class="mb-3">
+    <input type="hidden" name="tandai_semua" value="1">
+    <button type="button" class="btn btn-sm btn-primary" id="setAllReadBtn">
+        <i class="bi bi-check2-all"></i> Tandai Semua Sudah Dibaca
+    </button>
+    </form>
+    </div>
+
+
+
+
         <div class="table-responsive">
-            <table class="table table-hover align-middle table-bordered">
+            <table id="notifikasiTable" class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
                         <th>No</th>
@@ -114,17 +160,17 @@ if ($stmt === false) {
                                 }
                                 ?>
                             </td>
-                            <td class="text-center"><?= htmlspecialchars($row['status']) ?></td>
+                            <td class="text-center status-cell"><?= htmlspecialchars($row['status']) ?></td>
                             <td class="text-center">
                                 <?php if ($row['status'] == 'Belum Dibaca'): ?>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="notif_id" value="<?= $row['id']; ?>">
-                                        <button type="submit" name="baca" style="background:none; border:none; cursor:pointer;">
-                                            <i class="bi bi-check2"></i>
-                                        </button>
+                                    <form method="POST" onsubmit="return tandaiDibaca(this)">
+                                    <input type="hidden" name="notif_id" value="<?= $row['id']; ?>">
+                                    <button type="submit" name="baca" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-check2"></i>
+                                    </button>
                                     </form>
                                 <?php endif; ?>
-                            </td>
+                            </td>  
                         </tr>
                     <?php $no++; endwhile; ?>
                     <?php if (!$hasData): ?>

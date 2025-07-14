@@ -16,6 +16,7 @@
  * @object dateTimeHelpers
  * @description Kumpulan fungsi untuk mengelola input tanggal dan waktu.
  */
+
 const dateTimeHelpers = {
   isLeapYear: function (year) {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -149,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Halaman Otentikasi
   setupLoginForm();
   setupLupaSandiForm();
+  setupTooglePass();
 
   // Halaman Admin & Operator
   setupLaporanPage();
@@ -182,6 +184,21 @@ document.addEventListener("DOMContentLoaded", function () {
   // Setup Profil
   setupProfil();
 });
+
+function setupTooglePass() {
+  const toggleBtn = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("kataSandi");
+  const eyeIcon = document.getElementById("eyeIcon");
+
+  if (!toggleBtn || !passwordInput || !eyeIcon) return;
+
+  toggleBtn.addEventListener("click", function () {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+    eyeIcon.classList.toggle("fa-eye-slash", !isPassword);
+    eyeIcon.classList.toggle("fa-eye", isPassword);
+  });
+}
 
 function setupProfil() {
   const profilForm = document.getElementById("profilForm");
@@ -231,6 +248,35 @@ function setupSuccessModalFromPHP() {
   ) {
     new bootstrap.Modal(successModalElement).show();
   }
+}
+
+function setupNotif() {
+  window.tandaiDibaca = function (button) {
+    const form = button.closest("form");
+    const row = form.closest("tr");
+
+    // Kurangi badge
+    const badge = document.getElementById("notifBadge");
+    if (badge) {
+      let count = parseInt(badge.textContent || "0");
+      if (count > 1) {
+        badge.textContent = count - 1;
+      } else {
+        badge.textContent = "";
+        badge.style.display = "none";
+      }
+    }
+
+    // Ubah status di tabel jadi 'Sudah Dibaca'
+    const statusCell = row.querySelector(".status-cell");
+    if (statusCell) {
+      statusCell.textContent = "Sudah Dibaca";
+    }
+
+    // Submit form biasa ke PHP
+    form.submit();
+    return false;
+  };
 }
 
 // =================================================================
@@ -704,107 +750,86 @@ function setupCekKetersediaanBarangPage() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", setupCekKetersediaanBarangPage);
-
 function setupCekKetersediaanRuanganPage() {
   const form = document.getElementById("formCekKetersediaanRuangan");
   if (!form) return;
 
-  // Inisialisasi date & time picker
-  dateTimeHelpers.fillSelects("tglHari", "tglBulan", "tglTahun");
-  dateTimeHelpers.fillTimeSelects("jam_dari", "menit_dari");
-  dateTimeHelpers.fillTimeSelects("jam_sampai", "menit_sampai");
+  flatpickr("#tglPeminjamanRuangan", {
+    dateFormat: "Y-m-d", //format yang dikirim ke server
+    altInput: true, //tampilan alternatif ke user
+    altFormat: "d F Y", //yang ditampilkan ke user
+    minDate: "today",
+  });
 
-  form.addEventListener("submit", function (e) {
-    const hari = document.getElementById("tglHari").value;
-    const bulan = document.getElementById("tglBulan").value;
-    const tahun = document.getElementById("tglTahun").value;
-    const jamDari = document.getElementById("jam_dari").value;
-    const menitDari = document.getElementById("menit_dari").value;
-    const jamSampai = document.getElementById("jam_sampai").value;
-    const menitSampai = document.getElementById("menit_sampai").value;
+  flatpickr("#waktuMulai", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true,
+  });
 
-    const errorMsg = document.getElementById("error-message");
-    const errorWaktu = document.getElementById("error-waktu");
-    const errorWaktuMulai = document.getElementById("error-waktu-mulai");
-    const errorWaktuSelesai = document.getElementById("error-waktu-selesai");
+  flatpickr("#waktuSelesai", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true,
+  });
 
-    let isValid = true;
+  //validasi form saat submit
+  document
+    .getElementById("formCekKetersediaanRuangan")
+    .addEventListener("submit", function (e) {
+      const tanggal = document
+        .getElementById("tglPeminjamanRuangan")
+        .value.trim();
+      const waktuMulai = document.getElementById("waktuMulai").value.trim();
+      const waktuSelesai = document.getElementById("waktuSelesai").value.trim();
 
-    // Validasi Tanggal
-    if (!hari || !bulan || !tahun) {
-      errorMsg.textContent = "*Harus Diisi";
-      isValid = false;
-    } else {
-      const inputDate = new Date(
-        `${tahun}-${String(bulan).padStart(2, "0")}-${String(hari).padStart(
-          2,
-          "0"
-        )}`
-      );
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (inputDate < today) {
-        errorMsg.textContent = "*Input tanggal sudah lewat";
+      let isValid = true;
+
+      document.getElementById("error-message").style.display = "none";
+      document.getElementById("error-waktu").style.display = "none";
+      document.getElementById("error-waktu-mulai").style.display = "none";
+      document.getElementById("error-waktu-selesai").style.display = "none";
+
+      if (!tanggal) {
+        document.getElementById("error-message").textContent =
+          "*Harus pilih tanggal";
+        document.getElementById("error-message").style.display = "inline";
         isValid = false;
       }
-    }
-    errorMsg.style.display = isValid ? "none" : "inline";
-    if (!isValid) e.preventDefault();
-
-    // Validasi Waktu
-    let isTimeValid = true;
-    let isStartTimeFilled = jamDari !== "" && menitDari !== "";
-    let isEndTimeFilled = jamSampai !== "" && menitSampai !== "";
-
-    errorWaktuMulai.style.display = isStartTimeFilled ? "none" : "inline";
-    errorWaktuSelesai.style.display = isEndTimeFilled ? "none" : "inline";
-
-    if (!isStartTimeFilled || !isEndTimeFilled) {
-      isTimeValid = false;
-    } else {
-      const startMinutes = parseInt(jamDari) * 60 + parseInt(menitDari);
-      const endMinutes = parseInt(jamSampai) * 60 + parseInt(menitSampai);
-      const selectedDate = new Date(
-        `${tahun}-${String(bulan).padStart(2, "0")}-${String(hari).padStart(
-          2,
-          "0"
-        )}`
-      );
-      const now = new Date();
-
-      if (endMinutes <= startMinutes) {
-        errorWaktu.textContent =
-          "*Waktu selesai harus lebih besar dari waktu mulai";
-        isTimeValid = false;
-      } else if (
-        selectedDate.toDateString() === now.toDateString() &&
-        startMinutes < now.getHours() * 60 + now.getMinutes()
-      ) {
-        errorWaktu.textContent =
-          "*Waktu mulai tidak boleh lebih kecil dari waktu sekarang";
-        isTimeValid = false;
+      if (!waktuMulai) {
+        document.getElementById("error-waktu-mulai").style.display = "inline";
+        isValid = false;
       }
-    }
-
-    errorWaktu.style.display = isTimeValid ? "none" : "block";
-    if (!isTimeValid) {
-      isValid = false;
-      e.preventDefault();
-    }
-
-    // Jika semua valid, set hidden input
-    if (isValid) {
-      const tglPeminjamanInput = document.getElementById(
-        "tglPeminjamanRuangan"
-      );
-      if (tglPeminjamanInput) {
-        tglPeminjamanInput.value = `${String(hari).padStart(2, "0")}-${String(
-          bulan
-        ).padStart(2, "0")}-${tahun}`;
+      if (!waktuSelesai) {
+        document.getElementById("error-waktu-selesai").style.display = "inline";
+        isValid = false;
       }
-    }
-  });
+
+      if (waktuMulai && waktuSelesai && waktuMulai >= waktuSelesai) {
+        document.getElementById("error-waktu").textContent =
+          "*Waktu mulai harus lebih awal dari waktu selesai";
+        document.getElementById("error-waktu").style.display = "inline";
+        isValid = false;
+      }
+
+      // Tambahkan validasi waktu mulai < sekarang jika tanggal == hari ini
+      if (tanggal && waktuMulai) {
+        const now = new Date();
+        const inputDateTime = new Date(tanggal + "T" + waktuMulai);
+        if (inputDateTime < now) {
+          document.getElementById("error-waktu").textContent =
+            "*Waktu mulai tidak boleh kurang dari waktu sekarang";
+          document.getElementById("error-waktu").style.display = "inline";
+          isValid = false;
+        }
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
 }
 
 // =================================================================

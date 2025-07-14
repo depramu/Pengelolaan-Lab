@@ -200,10 +200,6 @@ include '../../templates/sidebar.php';
                                         <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nim ?? $npk ?? '-') ?>">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold">Nama Peminjam</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nama) ?>">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
