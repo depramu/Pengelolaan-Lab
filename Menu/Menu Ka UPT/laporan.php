@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../../function/init.php';
 // Penyesuaian: Mengamankan halaman untuk role 'Kepala UPT'
-authorize_role('Kepala UPT'); 
+authorize_role('KA UPT'); 
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
