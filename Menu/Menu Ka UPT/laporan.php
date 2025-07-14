@@ -2,8 +2,8 @@
 // laporan.php untuk Ka UPT (Versi yang sudah dimodifikasi)
 
 require_once __DIR__ . '/../../function/init.php';
-// Penyesuaian: Mengamankan halaman untuk role 'KA UPT'
-authorize_role('KA UPT'); 
+// Penyesuaian: Mengamankan halaman untuk role 'Kepala UPT'
+authorize_role('Kepala UPT'); 
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
@@ -19,7 +19,7 @@ include '../../templates/sidebar.php';
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <!-- Penyesuaian: Link mengarah ke dashboard Ka UPT -->
-        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu KaUPT/dashboardKAUPT.php">Sistem Pengelolaan Lab</a></li>
+        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php">Sistem Pengelolaan Lab</a></li>
         <li class="breadcrumb-item active" aria-current="page">Laporan</li>
       </ol>
     </nav>
