@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../function/init.php';
+require_once _DIR_ . '/../function/init.php';
 
-include __DIR__ . '/header.php';
-include __DIR__ . '/sidebar.php';
+include _DIR_ . '/header.php';
+include _DIR_ . '/sidebar.php';
 
 // Debugging - tampilkan data session
 echo "<!-- Debug Session: ";
@@ -112,12 +112,23 @@ if ($stmt === false) {
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu/Menu PIC/dashboardPIC.php">Sistem Pengelolaan Lab</a></li>
+                <?php
+                // Sesuaikan dashboard berdasarkan role
+                $base_url = 'Menu/Menu Peminjam/';
+                $dashboard_link = $base_url . 'dashboardPeminjam.php';
+                if ($user_role === 'PIC Aset') {
+                    $base_url = 'Menu/Menu PIC/';
+                    $dashboard_link = $base_url . 'dashboardPIC.php';
+                } elseif ($user_role === 'KA UPT') {
+                    $base_url = 'Menu/Menu KA UPT/';
+                    $dashboard_link = $base_url . 'dashboardKAUPT.php';
+                }
+                ?>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/<?= $dashboard_link ?>">Sistem Pengelolaan Lab</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Notifikasi</li>
             </ol>
         </nav>
     </div>
-
     <div class="d-flex justify-content-end">
         <form id="formSetRead" action="notif.php" method="post" class="mb-3">
     <input type="hidden" name="tandai_semua" value="1">

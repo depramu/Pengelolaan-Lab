@@ -82,8 +82,7 @@ include '../../templates/sidebar.php';
                                         <label for="nim" class="form-label fw-semibold d-flex align-items-center">
                                             NIM
                                         </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($nim) ?>">
-                                        <input type="hidden" name="nim" value="<?= htmlspecialchars($nim) ?>">
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($data['nim']) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label fw-semibold d-flex align-items-center">
