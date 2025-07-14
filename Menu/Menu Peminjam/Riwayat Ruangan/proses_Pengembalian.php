@@ -91,7 +91,7 @@ if (isset($_POST['submit_pengembalian'])) {
                 $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
                 sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
                 // Sukses, showModal true (bisa digunakan di halaman redirect)
-                header("Location: riwayatRuangan.php?showModal=1");
+                header("Location: formDetailRiwayatRuangan.php?idPeminjamanRuangan=$idPeminjaman&success=1");
                 exit();
             } else {
                 echo "Data pengembalian berhasil disimpan, TAPI gagal update status peminjaman. Error: <pre>";

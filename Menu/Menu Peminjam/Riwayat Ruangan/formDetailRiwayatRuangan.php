@@ -6,6 +6,10 @@ $showModal = false;
 $data = null;
 $error_message = null;
 
+if (isset($_GET['success']) && $_GET['success'] == '1') {
+    $showModal = true;
+}
+
 // Cek baik POST maupun GET untuk idPeminjamanRuangan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idPeminjamanRuangan = $_POST['idPeminjamanRuangan'];
@@ -223,8 +227,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
-
-                    </div>
+                            </div>
                     </form>
                 <?php endif; ?>
                 </div>
@@ -232,15 +235,6 @@ include __DIR__ . '/../../../templates/sidebar.php';
         </div>
     </div>
 </main>
-
-<script src="<?= BASE_URL ?>/main.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setupDetailRiwayatForm();
-    });
-</script>
-
-
 <?php
 include __DIR__ . '/../../../templates/footer.php';
 

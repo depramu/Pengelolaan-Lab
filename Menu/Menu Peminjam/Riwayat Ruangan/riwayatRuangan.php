@@ -33,7 +33,7 @@
                       JOIN Ruangan r ON pr.idRuangan = r.idRuangan
                       LEFT JOIN Status_Peminjaman sp ON pr.idPeminjamanRuangan = sp.idPeminjamanRuangan
                       WHERE pr.nim = ?
-                      ORDER BY pr.tglPeminjamanRuangan DESC, pr.waktuMulai DESC
+                      ORDER BY pr.tglPeminjamanRuangan ASC, pr.waktuMulai ASC
                       OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
             $params = [$nim, $offset, $perPage];
             $result = sqlsrv_query($conn, $query, $params);
