@@ -59,7 +59,6 @@ include '../../../templates/sidebar.php';
           <th>Tanggal Peminjaman</th>
           <th>Waktu Mulai</th>
           <th>Waktu Selesai</th>
-          <th>Status Peminjaman</th>
           <th>Aksi</th>
         </tr>
       </thead>
@@ -72,22 +71,38 @@ include '../../../templates/sidebar.php';
           $statusPeminjaman = $row['statusPeminjaman'] ?? '';
           $idPeminjaman = htmlspecialchars($row['idPeminjamanRuangan'] ?? '');
 
+          $now = new DateTime();
+                            $terlambat = false;
+
+                            if (
+                                $statusPeminjaman === 'Sedang Dipinjam' &&
+                                ($row['tglPeminjamanRuangan'] instanceof DateTime) &&
+                                ($row['waktuSelesai'] instanceof DateTime) &&
+                                $statusPeminjaman !== 'Telah Dikembalikan'
+                            ) {
+                                $tgl = $row['tglPeminjamanRuangan']->format('Y-m-d');
+                                $jam = $row['waktuSelesai']->format('H:i:s');
+                                $waktuSelesaiFull = new DateTime("$tgl $jam");
+
+                                $terlambat = $now > $waktuSelesaiFull;
+                            }
+
           // Penyesuaian link dan ikon aksi sesuai status
           switch ($statusPeminjaman) {
             case 'Menunggu Persetujuan':
-              $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+              $iconSrc = BASE_URL . '/icon/jamAbu.svg';
               $altText = 'Menunggu Persetujuan oleh PIC';
               $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
               $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/pengajuanRuangan.php?id=' . $idPeminjaman;
               break;
             case 'Menunggu Pengecekan':
-              $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+              $iconSrc = BASE_URL . '/icon/jamhijau.svg';
               $altText = 'Menunggu Pengecekan oleh PIC';
               $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
               $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/pengembalianRuangan.php?id=' . $idPeminjaman;
               break;
             case 'Sedang Dipinjam':
-              $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+              $iconSrc = BASE_URL . '/icon/jamkuning.svg';
               $altText = 'Sedang Dipinjam';
               $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
               $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
@@ -112,7 +127,7 @@ include '../../../templates/sidebar.php';
               break;
           }
         ?>
-          <tr class="text-center">
+          <tr class="<?= $terlambat ? 'table-danger' : '' ?> text-center">
             <td><?= $no ?></td>
             <td class="text-start"><?= htmlspecialchars($row['namaRuangan']) ?></td>
             <td class="text-start"><?= htmlspecialchars($row['namaPeminjam']) ?></td>
@@ -121,7 +136,6 @@ include '../../../templates/sidebar.php';
             </td>
             <td><?= ($row['waktuMulai'] instanceof DateTimeInterface) ? $row['waktuMulai']->format('H:i') : 'N/A'; ?></td>
             <td><?= ($row['waktuSelesai'] instanceof DateTimeInterface) ? $row['waktuSelesai']->format('H:i') : 'N/A'; ?></td>
-            <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman']) ?></td>
             <td class="td-aksi">
               <a href="<?= $linkAksi ?>">
                 <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -142,7 +156,15 @@ include '../../../templates/sidebar.php';
       </tbody>
     </table>
   </div>
-
+      <table class="legend-status">
+            <tr>
+                <td><p><img src="<?= BASE_URL?>/icon/centang.svg" class="legend-icon"> : Telah Dikembalikan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/silang.svg" class="legend-icon"> : Ditolak</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamhijau.svg" class="legend-icon"> : Menunggu Pengecekan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamkuning.svg" class="legend-icon"> : Sedang Dipinjam</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p></td>
+            </tr>
+        </table>
   <?php
   generatePagination($page, $totalPages);
   ?>

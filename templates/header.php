@@ -40,7 +40,7 @@ switch ($user_role) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <link rel="stylesheet" href="<?= BASE_URL ?>style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
 </head>
 
 <body class="bg-light">
@@ -63,7 +63,6 @@ switch ($user_role) {
                             echo " (" . htmlspecialchars($_SESSION['user_role']) . ")";
                         }
                         ?>
-                    </span>
                     </span>
                 </div>
                 <a href="<?= BASE_URL ?>/templates/profil.php" class="me-2"><img src="<?= BASE_URL ?>/icon/vector0.svg" class="profile-img img-fluid" alt="Profil"></a>

@@ -81,8 +81,7 @@
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
-                        <th>ID Peminjaman</th>
-                        <th>ID Ruangan</th>
+                        <th>No</th>
                         <th>Nama Ruangan</th>
                         <th>Tanggal Peminjaman</th>
                         <th>Waktu Mulai </th>
@@ -91,7 +90,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
+                <?php
+                $hasData = false;
+                $no = ($page - 1) * $perPage + 1;
                     if ($result === false) {
                         echo "<tr><td colspan='7' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
                     } elseif (sqlsrv_has_rows($result) === false) {
@@ -99,32 +100,47 @@
                     } else {
                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                             $statusPeminjaman = $row['statusPeminjaman'] ?? '';
-                            $idPeminjaman = htmlspecialchars(string: $row['idPeminjamanRuangan'] ?? '');
+                            $idPeminjaman = htmlspecialchars($row['idPeminjamanRuangan'] ?? '');
 
                             $linkDetail = "formDetailRiwayatRuangan.php?idPeminjamanRuangan=" . $idPeminjaman;
+
+                            $now = new DateTime();
+                            $terlambat = false;
+
+                            if (
+                                $statusPeminjaman === 'Sedang Dipinjam' &&
+                                ($row['tglPeminjamanRuangan'] instanceof DateTime) &&
+                                ($row['waktuSelesai'] instanceof DateTime) &&
+                                $statusPeminjaman !== 'Telah Dikembalikan'
+                            ) {
+                                $tgl = $row['tglPeminjamanRuangan']->format('Y-m-d');
+                                $jam = $row['waktuSelesai']->format('H:i:s');
+                                $waktuSelesaiFull = new DateTime("$tgl $jam");
+
+                                $terlambat = $now > $waktuSelesaiFull;
+                            }
 
                             if ($statusPeminjaman == 'Telah Dikembalikan') {
                                 $iconSrc = BASE_URL . '/icon/centang.svg';
                                 $altText = 'Peminjaman Selesai';
                             } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-                                $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                                $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                                 $altText = 'Sedang Dipinjam';
                             } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
                                 $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                                 $altText = 'Menunggu Pengecekan oleh PIC';
                             } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
-                                $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+                                $iconSrc = BASE_URL . '/icon/jamAbu.svg';
                                 $altText = 'Menunggu Persetujuan oleh PIC';
                             } elseif ($statusPeminjaman == 'Ditolak') {
                                 $iconSrc = BASE_URL . '/icon/silang.svg';
                                 $altText = 'Ditolak';
                             }
                     ?>
-                            <tr>
-                                <td class="text-center"><?= htmlspecialchars($row['idPeminjamanRuangan'] ?? '') ?></td>
-                                <td class="text-center"><?= htmlspecialchars($row['idRuangan'] ?? '') ?></td>
+                            <tr class="<?= $terlambat ? 'table-danger' : '' ?>">
+                                <td class="text-center"><?= $no ?></td>
                                 <td><?= htmlspecialchars($row['namaRuangan'] ?? '') ?></td>
-                                <td class="text-center"><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d-m-Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
+                                <td class="text-center"><?= ($row['tglPeminjamanRuangan'] instanceof DateTime ? $row['tglPeminjamanRuangan']->format('d M Y') : htmlspecialchars($row['tglPeminjamanRuangan'] ?? '')) ?></td>
                                 <td class="text-center"><?= ($row['waktuMulai'] instanceof DateTime ? $row['waktuMulai']->format('H:i') : htmlspecialchars($row['waktuMulai'] ?? '')) ?></td>
                                 <td class="text-center"><?= ($row['waktuSelesai'] instanceof DateTime ? $row['waktuSelesai']->format('H:i') : htmlspecialchars($row['waktuSelesai'] ?? '')) ?></td>
                                 <td class="td-aksi">
@@ -137,6 +153,7 @@
                                 </td>
                             </tr>
                     <?php
+                            $no++;
                         }
                         generatePagination($page, $totalPages);
                     }
@@ -144,6 +161,15 @@
                 </tbody>
             </table>
         </div>
+        <table class="legend-status">
+            <tr>
+                <td><p><img src="<?= BASE_URL?>/icon/centang.svg" class="legend-icon"> : Telah Dikembalikan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/silang.svg" class="legend-icon"> : Ditolak</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamhijau.svg" class="legend-icon"> : Menunggu Pengecekan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamkuning.svg" class="legend-icon"> : Sedang Dipinjam</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p></td>
+            </tr>
+        </table>
     </main>
 
 

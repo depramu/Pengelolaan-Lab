@@ -1,5 +1,10 @@
 <?php
-include '../../../function/koneksi.php';
+include '../../../function/init.php';
+
+error_log("--- START: proses_Pengembalian.php (Timestamp: " . date('Y-m-d H:i:s') . ") ---");
+error_log("POST Data: " . print_r($_POST, true));
+error_log("FILES Data: " . print_r($_FILES, true));
+error_log("UPLOAD_DIR: " . UPLOAD_DIR);
 
 $showModal = false; // Tambahkan variabel showModal
 
@@ -12,11 +17,11 @@ if (isset($_POST['submit_pengembalian'])) {
     $namaFileSesudah = '';
 
     if (isset($_FILES['dokSebelum']) && $_FILES['dokSebelum']['error'] == 0) {
-        $target_dir = "../../uploads/dokumentasi/";
+        $target_dir = UPLOAD_DIR;
         if (!is_dir($target_dir)) {
             mkdir($target_dir, 0755, true);
         }
-        $namaFileSebelum = $idPeminjaman . "_sebelum_" . time() . "_" . basename($_FILES["dokSebelum"]["name"]);
+        $namaFileSebelum = "$idPeminjaman" . "_sebelum_" . time() . "_" . basename($_FILES["dokSebelum"]["name"]);
         $target_file_sebelum = $target_dir . $namaFileSebelum;
         if (!move_uploaded_file($_FILES["dokSebelum"]["tmp_name"], $target_file_sebelum)) {
             $pesan_error .= "Gagal upload file 'Sebelum'. ";
@@ -28,11 +33,11 @@ if (isset($_POST['submit_pengembalian'])) {
     }
 
     if (isset($_FILES['dokSesudah']) && $_FILES['dokSesudah']['error'] == 0) {
-        $target_dir = "../../uploads/dokumentasi/";
+        $target_dir = UPLOAD_DIR;
         if (!is_dir($target_dir)) {
             mkdir($target_dir, 0755, true);
         }
-        $namaFileSesudah = $idPeminjaman . "_sesudah_" . time() . "_" . basename($_FILES["dokSesudah"]["name"]);
+        $namaFileSesudah = "$idPeminjaman" . "_sesudah_" . time() . "_" . basename($_FILES["dokSesudah"]["name"]);
         $target_file_sesudah = $target_dir . $namaFileSesudah;
         if (!move_uploaded_file($_FILES["dokSesudah"]["tmp_name"], $target_file_sesudah)) {
             $pesan_error .= "Gagal upload file 'Sesudah'. ";

@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($idPeminjamanRuangan !== null) {
-    // Query untuk mendapatkan data peminjaman ruangan
     $sql = "SELECT
                 p.idPeminjamanRuangan, p.idRuangan, p.nim, p.npk,
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
@@ -105,40 +104,27 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                 <?= $error_message ?>
                             </div>
                         <?php elseif ($data) : ?>
-                            <form id="formDetail" action="proses_pengembalian.php" method="POST" enctype="multipart/form-data">
+                            <form id="formDetail" action="proses_Pengembalian.php" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="idPeminjamanRuangan" value="<?= htmlspecialchars($data['idPeminjamanRuangan'] ?? '') ?>">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idPeminjamanRuangan']) ?></div>
-                                            <input type="hidden" name="idPeminjamanRuangan" class="form-control" value="<?= htmlspecialchars($data['idPeminjamanRuangan']) ?>">
-                                        </div>
-                                        <div class="mb-3">
                                             <label class="form-label fw-semibold">NIM / NPK</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d-m-y') : '' ?></div>
-                                            <input type="hidden" class="form-control" value="<?= ($data['tglPeminjamanRuangan'] instanceof DateTime) ? $data['tglPeminjamanRuangan']->format('d-m-y') : '' ?>">
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime)  ? $data['tglPeminjamanRuangan']->format('d M Y') : '' ?></div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Alasan Peminjaman</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></div>
-                                            <textarea class="form-control" rows="3" hidden><?= htmlspecialchars($data['alasanPeminjamanRuangan']) ?></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">ID Ruangan</label>
-                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['idRuangan']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['idRuangan']) ?>">
-                                        </div>
-                                        <div class="mb-3">
                                             <label class="form-label fw-semibold">Nama Ruangan</label>
                                             <div class="form-control-plaintext"><?= htmlspecialchars($data['namaRuangan']) ?></div>
-                                            <input type="hidden" class="form-control" value="<?= htmlspecialchars($data['namaRuangan']) ?>">
                                         </div>
                                         <div class="mb-3">
                                             <div class="row">
@@ -199,7 +185,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">
+                                                                <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" alt="Dokumentasi Sebelum" style="max-width: 500px; height: auto;">
+                                                            </a>
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                                         <?php endif; ?>
@@ -217,7 +205,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 <?php else : ?>
                                                     <div class="mt-1">
                                                         <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                            <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">
+                                                                <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" alt="Dokumentasi Sesudah" style="max-width: 500px; height: auto;">
+                                                            </a>
                                                         <?php else : ?>
                                                             <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                                         <?php endif; ?>
@@ -225,23 +215,30 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 <?php endif; ?>
                                             </div>
                                         </div>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
+                                            <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
+                                                <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
+                                            <?php endif; ?>
+                                        </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
 
-                            </div>
-                            <div class="d-flex justify-content-between mt-3">
-                                <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
-                                <?php if ($data['statusPeminjaman'] == 'Sedang Dipinjam') : ?>
-                                    <button type="submit" name="submit_pengembalian" class="btn btn-primary">Kirim</button>
-                                <?php endif; ?>
-                            </div>
-                        </form>
-                    <?php endif; ?>
+                    </div>
+                    </form>
+                <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+<script src="<?= BASE_URL ?>/main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setupDetailRiwayatForm();
+    });
+</script>
 
 
 <?php

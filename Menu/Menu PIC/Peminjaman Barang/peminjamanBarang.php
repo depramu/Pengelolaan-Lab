@@ -57,7 +57,6 @@ include '../../../templates/sidebar.php';
                     <th>Nama Peminjam</th>
                     <th>Tanggal Peminjaman</th>
                     <th>Jumlah Peminjaman</th>
-                    <th>Status Peminjaman</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -69,13 +68,26 @@ include '../../../templates/sidebar.php';
                     $hasData = true;
                     $statusPeminjaman = $row['statusPeminjaman'] ?? '';
                     $idPeminjaman = htmlspecialchars($row['idPeminjamanBrg'] ?? '');
+                    $terlambat = false;
+                        if (
+                            $statusPeminjaman === 'Sedang Dipinjam' &&
+                            isset($row['tglPeminjamanBrg']) &&
+                            $row['tglPeminjamanBrg'] instanceof DateTime
+                        ) {
+                            $deadline = clone $row['tglPeminjamanBrg'];
+                            $deadline->setTime(23, 59, 59);
+                            $now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+                            if ($now > $deadline) {
+                                $terlambat = true;
+                            }
+                        }
 
                     if ($statusPeminjaman == 'Menunggu Persetujuan') {
-                        $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+                        $iconSrc = BASE_URL . '/icon/jamAbu.svg';
                         $altText = 'Menunggu Persetujuan oleh PIC';
                         $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/pengajuanBarang.php?id=' . $idPeminjaman;
                     } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-                        $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                        $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                         $altText = 'Sedang Dipinjam';
                         $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/pengembalianBarang.php?id=' . $idPeminjaman;
                     } elseif ($statusPeminjaman == 'Sebagian Dikembalikan') {
@@ -96,13 +108,12 @@ include '../../../templates/sidebar.php';
                         $linkDetail = '#';
                     }
                 ?>
-                    <tr class="text-center">
+                    <tr class="<?= $terlambat ? 'table-danger' : '' ?> text-center">
                         <td><?= $no ?></td>
                         <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
                         <td class="text-start"><?= htmlspecialchars($row['namaPeminjam'] ?? '') ?></td>
                         <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
                         <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['statusPeminjaman']) ?></td>
                         <td class="td-aksi">
                             <a href="<?= $linkDetail ?>">
                                 <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
@@ -123,6 +134,15 @@ include '../../../templates/sidebar.php';
             </tbody>
         </table>
     </div>
+    <table class="legend-status">
+            <tr>
+                <td><p><img src="<?= BASE_URL?>/icon/centang.svg" class="legend-icon"> : Telah Dikembalikan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/silang.svg" class="legend-icon"> : Ditolak</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamhijau.svg" class="legend-icon"> : Sebagian Dikembalikan</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamkuning.svg" class="legend-icon"> : Sedang Dipinjam</p></td>
+                <td><p><img src="<?= BASE_URL?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p></td>
+            </tr>
+        </table>
     <?php
     generatePagination($page, $totalPages);
     ?>
