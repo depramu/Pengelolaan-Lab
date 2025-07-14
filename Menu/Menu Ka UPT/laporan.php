@@ -1,5 +1,4 @@
 <?php
-// laporan.php untuk Ka UPT (Versi yang sudah dimodifikasi)
 
 require_once __DIR__ . '/../../function/init.php';
 // Penyesuaian: Mengamankan halaman untuk role 'Kepala UPT'
