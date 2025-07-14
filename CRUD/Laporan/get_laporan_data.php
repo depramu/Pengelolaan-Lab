@@ -19,8 +19,11 @@ $response = ['status' => 'error', 'message' => 'Request tidak valid.', 'data' =>
 
 // Ambil parameter dari URL request.
 $jenisLaporan = isset($_GET['jenisLaporan']) ? $_GET['jenisLaporan'] : null;
-$bulan = isset($_GET['bulan']) && $_GET['bulan'] !== '' ? (int)$_GET['bulan'] : null;
+$bulan = (isset($_GET['bulan']) && $_GET['bulan'] !== '' && $_GET['bulan'] !== '0') ? (int)$_GET['bulan'] : null;
 $tahun = isset($_GET['tahun']) && $_GET['tahun'] !== '' ? (int)$_GET['tahun'] : null;
+
+// // Debug log (hapus jika sudah yakin)
+file_put_contents(__DIR__ . '/debug.log', "jenisLaporan=$jenisLaporan, tahun=$tahun, bulan=$bulan\n", FILE_APPEND);
 
 // Lanjutkan hanya jika koneksi berhasil dan jenis laporan telah diberikan.
 if ($conn && $jenisLaporan) {
@@ -39,11 +42,8 @@ if ($conn && $jenisLaporan) {
                 $stmt = sqlsrv_query($conn, $query);
                 break;
             case 'peminjamSeringMeminjam':
-                if ($bulan === null || $tahun === null) {
-                    $response['message'] = "Bulan dan Tahun harus dipilih untuk laporan ini.";
-                    $stmt = false;
-                } else {
-                    // **PERBAIKAN UTAMA**: Mengganti `namaMhs` dan `namaKry` menjadi `nama`
+                if ($tahun && $bulan === null) {
+                    // Query tahunan
                     $query = "
                         SELECT
                             CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam,
@@ -51,9 +51,32 @@ if ($conn && $jenisLaporan) {
                             CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
                             COUNT(P.id_peminjaman) AS JumlahPeminjaman
                         FROM (
-                            SELECT idPeminjamanBrg AS id_peminjaman, nim, npk, tglPeminjamanBrg FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
+                            SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ?
                             UNION ALL
-                            SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk, tglPeminjamanRuangan FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ? AND MONTH(tglPeminjamanRuangan) = ?
+                            SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ?
+                        ) AS P
+                        LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
+                        LEFT JOIN Karyawan AS K ON P.npk = K.npk 
+                        GROUP BY 
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                        ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC;
+                    ";
+                    $params = [$tahun, $tahun];
+                    $stmt = sqlsrv_query($conn, $query, $params);
+                } elseif ($tahun && $bulan !== null) {
+                    // Query bulanan
+                    $query = "
+                        SELECT
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
+                            COUNT(P.id_peminjaman) AS JumlahPeminjaman
+                        FROM (
+                            SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
+                            UNION ALL
+                            SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ? AND MONTH(tglPeminjamanRuangan) = ?
                         ) AS P
                         LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
                         LEFT JOIN Karyawan AS K ON P.npk = K.npk 
@@ -65,13 +88,22 @@ if ($conn && $jenisLaporan) {
                     ";
                     $params = [$tahun, $bulan, $tahun, $bulan];
                     $stmt = sqlsrv_query($conn, $query, $params);
+                } else {
+                    $response['message'] = "Tahun harus dipilih untuk laporan ini.";
+                    $stmt = false;
                 }
                 break;
             case 'barangSeringDipinjam':
-                if ($bulan === null || $tahun === null) {
-                    $response['message'] = "Bulan dan Tahun harus dipilih untuk laporan ini.";
-                    $stmt = false;
-                } else {
+                if ($tahun && $bulan === null) {
+                    $query = "
+                        SELECT PB.idBarang, B.namaBarang, SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
+                        FROM Peminjaman_Barang AS PB INNER JOIN Barang AS B ON PB.idBarang = B.idBarang
+                        WHERE YEAR(PB.tglPeminjamanBrg) = ?
+                        GROUP BY PB.idBarang, B.namaBarang ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC;
+                    ";
+                    $params = [$tahun];
+                    $stmt = sqlsrv_query($conn, $query, $params);
+                } elseif ($tahun && $bulan !== null) {
                     $query = "
                         SELECT PB.idBarang, B.namaBarang, SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
                         FROM Peminjaman_Barang AS PB INNER JOIN Barang AS B ON PB.idBarang = B.idBarang
@@ -80,13 +112,22 @@ if ($conn && $jenisLaporan) {
                     ";
                     $params = [$tahun, $bulan];
                     $stmt = sqlsrv_query($conn, $query, $params);
+                } else {
+                    $response['message'] = "Tahun harus dipilih untuk laporan ini.";
+                    $stmt = false;
                 }
                 break;
             case 'ruanganSeringDipinjam':
-                if ($bulan === null || $tahun === null) {
-                    $response['message'] = "Bulan dan Tahun harus dipilih untuk laporan ini.";
-                    $stmt = false;
-                } else {
+                if ($tahun && $bulan === null) {
+                    $query = "
+                        SELECT PR.idRuangan, R.namaRuangan, COUNT(PR.idpeminjamanRuangan) AS JumlahDipinjam
+                        FROM Peminjaman_Ruangan AS PR INNER JOIN Ruangan AS R ON PR.idRuangan = R.idRuangan
+                        WHERE YEAR(PR.tglPeminjamanRuangan) = ?
+                        GROUP BY PR.idRuangan, R.namaRuangan ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC;
+                    ";
+                    $params = [$tahun];
+                    $stmt = sqlsrv_query($conn, $query, $params);
+                } elseif ($tahun && $bulan !== null) {
                     $query = "
                         SELECT PR.idRuangan, R.namaRuangan, COUNT(PR.idpeminjamanRuangan) AS JumlahDipinjam
                         FROM Peminjaman_Ruangan AS PR INNER JOIN Ruangan AS R ON PR.idRuangan = R.idRuangan
@@ -95,6 +136,9 @@ if ($conn && $jenisLaporan) {
                     ";
                     $params = [$tahun, $bulan];
                     $stmt = sqlsrv_query($conn, $query, $params);
+                } else {
+                    $response['message'] = "Tahun harus dipilih untuk laporan ini.";
+                    $stmt = false;
                 }
                 break;
             default:

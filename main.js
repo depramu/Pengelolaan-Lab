@@ -356,11 +356,8 @@ function setupLaporanPage() {
     const thn = document.getElementById("tahunLaporan").value;
 
     // Validasi filter
-    if (
-      !type ||
-      (type !== "dataBarang" && type !== "dataRuangan" && (!bln || !thn))
-    ) {
-      validationMsg.textContent = "Silakan lengkapi filter yang diperlukan.";
+    if (!type || (type !== "dataBarang" && type !== "dataRuangan" && !thn)) {
+      validationMsg.textContent = "Silakan pilih jenis laporan dan tahun.";
       if (validationModal) validationModal.show();
       return;
     }
@@ -375,7 +372,9 @@ function setupLaporanPage() {
     // Fetch data
     let url = `../../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}`;
     if (type !== "dataBarang" && type !== "dataRuangan") {
-      url += `&bulan=${bln}&tahun=${thn}`;
+      if (thn) url += `&tahun=${thn}`;
+      // Hanya tambahkan bulan jika benar-benar dipilih (tidak kosong)
+      if (bln && bln !== "") url += `&bulan=${bln}`;
     }
 
     fetch(url)
@@ -559,43 +558,39 @@ function setupLaporanPage() {
     const wadahLaporanDiv = document.getElementById("wadahLaporan");
     if (!wadahLaporanDiv) return;
 
-    // Bagian rendering tabel di halaman utama tidak berubah
-    const tbl = document.createElement("table");
-    tbl.className = "table table-striped table-bordered table-hover";
+    // Header dan keys tanpa ID, kolom pertama selalu "No"
     let headers = [],
       keys = [];
     switch (reportType) {
       case "dataBarang":
-        headers = ["ID", "Nama", "Stok", "Lokasi"];
-        keys = ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"];
+        headers = ["No", "Nama Barang", "Stok", "Lokasi"];
+        keys = ["namaBarang", "stokBarang", "lokasiBarang"];
         break;
       case "dataRuangan":
-        headers = ["ID", "Nama", "Kondisi", "Ketersediaan"];
-        keys = ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"];
+        headers = ["No", "Nama Ruangan", "Kondisi", "Ketersediaan"];
+        keys = ["namaRuangan", "kondisiRuangan", "ketersediaan"];
         break;
       case "peminjamSeringMeminjam":
-        headers = ["ID Peminjam", "Nama", "Jenis", "Jumlah"];
-        keys = [
-          "IDPeminjam",
-          "NamaPeminjam",
-          "JenisPeminjam",
-          "JumlahPeminjaman",
-        ];
+        headers = ["No", "Nama Peminjam", "Jenis", "Jumlah Peminjaman"];
+        keys = ["NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"];
         break;
       case "barangSeringDipinjam":
-        headers = ["ID Barang", "Nama", "Total Dipinjam"];
-        keys = ["idBarang", "namaBarang", "TotalKuantitasDipinjam"];
+        headers = ["No", "Nama Barang", "Total Kuantitas Dipinjam"];
+        keys = ["namaBarang", "TotalKuantitasDipinjam"];
         break;
       case "ruanganSeringDipinjam":
-        headers = ["ID Ruangan", "Nama", "Jumlah Dipinjam"];
-        keys = ["idRuangan", "namaRuangan", "JumlahDipinjam"];
+        headers = ["No", "Nama Ruangan", "Jumlah Dipinjam"];
+        keys = ["namaRuangan", "JumlahDipinjam"];
         break;
     }
+    const tbl = document.createElement("table");
+    tbl.className = "table table-striped table-bordered table-hover";
     const thead = tbl.createTHead().insertRow();
     headers.forEach((h) => (thead.insertCell().textContent = h));
     const tbody = tbl.createTBody();
-    fullData.forEach((item) => {
+    fullData.forEach((item, idx) => {
       const r = tbody.insertRow();
+      r.insertCell().textContent = idx + 1; // Kolom No
       keys.forEach((k) => (r.insertCell().textContent = item[k] ?? ""));
     });
     wadahLaporanDiv.innerHTML = "";
@@ -612,25 +607,16 @@ function setupLaporanPage() {
         const bln = document.getElementById("bulanLaporan").value;
         const thn = document.getElementById("tahunLaporan").value;
 
-        // Tentukan script mana yang akan digunakan berdasarkan path URL
         let scriptName = "export_laporan_excel_pic.php";
         if (window.location.pathname.includes("/Menu Ka UPT/")) {
           scriptName = "export_laporan_excel_kaupt.php";
         }
 
-        // ================================================ //
-        // ========= PERUBAHAN UTAMA UNTUK PREVIEW ======== //
-        // ================================================ //
-
-        // Buat URL ke script PHP, TANPA &mode=download
-        // Ini akan secara default membuka mode preview
+        // Buat URL ke script PHP, tanpa &mode=download
         let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
+        if (thn) previewUrl += `&tahun=${thn}`;
+        if (bln && bln !== "") previewUrl += `&bulan=${bln}`;
 
-        if (bln && thn) {
-          previewUrl += `&bulan=${bln}&tahun=${thn}`;
-        }
-
-        // Buka URL preview di tab baru
         window.open(previewUrl, "_blank");
       });
     }

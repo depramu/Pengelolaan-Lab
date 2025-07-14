@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../function/init.php';
 
 // Ambil parameter dari URL
 $jenisLaporan = isset($_GET['jenisLaporan']) ? $_GET['jenisLaporan'] : null;
-$bulan = isset($_GET['bulan']) && $_GET['bulan'] !== '' ? (int)$_GET['bulan'] : null;
+$bulan = (isset($_GET['bulan']) && $_GET['bulan'] !== '' && $_GET['bulan'] !== '0') ? (int)$_GET['bulan'] : null;
 $tahun = isset($_GET['tahun']) && $_GET['tahun'] !== '' ? (int)$_GET['tahun'] : null;
 
 if (!$jenisLaporan) {
@@ -24,19 +24,19 @@ $reportTitles = [
 ];
 
 $headersMap = [
-    'dataBarang' => ["ID", "Nama Barang", "Stok", "Lokasi"],
-    'dataRuangan' => ["ID", "Nama Ruangan", "Kondisi", "Ketersediaan"],
-    'peminjamSeringMeminjam' => ["ID Peminjam", "Nama Peminjam", "Jenis", "Jumlah Peminjaman"],
-    'barangSeringDipinjam' => ["ID Barang", "Nama Barang", "Total Kuantitas Dipinjam"],
-    'ruanganSeringDipinjam' => ["ID Ruangan", "Nama Ruangan", "Jumlah Dipinjam"]
+    'dataBarang' => ["No", "Nama Barang", "Stok", "Lokasi"],
+    'dataRuangan' => ["No", "Nama Ruangan", "Kondisi", "Ketersediaan"],
+    'peminjamSeringMeminjam' => ["No", "Nama Peminjam", "Jenis", "Jumlah Peminjaman"],
+    'barangSeringDipinjam' => ["No", "Nama Barang", "Total Kuantitas Dipinjam"],
+    'ruanganSeringDipinjam' => ["No", "Nama Ruangan", "Jumlah Dipinjam"]
 ];
 
 $keysMap = [
-    'dataBarang' => ["idBarang", "namaBarang", "stokBarang", "lokasiBarang"],
-    'dataRuangan' => ["idRuangan", "namaRuangan", "kondisiRuangan", "ketersediaan"],
-    'peminjamSeringMeminjam' => ["IDPeminjam", "NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"],
-    'barangSeringDipinjam' => ["idBarang", "namaBarang", "TotalKuantitasDipinjam"],
-    'ruanganSeringDipinjam' => ["idRuangan", "namaRuangan", "JumlahDipinjam"]
+    'dataBarang' => ["namaBarang", "stokBarang", "lokasiBarang"],
+    'dataRuangan' => ["namaRuangan", "kondisiRuangan", "ketersediaan"],
+    'peminjamSeringMeminjam' => ["NamaPeminjam", "JenisPeminjam", "JumlahPeminjaman"],
+    'barangSeringDipinjam' => ["namaBarang", "TotalKuantitasDipinjam"],
+    'ruanganSeringDipinjam' => ["namaRuangan", "JumlahDipinjam"]
 ];
 
 $reportTitle = $reportTitles[$jenisLaporan] ?? 'Laporan';
@@ -62,59 +62,108 @@ if ($conn) {
     $params = [];
     switch ($jenisLaporan) {
         case 'dataBarang':
-            $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY idBarang ASC";
+            $query = "SELECT namaBarang, stokBarang, lokasiBarang FROM Barang ORDER BY namaBarang ASC";
             break;
         case 'dataRuangan':
-            $query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan ORDER BY idRuangan ASC";
+            $query = "SELECT namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan ORDER BY namaRuangan ASC";
             break;
         case 'peminjamSeringMeminjam':
-            $query = "
-                SELECT
-                    CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam,
-                    CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
-                    CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
-                    COUNT(P.id_peminjaman) AS JumlahPeminjaman
-                FROM (
-                    SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
-                    UNION ALL
-                    SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ? AND MONTH(tglPeminjamanRuangan) = ?
-                ) AS P
-                LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
-                LEFT JOIN Karyawan AS K ON P.npk = K.npk 
-                GROUP BY 
-                    CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
-                    CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
-                    CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
-                ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC;
-            ";
-            $params = [$tahun, $bulan, $tahun, $bulan];
+            if ($tahun && $bulan === null) {
+                // Query tahunan
+                $query = "
+                    SELECT
+                        CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
+                        CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
+                        COUNT(P.id_peminjaman) AS JumlahPeminjaman
+                    FROM (
+                        SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ?
+                        UNION ALL
+                        SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ?
+                    ) AS P
+                    LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
+                    LEFT JOIN Karyawan AS K ON P.npk = K.npk 
+                    GROUP BY 
+                        CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
+                        CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                    ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC;
+                ";
+                $params = [$tahun, $tahun];
+            } elseif ($tahun && $bulan !== null) {
+                // Query bulanan
+                $query = "
+                    SELECT
+                        CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
+                        CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
+                        COUNT(P.id_peminjaman) AS JumlahPeminjaman
+                    FROM (
+                        SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
+                        UNION ALL
+                        SELECT idPeminjamanRuangan AS id_peminjaman, nim, npk FROM Peminjaman_Ruangan WHERE YEAR(tglPeminjamanRuangan) = ? AND MONTH(tglPeminjamanRuangan) = ?
+                    ) AS P
+                    LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
+                    LEFT JOIN Karyawan AS K ON P.npk = K.npk 
+                    GROUP BY 
+                        CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
+                        CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                    ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC;
+                ";
+                $params = [$tahun, $bulan, $tahun, $bulan];
+            }
             break;
         case 'barangSeringDipinjam':
-            $query = "
-                SELECT PB.idBarang, B.namaBarang, SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
-                FROM Peminjaman_Barang AS PB INNER JOIN Barang AS B ON PB.idBarang = B.idBarang
-                WHERE YEAR(PB.tglPeminjamanBrg) = ? AND MONTH(PB.tglPeminjamanBrg) = ?
-                GROUP BY PB.idBarang, B.namaBarang ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC;
-            ";
-            $params = [$tahun, $bulan];
+            if ($tahun) {
+                if ($bulan === null) {
+                    $query = "
+                        SELECT B.namaBarang, SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
+                        FROM Peminjaman_Barang AS PB INNER JOIN Barang AS B ON PB.idBarang = B.idBarang
+                        WHERE YEAR(PB.tglPeminjamanBrg) = ?
+                        GROUP BY B.namaBarang ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC;
+                    ";
+                    $params = [$tahun];
+                } else {
+                    $query = "
+                        SELECT B.namaBarang, SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
+                        FROM Peminjaman_Barang AS PB INNER JOIN Barang AS B ON PB.idBarang = B.idBarang
+                        WHERE YEAR(PB.tglPeminjamanBrg) = ? AND MONTH(PB.tglPeminjamanBrg) = ?
+                        GROUP BY B.namaBarang ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC;
+                    ";
+                    $params = [$tahun, $bulan];
+                }
+            } else {
+                // Tahun wajib dipilih
+                echo "<p style='color:red;font-weight:bold;'>Tahun wajib dipilih untuk laporan ini.</p>";
+                exit;
+            }
             break;
         case 'ruanganSeringDipinjam':
-            $query = "
-                SELECT PR.idRuangan, R.namaRuangan, COUNT(PR.idpeminjamanRuangan) AS JumlahDipinjam
-                FROM Peminjaman_Ruangan AS PR INNER JOIN Ruangan AS R ON PR.idRuangan = R.idRuangan
-                WHERE YEAR(PR.tglPeminjamanRuangan) = ? AND MONTH(PR.tglPeminjamanRuangan) = ?
-                GROUP BY PR.idRuangan, R.namaRuangan ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC;
-            ";
-            $params = [$tahun, $bulan];
+            if ($tahun && $bulan === null) {
+                $query = "
+                    SELECT R.namaRuangan, COUNT(PR.idpeminjamanRuangan) AS JumlahDipinjam
+                    FROM Peminjaman_Ruangan AS PR INNER JOIN Ruangan AS R ON PR.idRuangan = R.idRuangan
+                    WHERE YEAR(PR.tglPeminjamanRuangan) = ?
+                    GROUP BY R.namaRuangan ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC;
+                ";
+                $params = [$tahun];
+            } elseif ($tahun && $bulan !== null) {
+                $query = "
+                    SELECT R.namaRuangan, COUNT(PR.idpeminjamanRuangan) AS JumlahDipinjam
+                    FROM Peminjaman_Ruangan AS PR INNER JOIN Ruangan AS R ON PR.idRuangan = R.idRuangan
+                    WHERE YEAR(PR.tglPeminjamanRuangan) = ? AND MONTH(PR.tglPeminjamanRuangan) = ?
+                    GROUP BY R.namaRuangan ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC;
+                ";
+                $params = [$tahun, $bulan];
+            }
             break;
     }
 
-    $stmt = sqlsrv_query($conn, $query, $params);
-    if ($stmt) {
-        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-            $dataResult[] = $row;
+    if ($query) {
+        $stmt = sqlsrv_query($conn, $query, $params);
+        if ($stmt) {
+            while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+                $dataResult[] = $row;
+            }
+            sqlsrv_free_stmt($stmt);
         }
-        sqlsrv_free_stmt($stmt);
     }
 }
 
@@ -214,8 +263,10 @@ if (empty($dataResult)) {
     echo "<tr><td colspan='" . count($headersMap[$jenisLaporan]) . "'>Tidak ada data ditemukan.</td></tr>";
 } else {
     $keys = $keysMap[$jenisLaporan];
+    $no = 1;
     foreach ($dataResult as $row) {
         echo "<tr>";
+        echo "<td>" . $no++ . "</td>"; // Kolom No
         foreach ($keys as $key) {
             echo "<td>" . htmlspecialchars($row[$key] ?? '') . "</td>";
         }
@@ -230,7 +281,15 @@ echo "</table>";
 // Jika dalam mode preview, tambahkan tombol download
 if ($mode === 'preview') {
     // Tombol ini akan mengarah ke URL yang sama, tetapi dengan tambahan &mode=download
-    $downloadUrl = htmlspecialchars($_SERVER['REQUEST_URI'] . '&mode=download');
+    $downloadUrl = $_SERVER['REQUEST_URI'];
+    $downloadUrl = preg_replace('/&mode=download/', '', $downloadUrl);
+    // Hilangkan &bulan= jika bulan tidak dipilih
+    if ($bulan === null) {
+        $downloadUrl = preg_replace('/&bulan=[^&]*/', '', $downloadUrl);
+    }
+    $downloadUrl .= (strpos($downloadUrl, '?') !== false ? '&' : '?') . 'mode=download';
+    $downloadUrl = htmlspecialchars($downloadUrl);
+
     echo "<a href='{$downloadUrl}' class='download-btn'>Download sebagai Excel (.xls)</a>";
     echo "</body>";
     echo "</html>";
