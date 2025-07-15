@@ -1,9 +1,9 @@
 <?php
 
-require_once _DIR_ . '/../function/init.php';
+require_once __DIR__ . '/../function/init.php';
 
-include _DIR_ . '/header.php';
-include _DIR_ . '/sidebar.php';
+include __DIR__ . '/header.php';
+include __DIR__ . '/sidebar.php';
 
 // Debugging - tampilkan data session
 echo "<!-- Debug Session: ";

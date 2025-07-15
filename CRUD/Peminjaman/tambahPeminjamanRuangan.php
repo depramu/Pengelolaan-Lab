@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $paramsInsert = [
             $idPeminjamanRuangan,
             $idRuangan,
-            $tglForSQL,
+            $tglPeminjamanRuangan,
             $nim,
             $npk,
             $waktuMulaiForSQL,

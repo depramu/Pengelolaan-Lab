@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 $error_message = '';
+$identifierError = '';
 $kataSandiError = '';
 $role = $_GET['role'] ?? 'Peminjam';
 
@@ -29,11 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identifier = $_POST['identifier'] ?? '';
     $kataSandi = $_POST['kataSandi'] ?? '';
 
+    if (empty($identifier)) {
+        $identifierError = $identifierLabel . ' tidak boleh kosong.';
+    }
+
     if (empty($kataSandi)) {
         $kataSandiError = 'Kata Sandi tidak boleh kosong.';
     }
 
-    if (empty($kataSandiError)) {
+    if (empty($identifierError) && empty($kataSandiError)) {
         if ($role === 'Peminjam') {
             $query_mhs = "SELECT nim, kataSandi, nama FROM Mahasiswa WHERE nim = ?";
             $stmt_mhs = sqlsrv_query($conn, $query_mhs, [$identifier]);
@@ -80,11 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $redirectPath = ($role === 'PIC Aset') ? '../Menu/Menu PIC/dashboardPIC.php' : '../Menu/Menu Ka UPT/dashboardKaUPT.php';
 
             $query = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
-            $stmt = sqlsrv_query($conn,  $query, [$identifier]);
+            $stmt = sqlsrv_query($conn, $query, [$identifier]);
             $row = $stmt ? sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC) : false;
 
             if ($row) {
-                if ($kataSandi === $row['kataSandi'] && isset($row['jenisRole']) && $row['jenisRole'] === $expectedRole) {
+                if ($kataSandi === $row['kataSandi'] && $row['jenisRole'] === $expectedRole) {
                     $_SESSION['user_id'] = $row['npk'];
                     $_SESSION['user_nama'] = $row['nama'];
                     $_SESSION['user_role'] = $row['jenisRole'];
@@ -105,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($pageTitle) ?> - Sistem Pengelolaan Laboratorium</title>
@@ -113,6 +118,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <style>
+        .form-control.is-invalid {
+            background-image: none !important;
+            padding-right: 0.75rem !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -133,28 +144,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-right">
         <div class="login-form-container">
             <h3 class="login-form-title"><?= htmlspecialchars($pageTitle) ?></h3>
-            <form action="login.php?role=<?= htmlspecialchars($role) ?>" method="POST" id="loginForm">
+            <form action="login.php?role=<?= htmlspecialchars($role) ?>" method="POST" id="loginForm" onsubmit="return validateForm()">
                 <div class="mb-3">
+                    <?php if (!empty($identifierError)) : ?>
+                        <div class="text-danger" style="font-size: 0.9rem; margin-bottom: 5px;">
+                            <?= htmlspecialchars($identifierError) ?>
+                        </div>
+                    <?php endif; ?>
                     <label for="identifier" class="form-label d-flex align-items-start">
                         <span><?= htmlspecialchars($identifierLabel) ?></span>
-                        <span id="identifier-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;"></span>
+                        <span id="identifier-error" class="text-danger ps-2" style="font-size: 0.9rem;"></span>
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
-                        <input type="text" class="form-control" id="identifier" name="identifier" placeholder="<?= htmlspecialchars($identifierPlaceholder) ?>">
+                        <input type="text" class="form-control <?= !empty($identifierError) ? 'is-invalid' : '' ?>" id="identifier" name="identifier" placeholder="<?= htmlspecialchars($identifierPlaceholder) ?>" value="<?= isset($identifier) ? htmlspecialchars($identifier) : '' ?>">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="kataSandi" class="form-label d-flex align-items-start">
                         <span>Kata Sandi</span>
-                        <span id="kataSandi-error" class="text-danger" style="font-size: 0.9rem; padding-left: 10px;">
-                            <?= htmlspecialchars($kataSandiError) ?>
-                        </span>
+                        <span id="kataSandi-error" class="text-danger ps-2" style="font-size: 0.9rem;"><?= htmlspecialchars($kataSandiError) ?></span>
                     </label>
                     <div class="input-group password-wrapper">
                         <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
-                        <input type="password" class="form-control" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
+                        <input type="password" class="form-control <?= !empty($kataSandiError) ? 'is-invalid' : '' ?>" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
                         <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
                             <i class="fa fa-eye-slash" id="eyeIcon"></i>
                         </span>
@@ -175,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 
-<!-- Script toggle password -->
 <script>
 document.getElementById("togglePassword").addEventListener("click", function () {
     const input = document.getElementById("kataSandi");
@@ -190,6 +203,35 @@ document.getElementById("togglePassword").addEventListener("click", function () 
         icon.classList.add("fa-eye-slash");
     }
 });
+
+function validateForm() {
+    const identifier = document.getElementById("identifier");
+    const kataSandi = document.getElementById("kataSandi");
+    const identifierError = document.getElementById("identifier-error");
+    const kataSandiError = document.getElementById("kataSandi-error");
+
+    let isValid = true;
+
+    if (identifier.value.trim() === "") {
+        identifierError.textContent = "<?= $identifierLabel ?> tidak boleh kosong.";
+        identifier.classList.add("is-invalid");
+        isValid = false;
+    } else {
+        identifierError.textContent = "";
+        identifier.classList.remove("is-invalid");
+    }
+
+    if (kataSandi.value.trim() === "") {
+        kataSandiError.textContent = "Kata Sandi tidak boleh kosong.";
+        kataSandi.classList.add("is-invalid");
+        isValid = false;
+    } else {
+        kataSandiError.textContent = "";
+        kataSandi.classList.remove("is-invalid");
+    }
+
+    return isValid;
+}
 </script>
 
 <?php include '../templates/footer.php'; ?>

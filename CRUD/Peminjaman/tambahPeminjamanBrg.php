@@ -59,7 +59,7 @@ $stokBarang = sqlsrv_fetch_array($stmtStok, SQLSRV_FETCH_ASSOC)['stokBarang'];
 // Proses Peminjaman hanya jika metode POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $alasanPeminjamanBrg = $_POST['alasanPeminjamanBrg'];
-    $jumlahBrg = (int)$_POST['jumlahBrg']; // Pastikan integer
+    $jumlahBrg = (int)$_POST['jumlahBrg'];
 
     // Ubah format tanggal sebelum insert
     if ($tglPeminjamanBrg) {
