@@ -174,7 +174,10 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         <h6 class=" mb-3">DETAIL PENOLAKAN</h6>
                                         <div class="mt-3">
                                             <label class="form-label fw-semibold">Alasan Penolakan dari PIC</label>
-                                            <textarea class="form-control" rows="3"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                            <textarea class="form-control protect-input bg-light" rows="3"><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary me-2">Kembali</a>
                                         </div>
                                     <?php else: ?>
                                         <h6 class=" mb-3">DOKUMENTASI PEMAKAIAN</h6>
@@ -198,7 +201,6 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
-
                                             <div class="col-md-6 mb-3">
                                                 <label class="form-label fw-semibold">
                                                     Dokumentasi Selesai
@@ -227,7 +229,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
-                            </div>
+                    </div>
                     </form>
                 <?php endif; ?>
                 </div>

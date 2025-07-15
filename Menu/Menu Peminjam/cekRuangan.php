@@ -227,8 +227,8 @@ include __DIR__ . '/../../templates/sidebar.php';
         document.getElementById("error-waktu-selesai").style.display = "none";
 
         if (!tanggal) {
-            document.getElementById("error-message").textContent = "*Harus pilih tanggal";
-            document.getElementById("error-message").style.display = "inline";
+            document.getElementById("error-message").textContent = "*Harus diisi";
+            document.getElementById("error-message").style.display = "inline";  
             isValid = false;
         }
         if (!waktuMulai) {

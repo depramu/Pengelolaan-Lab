@@ -794,7 +794,7 @@ function setupCekKetersediaanRuanganPage() {
 
       if (!tanggal) {
         document.getElementById("error-message").textContent =
-          "*Harus pilih tanggal";
+          "*Harus diisi";
         document.getElementById("error-message").style.display = "inline";
         isValid = false;
       }
