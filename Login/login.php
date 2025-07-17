@@ -30,12 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identifier = $_POST['identifier'] ?? '';
     $kataSandi = $_POST['kataSandi'] ?? '';
 
+    // Validasi kosong
     if (empty($identifier)) {
-        $identifierError = $identifierLabel . '*NIM/NPK tidak boleh kosong.';
+        if ($role === 'Peminjam') {
+            $identifierError = '*NIM/NPK tidak boleh kosong';
+        } else {
+            $identifierError = '*NPK tidak boleh kosong';
+        }
     }
 
     if (empty($kataSandi)) {
-        $kataSandiError = '*Kata Sandi tidak boleh kosong.';
+        $kataSandiError = '*Kata sandi tidak boleh kosong';
     }
 
     if (empty($identifierError) && empty($kataSandiError)) {
@@ -53,9 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: ../Menu/Menu Peminjam/dashboardPeminjam.php');
                     exit;
                 } else {
-                    $kataSandiError = '*Kata Sandi salah.';
+                    $kataSandiError = '*Kata sandi salah';
                 }
             } else {
+                // Cek di Karyawan untuk role Peminjam
                 $query_kry = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
                 $stmt_kry = sqlsrv_query($conn, $query_kry, [$identifier]);
                 $row_kry = $stmt_kry ? sqlsrv_fetch_array($stmt_kry, SQLSRV_FETCH_ASSOC) : false;
@@ -72,9 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         header('Location: ../Menu/Menu Peminjam/dashboardPeminjam.php');
                         exit;
                     } elseif ($kataSandi === $row_kry['kataSandi']) {
-                        $kataSandiError = '*Akun Anda bukan peminjam.';
+                        $kataSandiError = '*Kata sandi salah';
                     } else {
-                        $kataSandiError = '*Kata Sandi salah.';
+                        $kataSandiError = '*Kata sandi salah';
                     }
                 } else {
                     $identifierError = '*NIM/NPK tidak ditemukan.';
@@ -97,12 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: ' . $redirectPath);
                     exit;
                 } elseif ($kataSandi === $row['kataSandi']) {
-                    $kataSandiError = "*Anda tidak memiliki hak akses sebagai $expectedRole.";
+                    $identifierError = '*NPK tidak ditemukan';
                 } else {
-                    $kataSandiError = '*Kata Sandi salah.';
+                    $kataSandiError = '*Kata sandi salah';
                 }
             } else {
-                $identifierError = '*Akun tidak terdaftar.';
+                $identifierError = '*NPK tidak ditemukan';
             }
         }
     }

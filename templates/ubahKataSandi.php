@@ -17,22 +17,26 @@ $showModal = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user_id) {
     $kataSandiBaru = $_POST['kataSandi'];
     if (!empty($kataSandiBaru)) {
-        if ($user_role === 'Peminjam') {
-            $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
-            $params = [$kataSandiBaru, $user_id];
+        if (strlen($kataSandiBaru) < 8) {
+            $error_message = "Kata sandi minimal 8 karakter";
         } else {
-            $query = "UPDATE Karyawan SET kataSandi = ? WHERE npk = ?";
-            $params = [$kataSandiBaru, $user_id];
-        }
+            if ($user_role === 'Peminjam') {
+                $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
+                $params = [$kataSandiBaru, $user_id];
+            } else {
+                $query = "UPDATE Karyawan SET kataSandi = ? WHERE npk = ?";
+                $params = [$kataSandiBaru, $user_id];
+            }
 
-        $stmt = sqlsrv_query($conn, $query, $params);
-        if ($stmt) {
-            $showModal = true;
-        } else {
-            $error_message = "Gagal mengubah kata sandi.";
-            if (($errors = sqlsrv_errors()) != null) {
-                foreach ($errors as $err) {
-                    $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
+            $stmt = sqlsrv_query($conn, $query, $params);
+            if ($stmt) {
+                $showModal = true;
+            } else {
+                $error_message = "Gagal mengubah kata sandi.";
+                if (($errors = sqlsrv_errors()) != null) {
+                    foreach ($errors as $err) {
+                        $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
+                    }
                 }
             }
         }

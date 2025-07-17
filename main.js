@@ -307,18 +307,23 @@ function allReadNotif() {
 // =================================================================
 // #2: HALAMAN OTENTIKASI (LOGIN & LUPA SANDI)
 // =================================================================
-
 function setupLoginForm() {
   const loginForm = document.getElementById("loginForm");
   if (!loginForm) return;
 
-  // Pastikan error span selalu terlihat (jika ada error)
+  const idInput = document.getElementById("identifier");
+  const passInput = document.getElementById("kataSandi");
   const idError = document.getElementById("identifier-error");
-  const passError = document.getElementById("password-error");
+  const passError = document.getElementById("kataSandi-error");
+
+  // Ambil role dari URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const role = urlParams.get("role") || "Peminjam"; // Default: Peminjam
+
+  // Tentukan label sesuai role
+  const idLabel = (role === "PIC Aset" || role === "KA UPT") ? "NPK" : "NIM/NPK";
 
   loginForm.addEventListener("submit", function (e) {
-    const idInput = document.getElementById("identifier");
-    const passInput = document.getElementById("kataSandi");
     let isValid = true;
 
     // Reset pesan error
@@ -327,20 +332,19 @@ function setupLoginForm() {
 
     // Validasi identifier
     if (!idInput.value.trim()) {
-      if (idError) idError.textContent = "*NIM/NPK tidak boleh kosong.";
+      if (idError) idError.textContent = `*${idLabel} tidak boleh kosong`;
       isValid = false;
     } else if (!/^\d+$/.test(idInput.value.trim())) {
-      if (idError) idError.textContent = "*NIM/NPK harus berupa angka.";
+      if (idError) idError.textContent = `*${idLabel} harus berupa angka`;
       isValid = false;
     }
 
     // Validasi password
     if (!passInput.value.trim()) {
-      if (passError) passError.textContent = "*Kata Sandi tidak boleh kosong.";
+      if (passError) passError.textContent = "*Kata sandi tidak boleh kosong";
       isValid = false;
     }
 
-    // Jika tidak valid, cegah submit dan pastikan error terlihat
     if (!isValid) {
       e.preventDefault();
       if (idError) idError.style.display = "inline";
@@ -361,43 +365,16 @@ function setupLoginForm() {
       errorMessage.includes("akun tidak terdafrar") ||
       errorMessage.includes("akun_tidak_terdaftar")
     ) {
-      if (idError) idError.textContent = "*Akun tidak terdaftar*";
+      if (idError) idError.textContent = `*${idLabel} tidak ditemukan*`;
     } else if (errorMessage.includes("kata_sandi_salah")) {
       if (passError) passError.textContent = "*Kata sandi salah*";
     } else {
       if (idError) idError.textContent = serverError.textContent.trim();
     }
+
     if (idError) idError.style.display = "inline";
     if (passError) passError.style.display = "inline";
   }
-}
-
-function setupLupaSandiForm() {
-  const lupaSandiForm = document.getElementById("lupaSandiForm"); // Gunakan ID spesifik
-  if (!lupaSandiForm) return;
-
-  document.querySelector(".btn-back").onclick = () =>
-    (window.location.href = "Login/login.php");
-
-  lupaSandiForm.addEventListener("submit", function (e) {
-    const emailInput = document.getElementById("email");
-    const emailError = document.getElementById("emailError");
-    let isValid = true;
-    emailError.style.display = "none";
-
-    if (!emailInput.value.trim()) {
-      emailError.textContent = "*Harus diisi";
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
-      emailError.textContent = "*Format email tidak valid";
-      isValid = false;
-    }
-
-    if (!isValid) {
-      e.preventDefault();
-      emailError.style.display = "inline";
-    }
-  });
 }
 
 // =================================================================
