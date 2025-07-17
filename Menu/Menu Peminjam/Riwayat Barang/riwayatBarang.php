@@ -87,11 +87,11 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
                         } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
-                            $iconSrc = BASE_URL . '/icon/jamHijau.svg';
+                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Sedang Dipinjam';
-                        } elseif ($statusPeminjaman == 'Menunggu Pengecekan') {
+                        } elseif ($statusPeminjaman == 'Sebagian Dikembalikan') {
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
-                            $altText = 'Menunggu Pengecekan oleh PIC';
+                            $altText = 'Sebagian Dikembalikan';
                         } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
                             $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Menunggu Persetujuan oleh PIC';
@@ -132,7 +132,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                 <p><img src="<?= BASE_URL ?>/icon/silang.svg" class="legend-icon"> : Ditolak</p>
             </td>
             <td>
-                <p><img src="<?= BASE_URL ?>/icon/jamhijau.svg" class="legend-icon"> : Menunggu Pengecekan</p>
+                <p><img src="<?= BASE_URL ?>/icon/jamhijau.svg" class="legend-icon"> : Sebagian Dikembalikan</p>
             </td>
             <td>
                 <p><img src="<?= BASE_URL ?>/icon/jamkuning.svg" class="legend-icon"> : Sedang Dipinjam</p>

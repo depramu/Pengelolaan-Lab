@@ -1,4 +1,4 @@
-    <?php
+<?php
     require_once __DIR__ . '/../../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
     authorize_role('PIC Aset');
 
@@ -16,13 +16,21 @@
                 p.tglPeminjamanRuangan, p.waktuMulai, p.waktuSelesai,
                 p.alasanPeminjamanRuangan,
                 sp.statusPeminjaman,
-                peng.kondisiRuangan, peng.catatanPengembalianRuangan
+                peng.kondisiRuangan, peng.catatanPengembalianRuangan,
+                COALESCE(m.nama, k.nama) AS namaPeminjam,
+                r.namaRuangan
             FROM 
                 Peminjaman_Ruangan p
             LEFT JOIN 
                 Status_Peminjaman sp ON p.idPeminjamanRuangan = sp.idPeminjamanRuangan
             LEFT JOIN 
                 Pengembalian_Ruangan peng ON p.idPeminjamanRuangan = peng.idPeminjamanRuangan
+            LEFT JOIN 
+                Mahasiswa m ON p.nim = m.nim
+            LEFT JOIN 
+                Karyawan k ON p.npk = k.npk
+            LEFT JOIN 
+                Ruangan r ON p.idRuangan = r.idRuangan
             WHERE 
                 p.idPeminjamanRuangan = ?";
         $params = [$idPeminjamanRuangan];
@@ -154,11 +162,42 @@
                         </div>
                         <div class="card-body scrollable-card-content">
                             <form method="POST" id="formPengembalianRuangan" enctype="multipart/form-data">
+                                <!-- Hidden input for ID Peminjaman - processed in background -->
+                                <input type="hidden" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>">
+                                
+                                <!-- Display borrower information for Menunggu Pengecekan status -->
+                                <?php if (($data['statusPeminjaman'] ?? '') === 'Menunggu Pengecekan'): ?>
                                 <div class="mb-3 row">
                                     <div class="col-md-6">
-                                        <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="idPeminjamanRuangan" name="idPeminjamanRuangan" value="<?= isset($idPeminjamanRuangan) ? htmlspecialchars($idPeminjamanRuangan) : '' ?>">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">NIM / NPK</label>
+                                            <input class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?>"></input>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Nama Ruangan</label>
+                                            <input class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($data['namaRuangan'] ?? '-') ?>" readonly>
+                                        </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Nama Peminjam</label>
+                                            <input class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '-') ?>" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">
+                                                Kondisi Ruangan
+                                                <span id="kondisiError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            </label>
+                                            <select class="form-select" id="kondisiRuangan" name="kondisiRuangan">
+                                                <option value="" hidden <?= empty($data['kondisiRuangan']) ? 'selected' : '' ?>>Pilih Kondisi Ruangan</option>
+                                                <option value="Baik" <?= ($data['kondisiRuangan'] ?? '') === 'Baik' ? 'selected' : '' ?>>Baik</option>
+                                                <option value="Rusak" <?= ($data['kondisiRuangan'] ?? '') === 'Rusak' ? 'selected' : '' ?>>Rusak</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <div class="mb-3 row">
                                     <div class="col-md-6">
                                         <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">
                                             Kondisi Ruangan
@@ -171,12 +210,13 @@
                                         </select>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                                 <div class="mb-3">
                                     <label for="catatanPengembalianRuangan" class="form-label fw-semibold d-flex align-items-center">
                                         Catatan Pengembalian
                                         <span id="catatanError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="3" style="resize: none;" placeholder="Masukkan catatan pengembalian.."><?= htmlspecialchars($data['catatanPengembalianRuangan'] ?? '') ?></textarea>
+                                    <textarea type="text" class="form-control" id="catatanPengembalianRuangan" name="catatanPengembalianRuangan" rows="2" style="resize: none;" placeholder="Masukkan catatan pengembalian.."><?= htmlspecialchars($data['catatanPengembalianRuangan'] ?? '') ?></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <div class="row">

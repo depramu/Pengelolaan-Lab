@@ -88,7 +88,7 @@ include '../../../templates/sidebar.php';
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                             <div class="form-control-plaintext">
-                                                <?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime ? $data['tglPeminjamanRuangan']->format('d-m-Y') : $data['tglPeminjamanRuangan']) ?>
+                                                <?= htmlspecialchars($data['tglPeminjamanRuangan'] instanceof DateTime ? $data['tglPeminjamanRuangan']->format('d M Y') : $data['tglPeminjamanRuangan']) ?>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -154,30 +154,60 @@ include '../../../templates/sidebar.php';
                                 </div>
 
                                 <?php if ($data['statusPeminjaman'] == 'Telah Dikembalikan') : ?>
-                                    <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold">Dokumentasi Sebelum</label>
-                                            <div class="mt-1">
+                                            <div class="mt-2">
                                                 <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                    <div class="text-center">
+                                                        <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>"
+                                                            alt="Dokumentasi Sebelum"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>', '_blank')">
+                                                    </div>
                                                 <?php else : ?>
-                                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                    <div class="border rounded p-3 text-center text-muted" style="min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                    </div>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold">Dokumentasi Selesai</label>
-                                            <div class="mt-1">
+                                            <div class="mt-2">
                                                 <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                    <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">Lihat Dokumentasi</a>
+                                                    <div class="text-center">
+                                                        <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>"
+                                                            alt="Dokumentasi Selesai"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>', '_blank')">
+                                                    </div>
                                                 <?php else : ?>
-                                                    <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                    <div class="border rounded p-3 text-center text-muted" style="min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                                                        <span class="text-danger"><em>(Tidak Diupload)</em></span>
+                                                    </div>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
+                                <?php
+                                    if ($data['statusPeminjaman'] == 'Ditolak' && !empty($data['alasanPenolakan'])) : ?>
+                                        <hr>
+                                        <h6 class="mb-3">DETAIL PENOLAKAN</h6>
+                                        <div class="mt-3">
+                                            <label class="form-label fw-bold text-danger">Alasan Penolakan dari PIC</label>
+                                            <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'])) ?></div>
+                                        </div>
+                                    <?php endif; ?>
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>

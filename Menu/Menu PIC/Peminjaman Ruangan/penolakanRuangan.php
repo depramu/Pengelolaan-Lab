@@ -110,23 +110,13 @@ include '../../../templates/sidebar.php';
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="idPeminjamanRuangan" class="form-label fw-semibold">ID Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($idPeminjamanRuangan) ?></div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="idRuangan" class="form-label fw-semibold">ID Ruangan</label>
-                                        <div class="form-control-plaintext"><?= $data && isset($data['idRuangan']) ? htmlspecialchars($data['idRuangan']) : '' ?></div>
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
                                         <div class="form-control-plaintext"><?= $data && isset($data['namaRuangan']) ? htmlspecialchars($data['namaRuangan']) : '' ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="tglPeminjamanRuangan" class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                        <div class="form-control-plaintext"><?= isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime ? htmlspecialchars($data['tglPeminjamanRuangan']->format('d-m-y')) : '' ?></div>
+                                        <div class="form-control-plaintext"><?= isset($data['tglPeminjamanRuangan']) && $data['tglPeminjamanRuangan'] instanceof DateTime ? htmlspecialchars($data['tglPeminjamanRuangan']->format('d M Y')) : '' ?></div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
@@ -137,6 +127,8 @@ include '../../../templates/sidebar.php';
                                             <div class="form-control-plaintext"><?= $data && isset($data['waktuSelesai']) && $data['waktuSelesai'] instanceof DateTime ? htmlspecialchars($data['waktuSelesai']->format('H:i')) : '' ?></div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">

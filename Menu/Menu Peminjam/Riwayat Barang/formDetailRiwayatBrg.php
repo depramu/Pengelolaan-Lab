@@ -107,8 +107,8 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                             <?php
                                             $statusClass = 'text-secondary';
                                             switch ($data['statusPeminjaman']) {
-                                                case 'Diajukan':
-                                                    $statusClass = 'text-primary';
+                                                case 'Sebagian Dikembalikan':
+                                                    $statusClass = 'text-success';
                                                     break;
                                                 case 'Menunggu Persetujuan':
                                                     $statusClass = 'text-warning';

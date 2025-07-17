@@ -1,6 +1,9 @@
 <?php
 include '../../../function/init.php';
 
+define('UPLOAD_DIR', __DIR__ . '/../../../uploads/dokumentasi/');
+
+
 error_log("--- START: proses_Pengembalian.php (Timestamp: " . date('Y-m-d H:i:s') . ") ---");
 error_log("POST Data: " . print_r($_POST, true));
 error_log("FILES Data: " . print_r($_FILES, true));
