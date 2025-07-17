@@ -10,9 +10,12 @@ if (empty($idPeminjamanBrg)) {
 }
 
 // Get fresh data
-$query_get = "SELECT pb.jumlahBrg, pb.sisaPinjaman, pb.idBarang, b.namaBarang
+$query_get = "SELECT pb.jumlahBrg, pb.sisaPinjaman, pb.idBarang, b.namaBarang, pb.nim, pb.npk,
+                COALESCE(m.nama, k.nama) AS namaPeminjam
               FROM Peminjaman_Barang pb
               JOIN Barang b ON pb.idBarang = b.idBarang
+              LEFT JOIN Mahasiswa m ON pb.nim = m.nim
+              LEFT JOIN Karyawan k ON pb.npk = k.npk
               WHERE pb.idPeminjamanBrg = ?";
 $params_get = [$idPeminjamanBrg];
 $stmt_get = sqlsrv_query($conn, $query_get, $params_get);
@@ -26,7 +29,6 @@ $jumlahBrg = $data['jumlahBrg'];
 $sisaPinjaman = $data['sisaPinjaman'];
 $namaBarang = $data['namaBarang'];
 
-$nim = $data['nim'] ?? ''; // Pastikan $nim diinisialisasi, bisa dari session atau data yang diambil    
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlahPengembalian = (int)$_POST['jumlahPengembalian'];
@@ -130,23 +132,11 @@ include '../../../templates/sidebar.php';
                         <form id="formPengembalianBarang" method="POST">
                             <div class='mb-3 row'>
                                 <div class="col-md-6">
-                                    <div class="mb-4">
+                                    <div class="mb-2">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
                                     </div>
                                     <div class="mb-2">
-                                        <label for="txtKondisi" class="form-label fw-semibold">Kondisi Barang
-                                            <span id="kondisiError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
-                                        </label>
-                                        <select class="form-select" id="txtKondisi" name="kondisiBrg">
-                                            <option hidden selected>Pilih Kondisi Barang</option>
-                                            <option value="Baik">Baik</option>
-                                            <option value="Rusak">Rusak</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-1">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
                                         <input type="hidden" id="sisaPinjaman" value="<?= $sisaPinjaman ?>">
@@ -156,7 +146,39 @@ include '../../../templates/sidebar.php';
                                             <span class="text-primary small">Sisa yang harus dikembalikan: <?= $sisaPinjaman ?></span>
                                         <?php endif; ?>
                                     </div>
+                                    <div class="mb">
+                                        <label class="form-label fw-semibold">NIM/NPK</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" value=" <?php
+                                                                                                                        if (!empty($data['nim'])) {
+                                                                                                                            echo htmlspecialchars($data['nim']);
+                                                                                                                        } elseif (!empty($data['npk'])) {
+                                                                                                                            echo htmlspecialchars($data['npk']);
+                                                                                                                        } else {
+                                                                                                                            echo '-';
+                                                                                                                        }
+                                                                                                                        ?>">
+
+                                        </input>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
                                     <div class="mb-2">
+                                        <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
+                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="txtKondisi" class="form-label fw-semibold">Kondisi Barang
+                                            <span id="kondisiError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
+                                        </label>
+                                        <select class="form-select" id="txtKondisi" name="kondisiBrg">
+                                            <option hidden selected>Pilih Kondisi Barang</option>
+                                            <option value="Baik">Baik</option>
+                                            <option value="Rusak">Rusak</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb">
                                         <label for="jumlahPengembalian" class="form-label w-100 fw-semibold">Jumlah Pengembalian
                                             <span id="jumlahError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
                                         </label>
@@ -173,7 +195,7 @@ include '../../../templates/sidebar.php';
                                 <label for="catatanPengembalianBarang" class="form-label fw-semibold">Catatan Pengembalian
                                     <span id="catatanError" class="text-danger small mt-1 fw-normal" style="font-size:0.95em;display:none;"></span>
                                 </label>
-                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="3" style="resize: none;" placeholder="Masukkan catatan pengembalian.."></textarea>
+                                <textarea type="text" class="form-control" id="catatanPengembalianBarang" name="catatanPengembalianBarang" rows="2" style="resize: none;" placeholder="Masukkan catatan pengembalian.."></textarea>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <a href="peminjamanBarang.php" class="btn btn-secondary">Kembali</a>

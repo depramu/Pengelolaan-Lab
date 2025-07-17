@@ -163,10 +163,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <span>Kata Sandi</span>
                         <span id="kataSandi-error" class="text-danger ps-2" style="font-size: 0.9rem;"><?= htmlspecialchars($kataSandiError) ?></span>
                     </label>
-                    <div class="input-group password-wrapper">
-                        <span class="input-group-text"><img src="../icon/iconPass.svg" alt=""></span>
-                        <input type="password" class="form-control <?= !empty($kataSandiError) ? 'is-invalid' : '' ?>" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda">
-                        <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                    <div class="input-group password-wrapper" style="border-radius: 8px; overflow: hidden;">
+                        <span class="input-group-text" style="border-top-left-radius: 8px; border-bottom-left-radius: 8px;"><img src="../icon/iconPass.svg" alt=""></span>
+                        <input type="password" class="form-control <?= !empty($kataSandiError) ? 'is-invalid' : '' ?>" id="kataSandi" name="kataSandi" placeholder="Masukkan Kata Sandi Anda" style="border-radius: 0;">
+                        <span class="input-group-text" id="togglePassword" style="cursor: pointer; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">
                             <i class="fa fa-eye-slash" id="eyeIcon"></i>
                         </span>
                     </div>
@@ -185,51 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
-
-<script>
-document.getElementById("togglePassword").addEventListener("click", function () {
-    const input = document.getElementById("kataSandi");
-    const icon = document.getElementById("eyeIcon");
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
-    } else {
-        input.type = "password";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-    }
-});
-
-function validateForm() {
-    const identifier = document.getElementById("identifier");
-    const kataSandi = document.getElementById("kataSandi");
-    const identifierError = document.getElementById("identifier-error");
-    const kataSandiError = document.getElementById("kataSandi-error");
-
-    let isValid = true;
-
-    if (identifier.value.trim() === "") {
-        identifierError.textContent = "<?= $identifierLabel ?> tidak boleh kosong.";
-        identifier.classList.add("is-invalid");
-        isValid = false;
-    } else {
-        identifierError.textContent = "";
-        identifier.classList.remove("is-invalid");
-    }
-
-    if (kataSandi.value.trim() === "") {
-        kataSandiError.textContent = "*Kata Sandi tidak boleh kosong.";
-        kataSandi.classList.add("is-invalid");
-        isValid = false;
-    } else {
-        kataSandiError.textContent = "";
-        kataSandi.classList.remove("is-invalid");
-    }
-
-    return isValid;
-}
-</script>
 
 <?php include '../templates/footer.php'; ?>
 </body>

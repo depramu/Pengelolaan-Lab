@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setupLoginForm();
   setupLupaSandiForm();
   setupTooglePass();
+  allReadNotif();
 
   // Halaman Admin & Operator
   setupLaporanPage();
@@ -277,6 +278,30 @@ function setupNotif() {
     form.submit();
     return false;
   };
+}
+
+function allReadNotif() {
+  const setAllReadBtn = document.getElementById("setAllReadBtn");
+  if (!setAllReadBtn) return;
+  setAllReadBtn.addEventListener("click", function () {
+    const confirmAction = document.getElementById("confirmAction");
+    if (confirmAction) {
+      confirmAction.innerText = "Tandai semua notifikasi sebagai sudah dibaca?";
+    }
+    const modalElement = document.getElementById("confirmModal");
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+
+      const confirmYes = document.getElementById("confirmYes");
+      if (confirmYes) {
+        confirmYes.onclick = function () {
+          const formSetRead = document.getElementById("formSetRead");
+          if (formSetRead) formSetRead.submit();
+        };
+      }
+    }
+  });
 }
 
 // =================================================================
@@ -793,8 +818,7 @@ function setupCekKetersediaanRuanganPage() {
       document.getElementById("error-waktu-selesai").style.display = "none";
 
       if (!tanggal) {
-        document.getElementById("error-message").textContent =
-          "*Harus diisi";
+        document.getElementById("error-message").textContent = "*Harus diisi";
         document.getElementById("error-message").style.display = "inline";
         isValid = false;
       }
@@ -842,7 +866,7 @@ function setupDetailRiwayatForm() {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i; 
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i;
 
     const validateFile = (inputId, errorId) => {
       const fileInput = document.getElementById(inputId);
@@ -1756,4 +1780,3 @@ function setupFormTambahPeminjamanRuangan() {
     confirmModal.show();
   });
 }
-

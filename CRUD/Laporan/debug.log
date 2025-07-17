@@ -1,2 +1,5 @@
 jenisLaporan=dataRuangan, tahun=, bulan=
 jenisLaporan=dataRuangan, tahun=, bulan=
+jenisLaporan=ruanganSeringDipinjam, tahun=2025, bulan=
+jenisLaporan=dataBarang, tahun=, bulan=
+jenisLaporan=peminjamSeringMeminjam, tahun=2025, bulan=6

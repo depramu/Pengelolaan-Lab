@@ -162,6 +162,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <?php
+                                    if ($data['statusPeminjaman'] == 'Ditolak' && !empty($data['alasanPenolakan'])) : ?>
+                                        <hr>
+                                        <h6 class="mb-3">DETAIL PENOLAKAN</h6>
+                                        <div class="mt-3">
+                                            <label class="form-label fw-bold text-danger">Alasan Penolakan dari PIC</label>
+                                            <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'])) ?></div>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <div class="row">
                                         <div class="col-12 d-flex justify-content-between mt-3">
                                             <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary me-2">Kembali</a>
