@@ -842,7 +842,7 @@ function setupDetailRiwayatForm() {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i;
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i; 
 
     const validateFile = (inputId, errorId) => {
       const fileInput = document.getElementById(inputId);
@@ -1756,3 +1756,4 @@ function setupFormTambahPeminjamanRuangan() {
     confirmModal.show();
   });
 }
+

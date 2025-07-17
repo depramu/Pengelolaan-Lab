@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kataSandi = $_POST['kataSandi'] ?? '';
 
     if (empty($identifier)) {
-        $identifierError = $identifierLabel . ' tidak boleh kosong.';
+        $identifierError = $identifierLabel . '*NIM/NPK tidak boleh kosong.';
     }
 
     if (empty($kataSandi)) {
-        $kataSandiError = 'Kata Sandi tidak boleh kosong.';
+        $kataSandiError = '*Kata Sandi tidak boleh kosong.';
     }
 
     if (empty($identifierError) && empty($kataSandiError)) {
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: ../Menu/Menu Peminjam/dashboardPeminjam.php');
                     exit;
                 } else {
-                    $kataSandiError = 'Kata Sandi salah.';
+                    $kataSandiError = '*Kata Sandi salah.';
                 }
             } else {
                 $query_kry = "SELECT npk, kataSandi, nama, jenisRole FROM Karyawan WHERE npk = ?";
@@ -72,12 +72,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         header('Location: ../Menu/Menu Peminjam/dashboardPeminjam.php');
                         exit;
                     } elseif ($kataSandi === $row_kry['kataSandi']) {
-                        $kataSandiError = 'Akun Anda bukan peminjam.';
+                        $kataSandiError = '*Akun Anda bukan peminjam.';
                     } else {
-                        $kataSandiError = 'Kata Sandi salah.';
+                        $kataSandiError = '*Kata Sandi salah.';
                     }
                 } else {
-                    $kataSandiError = 'NIM/NPK tidak ditemukan.';
+                    $identifierError = '*NIM/NPK tidak ditemukan.';
                 }
             }
         } elseif ($role === 'PIC Aset' || $role === 'KA UPT') {
@@ -97,12 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: ' . $redirectPath);
                     exit;
                 } elseif ($kataSandi === $row['kataSandi']) {
-                    $kataSandiError = "Anda tidak memiliki hak akses sebagai $expectedRole.";
+                    $kataSandiError = "*Anda tidak memiliki hak akses sebagai $expectedRole.";
                 } else {
-                    $kataSandiError = 'Kata Sandi salah.';
+                    $kataSandiError = '*Kata Sandi salah.';
                 }
             } else {
-                $kataSandiError = 'Akun tidak terdaftar.';
+                $identifierError = '*Akun tidak terdaftar.';
             }
         }
     }
@@ -146,14 +146,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h3 class="login-form-title"><?= htmlspecialchars($pageTitle) ?></h3>
             <form action="login.php?role=<?= htmlspecialchars($role) ?>" method="POST" id="loginForm" onsubmit="return validateForm()">
                 <div class="mb-3">
-                    <?php if (!empty($identifierError)) : ?>
-                        <div class="text-danger" style="font-size: 0.9rem; margin-bottom: 5px;">
-                            <?= htmlspecialchars($identifierError) ?>
-                        </div>
-                    <?php endif; ?>
                     <label for="identifier" class="form-label d-flex align-items-start">
                         <span><?= htmlspecialchars($identifierLabel) ?></span>
-                        <span id="identifier-error" class="text-danger ps-2" style="font-size: 0.9rem;"></span>
+                        <span id="identifier-error" class="text-danger ps-2" style="font-size: 0.9rem;">
+                            <?= htmlspecialchars($identifierError) ?>
+                        </span>
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><img src="../icon/iconID.svg" alt=""></span>
@@ -222,7 +219,7 @@ function validateForm() {
     }
 
     if (kataSandi.value.trim() === "") {
-        kataSandiError.textContent = "Kata Sandi tidak boleh kosong.";
+        kataSandiError.textContent = "*Kata Sandi tidak boleh kosong.";
         kataSandi.classList.add("is-invalid");
         isValid = false;
     } else {
