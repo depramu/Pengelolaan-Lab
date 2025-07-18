@@ -149,7 +149,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Halaman Otentikasi
   setupLoginForm();
-  setupLupaSandiForm();
   setupTooglePass();
   allReadNotif();
 
@@ -321,7 +320,7 @@ function setupLoginForm() {
   const role = urlParams.get("role") || "Peminjam"; // Default: Peminjam
 
   // Tentukan label sesuai role
-  const idLabel = (role === "PIC Aset" || role === "KA UPT") ? "NPK" : "NIM/NPK";
+  const idLabel = role === "PIC Aset" || role === "KA UPT" ? "NPK" : "NIM/NPK";
 
   loginForm.addEventListener("submit", function (e) {
     let isValid = true;
