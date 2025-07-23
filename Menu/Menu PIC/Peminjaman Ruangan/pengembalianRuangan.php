@@ -221,23 +221,31 @@
                                 <div class="mb-3">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label for="dokumentasiSebelum" class="fw-semibold">Dokumentasi sebelum pemakaian</label><br>
+                                            <label for="dokumentasiSebelum" class="fw-semibold">Dokumentasi Sebelum</label><br>
                                             <?php if (!empty($dokSebelum)): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" target="_blank">
-                                                                <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>" alt="Dokumentasi Sebelum" style="max-width: 500px; height: auto;">
+                                                            <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>"
+                                                            alt="Dokumentasi Sebelum"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($dokSebelum) ?>', '_blank')">
                                                             </a>
                                             <?php else: ?>
-                                                <span class="text-danger"><em>(Tidak Unggah)</em></span>
+                                                <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                             <?php endif; ?>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="dokumentasiSesudah" class="fw-semibold">Dokumentasi sesudah pemakaian</label><br>
+                                            <label for="dokumentasiSesudah" class="fw-semibold">Dokumentasi Sesudah</label><br>
                                             <?php if (!empty($dokSesudah)): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" target="_blank">
-                                                                <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>" alt="Dokumentasi Sesudah" style="max-width: 500px; height: auto;">
+                                                            <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>"
+                                                            alt="Dokumentasi Sesudah"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($dokSesudah) ?>', '_blank')">
                                                             </a>
                                             <?php else: ?>
-                                                <span class="text-danger"><em>(Tidak Unggah)</em></span>
+                                                <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>

@@ -169,7 +169,11 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSebelum'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">
-                                                    <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" style="max-width: 100%; height: auto;">
+                                                    <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>"
+                                                    alt="Dokumentasi Sebelum"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>', '_blank')">
                                                 </a>
                                             <?php else: ?>
                                                 <span class="text-danger"><em>(Tidak Diunggah)</em></span>
@@ -182,7 +186,11 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 <input type="file" class="form-control" id="dokSesudah"name="dokSesudah" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSesudah'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">
-                                                    <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" style="max-width: 100%; height: auto;">
+                                                    <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>"
+                                                    alt="Dokumentasi Sesudah"
+                                                            class="img-fluid rounded border"
+                                                            style="max-height: 200px; cursor: pointer;"
+                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>', '_blank')">
                                                 </a>
                                             <?php else: ?>
                                                 <span class="text-danger"><em>(Tidak Diunggah)</em></span>

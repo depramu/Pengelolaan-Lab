@@ -179,12 +179,12 @@ include '../../../templates/sidebar.php';
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold">Dokumentasi Selesai</label>
+                                            <label class="form-label fw-semibold">Dokumentasi Sesudah</label>
                                             <div class="mt-2">
                                                 <?php if (!empty($data['dokumentasiSesudah'])) : ?>
                                                     <div class="text-center">
                                                         <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>"
-                                                            alt="Dokumentasi Selesai"
+                                                            alt="Dokumentasi Sesudah"
                                                             class="img-fluid rounded border"
                                                             style="max-height: 200px; cursor: pointer;"
                                                             onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>', '_blank')">
