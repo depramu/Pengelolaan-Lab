@@ -147,7 +147,7 @@ include '../../templates/sidebar.php';
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
                                         <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
                                                                                                                                             $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
-                                                                                                                                            echo $dateObj ? $dateObj->format('d F Y') : htmlspecialchars($tglPeminjamanBrg);
+                                                                                                                                            echo $dateObj ? $dateObj->format('d M Y') : htmlspecialchars($tglPeminjamanBrg);
                                                                                                                                         } ?>">
                                     </div>
                                     <div class="mb-3">

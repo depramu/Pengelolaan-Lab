@@ -142,10 +142,6 @@ function setupKondisiRuanganLogic() {
 // =================================================================
 
 document.addEventListener("DOMContentLoaded", function () {
-  /**
-   * Panggil semua fungsi setup.
-   * Setiap fungsi akan memeriksa keberadaan elemennya sendiri sebelum berjalan.
-   */
 
   // Halaman Otentikasi
   setupLoginForm();

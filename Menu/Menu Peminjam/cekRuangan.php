@@ -182,15 +182,13 @@ include __DIR__ . '/../../templates/sidebar.php';
 
         <div class="mt-3">
             <?php
-            if ($totalPages > 1) {
-                generatePagination($page, $totalPages);
-            }
+            generatePagination($page, $totalPages);
             ?>
         </div>
     </div>
 </main>
 
-<script>
+<!-- <script>
     // Inisialisasi flatpickr untuk input tanggal dan waktu
     flatpickr("#tglPeminjamanRuangan", {
         dateFormat: "Y-m-d", //format yang dikirim ke server
@@ -261,6 +259,6 @@ include __DIR__ . '/../../templates/sidebar.php';
             e.preventDefault();
         }
     });
-</script>
+</script> -->
 
 <?php include __DIR__ . '/../../templates/footer.php'; ?>

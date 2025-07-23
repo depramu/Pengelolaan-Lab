@@ -1,33 +1,59 @@
 <?php
-require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
+require_once __DIR__ . '/../../function/init.php';
 authorize_role('PIC Aset');
+
+// --- Tangkap parameter pencarian ---
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 // Pagination setup
 $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
-// Hitung total data
-$countQuery = "SELECT COUNT(*) AS total FROM Mahasiswa WHERE isDeleted = 0";
-$countResult = sqlsrv_query($conn, $countQuery);
+// Hitung total data (dengan filter pencarian jika ada)
+$baseCountQuery = "FROM Mahasiswa WHERE isDeleted = 0";
+$countParams = [];
+if (!empty($searchTerm)) {
+    $baseCountQuery .= " AND (nim LIKE ? OR nama LIKE ? OR email LIKE ?)";
+    $likeTerm = "%" . $searchTerm . "%";
+    $countParams = [$likeTerm, $likeTerm, $likeTerm];
+}
+$countQuery = "SELECT COUNT(*) AS total " . $baseCountQuery;
+$countResult = sqlsrv_query($conn, $countQuery, $countParams);
 $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
 $totalData = $countRow['total'];
-$totalPages = ceil($totalData / $perPage);
+$totalPages = max(1, ceil($totalData / $perPage));
 
-// Ambil data sesuai halaman
+// Ambil data sesuai halaman (dengan filter pencarian jika ada)
 $offset = ($page - 1) * $perPage;
-$query = "SELECT nim, nama, email, jenisRole FROM Mahasiswa 
-            WHERE isDeleted = 0
-            ORDER BY nim OFFSET $offset ROWS FETCH NEXT $perPage ROWS ONLY";
-$result = sqlsrv_query($conn, $query);
-$currentPage = basename($_SERVER['PHP_SELF']); // Determine the current page
+$baseQuery = "FROM Mahasiswa WHERE isDeleted = 0";
+$params = [];
+if (!empty($searchTerm)) {
+    $baseQuery .= " AND (nim LIKE ? OR nama LIKE ? OR email LIKE ?)";
+    $likeTerm = "%" . $searchTerm . "%";
+    $params = [$likeTerm, $likeTerm, $likeTerm];
+}
+$query = "SELECT nim, nama, email, jenisRole " . $baseQuery .
+    " ORDER BY nim OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+$params[] = $offset;
+$params[] = $perPage;
+$result = sqlsrv_query($conn, $query, $params);
+$currentPage = basename($_SERVER['PHP_SELF']);
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 ?>
 <!-- Content Area -->
 <main class="col bg-white px-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Manajemen Akun Mahasiswa</h3>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-semibold mb-0">Manajemen Akun Mahasiswa</h3>
+        <form action="" method="GET" class="d-flex" role="search">
+            <input type="text" name="search" class="form-control me-2" placeholder="Cari NIM, Nama, atau Email..." value="<?= htmlspecialchars($searchTerm) ?>" style="max-width: 250px;">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
     <div class="mb-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -37,8 +63,7 @@ include '../../templates/sidebar.php';
         </nav>
     </div>
 
-    <!-- Table Manajemen Akun Mahasiswa -->
-    <div class="d-flex justify-content-start mb-2">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
         <a href="<?= BASE_URL ?>/CRUD/Akun/tambahAkunMhs.php" class="btn btn-primary">
             <img src="<?= BASE_URL ?>/icon/tambah.svg" alt="Tambah Akun" class="me-2">
             Tambah Akun
@@ -60,48 +85,55 @@ include '../../templates/sidebar.php';
                 <?php
                 $hasData = false;
                 $no = $offset + 1;
-                while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                    $hasData = true;
+                if ($result === false) {
+                    echo '<tr><td colspan="6" class="text-center">Terjadi kesalahan saat mengambil data.</td></tr>';
+                } elseif (sqlsrv_has_rows($result) === false) {
+                    $pesan = "Tidak ada data mahasiswa.";
+                    if (!empty($searchTerm)) {
+                        $pesan = "Data yang Anda cari tidak ditemukan.";
+                    }
+                    echo "<tr><td colspan='6' class='text-center'>$pesan</td></tr>";
+                } else {
+                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                        $hasData = true;
                 ?>
-                    <tr class="text-center">
-                        <td><?= $no ?></td>
-                        <td><?= htmlspecialchars($row['nim']) ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['nama']) ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['email']) ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['jenisRole']) ?></td>
-                        <td>
-                            <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
-                            <a href="<?= BASE_URL ?>/CRUD/Akun/hapusAkunMhs.php?id=<?= urlencode($row['nim']) ?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                        <tr class="text-center">
+                            <td><?= $no ?></td>
+                            <td><?= htmlspecialchars($row['nim']) ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['nama']) ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['email']) ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['jenisRole']) ?></td>
+                            <td>
+                                <a href="<?= BASE_URL ?>/CRUD/Akun/editAkunMhs.php?id=<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/edit.svg" alt="editAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['nim'] ?>"><img src="<?= BASE_URL ?>/icon/hapus.svg" alt="hapusAkun" style="width: 20px; height: 20px; margin-bottom: 5px; margin-right: 0px;"></a>
 
-                            <!-- delete -->
-                            <div class="modal fade" id="deleteModal<?= $row['nim'] ?>"
-                                tabindex="-1" aria-labelledby="modalLabel<?= $row['nim'] ?>" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <form action="../../CRUD/Akun/hapusAkunMhs.php" method="POST">
-                                        <input type="hidden" name="nim" value="<?= $row['nim'] ?>">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLabel<?= $row['nim'] ?>">Konfirmasi Hapus</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                <!-- delete -->
+                                <div class="modal fade" id="deleteModal<?= $row['nim'] ?>"
+                                    tabindex="-1" aria-labelledby="modalLabel<?= $row['nim'] ?>" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form action="../../CRUD/Akun/hapusAkunMhs.php" method="POST">
+                                            <input type="hidden" name="nim" value="<?= $row['nim'] ?>">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalLabel<?= $row['nim'] ?>">Konfirmasi Hapus</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Apakah Anda yakin ingin menghapus akun <br>"<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-danger">Ya, hapus</button>
+                                                </div>
                                             </div>
-                                            <div class="modal-body">
-                                                Apakah Anda yakin ingin menghapus akun <br>"<strong><?= htmlspecialchars($row['nama']) ?></strong>"?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" class="btn btn-danger">Ya, hapus</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                 <?php
-                    $no++;
-                }
-                if (!$hasData) {
-                    echo '<tr><td colspan="5" class="text-center">Tidak ada data</td></tr>';
+                        $no++;
+                    }
                 }
                 ?>
             </tbody>
@@ -113,5 +145,4 @@ include '../../templates/sidebar.php';
 </main>
 
 <?php
-
 include '../../templates/footer.php';

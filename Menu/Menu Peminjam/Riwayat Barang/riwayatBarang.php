@@ -2,18 +2,20 @@
 require_once __DIR__ . '/../../../function/init.php';
 authorize_role(['Peminjam']);
 
+// --- Tangkap parameter pencarian dan filter ---
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+// BARU: Tangkap parameter filter status
+$filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
+
 // Pagination setup
 $perPage = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
-// Cek role dari session
 if (isset($_SESSION['user_role'])) {
-    // Jika role adalah Mahasiswa dan session 'nim' ada
     if ($_SESSION['user_role'] == 'Peminjam' && isset($_SESSION['nim'])) {
         $peminjam_field = 'nim';
         $peminjam_value = $_SESSION['nim'];
-        // Jika role adalah Karyawan dan session 'npk' ada
     } elseif ($_SESSION['user_role'] == 'Peminjam' && isset($_SESSION['npk'])) {
         $peminjam_field = 'npk';
         $peminjam_value = $_SESSION['npk'];
@@ -23,24 +25,51 @@ if (isset($_SESSION['user_role'])) {
     }
 
     if (!empty($peminjam_field) && !empty($peminjam_value)) {
-        // Hitung total data untuk Peminjam (Mahasiswa/Karyawan)
-        $countQuery = "SELECT COUNT(*) AS total FROM Peminjaman_Barang WHERE $peminjam_field = ?";
+        // --- Modifikasi Kueri untuk Pencarian & Filter ---
+
+        // Base query
+        $baseCountQuery = "FROM Peminjaman_Barang pb JOIN Barang b ON pb.idBarang = b.idBarang LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg WHERE pb.$peminjam_field = ?";
+        $baseQuery = "FROM Peminjaman_Barang pb 
+                      JOIN Barang b ON pb.idBarang = b.idBarang 
+                      LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
+                      WHERE pb.$peminjam_field = ?";
+
         $countParams = [$peminjam_value];
+        $params = [$peminjam_value];
+
+        // Jika ada kata kunci pencarian, tambahkan kondisi LIKE
+        if (!empty($searchTerm)) {
+            $baseQuery .= " AND b.namaBarang LIKE ?";
+            $baseCountQuery .= " AND b.namaBarang LIKE ?";
+            $searchParam = "%" . $searchTerm . "%";
+            $countParams[] = $searchParam;
+            $params[] = $searchParam;
+        }
+
+        // BARU: Jika ada filter status, tambahkan kondisi
+        if (!empty($filterStatus)) {
+            $baseQuery .= " AND sp.statusPeminjaman = ?";
+            $baseCountQuery .= " AND sp.statusPeminjaman = ?";
+            $countParams[] = $filterStatus;
+            $params[] = $filterStatus;
+        }
+
+        // Hitung total data (sudah termasuk filter)
+        $countQuery = "SELECT COUNT(*) AS total " . $baseCountQuery;
         $countResult = sqlsrv_query($conn, $countQuery, $countParams);
         $countRow = sqlsrv_fetch_array($countResult, SQLSRV_FETCH_ASSOC);
         $totalData = $countRow['total'];
         $totalPages = ceil($totalData / $perPage);
 
-        // Ambil data sesuai halaman
+        // Ambil data sesuai halaman (sudah termasuk filter)
         $offset = ($page - 1) * $perPage;
-        $query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.tglPeminjamanBrg, pb.jumlahBrg, sp.statusPeminjaman, b.namaBarang 
-                  FROM Peminjaman_Barang pb 
-                  JOIN Barang b ON pb.idBarang = b.idBarang 
-                  LEFT JOIN Status_Peminjaman sp ON pb.idPeminjamanBrg = sp.idPeminjamanBrg
-                  WHERE pb.$peminjam_field = ? 
-                  ORDER BY pb.tglPeminjamanBrg DESC
-                  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        $params = [$peminjam_value, $offset, $perPage];
+        $query = "SELECT pb.idPeminjamanBrg, pb.idBarang, pb.tglPeminjamanBrg, pb.jumlahBrg, sp.statusPeminjaman, b.namaBarang "
+               . $baseQuery
+               . " ORDER BY pb.tglPeminjamanBrg DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        
+        $params[] = $offset;
+        $params[] = $perPage;
+
         $result = sqlsrv_query($conn, $query, $params);
     }
 }
@@ -49,7 +78,36 @@ include __DIR__ . '/../../../templates/header.php';
 include __DIR__ . '/../../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
-    <h3 class="fw-semibold mb-3">Riwayat Peminjaman Barang</h3>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-semibold mb-0">Riwayat Peminjaman Barang</h3>
+
+        <div class="d-flex align-items-center gap-2">
+            
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-funnel"></i> Filter Status
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="?search=<?= htmlspecialchars($searchTerm) ?>">Semua Status</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="?status=Menunggu Persetujuan&search=<?= htmlspecialchars($searchTerm) ?>">Menunggu Persetujuan</a></li>
+                    <li><a class="dropdown-item" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
+                    <li><a class="dropdown-item" href="?status=Sebagian Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Sebagian Dikembalikan</a></li>
+                    <li><a class="dropdown-item" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
+                    <li><a class="dropdown-item" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                </ul>
+            </div>
+
+            <form action="" method="GET" class="d-flex" role="search">
+                <input type="hidden" name="status" value="<?= htmlspecialchars($filterStatus) ?>">
+                <input type="text" name="search" class="form-control me-2" placeholder="Cari nama barang..." value="<?= htmlspecialchars($searchTerm) ?>" style="max-width: 250px;">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -58,9 +116,10 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </ol>
         </nav>
     </div>
+    
     <div class="table-responsive">
         <table class="table table-hover align-middle table-bordered">
-            <thead class="table-light">
+        <thead class="table-light">
                 <tr class="text-center">
                     <th>No</th>
                     <th>Nama Barang</th>
@@ -73,16 +132,20 @@ include __DIR__ . '/../../../templates/sidebar.php';
                 <?php
                 $no = $offset + 1;
                 if ($result === false) {
-                    echo "<tr><td colspan='7' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
+                    // ... (error handling)
                 } elseif (sqlsrv_has_rows($result) === false) {
-                    echo "<tr><td colspan='7' class='text-center'>Tidak ada data peminjaman barang.</td></tr>";
+                    $pesan = "Tidak ada data peminjaman barang.";
+                    if (!empty($searchTerm) || !empty($filterStatus)) {
+                        $pesan = "Data yang Anda cari tidak ditemukan.";
+                    }
+                    echo "<tr><td colspan='5' class='text-center'>$pesan</td></tr>";
                 } else {
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $statusPeminjaman = $row['statusPeminjaman'] ?? '';
                         $idPeminjaman = htmlspecialchars($row['idPeminjamanBrg'] ?? '');
-
                         $linkDetail = "formDetailRiwayatBrg.php?idPeminjamanBrg=" . $idPeminjaman;
 
+                        // Logika ikon status (tidak ada perubahan)
                         if ($statusPeminjaman == 'Telah Dikembalikan') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
                             $altText = 'Peminjaman Selesai';
@@ -113,16 +176,18 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <img src="<?= BASE_URL ?>/icon/detail.svg" alt="Lihat Detail" class="aksi-icon">
                                 </a>
                             </td>
-                        </tr>
+                        </tr>   
                 <?php
                         $no++;
-                        generatePagination($page, $totalPages);
                     }
+                    generatePagination($page, $totalPages);
+
                 }
                 ?>
             </tbody>
         </table>
     </div>
+
     <table class="legend-status">
         <tr>
             <td>
@@ -142,6 +207,6 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </td>
         </tr>
     </table>
-</main>
 
+</main>
 <?php include __DIR__ . '/../../../templates/footer.php'; ?>
