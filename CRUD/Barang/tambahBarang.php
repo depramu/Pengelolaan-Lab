@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
+authorize_role(['PIC Aset']);
 $showModal = false;
 
 $idBarang = 'BRG001';

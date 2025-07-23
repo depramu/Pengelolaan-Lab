@@ -123,9 +123,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ketersediaanQuery = "UPDATE Ruangan SET ketersediaan = 'Tidak Tersedia' WHERE idRuangan = ?";
                 $stmtUpdate = sqlsrv_query($conn, $ketersediaanQuery, [$idRuangan]);
                 if ($stmtUpdate) {
+                    $nama_peminjam = $nama;
                     $untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
-                    $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan menunggu persetujuan.";
-                    $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                    $pesanNotif = "Pengajuan peminjaman ruangan oleh $nama_peminjam menunggu persetujuan.";
+                    $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
                     sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
                     $showModal = true;
                 } else {

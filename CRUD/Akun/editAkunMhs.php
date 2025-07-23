@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
-authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'Peminjam'
+authorize_role(['PIC Aset']);
 
 $nim = $_GET['id'] ?? null;
 

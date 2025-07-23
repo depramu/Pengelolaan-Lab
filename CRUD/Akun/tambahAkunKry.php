@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../function/init.php';
-authorize_role('PIC Aset');
+authorize_role(['PIC Aset']);
 
 // Buffer output to ensure header() redirects work even if some whitespace or HTML comes later
 ob_start();
