@@ -136,7 +136,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Status Peminjaman</label>
                                             <?php
-                                            $statusClass = match ($data['statusPeminjaman']) {
+                                            $statusClass = match($data['statusPeminjaman']) {
                                                 'Menunggu Persetujuan' => 'text-warning',
                                                 'Sedang Dipinjam', 'Menunggu Pengecekan' => 'text-info',
                                                 'Telah Dikembalikan' => 'text-success',
@@ -153,7 +153,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <hr>
                                     <h6 class="mb-3">DETAIL PENOLAKAN</h6>
                                     <label class="form-label fw-semibold">Alasan Penolakan dari PIC</label>
-                                    <textarea class="form-control bg-light protect-input bg-light" rows="3" readonly><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                    <textarea class="form-control bg-light" rows="3" readonly><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
                                     <div class="mt-3">
                                         <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary">Kembali</a>
                                     </div>
@@ -165,8 +165,8 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold">Dokumentasi Sebelum</label>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
-                                                <span id="dokSebelumError" class="text-danger small"></span>
-                                                <input type="file" class="form-control" name="dokSebelum" id="dokSebelum" accept="image/*">
+                                                <span id="dokSebelumError" class="text-danger"></span>
+                                                <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSebelum'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">
                                                     <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" style="max-width: 100%; height: auto;">
@@ -178,8 +178,8 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold">Dokumentasi Sesudah</label>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
-                                                <span id="dokSesudahError" class="text-danger small"></span>
-                                                <input type="file" class="form-control" name="dokSesudah" id="dokSesudah" accept="image/*">
+                                                <span id="dokSesudahError" class="text-danger"></span>
+                                                <input type="file" class="form-control" id="dokSesudah"name="dokSesudah" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSesudah'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">
                                                     <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" style="max-width: 100%; height: auto;">
@@ -208,10 +208,5 @@ include __DIR__ . '/../../../templates/sidebar.php';
         </div>
     </div>
 </main>
-<!-- <script src="<?= BASE_URL ?>/assets/js/validasiPengembalian.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", setupDetailRiwayatForm);
-</script> -->
-
 
 <?php include __DIR__ . '/../../../templates/footer.php'; ?>
