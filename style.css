@@ -379,6 +379,10 @@ main {
   margin-right: 3vh;
   border-radius: 12px;
   height: 82vh;
+  min-width:0; 
+  flex:1 1 0; 
+  width:100%; 
+  box-sizing:border-box;
 }
 
 .fixed-pagination {

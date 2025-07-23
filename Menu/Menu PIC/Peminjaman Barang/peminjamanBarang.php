@@ -75,6 +75,14 @@ include __DIR__ . '/../../../templates/header.php';
 include __DIR__ . '/../../../templates/sidebar.php';
 ?>
 
+<!-- 
+    Penjelasan perubahan:
+    - Tambahkan style inline pada <main> agar lebar main tidak terlalu kecil saat di scale (zoom out/in) dan tidak turun ke bawah.
+    - Gunakan min-width dan width: 0 agar flexbox tidak membuat main turun ke bawah saat sidebar terlalu lebar.
+    - Gunakan flex-grow agar main tetap mengisi ruang yang tersedia.
+    - Pastikan parent flex container (biasanya row di layout) sudah menggunakan display: flex.
+-->
+
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <h3 class="fw-semibold mb-0">Peminjaman Barang</h3>
@@ -84,13 +92,13 @@ include __DIR__ . '/../../../templates/sidebar.php';
                     <i class="bi bi-funnel"></i> Filter Status
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="?search=<?= htmlspecialchars($searchTerm) ?>">Semua Status</a></li>
+                    <li><a class="dropdown-item<?= empty($filterStatus) ? ' active' : '' ?>" href="?search=<?= htmlspecialchars($searchTerm) ?>">Semua Status</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="?status=Menunggu Persetujuan&search=<?= htmlspecialchars($searchTerm) ?>">Menunggu Persetujuan</a></li>
-                    <li><a class="dropdown-item" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
-                    <li><a class="dropdown-item" href="?status=Sebagian Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Sebagian Dikembalikan</a></li>
-                    <li><a class="dropdown-item" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
-                    <li><a class="dropdown-item" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Menunggu Persetujuan' ? ' active' : '' ?>" href="?status=Menunggu Persetujuan&search=<?= htmlspecialchars($searchTerm) ?>">Menunggu Persetujuan</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Sedang Dipinjam' ? ' active' : '' ?>" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Sebagian Dikembalikan' ? ' active' : '' ?>" href="?status=Sebagian Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Sebagian Dikembalikan</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Telah Dikembalikan' ? ' active' : '' ?>" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Ditolak' ? ' active' : '' ?>" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
                 </ul>
             </div>
             <form action="" method="GET" class="d-flex" role="search">
@@ -127,13 +135,13 @@ include __DIR__ . '/../../../templates/sidebar.php';
                 <?php
                 $no = $offset + 1;
                 if ($result === false) {
-                    echo "<tr><td colspan='7' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
+                    echo "<tr><td colspan='6' class='text-center text-danger'>Gagal mengambil data dari database " . print_r(sqlsrv_errors(), true) . "</td></tr>";
                 } elseif (sqlsrv_has_rows($result) === false) {
                     $pesan = "Tidak ada data peminjaman barang.";
                     if (!empty($searchTerm) || !empty($filterStatus)) {
                         $pesan = "Data yang Anda cari tidak ditemukan.";
                     }
-                    echo "<tr><td colspan='7' class='text-center'>$pesan</td></tr>";
+                    echo "<tr><td colspan='6' class='text-center'>$pesan</td></tr>";
                 } else {
                     while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                         $statusPeminjaman = $row['statusPeminjaman'] ?? '';
