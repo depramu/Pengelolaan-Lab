@@ -90,10 +90,8 @@ if (isset($_POST['submit_pengembalian'])) {
 
             if ($stmt_update) {
                 $untuk = 'PIC Aset';
-                $pesanNotif = "Pengembalian ruangan dengan ID $idPeminjaman telah diajukan oleh peminjam.";
-                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                $pesanNotif = "Pengembalian ruangan telah diajukan oleh peminjam.";
                 sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
-                // Sukses, showModal true (bisa digunakan di halaman redirect)
                 header("Location: formDetailRiwayatRuangan.php?idPeminjamanRuangan=$idPeminjaman&success=1");
                 exit();
             } else {

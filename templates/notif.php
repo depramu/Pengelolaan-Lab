@@ -1,21 +1,19 @@
 <?php
 
-require_once __DIR__. '/../function/init.php';
+require_once __DIR__ . '/../function/init.php';
 
-include __DIR__ . '/header.php';
-include __DIR__ . '/sidebar.php';
+// Debugging - tampilkan data session (DIPINDAHKAN ke bawah)
+ob_start();
 
-// Debugging - tampilkan data session
-echo "<!-- Debug Session: ";
-print_r($_SESSION);
-echo " -->";
+// Ambil data user dari session
+$user_role = $_SESSION['user_role'] ?? '';
+$nim = $_SESSION['nim'] ?? ''; // Khusus mahasiswa
 
 if (isset($_POST['notif_id']) && !empty($_POST['notif_id'])) {
-  $notif_id = $_POST['notif_id'];
-  $query_update = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE id = ?";
-  $params_update = array($notif_id);
-  $result = sqlsrv_query($conn, $query_update, $params_update);
-  
+    $notif_id = $_POST['notif_id'];
+    $query_update = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE id = ?";
+    $params_update = array($notif_id);
+    $result = sqlsrv_query($conn, $query_update, $params_update);
 }
 
 if (isset($_POST['tandai_semua'])) {
@@ -31,21 +29,26 @@ if (isset($_POST['tandai_semua'])) {
     }
 
     sqlsrv_query($conn, $query_all_read, $params_all_read);
-    echo "<script>alert('Semua notifikasi telah ditandai sebagai sudah dibaca.'); window.location='notif.php';</script>";
+
+    $_SESSION['notif_success'] = "Semua notifikasi telah ditandai sebagai sudah dibaca.";
+    header("Location: notif.php");
     exit;
 }
 
-// Proses update status notifikasi
-if (isset($_POST['baca']) && !empty($_POST['notif_id'])) {
-    $notif_id = $_POST['notif_id'];
-    $query_update = "UPDATE Notifikasi SET status = 'Sudah Dibaca' WHERE id = ?";
-    $params_update = array($notif_id);
-    sqlsrv_query($conn, $query_update, $params_update);
+// Validasi login
+if (empty($user_role)) {
+    header("Location: login.php");
+    exit;
 }
 
-// Ambil data user dari session
-$user_role = $_SESSION['user_role'] ?? '';
-$nim = $_SESSION['nim'] ?? ''; // Khusus mahasiswa
+// SETELAH semua logika yang mungkin redirect, baru include header
+include __DIR__ . '/header.php';
+include __DIR__ . '/sidebar.php';
+
+// Tampilkan debugging session
+echo "<!-- Debug Session: ";
+print_r($_SESSION);
+echo " -->";
 
 // Validasi login
 if (empty($user_role)) {
@@ -100,7 +103,15 @@ if ($stmt === false) {
 
 <!-- Tampilan HTML -->
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
+    <?php if (isset($_SESSION['notif_success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $_SESSION['notif_success']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php unset($_SESSION['notif_success']); ?>
+    <?php endif; ?>
     <h3 class="fw-semibold mb-3">Notifikasi</h3>
+
     <div class="mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -166,19 +177,19 @@ if ($stmt === false) {
                             <td class="text-center status-cell"><?= htmlspecialchars($row['status']) ?></td>
                             <td class="text-center">
                                 <?php if ($row['status'] == 'Belum Dibaca'): ?>
-                                    <form method="POST" onsubmit="return tandaiDibaca(this)">
+                                  <form method="POST"> <!-- Hapus atribut onsubmit -->
                                     <input type="hidden" name="notif_id" value="<?= $row['id']; ?>">
                                     <button type="submit" name="baca" class="btn btn-sm btn-outline-success">
                                         <i class="bi bi-check2"></i>
                                     </button>
-                                    </form>
+                                </form>
                                 <?php endif; ?>
                             </td>  
                         </tr>
                     <?php $no++; endwhile; ?>
                     <?php if (!$hasData): ?>
                         <tr>
-                            <td colspan="4" class="text-center">Tidak ada notifikasi.</td>
+                            <td colspan="5" class="text-center">Tidak ada notifikasi.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -192,4 +203,5 @@ if ($stmt === false) {
 
 <?php
 include 'footer.php';
+ob_end_flush();
 ?>

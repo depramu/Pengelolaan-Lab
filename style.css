@@ -522,8 +522,24 @@ tr.terlambat td {
 
 /* --- Media Queries & Responsif --- */
 
-/* Offcanvas (Sidebar mobile) */
 @media (max-width: 991.98px) {
+  /* Menyembunyikan elemen dekoratif di kiri */
+  .role-left,
+  .login-left {
+    display: none !important;
+  }
+
+  /* Memastikan elemen utama (kanan) mengisi seluruh layar */
+  .role-right,
+  .login-right {
+    flex-basis: 100%;
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    padding: 32px 20px;
+  }
+
+  /* Penyesuaian lain untuk Offcanvas (sidebar) jika perlu */
   .offcanvas-end {
     background: #065ba6;
     border-right: 1.5px solid #d1d5db;
@@ -610,27 +626,37 @@ tr.terlambat td {
   main nav {
     font-size: 0.8rem;
   }
+
   .role-card,
   .container-login {
     flex-direction: column;
     max-width: 100vw;
     height: auto;
-    min-height: 100vh;
+    min-height: 100vh; /* Pastikan halaman login tetap fullscreen tingginya */
   }
+
   .role-left,
-  .role-right,
-  .login-left,
-  .login-right {
-    border-radius: 0;
-    padding: 32px 10px;
-    height: auto;
-    min-height: 0;
-    flex-basis: auto;
+  .login-left {
+    display: none !important; /* <-- TAMBAHKAN !important DI SINI */
   }
+
+  /* Pastikan kolom kanan mengisi seluruh ruang */
+  .role-right,
+  .login-right {
+    flex-basis: 100%; /* Ambil 100% lebar */
+    width: 100%;
+    min-height: 100vh; /* Penuhi tinggi layar */
+    border-radius: 0;
+    padding: 32px 20px; /* Sedikit padding horizontal */
+  }
+
+  /* --- AKHIR PERUBAHAN --- */
+
   .role-title {
     font-size: 1.2rem;
   }
   .role-btn {
     width: 90%;
+    max-width: 350px; /* Beri batas lebar tombol */
   }
 }

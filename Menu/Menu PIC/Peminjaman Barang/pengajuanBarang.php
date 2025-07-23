@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
         if ($stmtUpdate) {
             $untuk = $nim;
-            $pesanNotif = "Pengajuan peminjaman barang dengan ID $idPeminjamanBrg disetujui oleh PIC.";
+            $pesanNotif = "Pengajuan peminjaman barang disetujui oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
             sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);

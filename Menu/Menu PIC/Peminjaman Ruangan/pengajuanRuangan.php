@@ -68,9 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt) {
             $untuk = $nim;
-            $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan disetujui oleh PIC.";
+            $pesanNotif = "Pengajuan peminjaman ruangan disetujui oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+            sqlsrv_query($conn, $queryNotif, [$pesanNotif,$untuk]);
 
             $showModal = true;
         } else {

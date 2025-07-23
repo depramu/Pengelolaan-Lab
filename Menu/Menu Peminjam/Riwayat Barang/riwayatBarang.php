@@ -8,7 +8,7 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
 
 // Pagination setup
-$perPage = 9;
+$perPage = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 

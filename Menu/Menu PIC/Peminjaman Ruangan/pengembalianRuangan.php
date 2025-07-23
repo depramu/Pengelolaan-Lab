@@ -118,9 +118,9 @@
                 }
 
                 $untuk = $nim; // atau $_SESSION['user_role'] untuk peminjam
-                $pesanNotif = "Ruangan dengan ID $idPeminjamanRuangan telah dikembalikan.";
+                $pesanNotif = "Ruangan yang dipinjam telah dikembalikan.";
                 $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif,$untuk]);
                 $showModal = true;
             } else {
                 $error = "Gagal mengubah status peminjaman.";

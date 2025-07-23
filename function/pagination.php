@@ -22,7 +22,7 @@ function generatePagination($currentPage, $totalPages, $baseUrl = '?')
             </li>
 
             <?php
-            $showPages = 3; // Jumlah halaman yang selalu tampil di awal dan akhir
+            $showPages = 1  ; // Jumlah halaman yang selalu tampil di awal dan akhir
             $ellipsisShown = false;
             for ($i = 1; $i <= $totalPages; $i++) {
                 if (

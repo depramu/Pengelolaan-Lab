@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             sqlsrv_query($conn, $update_stock, [$jumlahPengembalian, $idBarang]);
 
             $untuk = $nim; // atau $_SESSION['user_role'] untuk peminjam
-            $pesanNotif = "Barang dengan ID $idPeminjamanBrg telah dikembalikan.";
+            $pesanNotif = "Barang yang dipinjam telah dikembalikan.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
             sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);

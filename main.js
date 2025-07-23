@@ -1084,7 +1084,8 @@ function setupPengembalianRuanganPage() {
 // =================================================================
 
 function setupSidebarPersistence() {
-  const sidebar = document.querySelector(".sidebar, .offcanvas-body");
+  // Sesuaikan selector agar bisa menangani sidebar atau offcanvas
+  const sidebar = document.querySelector(".sidebar") || document.querySelector(".offcanvas-body");
   if (!sidebar) return;
 
   const storageKey = "sidebar_active_menus";
@@ -1096,8 +1097,9 @@ function setupSidebarPersistence() {
   // Pulihkan state saat load
   getActiveMenus().forEach((menuId) => {
     const menuElement = document.getElementById(menuId);
-    if (menuElement) {
-      const collapseInstance = new bootstrap.Collapse(menuElement, {
+    if (menuElement && menuElement.classList.contains("collapse")) {
+      // Pastikan hanya elemen collapse yang diproses
+      const collapseInstance = bootstrap.Collapse.getOrCreateInstance(menuElement, {
         toggle: false,
       });
       collapseInstance.show();

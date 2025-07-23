@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($updateStatusStmt) {
             $untuk = $nim;
-            $pesanNotif = "Pengajuan peminjaman ruangan dengan ID $idPeminjamanRuangan ditolak oleh PIC.";
+            $pesanNotif = "Pengajuan peminjaman ruangan ditolak oleh PIC.";
             $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
             sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
             sqlsrv_commit($conn);
