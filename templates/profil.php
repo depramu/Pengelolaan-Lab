@@ -11,40 +11,29 @@ $user_nama = $_SESSION['user_nama'] ?? null;
 $profil = [];
 
 // Ambil data profil
-if ($user_id && $user_role) {
-    if ($user_role === 'Peminjam') {
-        $query = "SELECT nim, nama, email, kataSandi FROM Mahasiswa WHERE nim = ?";
-        $stmt = sqlsrv_query($conn, $query, array($user_id));
-        if ($stmt === false) {
-            $error_message = "Gagal mengambil data Mahasiswa.";
-        } else {
-            $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-            if ($profil) {
-                $profil['nim'] = $profil['nim'];
-                $profil['nama'] = $profil['nama'];
-                $profil['role'] = 'Peminjam (Mahasiswa)';
-                $profil['email'] = $profil['email'];
-                $profil['kataSandi'] = $profil['kataSandi'];
-            }
-        }
-    } else {
-        $query = "SELECT npk, nama, email, jenisRole, kataSandi FROM Karyawan WHERE npk = ?";
-        $stmt = sqlsrv_query($conn, $query, array($user_id));
-        if ($stmt === false) {
-            $error_message = "Gagal mengambil data Karyawan.";
-        } else {
-            $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-            if ($profil) {
-                $profil['npk'] = $profil['npk'];
-                $profil['nama'] = $profil['nama'];
-                $profil['role'] = $profil['jenisRole'] ?? 'Peminjam (Karyawan)';
-                $profil['email'] = $profil['email'];
-                $profil['kataSandi'] = $profil['kataSandi'];
-            }
-        }
-    }
+$query = "SELECT nim, nama, email, kataSandi FROM Mahasiswa WHERE nim = ?";
+$stmt = sqlsrv_query($conn, $query, [$user_id]);
+if ($stmt && sqlsrv_has_rows($stmt)) {
+    $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+    $profil['nim'] = $profil['nim'];
+    $profil['nama'] = $profil['nama'];
+    $profil['role'] = 'Peminjam (Mahasiswa)';
+    $profil['email'] = $profil['email'];
+    $profil['kataSandi'] = $profil['kataSandi'];
 } else {
-    $error_message = "Anda belum login.";
+    // Jika tidak ditemukan, cek di Karyawan
+    $query = "SELECT npk, nama, email, jenisRole, kataSandi FROM Karyawan WHERE npk = ?";
+    $stmt = sqlsrv_query($conn, $query, [$user_id]);
+    if ($stmt && sqlsrv_has_rows($stmt)) {
+        $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        $profil['npk'] = $profil['npk'];
+        $profil['nama'] = $profil['nama'];
+        $profil['role'] = $profil['jenisRole'] ?? 'Peminjam (Karyawan)';
+        $profil['email'] = $profil['email'];
+        $profil['kataSandi'] = $profil['kataSandi'];
+    } else {
+        $error_message = "Data pengguna tidak ditemukan.";
+    }
 }
 ?>
 

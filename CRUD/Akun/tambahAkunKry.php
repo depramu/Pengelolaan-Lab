@@ -12,15 +12,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
 
-    // Auto-generate secure random password
-    require_once __DIR__ . '/../../function/reset_password_helper.php';
-    $kataSandi = generateSecurePassword();
-
+    // Validasi NPK dan Email
+    $hasError = false;
     $cekNpk = sqlsrv_query($conn, "SELECT npk FROM Karyawan WHERE npk = ?", [$npk]);
+    $cekEmail = sqlsrv_query($conn, "SELECT email FROM Karyawan WHERE email = ?", [$email]);
     if ($cekNpk && sqlsrv_has_rows($cekNpk)) {
         $npkError = "*NPK sudah terdaftar";
-    } else {
-        $npkError = ''; // Reset pesan error jika sebelumnya ada error
+        $hasError = true;
+    } 
+    if ($cekEmail && sqlsrv_has_rows($cekEmail)) {
+        $emailError = "*Email sudah terdaftar";
+        $hasError = true;
+    }
+    if (!$hasError) {
+        // Auto-generate secure random password
+        require_once __DIR__ . '/../../function/reset_password_helper.php';
+        $kataSandi = generateSecurePassword();
         $query = "INSERT INTO Karyawan (npk, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
         $params = [$npk, $nama, $email, $jenisRole, $kataSandi];
         $stmt = sqlsrv_query($conn, $query, $params);
@@ -92,6 +99,9 @@ include '../../templates/sidebar.php';
                                         <label for="email" class="form-label fw-semibold d-flex align-items-center">
                                             Email
                                             <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($emailError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $emailError ?></span>
+                                            <?php endif; ?>
                                         </label>
                                         <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
                                     </div>
@@ -121,4 +131,4 @@ include '../../templates/sidebar.php';
     </div>
 </main>
 
-<?php include '../../templates/footer.php';?>
+<?php include '../../templates/footer.php'; ?>

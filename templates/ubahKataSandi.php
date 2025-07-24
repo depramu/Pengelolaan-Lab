@@ -20,7 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user
         if (strlen($kataSandiBaru) < 8) {
             $error_message = "Kata sandi minimal 8 karakter";
         } else {
-            if ($user_role === 'Peminjam') {
+            $query_cek = "SELECT nim FROM Mahasiswa WHERE nim = ?";
+            $params_cek = [$user_id];
+            $stmt_cek = sqlsrv_query($conn, $query_cek, $params_cek);
+            if ($stmt_cek && sqlsrv_has_rows($stmt_cek)) {
                 $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
                 $params = [$kataSandiBaru, $user_id];
             } else {
@@ -28,14 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user
                 $params = [$kataSandiBaru, $user_id];
             }
 
-            $stmt = sqlsrv_query($conn, $query, $params);
-            if ($stmt) {
-                $showModal = true;
-            } else {
-                $error_message = "Gagal mengubah kata sandi.";
-                if (($errors = sqlsrv_errors()) != null) {
-                    foreach ($errors as $err) {
-                        $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
+            if (isset($query) && isset($params)) {
+                $stmt_update = sqlsrv_query($conn, $query, $params);
+                if ($stmt_update) {
+                    $showModal = true;
+                } else {
+                    $error_message = "Gagal mengubah kata sandi.";
+                    if (($errors = sqlsrv_errors()) != null) {
+                        foreach ($errors as $err) {
+                            $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
+                        }
                     }
                 }
             }
@@ -46,40 +51,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user
 }
 
 // Ambil data profil
-if ($user_id && $user_role) {
-    if ($user_role === 'Peminjam') {
-        $query = "SELECT nim, nama, email, kataSandi FROM Mahasiswa WHERE nim = ?";
-        $stmt = sqlsrv_query($conn, $query, array($user_id));
-        if ($stmt === false) {
-            $error_message = "Gagal mengambil data Mahasiswa.";
-        } else {
-            $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-            if ($profil) {
-                $profil['nim'] = $profil['nim'];
-                $profil['nama'] = $profil['nama'];
-                $profil['role'] = 'Peminjam (Mahasiswa)';
-                $profil['email'] = $profil['email'];
-                $profil['kataSandi'] = $profil['kataSandi'];
-            }
-        }
-    } else {
-        $query = "SELECT npk, nama, email, jenisRole, kataSandi FROM Karyawan WHERE npk = ?";
-        $stmt = sqlsrv_query($conn, $query, array($user_id));
-        if ($stmt === false) {
-            $error_message = "Gagal mengambil data Karyawan.";
-        } else {
-            $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-            if ($profil) {
-                $profil['npk'] = $profil['npk'];
-                $profil['nama'] = $profil['nama'];
-                $profil['role'] = $profil['jenisRole'] ?? 'Peminjam (Karyawan)';
-                $profil['email'] = $profil['email'];
-                $profil['kataSandi'] = $profil['kataSandi'];
-            }
-        }
-    }
+$query = "SELECT nim, nama, email, kataSandi FROM Mahasiswa WHERE nim = ?";
+$stmt = sqlsrv_query($conn, $query, [$user_id]);
+if ($stmt && sqlsrv_has_rows($stmt)) {
+    $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+    $profil['nim'] = $profil['nim'];
+    $profil['nama'] = $profil['nama'];
+    $profil['role'] = 'Peminjam (Mahasiswa)';
+    $profil['email'] = $profil['email'];
+    $profil['kataSandi'] = $profil['kataSandi'];
 } else {
-    $error_message = "Anda belum login.";
+    // Jika tidak ditemukan, cek di Karyawan
+    $query = "SELECT npk, nama, email, jenisRole, kataSandi FROM Karyawan WHERE npk = ?";
+    $stmt = sqlsrv_query($conn, $query, [$user_id]);
+    if ($stmt && sqlsrv_has_rows($stmt)) {
+        $profil = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        $profil['npk'] = $profil['npk'];
+        $profil['nama'] = $profil['nama'];
+        $profil['role'] = $profil['jenisRole'] ?? 'Peminjam (Karyawan)';
+        $profil['email'] = $profil['email'];
+        $profil['kataSandi'] = $profil['kataSandi'];
+    } else {
+        $error_message = "Data pengguna tidak ditemukan.";
+    }
 }
 ?>
 
@@ -123,25 +117,25 @@ if ($user_id && $user_role) {
                                 <span class="float-end">:</span>
                             </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk']) ?>">
+                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk']) ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['nama']) ?>">
+                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['nama']) ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Role <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['role']) ?>">
+                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['role']) ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Email <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light" readonly value="<?= htmlspecialchars($profil['email']) ?>">
+                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['email']) ?>">
                             </div>
                         </div>
                         <div class="mb-3 row">

@@ -136,7 +136,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Status Peminjaman</label>
                                             <?php
-                                            $statusClass = match($data['statusPeminjaman']) {
+                                            $statusClass = match ($data['statusPeminjaman']) {
                                                 'Menunggu Persetujuan' => 'text-warning',
                                                 'Sedang Dipinjam', 'Menunggu Pengecekan' => 'text-info',
                                                 'Telah Dikembalikan' => 'text-success',
@@ -163,40 +163,40 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold">Dokumentasi Sebelum</label>
+                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sebelum</label><br>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
                                                 <span id="dokSebelumError" class="text-danger"></span>
                                                 <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSebelum'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">
                                                     <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>"
-                                                    alt="Dokumentasi Sebelum"
-                                                            class="img-fluid rounded border"
-                                                            style="max-height: 200px; cursor: pointer;"
-                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>', '_blank')">
+                                                        alt="Dokumentasi Sebelum"
+                                                        class="img-fluid rounded border"
+                                                        style="max-height: 200px; cursor: pointer;">
                                                 </a>
                                             <?php else: ?>
                                                 <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                             <?php endif; ?>
                                         </div>
+
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold">Dokumentasi Sesudah</label>
+                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sesudah</label><br>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
                                                 <span id="dokSesudahError" class="text-danger"></span>
-                                                <input type="file" class="form-control" id="dokSesudah"name="dokSesudah" accept="image/*">
+                                                <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSesudah'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">
                                                     <img src="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>"
-                                                    alt="Dokumentasi Sesudah"
-                                                            class="img-fluid rounded border"
-                                                            style="max-height: 200px; cursor: pointer;"
-                                                            onclick="window.open('<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>', '_blank')">
+                                                        alt="Dokumentasi Sesudah"
+                                                        class="img-fluid rounded border"
+                                                        style="max-height: 200px; cursor: pointer;">
                                                 </a>
                                             <?php else: ?>
                                                 <span class="text-danger"><em>(Tidak Diunggah)</em></span>
                                             <?php endif; ?>
                                         </div>
                                     </div>
+
                                     <div class="d-flex justify-content-between mt-3">
                                         <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary">Kembali</a>
                                         <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>

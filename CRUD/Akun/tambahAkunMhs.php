@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../function/init.php';
 authorize_role(['PIC Aset']);
 
-
 // Buffer any accidental output so header() redirect works
 ob_start();
 
@@ -14,15 +13,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $jenisRole = $_POST['jenisRole'];
 
-    // Auto-generate secure random password
-    require_once __DIR__ . '/../../function/reset_password_helper.php';
-    $kataSandi = generateSecurePassword();
-
+    // Validasi NIM dan Email
+    $hasError = false;
     $cekNim = sqlsrv_query($conn, "SELECT nim FROM Mahasiswa WHERE nim = ?", [$nim]);
+    $cekEmail = sqlsrv_query($conn, "SELECT email FROM Mahasiswa WHERE email = ?", [$email]);
     if ($cekNim && sqlsrv_has_rows($cekNim)) {
         $nimError = "*NIM sudah terdaftar";
-    } else {
-        $nimError = '';     // Reset pesan error jika sebelumnya ada error
+        $hasError = true;
+    }
+
+    if ($cekEmail && sqlsrv_has_rows($cekEmail)) {
+        $emailError = "*Email sudah terdaftar";
+        $hasError = true;
+    } 
+    
+    if (!$hasError) {
+        // Auto-generate secure random password
+        require_once __DIR__ . '/../../function/reset_password_helper.php';
+        $kataSandi = generateSecurePassword();
         $query = "INSERT INTO Mahasiswa (nim, nama, email, jenisRole, kataSandi) VALUES (?, ?, ?, ?, ?)";
         $params = [$nim, $nama, $email, $jenisRole, $kataSandi];
         $stmt = sqlsrv_query($conn, $query, $params);
@@ -93,6 +101,9 @@ include '../../templates/sidebar.php';
                                         <label for="email" class="form-label fw-semibold d-flex align-items-center">
                                             Email
                                             <span id="emailError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($emailError)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $emailError ?></span>
+                                            <?php endif; ?>
                                         </label>
                                         <input type="text" class="form-control" id="email" name="email" placeholder="Masukkan email.." value="<?= isset($email) ? htmlspecialchars($email) : '' ?>">
                                     </div>

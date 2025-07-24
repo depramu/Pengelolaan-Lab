@@ -156,6 +156,7 @@ include '../../../templates/sidebar.php';
                                 <?php if ($data['statusPeminjaman'] == 'Telah Dikembalikan') : ?>
                                     <div class="row mt-4">
                                         <div class="col-12">
+                                            <hr>
                                             <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
                                         </div>
                                     </div>
@@ -164,7 +165,7 @@ include '../../../templates/sidebar.php';
                                             <label class="form-label fw-semibold">Dokumentasi Sebelum</label>
                                             <div class="mt-2">
                                                 <?php if (!empty($data['dokumentasiSebelum'])) : ?>
-                                                    <div class="text-center">
+                                                    <div>
                                                         <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>"
                                                             alt="Dokumentasi Sebelum"
                                                             class="img-fluid rounded border"
@@ -182,7 +183,7 @@ include '../../../templates/sidebar.php';
                                             <label class="form-label fw-semibold">Dokumentasi Sesudah</label>
                                             <div class="mt-2">
                                                 <?php if (!empty($data['dokumentasiSesudah'])) : ?>
-                                                    <div class="text-center">
+                                                    <div>
                                                         <img src="<?= BASE_URL ?>uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>"
                                                             alt="Dokumentasi Sesudah"
                                                             class="img-fluid rounded border"
@@ -200,14 +201,14 @@ include '../../../templates/sidebar.php';
                                 <?php endif; ?>
 
                                 <?php
-                                    if ($data['statusPeminjaman'] == 'Ditolak' && !empty($data['alasanPenolakan'])) : ?>
-                                        <hr>
-                                        <h6 class="mb-3">DETAIL PENOLAKAN</h6>
-                                        <div class="mt-3">
-                                            <label class="form-label fw-bold text-danger">Alasan Penolakan dari PIC</label>
-                                            <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'])) ?></div>
-                                        </div>
-                                    <?php endif; ?>
+                                if ($data['statusPeminjaman'] == 'Ditolak' && !empty($data['alasanPenolakan'])) : ?>
+                                    <hr>
+                                    <h6 class="mb-3">DETAIL PENOLAKAN</h6>
+                                    <div class="mt-3">
+                                        <label class="form-label fw-bold text-danger">Alasan Penolakan dari PIC</label>
+                                        <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'])) ?></div>
+                                    </div>
+                                <?php endif; ?>
 
                                 <div class="d-flex justify-content-between mt-3">
                                     <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php" class="btn btn-secondary me-2">Kembali</a>
