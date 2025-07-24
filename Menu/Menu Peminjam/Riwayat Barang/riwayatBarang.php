@@ -156,7 +156,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             $iconSrc = BASE_URL . '/icon/jamHijau.svg';
                             $altText = 'Sebagian Dikembalikan';
                         } elseif ($statusPeminjaman == 'Menunggu Persetujuan') {
-                            $iconSrc = BASE_URL . '/icon/jamKuning.svg';
+                            $iconSrc = BASE_URL . '/icon/jamAbu.svg';
                             $altText = 'Menunggu Persetujuan oleh PIC';
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';

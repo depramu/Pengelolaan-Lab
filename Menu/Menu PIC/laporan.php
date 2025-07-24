@@ -2,6 +2,33 @@
 require_once __DIR__ . '/../../function/init.php'; // Penyesuaian: gunakan init.php untuk inisialisasi dan otorisasi
 authorize_role('PIC Aset'); // Lindungi halaman ini untuk role 'PIC Aset'
 
+// Ambil daftar lokasi unik untuk filter Data Barang
+$lokasiList = [];
+$lokasiQuery = "SELECT DISTINCT lokasiBarang FROM Barang WHERE isDeleted = 0 ORDER BY lokasiBarang ASC";
+$lokasiResult = sqlsrv_query($conn, $lokasiQuery);
+if ($lokasiResult !== false) {
+    while ($rowLokasi = sqlsrv_fetch_array($lokasiResult, SQLSRV_FETCH_ASSOC)) {
+        if (!empty($rowLokasi['lokasiBarang'])) {
+            $lokasiList[] = $rowLokasi['lokasiBarang'];
+        }
+    }
+}
+
+// Ambil daftar kondisi unik untuk filter Data Ruangan
+$kondisiList = [];
+$kondisiQuery = "SELECT DISTINCT kondisiRuangan FROM Ruangan ORDER BY kondisiRuangan ASC";
+$kondisiResult = sqlsrv_query($conn, $kondisiQuery);
+if ($kondisiResult !== false) {
+    while ($rowKondisi = sqlsrv_fetch_array($kondisiResult, SQLSRV_FETCH_ASSOC)) {
+        if (!empty($rowKondisi['kondisiRuangan'])) {
+            $kondisiList[] = $rowKondisi['kondisiRuangan'];
+        }
+    }
+}
+
+// Tambahkan file pagination.php agar fungsi pagination bisa digunakan
+require_once __DIR__ . '/../../function/pagination.php';
+
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
 ?>
@@ -35,6 +62,26 @@ include '../../templates/sidebar.php';
             <option value="peminjamSeringMeminjam">Peminjam yang Sering Meminjam</option>
             <option value="barangSeringDipinjam">Barang yang Sering Dipinjam</option>
             <option value="ruanganSeringDipinjam">Ruangan yang Sering Dipinjam</option>
+          </select>
+        </div>
+        <!-- Filter Lokasi Barang (khusus Data Barang) -->
+        <div class="col-md-3" id="colLokasiBarang" style="display:none;">
+          <label for="lokasiBarangFilter" class="form-label">Lokasi Barang</label>
+          <select class="form-select" id="lokasiBarangFilter">
+            <option selected value="">Semua Lokasi</option>
+            <?php foreach ($lokasiList as $lokasi): ?>
+              <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <!-- Filter Kondisi Ruangan (khusus Data Ruangan) -->
+        <div class="col-md-3" id="colKondisiRuangan" style="display:none;">
+          <label for="kondisiRuanganFilter" class="form-label">Kondisi Ruangan</label>
+          <select class="form-select" id="kondisiRuanganFilter">
+            <option selected value="">Semua Kondisi</option>
+            <?php foreach ($kondisiList as $kondisi): ?>
+              <option value="<?= htmlspecialchars($kondisi) ?>"><?= htmlspecialchars($kondisi) ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
         <div class="col-md-3" id="colBulan">
@@ -72,6 +119,13 @@ include '../../templates/sidebar.php';
     <div id="wadahLaporan" class="table-responsive">
       <!-- Tabel akan dirender oleh JavaScript di sini -->
     </div>
+    <!-- Pagination PHP (server-side) jika ingin digunakan secara statis, bisa dipanggil di sini -->
+    <?php
+    // Contoh penggunaan generatePagination jika ingin server-side (AJAX/JS tetap bisa handle client-side)
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $totalPages = 1; // Ganti dengan total halaman hasil query
+    generatePagination($page, $totalPages);
+    ?>
   </div>
 
   <div id="bottomControlsContainer" class="d-flex justify-content-between align-items-end mt-0">
@@ -81,7 +135,7 @@ include '../../templates/sidebar.php';
       </div>
       <nav aria-label="Page navigation" id="paginationControlsContainer">
         <ul class="pagination mb-0" id="paginationUl">
-          <!-- Tombol paginasi akan muncul di sini -->
+          <!-- Tombol paginasi akan muncul di sini (client-side JS) -->
         </ul>
       </nav>
     </div>
@@ -111,5 +165,35 @@ include '../../templates/sidebar.php';
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const jenisLaporan = document.getElementById('jenisLaporan');
+  const colLokasiBarang = document.getElementById('colLokasiBarang');
+  const colKondisiRuangan = document.getElementById('colKondisiRuangan');
+  const colBulan = document.getElementById('colBulan');
+  const colTahun = document.getElementById('colTahun');
+
+  function updateFilterVisibility() {
+    const value = jenisLaporan.value;
+    // Sembunyikan semua filter khusus dulu
+    colLokasiBarang.style.display = 'none';
+    colKondisiRuangan.style.display = 'none';
+
+    // Tampilkan filter sesuai jenis laporan
+    if (value === 'dataBarang') {
+      colLokasiBarang.style.display = '';
+    } else if (value === 'dataRuangan') {
+      colKondisiRuangan.style.display = '';
+    }
+    // Filter bulan/tahun tetap tampil untuk semua jenis laporan
+  }
+
+  jenisLaporan.addEventListener('change', updateFilterVisibility);
+
+  // Inisialisasi tampilan filter saat load
+  updateFilterVisibility();
+});
+</script>
     
 <?php include '../../templates/footer.php';

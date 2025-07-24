@@ -134,11 +134,11 @@ include '../../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                        <input type="text" class="form-control-plaintext" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
                                     </div>
                                     <div class="mb-2">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
+                                        <input type="text" class="form-control-plaintext" id="jumlahBrg" name="jumlahBrg" value="<?= $jumlahBrg ?>">
                                         <input type="hidden" id="sisaPinjaman" value="<?= $sisaPinjaman ?>">
                                         <?php if ($sisaPinjaman == 0): ?>
                                             <span class="text-success small">Semua barang sudah dikembalikan.</span>
@@ -148,7 +148,7 @@ include '../../../templates/sidebar.php';
                                     </div>
                                     <div class="mb">
                                         <label class="form-label fw-semibold">NIM/NPK</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" value=" <?php
+                                        <input type="text" class="form-control-plaintext" value=" <?php
                                                                                                                         if (!empty($data['nim'])) {
                                                                                                                             echo htmlspecialchars($data['nim']);
                                                                                                                         } elseif (!empty($data['npk'])) {
@@ -165,7 +165,7 @@ include '../../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                        <input type="text" class="form-control-plaintext" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
                                     </div>
 
                                     <div class="mb-4">

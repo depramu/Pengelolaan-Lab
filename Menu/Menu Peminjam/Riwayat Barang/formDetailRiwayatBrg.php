@@ -80,7 +80,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                             <div class="form-control-plaintext">
                                                 <?= htmlspecialchars(
                                                     ($data['tglPeminjamanBrg'] instanceof DateTime)
-                                                        ? $data['tglPeminjamanBrg']->format('d-m-Y')
+                                                        ? $data['tglPeminjamanBrg']->format('d M Y')
                                                         : $data['tglPeminjamanBrg']
                                                 ) ?>
                                             </div>

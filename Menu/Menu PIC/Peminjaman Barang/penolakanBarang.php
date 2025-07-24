@@ -124,11 +124,11 @@ include '../../../templates/sidebar.php';
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">NIM / NPK</label>
                                         <div class="form-control-plaintext">
-                                            <?php
-                                            if (!empty($nim)) {
-                                                echo htmlspecialchars($nim);
-                                            } elseif (!empty($npk)) {
-                                                echo htmlspecialchars($npk);
+                                        <?php
+                                            if (!empty($data['nim'])) {
+                                                echo htmlspecialchars($data['nim']);
+                                            } elseif (!empty($data['npk'])) {
+                                                echo htmlspecialchars($data['npk']);
                                             } else {
                                                 echo "-";
                                             }

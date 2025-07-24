@@ -75,14 +75,6 @@ include __DIR__ . '/../../../templates/header.php';
 include __DIR__ . '/../../../templates/sidebar.php';
 ?>
 
-<!-- 
-    Penjelasan perubahan:
-    - Tambahkan style inline pada <main> agar lebar main tidak terlalu kecil saat di scale (zoom out/in) dan tidak turun ke bawah.
-    - Gunakan min-width dan width: 0 agar flexbox tidak membuat main turun ke bawah saat sidebar terlalu lebar.
-    - Gunakan flex-grow agar main tetap mengisi ruang yang tersedia.
-    - Pastikan parent flex container (biasanya row di layout) sudah menggunakan display: flex.
--->
-
 <main class="col bg-white px-3 px-md-4 py-3 position-relative">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <h3 class="fw-semibold mb-0">Peminjaman Barang</h3>

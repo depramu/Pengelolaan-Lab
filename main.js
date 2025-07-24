@@ -937,77 +937,51 @@ function setupPengembalianBarangPage() {
   const catatanInput = document.getElementById("catatanPengembalianBarang");
   const catatanError = document.getElementById("catatanError");
 
-  // Validasi live: jumlahPengembalian
-  jumlahInput.addEventListener("input", function () {
-    const nilai = parseInt(jumlahInput.value, 10);
-    if (!jumlahInput.value || nilai <= 0) {
-      jumlahError.textContent = "*Jumlah harus lebih dari 0.";
-    } else if (nilai > sisaPinjaman) {
-      jumlahError.textContent = "*Melebihi sisa pinjaman.";
-    } else {
-      jumlahError.textContent = "";
-    }
-    jumlahError.style.display =
-      jumlahError.textContent !== "" ? "inline" : "none";
-  });
-
-  // Validasi live: kondisi barang
-  kondisiSelect.addEventListener("change", function () {
-    if (
-      !kondisiSelect.value ||
-      kondisiSelect.value === "Pilih Kondisi Barang"
-    ) {
-      kondisiError.textContent = "*Harus Dipilih";
-    } else {
-      kondisiError.textContent = "";
-    }
-    kondisiError.style.display =
-      kondisiError.textContent !== "" ? "inline" : "none";
-  });
-
-  // Validasi live: catatan
-  catatanInput.addEventListener("input", function () {
-    if (!catatanInput.value.trim()) {
-      catatanError.textContent = "*Harus Diisi";
-    } else {
-      catatanError.textContent = "";
-    }
-    catatanError.style.display =
-      catatanError.textContent !== "" ? "inline" : "none";
-  });
+  // Hapus validasi live: jumlahPengembalian
+  // Hapus validasi live: kondisi barang
+  // Hapus validasi live: catatan
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     let isValid = true;
 
+    // Validasi jumlah pengembalian
     if (!jumlahInput.value || parseInt(jumlahInput.value, 10) <= 0) {
       jumlahError.textContent = "*Jumlah harus lebih dari 0.";
+      jumlahError.style.display = "inline";
       isValid = false;
     } else if (parseInt(jumlahInput.value, 10) > sisaPinjaman) {
       jumlahError.textContent = "*Melebihi sisa pinjaman.";
+      jumlahError.style.display = "inline";
       isValid = false;
+    } else {
+      jumlahError.textContent = "";
+      jumlahError.style.display = "none";
     }
-    jumlahError.style.display =
-      jumlahError.textContent !== "" ? "inline" : "none";
 
+    // Validasi kondisi barang
     if (
       !kondisiSelect.value ||
       kondisiSelect.value === "Pilih Kondisi Barang"
     ) {
       kondisiError.textContent = "*Harus Dipilih";
+      kondisiError.style.display = "inline";
       isValid = false;
+    } else {
+      kondisiError.textContent = "";
+      kondisiError.style.display = "none";
     }
-    kondisiError.style.display =
-      !kondisiSelect.value || kondisiSelect.value === "Pilih Kondisi Barang"
-        ? "inline"
-        : "none";
 
+    // Validasi catatan
     if (!catatanInput.value.trim()) {
       catatanError.textContent = "*Harus Diisi";
+      catatanError.style.display = "inline";
       isValid = false;
+    } else {
+      catatanError.textContent = "";
+      catatanError.style.display = "none";
     }
-    catatanError.style.display = !catatanInput.value.trim() ? "inline" : "none";
 
     if (!isValid) return;
 
@@ -1083,48 +1057,60 @@ function setupPengembalianRuanganPage() {
 // #6: FITUR TAMBAHAN (SIDEBAR, PROTEKSI INPUT, MODAL)
 // =================================================================
 
-function setupSidebarPersistence() {
-  // Sesuaikan selector agar bisa menangani sidebar atau offcanvas
-  const sidebar = document.querySelector(".sidebar") || document.querySelector(".offcanvas-body");
-  if (!sidebar) return;
+// Jadikan sidebar benar-benar fixed antar page (tidak ke-refresh) dengan menyimpan state di localStorage dan restore state sebelum Bootstrap collapse inisialisasi
+(function () {
+  // Gunakan flag global agar hanya satu kali inisialisasi
+  if (window._sidebarPersistenceInitialized) return;
+  window._sidebarPersistenceInitialized = true;
 
-  const storageKey = "sidebar_active_menus";
-  const getActiveMenus = () =>
-    JSON.parse(localStorage.getItem(storageKey)) || [];
-  const setActiveMenus = (menus) =>
-    localStorage.setItem(storageKey, JSON.stringify(menus));
+  // Fungsi untuk restore state collapse sebelum Bootstrap inisialisasi
+  function restoreSidebarState() {
+    const storageKey = "sidebar_active_menus";
+    const activeMenus = JSON.parse(localStorage.getItem(storageKey)) || [];
+    // Loop semua .collapse, show/hide sesuai state
+    document.querySelectorAll(".collapse").forEach((menu) => {
+      if (!menu.id) return;
+      if (activeMenus.includes(menu.id)) {
+        menu.classList.add("show");
+        menu.setAttribute("aria-expanded", "true");
+      } else {
+        menu.classList.remove("show");
+        menu.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
 
-  // Pulihkan state saat load
-  getActiveMenus().forEach((menuId) => {
-    const menuElement = document.getElementById(menuId);
-    if (menuElement && menuElement.classList.contains("collapse")) {
-      // Pastikan hanya elemen collapse yang diproses
-      const collapseInstance = bootstrap.Collapse.getOrCreateInstance(menuElement, {
-        toggle: false,
+  // Restore state SEBELUM Bootstrap collapse inisialisasi
+  restoreSidebarState();
+
+  // Setelah DOMContentLoaded, pasang event listener untuk update state ke localStorage
+  document.addEventListener("DOMContentLoaded", function () {
+    const storageKey = "sidebar_active_menus";
+    const getActiveMenus = () =>
+      JSON.parse(localStorage.getItem(storageKey)) || [];
+    const setActiveMenus = (menus) =>
+      localStorage.setItem(storageKey, JSON.stringify(menus));
+
+    document.querySelectorAll(".collapse").forEach((menu) => {
+      if (!menu.id) return;
+      menu.addEventListener("show.bs.collapse", function () {
+        let activeMenus = getActiveMenus();
+        if (!activeMenus.includes(this.id)) {
+          activeMenus.push(this.id);
+          setActiveMenus(activeMenus);
+        }
       });
-      collapseInstance.show();
-    }
-  });
-
-  // Tambahkan event listener
-  sidebar.querySelectorAll(".collapse").forEach((menu) => {
-    menu.addEventListener("show.bs.collapse", function () {
-      let activeMenus = getActiveMenus();
-      if (!activeMenus.includes(this.id)) {
-        activeMenus.push(this.id);
-        setActiveMenus(activeMenus);
-      }
-    });
-    menu.addEventListener("hide.bs.collapse", function () {
-      let activeMenus = getActiveMenus();
-      const index = activeMenus.indexOf(this.id);
-      if (index > -1) {
-        activeMenus.splice(index, 1);
-        setActiveMenus(activeMenus);
-      }
+      menu.addEventListener("hide.bs.collapse", function () {
+        let activeMenus = getActiveMenus();
+        const idx = activeMenus.indexOf(this.id);
+        if (idx > -1) {
+          activeMenus.splice(idx, 1);
+          setActiveMenus(activeMenus);
+        }
+      });
     });
   });
-}
+})();
 
 function setupInputProtection() {
   document.querySelectorAll(".protect-input").forEach((input) => {

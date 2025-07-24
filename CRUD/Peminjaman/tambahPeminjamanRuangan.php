@@ -197,10 +197,6 @@ include '../../templates/sidebar.php';
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold">NIM / NPK</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" value="<?= htmlspecialchars($nim ?? $npk ?? '-') ?>">
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>
                                         </label>
