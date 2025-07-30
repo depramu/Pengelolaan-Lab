@@ -1,5 +1,5 @@
 <?php
-require_once _DIR_ . '/../function/init.php';
+require_once __DIR__ . '/../function/init.php';
 
 // Debugging - tampilkan data session
 ob_start();
@@ -58,8 +58,8 @@ if (empty($user_role)) {
 }
 
 // SETELAH semua logika yang mungkin redirect, baru include header
-include _DIR_ . '/header.php';
-include _DIR_ . '/sidebar.php';
+include __DIR__ . '/header.php';
+include __DIR__ . '/sidebar.php';
 
 // Tampilkan debugging session
 echo "<!-- Debug Session: ";

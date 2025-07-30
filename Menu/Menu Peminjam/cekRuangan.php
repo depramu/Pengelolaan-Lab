@@ -39,6 +39,18 @@ if (isset($_POST['submit'])) {
     }
 
     if ($isValid) {
+        // Validasi jam minimal dan maksimal
+        if ($mulai < "07:00" || $mulai > "21:00") {
+            $isValid = false;
+            $error = 'Waktu mulai minimal 07:00 dan maksimal 21:00.';
+        }
+        if ($selesai < "07:00" || $selesai > "21:00") {
+            $isValid = false;
+            $error = 'Waktu selesai minimal 07:00 dan maksimal 21:00.';
+        }
+    }
+
+    if ($isValid) {
         $_SESSION['tglPeminjamanRuangan'] = $tglInput; // sudah dalam format Y-m-d
         $_SESSION['waktuMulai'] = $mulai;
         $_SESSION['waktuSelesai'] = $selesai;
@@ -101,7 +113,7 @@ include __DIR__ . '/../../templates/sidebar.php';
                     </label>
                     <input type="text" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan"
                         class="form-control"
-                        placeholder="dd-mm-yyyy"
+                        placeholder="yyyy-mm-dd"
                         value="<?= $_SESSION['tglPeminjamanRuangan'] ?? '' ?>">
                 </div>
 
@@ -133,13 +145,18 @@ include __DIR__ . '/../../templates/sidebar.php';
                 </div>
 
                 <button type="submit" class="btn btn-primary mt-2" name="submit">Cek Ketersediaan</button>
+                <a href="#" id="lihatJadwalBtn" class="btn btn-primary mt-2">Lihat Jadwal Ruangan</a>
+                <span id="error-jadwal" class="text-danger fw-normal ms-2"></span>
+
             </form>
+            
         </div>
+        
     </div>
 
     <div id="areaRuanganTersedia" style="<?= $showTable ? 'display:block;' : 'display:none;' ?>">
         <h5 class="card-title mb-3 fw-semibold">Daftar Ruangan yang Tersedia</h5>
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
             <table class="table table-hover align-middle table-bordered">
                 <thead class="table-light">
                     <tr class="text-center">
@@ -179,16 +196,43 @@ include __DIR__ . '/../../templates/sidebar.php';
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <div class="mt-3">
-            <?php
-            generatePagination($page, $totalPages);
-            ?>
-        </div>
+    <!-- Pagination selalu ditampilkan ketika tabel ditampilkan -->
+    <div class="mt-3" style="<?= $showTable ? 'display:block;' : 'display:none;' ?>">
+        <?php
+        // Manual pagination - selalu tampil
+        $displayTotalPages = max($totalPages, 1);
+        ?>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+                <!-- Previous button -->
+                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                    <a class="page-link" href="<?= $page > 1 ? '?page=' . ($page - 1) : '#' ?>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+
+                </li>
+
+                <!-- Page numbers -->
+                <?php for ($i = 1; $i <= $displayTotalPages; $i++): ?>
+                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+
+                <!-- Next button -->
+                <li class="page-item <?= $page >= $displayTotalPages ? 'disabled' : '' ?>">
+                    <a class="page-link" href="<?= $page < $displayTotalPages ? '?page=' . ($page + 1) : '#' ?>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </main>
 
-<!-- <script>
+<script>
     // Inisialisasi flatpickr untuk input tanggal dan waktu
     flatpickr("#tglPeminjamanRuangan", {
         dateFormat: "Y-m-d", //format yang dikirim ke server
@@ -226,7 +270,7 @@ include __DIR__ . '/../../templates/sidebar.php';
 
         if (!tanggal) {
             document.getElementById("error-message").textContent = "*Harus diisi";
-            document.getElementById("error-message").style.display = "inline";  
+            document.getElementById("error-message").style.display = "inline";
             isValid = false;
         }
         if (!waktuMulai) {
@@ -239,7 +283,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         }
 
         if (waktuMulai && waktuSelesai && waktuMulai >= waktuSelesai) {
-            document.getElementById("error-waktu").textContent = "*Waktu mulai harus lebih awal dari waktu selesai";
+            document.getElementById("error-waktu").textContent = "*Waktu selesai harus lebih besar dari waktu mulai";
             document.getElementById("error-waktu").style.display = "inline";
             isValid = false;
         }
@@ -249,16 +293,50 @@ include __DIR__ . '/../../templates/sidebar.php';
             const now = new Date();
             const inputDateTime = new Date(tanggal + 'T' + waktuMulai);
             if (inputDateTime < now) {
-                document.getElementById("error-waktu").textContent = "*Waktu mulai tidak boleh kurang dari waktu sekarang";
+                document.getElementById("error-waktu").textContent = "*Waktu mulai tidak boleh lebih kecil dari waktu sekarang";
                 document.getElementById("error-waktu").style.display = "inline";
                 isValid = false;
             }
+        }
+
+        if (waktuMulai && (waktuMulai < "07:00" || waktuMulai > "21:00")) {
+            document.getElementById("error-waktu-mulai").textContent = "*Jam mulai minimal 07:00 dan maksimal 21:00";
+            document.getElementById("error-waktu-mulai").style.display = "inline";
+            isValid = false;
+        }
+        if (waktuSelesai && (waktuSelesai < "07:00" || waktuSelesai > "21:00")) {
+            document.getElementById("error-waktu-selesai").textContent = "*Jam selesai minimal 07:00 dan maksimal 21:00";
+            document.getElementById("error-waktu-selesai").style.display = "inline";
+            isValid = false;
         }
 
         if (!isValid) {
             e.preventDefault();
         }
     });
-</script> -->
+
+    document.getElementById("lihatJadwalBtn").addEventListener("click", function(e) {
+        const tanggal = document.getElementById("tglPeminjamanRuangan").value.trim();
+        const waktuMulai = document.getElementById("waktuMulai").value.trim();
+        const waktuSelesai = document.getElementById("waktuSelesai").value.trim();
+        let isValid = true;
+        let errorMsg = "";
+
+        if (!tanggal) isValid = false;
+        if (!waktuMulai || waktuMulai < "07:00" || waktuMulai > "21:00") isValid = false;
+        if (!waktuSelesai || waktuSelesai < "07:00" || waktuSelesai > "21:00") isValid = false;
+
+        if (!isValid) {
+            errorMsg = "Tanggal, waktu mulai (min 07:00), dan waktu selesai (maks 21:00) harus diisi dengan benar.";
+            document.getElementById("error-jadwal").textContent = errorMsg;
+            e.preventDefault();
+            return false;
+        } else {
+            document.getElementById("error-jadwal").textContent = '';
+            window.location.href = "jadwalKetersediaanRuangan.php?tanggal=" + encodeURIComponent(tanggal);
+            e.preventDefault();
+        }
+    });
+</script>
 
 <?php include __DIR__ . '/../../templates/footer.php'; ?>
