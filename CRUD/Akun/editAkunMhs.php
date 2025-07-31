@@ -82,14 +82,13 @@ include '../../templates/sidebar.php';
                                         <label for="nim" class="form-label fw-semibold d-flex align-items-center">
                                             NIM
                                         </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="nim" name="nim" value="<?= htmlspecialchars($data['nim']) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['nim']) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label fw-semibold d-flex align-items-center">
                                             Nama Lengkap
                                         </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
-                                        <input type="hidden" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['nama']) ?></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -104,9 +103,7 @@ include '../../templates/sidebar.php';
                                         <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">
                                             Jenis Role
                                         </label>
-                                        <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
-                                            <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
-                                        </select>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['jenisRole']) ?></div>
                                     </div>
                                 </div>
                             </div>

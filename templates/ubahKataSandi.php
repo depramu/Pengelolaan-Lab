@@ -11,42 +11,41 @@ $user_nama = $_SESSION['user_nama'] ?? null;
 $profil = [];
 $error_message = '';
 $success_message = '';
+$error_kataSandi = '';
 $showModal = false;
 
 // Proses update sandi jika form disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user_id) {
     $kataSandiBaru = $_POST['kataSandi'];
-    if (!empty($kataSandiBaru)) {
-        if (strlen($kataSandiBaru) < 8) {
-            $error_message = "Kata sandi minimal 8 karakter";
+    if (empty($kataSandiBaru)) {
+        $error_kataSandi = "*Tidak boleh kosong";
+    } elseif (strlen($kataSandiBaru) < 8) {
+        $error_kataSandi = "*Minimal 8 karakter";
+    } else {
+        $query_cek = "SELECT nim FROM Mahasiswa WHERE nim = ?";
+        $params_cek = [$user_id];
+        $stmt_cek = sqlsrv_query($conn, $query_cek, $params_cek);
+        if ($stmt_cek && sqlsrv_has_rows($stmt_cek)) {
+            $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
+            $params = [$kataSandiBaru, $user_id];
         } else {
-            $query_cek = "SELECT nim FROM Mahasiswa WHERE nim = ?";
-            $params_cek = [$user_id];
-            $stmt_cek = sqlsrv_query($conn, $query_cek, $params_cek);
-            if ($stmt_cek && sqlsrv_has_rows($stmt_cek)) {
-                $query = "UPDATE Mahasiswa SET kataSandi = ? WHERE nim = ?";
-                $params = [$kataSandiBaru, $user_id];
-            } else {
-                $query = "UPDATE Karyawan SET kataSandi = ? WHERE npk = ?";
-                $params = [$kataSandiBaru, $user_id];
-            }
+            $query = "UPDATE Karyawan SET kataSandi = ? WHERE npk = ?";
+            $params = [$kataSandiBaru, $user_id];
+        }
 
-            if (isset($query) && isset($params)) {
-                $stmt_update = sqlsrv_query($conn, $query, $params);
-                if ($stmt_update) {
-                    $showModal = true;
-                } else {
-                    $error_message = "Gagal mengubah kata sandi.";
-                    if (($errors = sqlsrv_errors()) != null) {
-                        foreach ($errors as $err) {
-                            $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
-                        }
+        if (isset($query) && isset($params)) {
+            $stmt_update = sqlsrv_query($conn, $query, $params);
+            if ($stmt_update) {
+                $showModal = true;
+            } else {
+                $error_message = "Gagal mengubah kata sandi.";
+                if (($errors = sqlsrv_errors()) != null) {
+                    foreach ($errors as $err) {
+                        $error_message .= "<br>SQLSTATE: " . $err['SQLSTATE'] . " - " . $err['message'];
                     }
                 }
             }
         }
-    } else {
-        $error_message = "Kata sandi tidak boleh kosong jika ingin mengubah.";
     }
 }
 
@@ -117,29 +116,34 @@ if ($stmt && sqlsrv_has_rows($stmt)) {
                                 <span class="float-end">:</span>
                             </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['nim'] ?? $profil['npk']) ?>">
+                                <div class="form-control-plaintext"><?= htmlspecialchars($profil['nim'] ?? $profil['npk']) ?></div>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Nama Lengkap <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['nama']) ?>">
+                                <div class="form-control-plaintext"><?= htmlspecialchars($profil['nama']) ?></div>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Role <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['role']) ?>">
+                                <div class="form-control-plaintext"><?= htmlspecialchars($profil['role']) ?></div>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label fw-semibold">Email <span class="float-end">:</span></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control bg-light protect-input" value="<?= htmlspecialchars($profil['email']) ?>">
+                                <div class="form-control-plaintext"><?= htmlspecialchars($profil['email']) ?></div>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-sm-4 col-form-label fw-semibold">Kata Sandi <span class="float-end">:</span></label>
+                            <label class="col-sm-4 col-form-label fw-semibold">Kata Sandi 
+                                <span id="error_kataSandi" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
+                                            <?php if (!empty($error_kataSandi)): ?>
+                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $error_kataSandi ?></span>
+                                            <?php endif; ?>
+                                <span class="float-end">:</span></label>
                             <div class="col-sm-8">
                                 <input type="password" class="form-control" name="kataSandi" placeholder="Masukkan kata sandi baru..">
                             </div>

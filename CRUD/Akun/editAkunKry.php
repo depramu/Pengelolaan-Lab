@@ -82,13 +82,13 @@ include '../../templates/sidebar.php';
                                         <label for="npk" class="form-label fw-semibold d-flex align-items-center">
                                             NPK
                                         </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="npk" name="npk" value="<?= htmlspecialchars($npk) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['npk']) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label fw-semibold d-flex align-items-center">
                                             Nama Lengkap
                                         </label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="nama" name="nama" value="<?= htmlspecialchars($data['nama']) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['nama']) ?></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -103,11 +103,7 @@ include '../../templates/sidebar.php';
                                         <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">
                                             Jenis Role
                                         </label>
-                                        <select class="form-select protect-input d-block bg-light" id="jenisRole" name="jenisRole">
-                                            <option value="KA UPT" <?php if ($data['jenisRole'] == 'KA UPT') echo 'selected'; ?>>KA UPT</option>
-                                            <option value="PIC Aset" <?php if ($data['jenisRole'] == 'PIC Aset') echo 'selected'; ?>>PIC Aset</option>
-                                            <option value="Peminjam" <?php if ($data['jenisRole'] == 'Peminjam') echo 'selected'; ?>>Peminjam</option>
-                                        </select>
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['jenisRole']) ?></div>
                                     </div>
                                 </div>
                             </div>
