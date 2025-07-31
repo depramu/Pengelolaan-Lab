@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kataSandi']) && $user
         $error_kataSandi = "*Tidak boleh kosong";
     } elseif (strlen($kataSandiBaru) < 8) {
         $error_kataSandi = "*Minimal 8 karakter";
+    } elseif (!preg_match('/[A-Za-z]/', $kataSandiBaru) || !preg_match('/[0-9]/', $kataSandiBaru)) {
+        $error_kataSandi = "*Gunakan huruf dan angka";
     } else {
         $query_cek = "SELECT nim FROM Mahasiswa WHERE nim = ?";
         $params_cek = [$user_id];
@@ -138,11 +140,11 @@ if ($stmt && sqlsrv_has_rows($stmt)) {
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label class="col-sm-4 col-form-label fw-semibold">Kata Sandi 
+                            <label class="col-sm-4 col-form-label fw-semibold">Kata Sandi
                                 <span id="error_kataSandi" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
-                                            <?php if (!empty($error_kataSandi)): ?>
-                                                <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $error_kataSandi ?></span>
-                                            <?php endif; ?>
+                                <?php if (!empty($error_kataSandi)): ?>
+                                    <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $error_kataSandi ?></span>
+                                <?php endif; ?>
                                 <span class="float-end">:</span></label>
                             <div class="col-sm-8">
                                 <input type="password" class="form-control" name="kataSandi" placeholder="Masukkan kata sandi baru..">
