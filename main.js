@@ -839,6 +839,7 @@ function setupDetailRiwayatForm() {
   form.addEventListener("submit", function (event) {
     let isValid = true;
     const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.heif|\.heic)$/i;
+    const maxFileSize = 10 * 1024 * 1024;
 
     const validateFile = (inputId, errorId) => {
       const fileInput = document.getElementById(inputId);
@@ -846,11 +847,16 @@ function setupDetailRiwayatForm() {
       if (!fileInput) return;
 
       errorSpan.textContent = "";
+      const file = fileInput.files[0];
+
       if (fileInput.files.length === 0) {
         errorSpan.textContent = "File wajib diupload.";
         isValid = false;
       } else if (!allowedExtensions.exec(fileInput.value)) {
         errorSpan.textContent = "Format file tidak valid.";
+        isValid = false;
+      } else if (file.size > maxFileSize) {
+        errorSpan.textContent = "Ukuran file maksimal 10MB"
         isValid = false;
       }
     };

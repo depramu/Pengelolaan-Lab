@@ -140,7 +140,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                                 'Menunggu Persetujuan' => 'text-warning',
                                                 'Sedang Dipinjam', 'Menunggu Pengecekan' => 'text-info',
                                                 'Telah Dikembalikan' => 'text-success',
-                                                'Ditolak' => 'text-danger',
+                                                'Ditolak', 'Kedaluwarsa' => 'text-danger',
                                                 default => 'text-secondary',
                                             };
                                             ?>
@@ -163,9 +163,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <h6 class="mb-3">DOKUMENTASI PEMAKAIAN</h6>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sebelum</label><br>
+                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sebelum <span id="dokSebelumError" class="text-danger" style="font-weight: normal"></span>
+                                            </label>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
-                                                <span id="dokSebelumError" class="text-danger"></span>
                                                 <input type="file" class="form-control" id="dokSebelum" name="dokSebelum" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSebelum'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSebelum']) ?>" target="_blank">
@@ -180,9 +180,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sesudah</label><br>
+                                            <label class="form-label fw-semibold mb-2">Dokumentasi Sesudah <span id="dokSesudahError" class="text-danger" style="font-weight: normal"></span>
+                                            </label>
                                             <?php if ($data['statusPeminjaman'] === 'Sedang Dipinjam'): ?>
-                                                <span id="dokSesudahError" class="text-danger"></span>
                                                 <input type="file" class="form-control" id="dokSesudah" name="dokSesudah" accept="image/*">
                                             <?php elseif (!empty($data['dokumentasiSesudah'])): ?>
                                                 <a href="<?= BASE_URL ?>/uploads/dokumentasi/<?= htmlspecialchars($data['dokumentasiSesudah']) ?>" target="_blank">

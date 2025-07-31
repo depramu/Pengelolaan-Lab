@@ -29,6 +29,17 @@
         }
 
         if (!empty($peminjam_field) && !empty($peminjam_value)) {
+            $updateKedaluwarsaSql = "
+            UPDATE sp
+            SET sp.statusPeminjaman = 'Kedaluwarsa'
+            FROM Status_Peminjaman sp
+            JOIN Peminjaman_Ruangan pr ON sp.idPeminjamanRuangan = pr.idPeminjamanRuangan
+            WHERE pr.$peminjam_field = ?
+            AND sp.statusPeminjaman = 'Menunggu Persetujuan'
+            AND CONVERT(VARCHAR, pr.tglPeminjamanRuangan, 23) + ' ' + CONVERT(VARCHAR, pr.waktuMulai, 8) < GETDATE()";
+
+            $updateParams = [$peminjam_value];
+            sqlsrv_query($conn, $updateKedaluwarsaSql, $updateParams);
             // --- Modifikasi Kueri untuk Pencarian & Filter ---
 
             // Base query
@@ -96,6 +107,7 @@
                         <li><a class="dropdown-item" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
                         <li><a class="dropdown-item" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
                         <li><a class="dropdown-item" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                        <li><a class="dropdown-item" href="?status=Kedaluwarsa&search=<?= htmlspecialchars($searchTerm) ?>">Kedaluwarsa</a></li>
                     </ul>
                 </div>
                 <form action="" method="GET" class="d-flex" role="search">
@@ -175,6 +187,9 @@
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';
                             $altText = 'Ditolak';
+                        } elseif ($statusPeminjaman == 'Kedaluwarsa') {
+                            $iconSrc = BASE_URL . '/icon/jamMerah.svg';
+                            $altText = 'Kedaluwarsa';
                         }
                 ?>
                         <tr class="<?= $terlambat ? 'table-danger' : '' ?>">
@@ -217,6 +232,9 @@
                 </td>
                 <td>
                     <p><img src="<?= BASE_URL ?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p>
+                </td>
+                <td>
+                    <p><img src="<?= BASE_URL ?>/icon/jamMerah.svg" class="legend-icon"> : Kedaluwarsa</p>
                 </td>
             </tr>
         </table>
