@@ -174,17 +174,17 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">NIM / NPK</label>
-                                            <div class="form-control-plaintext bg-light"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['nim'] ?? $data['npk'] ?? '-') ?></div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Nama Ruangan</label>
-                                            <div class="form-control-plaintext bg-light"><?= htmlspecialchars($data['namaRuangan'] ?? '-') ?></div>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaRuangan'] ?? '-') ?></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold">Nama Peminjam</label>
-                                            <div class="form-control-plaintext bg-light"><?= htmlspecialchars($data['namaPeminjam'] ?? '-') ?></div>
+                                            <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '-') ?></div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">
