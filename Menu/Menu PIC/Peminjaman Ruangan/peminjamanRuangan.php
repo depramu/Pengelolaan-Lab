@@ -7,7 +7,8 @@ authorize_role(['PIC Aset']);
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
 
-$perPage = 8;
+// Hard cap: maksimum 7 data per halaman
+$perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 

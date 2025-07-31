@@ -1,33 +1,33 @@
 # Authentication
-http://localhost/PIC-peminjaman-approval/Login/login.php
-http://localhost/PIC-peminjaman-approval/Login/LupaSandi.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Login/login.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Login/LupaSandi.php
 
 # Main Pages
-http://localhost/PIC-peminjaman-approval/
-http://localhost/PIC-peminjaman-approval/index.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/index.php
 
 # PIC Menu
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/dashboardPIC.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/manajemenRuangan.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/manajemenBarang.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/manajemenAkunMhs.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/manajemenAkunKry.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/dashboardPIC.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/manajemenRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/manajemenBarang.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/manajemenAkunMhs.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/manajemenAkunKry.php
 
 # Peminjaman Ruangan
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/Peminjaman%20Ruangan/peminjamanRuangan.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/Peminjaman%20Ruangan/pengajuanRuangan.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/Peminjaman%20Ruangan/pengembalianRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/Peminjaman%20Ruangan/peminjamanRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/Peminjaman%20Ruangan/pengajuanRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/Peminjaman%20Ruangan/pengembalianRuangan.php
 
 # Peminjaman Barang
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/Peminjaman%20Barang/peminjamanBarang.php
-http://localhost/PIC-peminjaman-approval/Menu%20PIC/Peminjaman%20Barang/pengajuanBarang.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/Peminjaman%20Barang/peminjamanBarang.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20PIC/Peminjaman%20Barang/pengajuanBarang.php
 
 # Peminjam Menu
-http://localhost/PIC-peminjaman-approval/Menu%20Peminjam/dashboardPeminjam.php
-http://localhost/PIC-peminjaman-approval/Menu%20Peminjam/Peminjaman%20Ruangan/lihatRuangan.php
-http://localhost/PIC-peminjaman-approval/Menu%20Peminjam/Peminjaman%20Barang/lihatBarang.php
-http://localhost/PIC-peminjaman-approval/Menu%20Peminjam/Riwayat%20Ruangan/riwayatRuangan.php
-http://localhost/PIC-peminjaman-approval/Menu%20Peminjam/Riwayat%20Barang/riwayatBarang.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Peminjam/dashboardPeminjam.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Peminjam/Peminjaman%20Ruangan/lihatRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Peminjam/Peminjaman%20Barang/lihatBarang.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Peminjam/Riwayat%20Ruangan/riwayatRuangan.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Peminjam/Riwayat%20Barang/riwayatBarang.php
 
 # Ka UPT Menu
-http://localhost/PIC-peminjaman-approval/Menu%20Ka%20UPT/dashboardKAUPT.php
+http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab/Menu%20Ka%20UPT/dashboardKAUPT.php
