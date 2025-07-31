@@ -103,7 +103,7 @@ include '../../templates/sidebar.php';
                                             <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
                                         <?php endif; ?>
                                     </label>
-                                    <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= isset($namaRuangan) ? htmlspecialchars($namaRuangan) : htmlspecialchars($data['namaRuangan']) ?>" placeholder="Masukkan nama ruangan..">
+                                    <input type="text" class="form-control-plaintext" id="namaRuangan" name="namaRuangan" value="<?= isset($data['namaRuangan']) ? htmlspecialchars($data['namaRuangan']) : '' ?>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kondisiRuangan" class="form-label fw-semibold d-flex align-items-center">Kondisi Ruangan

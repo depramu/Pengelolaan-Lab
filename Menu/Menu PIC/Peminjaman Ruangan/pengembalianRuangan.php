@@ -111,10 +111,13 @@
                 }
 
                 if ($idRuangan) {
-                    // Update ketersediaan ruangan menjadi 'Tersedia'
-                    $sqlUpdateKetersediaan = "UPDATE Ruangan SET ketersediaan = ? WHERE idRuangan = ?";
-                    $paramsUpdateKetersediaan = ['Tersedia', $idRuangan];
-                    $stmtUpdateKetersediaan = sqlsrv_query($conn, $sqlUpdateKetersediaan, $paramsUpdateKetersediaan);
+                    // Update kondisi dan ketersediaan ruangan
+                    $updateKondisi = $kondisiRuangan;
+                    $updateKetersediaan = ($kondisiRuangan === 'Rusak') ? 'Tidak Tersedia' : 'Tersedia';
+
+                    $sqlUpdateRuangan = "UPDATE Ruangan SET kondisiRuangan = ?, ketersediaan = ? WHERE idRuangan = ?";
+                    $paramsUpdateRuangan = [$updateKondisi, $updateKetersediaan, $idRuangan];
+                    sqlsrv_query($conn, $sqlUpdateRuangan, $paramsUpdateRuangan);
                 }
 
                 $untuk = $nim; // atau $_SESSION['user_role'] untuk peminjam
