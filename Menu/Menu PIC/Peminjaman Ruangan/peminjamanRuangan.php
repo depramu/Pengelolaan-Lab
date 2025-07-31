@@ -16,6 +16,16 @@ $result = false;
 $totalPages = 1;
 $offset = ($page - 1) * $perPage;
 
+// Otomatis perbarui status Kedaluwarsa untuk peminjaman yang belum disetujui dan sudah melewati waktu mulai
+$updateKedaluwarsaSql = "UPDATE sp
+SET sp.statusPeminjaman = 'Kedaluwarsa'
+FROM Status_Peminjaman sp
+JOIN Peminjaman_Ruangan pr ON sp.idPeminjamanRuangan = pr.idPeminjamanRuangan
+WHERE sp.statusPeminjaman = 'Menunggu Persetujuan'
+AND CONVERT(VARCHAR, pr.tglPeminjamanRuangan, 23) + ' ' + CONVERT(VARCHAR, pr.waktuMulai, 8) < GETDATE()";
+sqlsrv_query($conn, $updateKedaluwarsaSql);
+
+
 // --- Query pencarian dan filter, menyesuaikan riwayatRuangan.php ---
 $baseCountQuery = "FROM Peminjaman_Ruangan pr
                    JOIN Ruangan r ON pr.idRuangan = r.idRuangan
@@ -90,6 +100,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                     <li><a class="dropdown-item" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
                     <li><a class="dropdown-item" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
                     <li><a class="dropdown-item" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                        <li><a class="dropdown-item" href="?status=Kedaluwarsa&search=<?= htmlspecialchars($searchTerm) ?>">Kedaluwarsa</a></li>
                 </ul>
             </div>
             <form action="" method="GET" class="d-flex" role="search">
@@ -185,6 +196,12 @@ include __DIR__ . '/../../../templates/sidebar.php';
                             $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
                             $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
                             break;
+                        case 'Kedaluwarsa':
+                            $iconSrc = BASE_URL . '/icon/jamMerah.svg';
+                            $altText = 'Kedaluwarsa';
+                            $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/detailPeminjamanRuangan.php?id=' . $idPeminjaman;
+                            $linkDetail = $linkAksi;
+                            break;
                         default:
                             $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Status Tidak Diketahui';
@@ -235,6 +252,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </td>
             <td>
                 <p><img src="<?= BASE_URL ?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamMerah.svg" class="legend-icon"> : Kedaluwarsa</p>
             </td>
         </tr>
     </table>
