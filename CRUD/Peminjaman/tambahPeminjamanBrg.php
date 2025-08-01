@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $nama_peminjam = $nama;
                 $untuk = 'PIC Aset'; // atau $_SESSION['user_role'] untuk peminjam
                 $pesanNotif = "Pengajuan peminjaman barang oleh $nama_peminjam menunggu persetujuan.";
-                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
                 sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
                 $showModal = true;
             } else {
