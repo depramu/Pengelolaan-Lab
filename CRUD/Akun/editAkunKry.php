@@ -82,13 +82,23 @@ include '../../templates/sidebar.php';
                                         <label for="npk" class="form-label fw-semibold d-flex align-items-center">
                                             NPK
                                         </label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['npk']) ?></div>
+                                        <input type="text" class="form-control-plaintext" id="npk" name="npk"
+                                            value="<?= htmlspecialchars($data['npk'] ?? '') ?>"
+                                            tabindex="-1"
+                                            onfocus="this.blur();"
+                                            onkeydown="return false;"
+                                            onpaste="return false;">
                                     </div>
                                     <div class="mb-3">
                                         <label for="nama" class="form-label fw-semibold d-flex align-items-center">
                                             Nama Lengkap
                                         </label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['nama']) ?></div>
+                                        <input type="text" class="form-control-plaintext" id="nama" name="nama"
+                                            value="<?= htmlspecialchars($data['nama'] ?? '') ?>"
+                                            tabindex="-1"
+                                            onfocus="this.blur();"
+                                            onkeydown="return false;"
+                                            onpaste="return false;">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -103,7 +113,12 @@ include '../../templates/sidebar.php';
                                         <label for="jenisRole" class="form-label fw-semibold d-flex align-items-center">
                                             Jenis Role
                                         </label>
-                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['jenisRole']) ?></div>
+                                        <input type="text" class="form-control-plaintext" id="jenisRole" name="jenisRole"
+                                            value="<?= htmlspecialchars($data['jenisRole']) ?>"
+                                            tabindex="-1"
+                                            onfocus="this.blur();"
+                                            onkeydown="return false;"
+                                            onpaste="return false;">
                                     </div>
                                 </div>
                             </div>
