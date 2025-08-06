@@ -114,7 +114,7 @@ include __DIR__ . '/../../templates/sidebar.php';
             </label>
             <input type="text" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan"
                 class="form-control"
-                placeholder="dd-month-yyyy"
+                placeholder="yyyy-mm-dd"
                 value="<?= $_SESSION['tglPeminjamanRuangan'] ?? '' ?>">
             <!-- Tambahkan ruang kosong yang sama untuk menjaga keseimbangan -->
             <div style="min-height: 20px; margin-top: 5px;"></div>
@@ -291,7 +291,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         if (waktuMulai && waktuSelesai && waktuMulai >= waktuSelesai) {
             document.getElementById("error-waktu").textContent = "*Waktu mulai harus lebih awal dari selesai";
             document.getElementById("error-waktu").style.display = "inline";
-            isValid = false;
+            isValid = false; 
         }
 
         // Tambahkan validasi waktu mulai < sekarang jika tanggal == hari ini
