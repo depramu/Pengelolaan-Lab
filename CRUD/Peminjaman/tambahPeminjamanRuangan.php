@@ -173,29 +173,33 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="namaRuangan" class="form-label fw-semibold">Nama Ruangan</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" id="namaRuangan" name="namaRuangan" value="<?= $namaRuangan ?>">
+                                        <div class="form-control-plaintext" id="namaRuangan"><?= $namaRuangan ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control protect-input d-block bg-light" name="tglDisplay" value="<?php if (!empty($tglPeminjamanRuangan)) {
-                                                                                                                                            $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanRuangan);
-                                                                                                                                            echo $dateObj ? $dateObj->format('d M Y') : htmlspecialchars($tglPeminjamanRuangan);
-                                                                                                                                        } ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
-                                                <input type="text" class="form-control protect-input" id="waktuMulai" name="waktuMulai" value="<?= $waktuMulai ?>">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
-                                                <input type="text" class="form-control protect-input" id="waktuSelesai" name="waktuSelesai" value="<?= $waktuSelesai ?>">
-                                            </div>
+                                        <div class="form-control-plaintext" id="tglPeminjamanRuangan">
+                                            <?php
+                                            if (!empty($tglPeminjamanRuangan)) {
+                                                $dateObj = DateTime::createFromFormat('Y-m-d', $tglPeminjamanRuangan);
+                                                echo $dateObj ? $dateObj->format('d M Y') : htmlspecialchars($tglPeminjamanRuangan);
+                                            }
+                                            ?>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="waktuMulai" class="form-label fw-semibold">Waktu Mulai</label>
+                                                <div class="form-control-plaintext" id="waktuMulai"><?= htmlspecialchars($waktuMulai) ?></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="waktuSelesai" class="form-label fw-semibold">Waktu Selesai</label>
+                                                <div class="form-control-plaintext" id="waktuSelesai"><?= htmlspecialchars($waktuSelesai) ?></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="mb-3">
                                         <label for="alasanPeminjamanRuangan" class="form-label fw-semibold">
                                             Alasan Peminjaman <span id="error-message" class="text-danger small mt-1 fw-normal" style="font-size: 0.95em; display:none;">*Harus Diisi</span>

@@ -94,7 +94,7 @@ include '../../templates/sidebar.php';
                                         Nama Barang
                                         <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <input type="text" class="form-control-plaintext" id="namaBarang" name="namaBarang" value="<?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?>" placeholder="Masukkan nama barang..">
+                                    <div class="form-control-plaintext"><?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?></div>
                                 </div>
 
                                 <div class="mb-3">

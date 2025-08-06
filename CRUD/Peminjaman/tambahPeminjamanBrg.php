@@ -55,7 +55,6 @@ $sqlStok = "SELECT stokBarang FROM Barang WHERE idBarang = ?";
 $paramsStok = [$idBarang];
 $stmtStok = sqlsrv_query($conn, $sqlStok, $paramsStok);
 $stokBarang = sqlsrv_fetch_array($stmtStok, SQLSRV_FETCH_ASSOC)['stokBarang'];
-$stokBarangBaru = $stokBarang/2;
 
 // Proses Peminjaman hanya jika metode POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -143,14 +142,18 @@ include '../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <input type="text" class="form-control-plaintext" name="namaBarang_display" value="<?= $namaBarang ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($namaBarang) ?></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Tanggal Peminjaman</label>
-                                        <input type="text" class="form-control-plaintext" name="tglDisplay" value="<?php if (!empty($tglPeminjamanBrg)) {
-                                                                                                                                            $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
-                                                                                                                                            echo $dateObj ? $dateObj->format('d M Y') : htmlspecialchars($tglPeminjamanBrg);
-                                                                                                                                        } ?>">
+                                        <div class="form-control-plaintext">
+                                            <?php
+                                            if (!empty($tglPeminjamanBrg)) {
+                                                $dateObj = DateTime::createFromFormat('d-m-Y', $tglPeminjamanBrg);
+                                                echo $dateObj ? $dateObj->format('d M Y') : htmlspecialchars($tglPeminjamanBrg);
+                                            }
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -170,7 +173,7 @@ include '../../templates/sidebar.php';
                                             <input class="form-control text-center" id="jumlahBrg" name="jumlahBrg" value="0" min="0" style="max-width: 70px;">
                                             <button class="btn btn-outline-secondary" type="button" onclick="changeStok(1)">+</button>
                                         </div>
-                                        <small class="text-muted">Stok tersedia: <span id="stokBarang"><?= $stokBarangBaru ?></span></small>
+                                        <small class="text-muted">Stok tersedia: <span id="stokBarang"><?= $stokBarang ?></span></small>
                                     </div>
                                 </div>
 

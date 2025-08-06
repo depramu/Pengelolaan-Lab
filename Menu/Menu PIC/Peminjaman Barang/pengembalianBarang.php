@@ -134,7 +134,7 @@ include '../../../templates/sidebar.php';
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="namaBarang" class="form-label fw-semibold">Nama Barang</label>
-                                        <input type="text" class="form-control-plaintext" id="namaBarang" name="namaBarang" value="<?= htmlspecialchars($namaBarang) ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaBarang'] ?? '-') ?></div>
                                     </div>
                                     <div class="mb-2">
                                         <label for="jumlahBrg" class="form-label fw-semibold">Jumlah Peminjaman</label>
@@ -148,24 +148,16 @@ include '../../../templates/sidebar.php';
                                     </div>
                                     <div class="mb">
                                         <label class="form-label fw-semibold">NIM/NPK</label>
-                                        <input type="text" class="form-control-plaintext" value=" <?php
-                                                                                                                        if (!empty($data['nim'])) {
-                                                                                                                            echo htmlspecialchars($data['nim']);
-                                                                                                                        } elseif (!empty($data['npk'])) {
-                                                                                                                            echo htmlspecialchars($data['npk']);
-                                                                                                                        } else {
-                                                                                                                            echo '-';
-                                                                                                                        }
-                                                                                                                        ?>">
-
-                                        </input>
+                                        <div class="form-control-plaintext">
+                                            <?= !empty($data['nim']) ? htmlspecialchars($data['nim']) : (!empty($data['npk']) ? htmlspecialchars($data['npk']) : '-') ?>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label for="namaPeminjam" class="form-label fw-semibold">Nama Peminjam</label>
-                                        <input type="text" class="form-control-plaintext" id="namaPeminjam" name="namaPeminjam" value="<?= htmlspecialchars($data['namaPeminjam'] ?? '') ?>">
+                                        <div class="form-control-plaintext"><?= htmlspecialchars($data['namaPeminjam'] ?? '-') ?></div>
                                     </div>
 
                                     <div class="mb-4">

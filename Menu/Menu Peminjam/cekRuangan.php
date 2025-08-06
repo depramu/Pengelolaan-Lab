@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../function/init.php';
+require_once __DIR__ . '/../../function/init.php';
 authorize_role(['Peminjam']);
 
 $showTable = false;
@@ -83,8 +83,8 @@ $query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan
 $params = [$offset, $perPage];
 $result = sqlsrv_query($conn, $query, $params);
 
-include __DIR__ . '/../../../templates/header.php';
-include __DIR__ . '/../../../templates/sidebar.php';
+include __DIR__ . '/../../templates/header.php';
+include __DIR__ . '/../../templates/sidebar.php';
 ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -114,7 +114,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </label>
             <input type="text" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan"
                 class="form-control"
-                placeholder="yyyy-mm-dd"
+                placeholder="dd-month-yyyy"
                 value="<?= $_SESSION['tglPeminjamanRuangan'] ?? '' ?>">
             <!-- Tambahkan ruang kosong yang sama untuk menjaga keseimbangan -->
             <div style="min-height: 20px; margin-top: 5px;"></div>
@@ -345,8 +345,4 @@ include __DIR__ . '/../../../templates/sidebar.php';
     });
 </script>
 
-<<<<<<< HEAD
 <?php include __DIR__ . '/../../templates/footer.php';?>
-=======
-<?php include __DIR__ . '/../../../templates/footer.php';?>
->>>>>>> 0f3c32ae341d90990d4cf587b42b71c6dbf0cd4b

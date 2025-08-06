@@ -142,7 +142,6 @@ function setupKondisiRuanganLogic() {
 // =================================================================
 
 document.addEventListener("DOMContentLoaded", function () {
-
   // Halaman Otentikasi
   setupLoginForm();
   setupTooglePass();
@@ -692,7 +691,7 @@ function setupCekKetersediaanBarangPage() {
   }
 
   flatpickr(flatpickrInput, {
-    dateFormat: "d F Y",
+    dateFormat: "d M Y",
     minDate: "today",
     defaultDate: defaultFlatpickrDate,
     allowInput: false,
@@ -754,7 +753,7 @@ function setupCekKetersediaanRuanganPage() {
   flatpickr("#tglPeminjamanRuangan", {
     dateFormat: "Y-m-d", //format yang dikirim ke server
     altInput: true, //tampilan alternatif ke user
-    altFormat: "d F Y", //yang ditampilkan ke user
+    altFormat: "d M Y", //yang ditampilkan ke user
     minDate: "today",
   });
 
@@ -856,7 +855,7 @@ function setupDetailRiwayatForm() {
         errorSpan.textContent = "Format file tidak valid.";
         isValid = false;
       } else if (file.size > maxFileSize) {
-        errorSpan.textContent = "Ukuran file maksimal 10MB"
+        errorSpan.textContent = "Ukuran file maksimal 10MB";
         isValid = false;
       }
     };
@@ -1064,7 +1063,7 @@ function setupPengembalianRuanganPage() {
 // =================================================================
 
 // Jadikan sidebar benar-benar fixed antar page (tidak ke-refresh) dengan menyimpan state di localStorage dan restore state sebelum Bootstrap collapse inisialisasi
-(function () {
+function setupSidebarPersistence() {
   // Gunakan flag global agar hanya satu kali inisialisasi
   if (window._sidebarPersistenceInitialized) return;
   window._sidebarPersistenceInitialized = true;
@@ -1116,7 +1115,9 @@ function setupPengembalianRuanganPage() {
       });
     });
   });
-})();
+}
+
+setupSidebarPersistence();
 
 function setupInputProtection() {
   document.querySelectorAll(".protect-input").forEach((input) => {
