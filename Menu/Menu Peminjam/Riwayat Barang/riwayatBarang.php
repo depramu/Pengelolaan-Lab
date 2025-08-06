@@ -12,6 +12,15 @@ $perPage = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 
+// Otomatis perbarui status Kedaluwarsa untuk peminjaman yang belum disetujui dan sudah melewati waktu mulai
+$updateKedaluwarsaSql = "UPDATE sp
+SET sp.statusPeminjaman = 'Kedaluwarsa'
+FROM Status_Peminjaman sp
+JOIN Peminjaman_Barang pb ON sp.idPeminjamanBrg = pb.idPeminjamanBrg
+WHERE sp.statusPeminjaman = 'Menunggu Persetujuan'
+AND (CAST(pb.tglPeminjamanBrg AS DATETIME) < GETDATE())";
+sqlsrv_query($conn, $updateKedaluwarsaSql);
+
 if (isset($_SESSION['user_role'])) {
     if ($_SESSION['user_role'] == 'Peminjam' && isset($_SESSION['nim'])) {
         $peminjam_field = 'nim';
@@ -95,6 +104,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                     <li><a class="dropdown-item" href="?status=Sebagian Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Sebagian Dikembalikan</a></li>
                     <li><a class="dropdown-item" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
                     <li><a class="dropdown-item" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                    <li><a class="dropdown-item" href="?status=Kedaluwarsa&search=<?= htmlspecialchars($searchTerm) ?>">Kedaluwarsa</a></li>
                 </ul>
             </div>
 
@@ -148,7 +158,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                         // Logika ikon status (tidak ada perubahan)
                         if ($statusPeminjaman == 'Telah Dikembalikan') {
                             $iconSrc = BASE_URL . '/icon/centang.svg';
-                            $altText = 'Peminjaman Selesai';
+                            $altText = 'Telah Dikembalikan';
                         } elseif ($statusPeminjaman == 'Sedang Dipinjam') {
                             $iconSrc = BASE_URL . '/icon/jamKuning.svg';
                             $altText = 'Sedang Dipinjam';
@@ -161,6 +171,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
                         } elseif ($statusPeminjaman == 'Ditolak') {
                             $iconSrc = BASE_URL . '/icon/silang.svg';
                             $altText = 'Ditolak';
+                        } elseif ($statusPeminjaman == 'Kedaluwarsa') {
+                            $iconSrc = BASE_URL . '/icon/jamMerah.svg';
+                            $altText = 'Kedaluwarsa';
                         }
                 ?>
                         <tr class="text-center">
@@ -204,6 +217,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </td>
             <td>
                 <p><img src="<?= BASE_URL ?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamMerah.svg" class="legend-icon"> : Kedaluwarsa</p>
             </td>
         </tr>
     </table>
