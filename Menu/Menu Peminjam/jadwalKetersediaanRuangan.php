@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../function/init.php';
+require_once __DIR__ . '/../../../function/init.php';
 authorize_role(['Peminjam']);
 
 $tanggal = $_GET['tanggal'] ?? date('Y-m-d'); // Ambil dari URL, kalau nggak ada pakai hari ini
@@ -31,8 +31,8 @@ while ($row = sqlsrv_fetch_array($ruanganResult, SQLSRV_FETCH_ASSOC)) {
     $jadwal[] = $row;
 }
 
-include __DIR__ . '/../../templates/header.php';
-include __DIR__ . '/../../templates/sidebar.php';
+include __DIR__ . '/../../../templates/header.php';
+include __DIR__ . '/../../../templates/sidebar.php';
 ?>
 <main class="col bg-white px-3 px-md-4 py-3">
     <h4 class="fw-semibold mb-3">Jadwal Ketersediaan Ruangan</h4>
@@ -90,7 +90,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         <span class="d-inline-block" style="width: 24px; height: 24px; background: #dc3545; border-radius: 4px; border: 1px solid #ccc;"></span>
         <span>Tidak Tersedia</span>
     </div>
-        <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/cekRuangan.php" class="btn btn-secondary">Kembali</a>
+        <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Peminjaman Ruangan/cekRuangan.php" class="btn btn-secondary">Kembali</a>
     </div>
 </main>
-<?php include __DIR__ . '/../../templates/footer.php'; ?>
+<?php include __DIR__ . '/../../../templates/footer.php'; ?>
