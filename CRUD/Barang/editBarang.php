@@ -94,7 +94,12 @@ include '../../templates/sidebar.php';
                                         Nama Barang
                                         <span id="namaError" class="fw-normal text-danger ms-2" style="display:none;font-size:0.95em;"></span>
                                     </label>
-                                    <div class="form-control-plaintext"><?= isset($data['namaBarang']) ? htmlspecialchars($data['namaBarang']) : '' ?></div>
+                                    <input type="text" class="form-control-plaintext" id="namaBarang" name="namaBarang"
+                                        value="<?= htmlspecialchars($data['namaBarang'] ?? '') ?>"
+                                        tabindex="-1"
+                                        onfocus="this.blur();"
+                                        onkeydown="return false;"
+                                        onpaste="return false;">
                                 </div>
 
                                 <div class="mb-3">

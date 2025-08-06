@@ -103,7 +103,12 @@ include '../../templates/sidebar.php';
                                             <span class="fw-normal text-danger ms-2" style="font-size:0.95em;"><?= $namaError ?></span>
                                         <?php endif; ?>
                                     </label>
-                                    <div class="form-control-plaintext" id="namaRuangan"><?= htmlspecialchars($data['namaRuangan']) ?></div>
+                                    <input type="text" class="form-control-plaintext" id="namaRuangan" name="namaRuangan"
+                                        value="<?= htmlspecialchars($data['namaRuangan'] ?? '') ?>"
+                                        tabindex="-1"
+                                        onfocus="this.blur();"
+                                        onkeydown="return false;"
+                                        onpaste="return false;">
 
 
                                 </div>
