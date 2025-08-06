@@ -105,50 +105,56 @@ include __DIR__ . '/../../templates/sidebar.php';
         <div class="card-body">
             <h5 class="card-title mb-3 fw-semibold">Cek Ketersediaan Ruangan</h5>
 
-            <form method="POST" id="formCekKetersediaanRuangan" action="">
-                <div class="mb-3">
-                    <label class="form-label" for="tglPeminjamanRuangan">
-                        Pilih Tanggal Peminjaman
-                        <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal"></span>
-                    </label>
-                    <input type="text" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan"
-                        class="form-control"
-                        placeholder="yyyy-mm-dd"
-                        value="<?= $_SESSION['tglPeminjamanRuangan'] ?? '' ?>">
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="waktuMulai">
-                            Waktu Mulai
-                            <span id="error-waktu-mulai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                        </label>
-
-                        <input type="text" id="waktuMulai" name="waktuMulai"
-                            class="form-control"
-                            placeholder="HH:MM"
-                            value="<?= $_SESSION['waktuMulai'] ?? '' ?>">
-                        <div>
-                            <span id="error-waktu" style="color: red; display: none;" class="fw-normal"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="waktuSelesai">
-                            Waktu Selesai
-                            <span id="error-waktu-selesai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
-                        </label>
-                        <input type="text" id="waktuSelesai" name="waktuSelesai"
-                            class="form-control"
-                            placeholder="HH:MM"
-                            value="<?= $_SESSION['waktuSelesai'] ?? '' ?>">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary mt-2" name="submit">Cek Ketersediaan</button>
-                <a href="#" id="lihatJadwalBtn" class="btn btn-primary mt-2">Lihat Jadwal Ruangan</a>
-                <span id="error-jadwal" class="text-danger fw-normal ms-2"></span>
-
-            </form>
+           <form method="POST" id="formCekKetersediaanRuangan" action="">
+    <div class="row mb-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label" for="tglPeminjamanRuangan">
+                Pilih Tanggal Peminjaman
+                <span id="error-message" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
+            </label>
+            <input type="text" id="tglPeminjamanRuangan" name="tglPeminjamanRuangan"
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                value="<?= $_SESSION['tglPeminjamanRuangan'] ?? '' ?>">
+            <!-- Tambahkan ruang kosong yang sama untuk menjaga keseimbangan -->
+            <div style="min-height: 20px; margin-top: 5px;"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="waktuMulai">
+                Waktu Mulai
+                <span id="error-waktu-mulai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
+            </label>
+            <input type="text" id="waktuMulai" name="waktuMulai"
+                class="form-control"
+                placeholder="HH:MM"
+                value="<?= $_SESSION['waktuMulai'] ?? '' ?>">
+            <!-- Berikan tinggi tetap untuk area error -->
+            <div style="min-height: 20px; margin-top: 5px;">
+                <span id="error-waktu" style="color: red; display: none;" class="fw-normal"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="waktuSelesai">
+                Waktu Selesai
+                <span id="error-waktu-selesai" style="color: red; display: none; margin-left: 10px;" class="fw-normal">*Harus diisi</span>
+            </label>
+            <input type="text" id="waktuSelesai" name="waktuSelesai"
+                class="form-control"
+                placeholder="HH:MM"
+                value="<?= $_SESSION['waktuSelesai'] ?? '' ?>">
+            <!-- Berikan ruang kosong yang sama untuk menjaga keseimbangan -->
+            <div style="min-height: 20px; margin-top: 5px;"></div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" name="submit">Cek Ketersediaan</button>
+            <a href="#" id="lihatJadwalBtn" class="btn btn-primary">Lihat Jadwal Ruangan</a>
+            <span id="error-jadwal" class="text-danger fw-normal ms-2"></span>
+        </div>
+    </div>
+</form>
             
         </div>
         
@@ -283,7 +289,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         }
 
         if (waktuMulai && waktuSelesai && waktuMulai >= waktuSelesai) {
-            document.getElementById("error-waktu").textContent = "*Waktu selesai harus lebih besar dari waktu mulai";
+            document.getElementById("error-waktu").textContent = "*Waktu mulai harus lebih awal dari selesai";
             document.getElementById("error-waktu").style.display = "inline";
             isValid = false;
         }
@@ -293,19 +299,19 @@ include __DIR__ . '/../../templates/sidebar.php';
             const now = new Date();
             const inputDateTime = new Date(tanggal + 'T' + waktuMulai);
             if (inputDateTime < now) {
-                document.getElementById("error-waktu").textContent = "*Waktu mulai tidak boleh lebih kecil dari waktu sekarang";
+                document.getElementById("error-waktu").textContent = "*Waktu mulai kurang dari sekarang";
                 document.getElementById("error-waktu").style.display = "inline";
                 isValid = false;
             }
         }
 
         if (waktuMulai && (waktuMulai < "07:00" || waktuMulai > "21:00")) {
-            document.getElementById("error-waktu-mulai").textContent = "*Jam mulai minimal 07:00 dan maksimal 21:00";
+            document.getElementById("error-waktu-mulai").textContent = "*Waktu mulai minimal 07:00";
             document.getElementById("error-waktu-mulai").style.display = "inline";
             isValid = false;
         }
         if (waktuSelesai && (waktuSelesai < "07:00" || waktuSelesai > "21:00")) {
-            document.getElementById("error-waktu-selesai").textContent = "*Jam selesai minimal 07:00 dan maksimal 21:00";
+            document.getElementById("error-waktu-selesai").textContent = "*Waktu selesai maksimal 21:00";
             document.getElementById("error-waktu-selesai").style.display = "inline";
             isValid = false;
         }
@@ -327,7 +333,7 @@ include __DIR__ . '/../../templates/sidebar.php';
         if (!waktuSelesai || waktuSelesai < "07:00" || waktuSelesai > "21:00") isValid = false;
 
         if (!isValid) {
-            errorMsg = "Tanggal, waktu mulai (min 07:00), dan waktu selesai (maks 21:00) harus diisi dengan benar.";
+            errorMsg = "*waktu mulai (min 07:00), dan waktu selesai (maks 21:00) harus diisi";
             document.getElementById("error-jadwal").textContent = errorMsg;
             e.preventDefault();
             return false;
@@ -339,4 +345,4 @@ include __DIR__ . '/../../templates/sidebar.php';
     });
 </script>
 
-<?php include __DIR__ . '/../../templates/footer.php'; ?>
+<?php include __DIR__ . '/../../templates/footer.php';?>
