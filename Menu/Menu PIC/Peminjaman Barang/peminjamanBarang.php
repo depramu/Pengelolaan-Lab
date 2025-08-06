@@ -15,6 +15,15 @@ $result = false;
 $totalPages = 1;
 $offset = ($page - 1) * $perPage;
 
+// Otomatis perbarui status Kedaluwarsa untuk peminjaman yang belum disetujui dan sudah melewati waktu mulai
+$updateKedaluwarsaSql = "UPDATE sp
+SET sp.statusPeminjaman = 'Kedaluwarsa'
+FROM Status_Peminjaman sp
+JOIN Peminjaman_Barang pb ON sp.idPeminjamanBrg = pb.idPeminjamanBrg
+WHERE sp.statusPeminjaman = 'Menunggu Persetujuan'
+AND (CAST(pb.tglPeminjamanBrg AS DATETIME) < GETDATE())";
+sqlsrv_query($conn, $updateKedaluwarsaSql);
+
 // --- Query pencarian dan filter, menyesuaikan riwayatRuangan.php ---
 $baseCountQuery = "FROM Peminjaman_Barang pb
                    JOIN Barang b ON pb.idBarang = b.idBarang
@@ -85,12 +94,15 @@ include __DIR__ . '/../../../templates/sidebar.php';
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item<?= empty($filterStatus) ? ' active' : '' ?>" href="?search=<?= htmlspecialchars($searchTerm) ?>">Semua Status</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li><a class="dropdown-item<?= $filterStatus === 'Menunggu Persetujuan' ? ' active' : '' ?>" href="?status=Menunggu Persetujuan&search=<?= htmlspecialchars($searchTerm) ?>">Menunggu Persetujuan</a></li>
                     <li><a class="dropdown-item<?= $filterStatus === 'Sedang Dipinjam' ? ' active' : '' ?>" href="?status=Sedang Dipinjam&search=<?= htmlspecialchars($searchTerm) ?>">Sedang Dipinjam</a></li>
                     <li><a class="dropdown-item<?= $filterStatus === 'Sebagian Dikembalikan' ? ' active' : '' ?>" href="?status=Sebagian Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Sebagian Dikembalikan</a></li>
                     <li><a class="dropdown-item<?= $filterStatus === 'Telah Dikembalikan' ? ' active' : '' ?>" href="?status=Telah Dikembalikan&search=<?= htmlspecialchars($searchTerm) ?>">Telah Dikembalikan</a></li>
                     <li><a class="dropdown-item<?= $filterStatus === 'Ditolak' ? ' active' : '' ?>" href="?status=Ditolak&search=<?= htmlspecialchars($searchTerm) ?>">Ditolak</a></li>
+                    <li><a class="dropdown-item<?= $filterStatus === 'Kedaluwarsa' ? ' active' : '' ?>" href="?status=Kedaluwarsa&search=<?= htmlspecialchars($searchTerm) ?>">Kedaluwarsa</a></li>
                 </ul>
             </div>
             <form action="" method="GET" class="d-flex" role="search">
@@ -184,6 +196,12 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                 $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/detailPeminjamanBarang.php?id=' . $idPeminjaman;
                                 $linkDetail = BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/detailPeminjamanBarang.php?id=' . $idPeminjaman;
                                 break;
+                            case 'Kedaluwarsa':
+                                $iconSrc = BASE_URL . '/icon/jamMerah.svg';
+                                $altText = 'Kedaluwarsa';
+                                $linkAksi = BASE_URL . '/Menu/Menu PIC/Peminjaman Barang/detailPeminjamanBarang.php?id=' . $idPeminjaman;
+                                $linkDetail = $linkAksi;
+                                break;
                             default:
                                 $iconSrc = BASE_URL . '/icon/jamkuning.svg';
                                 $altText = 'Status Tidak Diketahui';
@@ -192,21 +210,21 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                 break;
                         }
                 ?>
-                    <tr class="<?= $terlambat ? 'table-danger' : '' ?> text-center">
-                        <td><?= $no ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
-                        <td class="text-start"><?= htmlspecialchars($row['namaPeminjam'] ?? '') ?></td>
-                        <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
-                        <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
-                        <td class="td-aksi">
-                            <a href="<?= $linkAksi ?>">
-                                <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
-                            </a>
-                            <a href="<?= $linkDetail ?>">
-                                <img src="<?= BASE_URL ?>/icon/detail.svg" alt="Lihat Detail" class="aksi-icon">
-                            </a>
-                        </td>
-                    </tr>
+                        <tr class="<?= $terlambat ? 'table-danger' : '' ?> text-center">
+                            <td><?= $no ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['namaBarang'] ?? '') ?></td>
+                            <td class="text-start"><?= htmlspecialchars($row['namaPeminjam'] ?? '') ?></td>
+                            <td><?= ($row['tglPeminjamanBrg'] instanceof DateTime ? $row['tglPeminjamanBrg']->format('d M Y') : htmlspecialchars($row['tglPeminjamanBrg'] ?? '')) ?></td>
+                            <td><?= htmlspecialchars($row['jumlahBrg'] ?? '') ?></td>
+                            <td class="td-aksi">
+                                <a href="<?= $linkAksi ?>">
+                                    <img src="<?= $iconSrc ?>" alt="<?= $altText ?>" class="aksi-icon" title="<?= $altText ?>">
+                                </a>
+                                <a href="<?= $linkDetail ?>">
+                                    <img src="<?= BASE_URL ?>/icon/detail.svg" alt="Lihat Detail" class="aksi-icon">
+                                </a>
+                            </td>
+                        </tr>
                 <?php
                         $no++;
                     }
@@ -231,6 +249,9 @@ include __DIR__ . '/../../../templates/sidebar.php';
             </td>
             <td>
                 <p><img src="<?= BASE_URL ?>/icon/jamAbu.svg" class="legend-icon"> : Menunggu Persetujuan</p>
+            </td>
+            <td>
+                <p><img src="<?= BASE_URL ?>/icon/jamMerah.svg" class="legend-icon"> : Kedaluwarsa</p>
             </td>
         </tr>
     </table>

@@ -143,6 +143,9 @@ include '../../../templates/sidebar.php';
                                                 case 'Ditolak':
                                                     $statusClass = 'text-danger';
                                                     break;
+                                                case 'Kedaluwarsa':
+                                                    $statusClass = 'text-danger';
+                                                    break;
                                             }
                                             ?>
                                             <div class="form-control-plaintext <?= $statusClass ?>">
