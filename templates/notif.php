@@ -18,11 +18,11 @@ if (isset($_POST['notif_id']) && !empty($_POST['notif_id'])) {
     $params_update = array($notif_id);
     $result = sqlsrv_query($conn, $query_update, $params_update);
     
-    if ($result) {
-        $_SESSION['notif_success'] = "Notifikasi telah ditandai sebagai sudah dibaca.";
-    } else {
-        $_SESSION['notif_error'] = "Gagal menandai notifikasi.";
-    }
+    // if ($result) {
+    //     $_SESSION['notif_success'] = "Notifikasi telah ditandai sebagai sudah dibaca.";
+    // } else {
+    //     $_SESSION['notif_error'] = "Gagal menandai notifikasi.";
+    // }
     header("Location: notif.php");
     exit;
 }
@@ -42,11 +42,11 @@ if (isset($_POST['tandai_semua'])) {
 
     $result = sqlsrv_query($conn, $query_all_read, $params_all_read);
     
-    if ($result) {
-        $_SESSION['notif_success'] = "Semua notifikasi telah ditandai sebagai sudah dibaca.";
-    } else {
-        $_SESSION['notif_error'] = "Gagal menandai semua notifikasi.";
-    }
+    // if ($result) {
+    //     $_SESSION['notif_success'] = "Semua notifikasi telah ditandai sebagai sudah dibaca.";
+    // } else {
+    //     $_SESSION['notif_error'] = "Gagal menandai semua notifikasi.";
+    // }
     header("Location: notif.php");
     exit;
 }
