@@ -3,7 +3,7 @@ session_start();
 $error_message = '';
 $showModal = false; // Tambahkan variabel untuk mengontrol modal
 
-define('BASE_URL', 'http://localhost:8080/projek-pengelolaan-lab/Pengelolaan-Lab');
+define('BASE_URL', 'http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab');
 
 require_once __DIR__ . '/../function/koneksi.php';
 
@@ -104,7 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p>Reset kata sandi berhasil. Mohon tunggu beberapa saat, sistem sedang memproses pengiriman email.</p>
                 </div>
                 <div class="modal-footer">
+<<<<<<< HEAD
                     <a href="<?= BASE_URL ?>/Login/login.php" class="btn btn-primary">OK</a>
+=======
+                    <a href="<?= BASE_URL ?>/Login/Login.php" class="btn btn-primary">OK</a>
+>>>>>>> 9b93ef847e4384ee42b9f204c87b160b2e1e04f3
                 </div>
             </div>
         </div>
