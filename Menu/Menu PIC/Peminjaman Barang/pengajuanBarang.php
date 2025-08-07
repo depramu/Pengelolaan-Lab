@@ -61,33 +61,68 @@ $alasanPeminjamanBrg = $data['alasanPeminjamanBrg'] ?? '';
 $statusPeminjaman = $data['statusPeminjaman'] ?? '';
 
 // Proses form untuk menyetujui peminjaman 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($idPeminjamanBrg)) {
-        sqlsrv_begin_transaction($conn);
-
-        $updateQuery = "UPDATE Status_Peminjaman
-                        SET statusPeminjaman = 'Sedang Dipinjam'
-                        WHERE idPeminjamanBrg = ?";
-        $updateParams = array($idPeminjamanBrg);
-        $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
-
-        if ($stmtUpdate) {
-            $untuk = $nim;
-            $pesanNotif = "Pengajuan peminjaman barang disetujui oleh PIC.";
-            $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
-            sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
-            sqlsrv_commit($conn);
-            $showModal = true;
-        } else {
-            sqlsrv_rollback($conn);
+        // Ambil koneksi dan mulai transaksi
+        if (!sqlsrv_begin_transaction($conn)) {
             $errors = sqlsrv_errors();
-            $error = "Gagal menyetujui peminjaman barang. Detail: ";
+            $error = "Gagal memulai transaksi. ";
             if ($errors) {
                 foreach ($errors as $err) {
                     $error .= $err['message'] . "; ";
                 }
+            }
+        } else {
+            // Cek apakah sudah ada baris di Status_Peminjaman
+            $cekStatusSql = "SELECT statusPeminjaman FROM Status_Peminjaman WHERE idPeminjamanBrg = ?";
+            $cekStatusParams = [$idPeminjamanBrg];
+            $cekStatusStmt = sqlsrv_query($conn, $cekStatusSql, $cekStatusParams);
+            $sudahAdaStatus = false;
+            $statusSekarang = null;
+            if ($cekStatusStmt && ($cekStatusRow = sqlsrv_fetch_array($cekStatusStmt, SQLSRV_FETCH_ASSOC))) {
+                $sudahAdaStatus = true;
+                $statusSekarang = $cekStatusRow['statusPeminjaman'];
+            }
+
+            if ($sudahAdaStatus) {
+                // Hanya update jika status bukan 'Sedang Dipinjam'
+                if ($statusSekarang !== 'Sedang Dipinjam') {
+                    $updateQuery = "UPDATE Status_Peminjaman
+                                    SET statusPeminjaman = 'Sedang Dipinjam', alasanPenolakan = NULL
+                                    WHERE idPeminjamanBrg = ?";
+                    $updateParams = array($idPeminjamanBrg);
+                    $stmtUpdate = sqlsrv_query($conn, $updateQuery, $updateParams);
+                } else {
+                    // Sudah 'Sedang Dipinjam', anggap sukses
+                    $stmtUpdate = true;
+                }
             } else {
-                $error .= "Kesalahan tidak diketahui.";
+                // Insert status jika belum ada
+                $insertQuery = "INSERT INTO Status_Peminjaman (idPeminjamanBrg, statusPeminjaman) VALUES (?, 'Sedang Dipinjam')";
+                $insertParams = array($idPeminjamanBrg);
+                $stmtUpdate = sqlsrv_query($conn, $insertQuery, $insertParams);
+            }
+
+            if ($stmtUpdate) {
+                $untuk = $nim ?: $npk;
+                $pesanNotif = "Pengajuan peminjaman barang disetujui oleh PIC.";
+                $queryNotif = "INSERT INTO Notifikasi (pesan, status, untuk) VALUES (?, 'Belum Dibaca', ?)";
+                sqlsrv_query($conn, $queryNotif, [$pesanNotif, $untuk]);
+                sqlsrv_commit($conn);
+                $showModal = true;
+                // Refresh data status setelah update/insert
+                $statusPeminjaman = 'Sedang Dipinjam';
+            } else {
+                sqlsrv_rollback($conn);
+                $errors = sqlsrv_errors();
+                $error = "Gagal menyetujui peminjaman barang. Detail: ";
+                if ($errors) {
+                    foreach ($errors as $err) {
+                        $error .= $err['message'] . "; ";
+                    }
+                } else {
+                    $error .= "Kesalahan tidak diketahui.";
+                }
             }
         }
     } else {
@@ -120,7 +155,7 @@ include '../../../templates/sidebar.php';
                         <span class="fw-semibold">Pengajuan Peminjaman Barang</span>
                     </div>
                     <div class="card-body scrollable-card-content">
-                        <form method="POST">
+                        <form id="formPengajuanBarang" method="POST">
                             <input type="hidden" name="idPeminjamanBrg" value="<?= htmlspecialchars($idPeminjamanBrg) ?>">
                             <div class="row">
                                 <div class="col-md-6">
@@ -173,7 +208,7 @@ include '../../../templates/sidebar.php';
                                 <a href="<?= BASE_URL ?>/Menu/Menu PIC/Peminjaman Barang/peminjamanBarang.php" class="btn btn-secondary">Kembali</a>
                                 <div>
                                     <a href="penolakanBarang.php?id=<?= htmlspecialchars($idPeminjamanBrg) ?>" class="btn btn-danger">Tolak</a>
-                                    <button type="submit" name="submit" class="btn btn-primary">Setuju</button>
+                                    <button type="submit" class="btn btn-primary">Setuju</button>
                                 </div>
                             </div>
                         </form>

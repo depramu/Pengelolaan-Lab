@@ -150,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Halaman Admin & Operator
   setupLaporanPage();
   setupPenolakanBarang();
+  setupPengajuanBarang();
   setupPengembalianBarangPage();
   setupPengembalianRuanganPage();
   setupDetailRiwayatForm();
@@ -170,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setupFormTambahPeminjamanBrg();
   setupFormTambahPeminjamanRuangan();
 
+  
   // Fitur Tambahan
   setupSidebarPersistence();
   setupInputProtection();
@@ -864,6 +866,36 @@ function setupDetailRiwayatForm() {
     validateFile("dokSesudah", "dokSesudahError");
 
     if (!isValid) event.preventDefault();
+  });
+}
+
+function setupPengajuanBarang() {
+  const form = document.getElementById("formPengajuanBarang");
+  if (!form) return;
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault(); // Selalu prevent default untuk tampilkan modal konfirmasi
+
+    // Tampilkan confirm modal saja, tanpa validasi
+    const confirmModal = new bootstrap.Modal(
+      document.getElementById("confirmModal")
+    );
+    const confirmAction = document.getElementById("confirmAction");
+    const confirmYes = document.getElementById("confirmYes");
+
+    if (confirmAction) {
+      confirmAction.textContent = "menyetujui peminjaman ini";
+    }
+
+    if (confirmYes) {
+      // Pastikan tidak ada event handler ganda
+      confirmYes.onclick = function () {
+        confirmModal.hide();
+        form.submit(); // Submit form setelah konfirmasi
+      };
+    }
+
+    confirmModal.show();
   });
 }
 
