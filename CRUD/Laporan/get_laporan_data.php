@@ -55,6 +55,7 @@ if ($conn && $jenisLaporan) {
 
                 // Query untuk data dengan pagination
                 $query = "SELECT idBarang, namaBarang, stokBarang, lokasiBarang FROM Barang WHERE isDeleted = 0";
+                $params = [];
                 if ($lokasiBarang) {
                     $query .= " AND lokasiBarang = ?";
                     $params[] = $lokasiBarang;
@@ -79,6 +80,7 @@ if ($conn && $jenisLaporan) {
 
                 // Query untuk data dengan pagination
                 $query = "SELECT idRuangan, namaRuangan, kondisiRuangan, ketersediaan FROM Ruangan";
+                $params = [];
                 if ($kondisiRuangan) {
                     $query .= " WHERE kondisiRuangan = ?";
                     $params[] = $kondisiRuangan;
@@ -95,7 +97,7 @@ if ($conn && $jenisLaporan) {
                     $countQuery = "
                         SELECT COUNT(*) as total FROM (
                             SELECT
-                                CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam
+                                CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END AS IDPeminjam
                             FROM (
                                 SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ?
                                 UNION ALL
@@ -104,9 +106,9 @@ if ($conn && $jenisLaporan) {
                             LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
                             LEFT JOIN Karyawan AS K ON P.npk = K.npk 
                             GROUP BY 
-                                CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
-                                CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
-                                CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                                CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END,
+                                CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END, 
+                                CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END
                         ) AS subquery
                     ";
                     $countStmt = sqlsrv_query($conn, $countQuery, [$tahun, $tahun]);
@@ -118,9 +120,9 @@ if ($conn && $jenisLaporan) {
                     // Query untuk data dengan pagination (tahunan)
                     $query = "
                         SELECT
-                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam,
-                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
-                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END AS IDPeminjam,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END AS NamaPeminjam, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END AS JenisPeminjam,
                             COUNT(P.id_peminjaman) AS JumlahPeminjaman
                         FROM (
                             SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ?
@@ -130,9 +132,9 @@ if ($conn && $jenisLaporan) {
                         LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
                         LEFT JOIN Karyawan AS K ON P.npk = K.npk 
                         GROUP BY 
-                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
-                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
-                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END
                         ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC
                         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                     ";
@@ -143,7 +145,7 @@ if ($conn && $jenisLaporan) {
                     $countQuery = "
                         SELECT COUNT(*) as total FROM (
                             SELECT
-                                CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam
+                                CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END AS IDPeminjam
                             FROM (
                                 SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
                                 UNION ALL
@@ -152,9 +154,9 @@ if ($conn && $jenisLaporan) {
                             LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
                             LEFT JOIN Karyawan AS K ON P.npk = K.npk 
                             GROUP BY 
-                                CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
-                                CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
-                                CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                                CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END,
+                                CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END, 
+                                CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END
                         ) AS subquery
                     ";
                     $countStmt = sqlsrv_query($conn, $countQuery, [$tahun, $bulan, $tahun, $bulan]);
@@ -166,9 +168,9 @@ if ($conn && $jenisLaporan) {
                     // Query untuk data dengan pagination (bulanan)
                     $query = "
                         SELECT
-                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END AS IDPeminjam,
-                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END AS NamaPeminjam, 
-                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END AS JenisPeminjam,
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END AS IDPeminjam,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END AS NamaPeminjam, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END AS JenisPeminjam,
                             COUNT(P.id_peminjaman) AS JumlahPeminjaman
                         FROM (
                             SELECT idPeminjamanBrg AS id_peminjaman, nim, npk FROM Peminjaman_Barang WHERE YEAR(tglPeminjamanBrg) = ? AND MONTH(tglPeminjamanBrg) = ?
@@ -178,9 +180,9 @@ if ($conn && $jenisLaporan) {
                         LEFT JOIN Mahasiswa AS M ON P.nim = M.nim 
                         LEFT JOIN Karyawan AS K ON P.npk = K.npk 
                         GROUP BY 
-                            CASE WHEN P.nim IS NOT NULL THEN P.nim WHEN P.npk IS NOT NULL THEN P.npk END,
-                            CASE WHEN P.nim IS NOT NULL THEN M.nama WHEN P.npk IS NOT NULL THEN K.nama END, 
-                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' WHEN P.npk IS NOT NULL THEN 'Karyawan' END
+                            CASE WHEN P.nim IS NOT NULL THEN P.nim ELSE P.npk END,
+                            CASE WHEN P.nim IS NOT NULL THEN M.nama ELSE K.nama END, 
+                            CASE WHEN P.nim IS NOT NULL THEN 'Mahasiswa' ELSE 'Karyawan' END
                         ORDER BY JumlahPeminjaman DESC, NamaPeminjam ASC
                         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                     ";
@@ -189,82 +191,82 @@ if ($conn && $jenisLaporan) {
                 }
                 break;
 
-            case 'barangSeringDipinjam':
-                if ($tahun && $bulan === null) {
-                    // Query untuk menghitung total records (tahunan)
-                    $countQuery = "
-                        SELECT COUNT(*) as total FROM (
-                            SELECT namaBarang
+                case 'barangSeringDipinjam':
+                    if ($tahun && $bulan === null) {
+                        // Query untuk menghitung total records (tahunan)
+                        $countQuery = "
+                            SELECT COUNT(*) as total FROM (
+                                SELECT B.namaBarang
+                                FROM Peminjaman_Barang PB
+                                INNER JOIN Barang B ON PB.idBarang = B.idBarang
+                                WHERE YEAR(PB.tglPeminjamanBrg) = ?
+                                GROUP BY B.namaBarang
+                            ) AS subquery
+                        ";
+                        $countStmt = sqlsrv_query($conn, $countQuery, [$tahun]);
+                        if ($countStmt) {
+                            $countRow = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
+                            $totalCount = $countRow['total'];
+                        }
+
+                        // Query untuk data dengan pagination (tahunan)
+                        $query = "
+                            SELECT 
+                                B.namaBarang,
+                                SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
                             FROM Peminjaman_Barang PB
-                            JOIN Barang B ON PB.idBarang = B.idBarang
+                            INNER JOIN Barang B ON PB.idBarang = B.idBarang
                             WHERE YEAR(PB.tglPeminjamanBrg) = ?
-                            GROUP BY namaBarang
-                        ) AS subquery
-                    ";
-                    $countStmt = sqlsrv_query($conn, $countQuery, [$tahun]);
-                    if ($countStmt) {
-                        $countRow = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-                        $totalCount = $countRow['total'];
-                    }
+                            GROUP BY B.namaBarang
+                            ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC
+                            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                        ";
+                        $params = [$tahun, $offset, $itemsPerPage];
+                        $stmt = sqlsrv_query($conn, $query, $params);
+                    } elseif ($tahun && $bulan !== null) {
+                        // Query untuk menghitung total records (bulanan)
+                        $countQuery = "
+                            SELECT COUNT(*) as total FROM (
+                                SELECT B.namaBarang
+                                FROM Peminjaman_Barang PB
+                                INNER JOIN Barang B ON PB.idBarang = B.idBarang
+                                WHERE YEAR(PB.tglPeminjamanBrg) = ? AND MONTH(PB.tglPeminjamanBrg) = ?
+                                GROUP BY B.namaBarang
+                            ) AS subquery
+                        ";
+                        $countStmt = sqlsrv_query($conn, $countQuery, [$tahun, $bulan]);
+                        if ($countStmt) {
+                            $countRow = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
+                            $totalCount = $countRow['total'];
+                        }
 
-                    // Query untuk data dengan pagination (tahunan)
-                    $query = "
-                        SELECT 
-                            B.namaBarang,
-                            SUM(PB.kuantitasPeminjamanBrg) AS TotalKuantitasDipinjam
-                        FROM Peminjaman_Barang PB
-                        JOIN Barang B ON PB.idBarang = B.idBarang
-                        WHERE YEAR(PB.tglPeminjamanBrg) = ?
-                        GROUP BY B.namaBarang
-                        ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC
-                        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-                    ";
-                    $params = [$tahun, $offset, $itemsPerPage];
-                    $stmt = sqlsrv_query($conn, $query, $params);
-                } elseif ($tahun && $bulan !== null) {
-                    // Query untuk menghitung total records (bulanan)
-                    $countQuery = "
-                        SELECT COUNT(*) as total FROM (
-                            SELECT namaBarang
+                        // Query untuk data dengan pagination (bulanan)
+                        $query = "
+                            SELECT 
+                                B.namaBarang,
+                                SUM(PB.jumlahBrg) AS TotalKuantitasDipinjam
                             FROM Peminjaman_Barang PB
-                            JOIN Barang B ON PB.idBarang = B.idBarang
+                            INNER JOIN Barang B ON PB.idBarang = B.idBarang
                             WHERE YEAR(PB.tglPeminjamanBrg) = ? AND MONTH(PB.tglPeminjamanBrg) = ?
-                            GROUP BY namaBarang
-                        ) AS subquery
-                    ";
-                    $countStmt = sqlsrv_query($conn, $countQuery, [$tahun, $bulan]);
-                    if ($countStmt) {
-                        $countRow = sqlsrv_fetch_array($countStmt, SQLSRV_FETCH_ASSOC);
-                        $totalCount = $countRow['total'];
+                            GROUP BY B.namaBarang
+                            ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC
+                            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                        ";
+                        $params = [$tahun, $bulan, $offset, $itemsPerPage];
+                        $stmt = sqlsrv_query($conn, $query, $params);
                     }
-
-                    // Query untuk data dengan pagination (bulanan)
-                    $query = "
-                        SELECT 
-                            B.namaBarang,
-                            SUM(PB.kuantitasPeminjamanBrg) AS TotalKuantitasDipinjam
-                        FROM Peminjaman_Barang PB
-                        JOIN Barang B ON PB.idBarang = B.idBarang
-                        WHERE YEAR(PB.tglPeminjamanBrg) = ? AND MONTH(PB.tglPeminjamanBrg) = ?
-                        GROUP BY B.namaBarang
-                        ORDER BY TotalKuantitasDipinjam DESC, B.namaBarang ASC
-                        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-                    ";
-                    $params = [$tahun, $bulan, $offset, $itemsPerPage];
-                    $stmt = sqlsrv_query($conn, $query, $params);
-                }
-                break;
+                    break;
 
             case 'ruanganSeringDipinjam':
                 if ($tahun && $bulan === null) {
                     // Query untuk menghitung total records (tahunan)
                     $countQuery = "
                         SELECT COUNT(*) as total FROM (
-                            SELECT namaRuangan
+                            SELECT R.namaRuangan
                             FROM Peminjaman_Ruangan PR
-                            JOIN Ruangan R ON PR.idRuangan = R.idRuangan
+                            INNER JOIN Ruangan R ON PR.idRuangan = R.idRuangan
                             WHERE YEAR(PR.tglPeminjamanRuangan) = ?
-                            GROUP BY namaRuangan
+                            GROUP BY R.namaRuangan
                         ) AS subquery
                     ";
                     $countStmt = sqlsrv_query($conn, $countQuery, [$tahun]);
@@ -279,7 +281,7 @@ if ($conn && $jenisLaporan) {
                             R.namaRuangan,
                             COUNT(PR.idPeminjamanRuangan) AS JumlahDipinjam
                         FROM Peminjaman_Ruangan PR
-                        JOIN Ruangan R ON PR.idRuangan = R.idRuangan
+                        INNER JOIN Ruangan R ON PR.idRuangan = R.idRuangan
                         WHERE YEAR(PR.tglPeminjamanRuangan) = ?
                         GROUP BY R.namaRuangan
                         ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC
@@ -291,11 +293,11 @@ if ($conn && $jenisLaporan) {
                     // Query untuk menghitung total records (bulanan)
                     $countQuery = "
                         SELECT COUNT(*) as total FROM (
-                            SELECT namaRuangan
+                            SELECT R.namaRuangan
                             FROM Peminjaman_Ruangan PR
-                            JOIN Ruangan R ON PR.idRuangan = R.idRuangan
+                            INNER JOIN Ruangan R ON PR.idRuangan = R.idRuangan
                             WHERE YEAR(PR.tglPeminjamanRuangan) = ? AND MONTH(PR.tglPeminjamanRuangan) = ?
-                            GROUP BY namaRuangan
+                            GROUP BY R.namaRuangan
                         ) AS subquery
                     ";
                     $countStmt = sqlsrv_query($conn, $countQuery, [$tahun, $bulan]);
@@ -310,7 +312,7 @@ if ($conn && $jenisLaporan) {
                             R.namaRuangan,
                             COUNT(PR.idPeminjamanRuangan) AS JumlahDipinjam
                         FROM Peminjaman_Ruangan PR
-                        JOIN Ruangan R ON PR.idRuangan = R.idRuangan
+                        INNER JOIN Ruangan R ON PR.idRuangan = R.idRuangan
                         WHERE YEAR(PR.tglPeminjamanRuangan) = ? AND MONTH(PR.tglPeminjamanRuangan) = ?
                         GROUP BY R.namaRuangan
                         ORDER BY JumlahDipinjam DESC, R.namaRuangan ASC

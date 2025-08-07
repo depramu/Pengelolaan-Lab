@@ -3,7 +3,7 @@ session_start();
 $error_message = '';
 $showModal = false; // Tambahkan variabel untuk mengontrol modal
 
-define('BASE_URL', 'http://localhost/projek-pengelolaan-lab/Pengelolaan-Lab');
+define('BASE_URL', 'http://localhost:8080/projek-pengelolaan-lab/Pengelolaan-Lab');
 
 require_once __DIR__ . '/../function/koneksi.php';
 
