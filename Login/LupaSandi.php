@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p>Reset kata sandi berhasil. Mohon tunggu beberapa saat, sistem sedang memproses pengiriman email.</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="<?= BASE_URL ?>/Login/LupaSandi.php" class="btn btn-primary">OK</a>
+                    <a href="<?= BASE_URL ?>/Login/login.php" class="btn btn-primary">OK</a>
                 </div>
             </div>
         </div>

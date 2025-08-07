@@ -7,11 +7,11 @@ $lokasiList = [];
 $lokasiQuery = "SELECT DISTINCT lokasiBarang FROM Barang WHERE isDeleted = 0 ORDER BY lokasiBarang ASC";
 $lokasiResult = sqlsrv_query($conn, $lokasiQuery);
 if ($lokasiResult !== false) {
-    while ($rowLokasi = sqlsrv_fetch_array($lokasiResult, SQLSRV_FETCH_ASSOC)) {
-        if (!empty($rowLokasi['lokasiBarang'])) {
-            $lokasiList[] = $rowLokasi['lokasiBarang'];
-        }
+  while ($rowLokasi = sqlsrv_fetch_array($lokasiResult, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($rowLokasi['lokasiBarang'])) {
+      $lokasiList[] = $rowLokasi['lokasiBarang'];
     }
+  }
 }
 
 // Ambil daftar kondisi unik untuk filter Data Ruangan
@@ -19,11 +19,11 @@ $kondisiList = [];
 $kondisiQuery = "SELECT DISTINCT kondisiRuangan FROM Ruangan ORDER BY kondisiRuangan ASC";
 $kondisiResult = sqlsrv_query($conn, $kondisiQuery);
 if ($kondisiResult !== false) {
-    while ($rowKondisi = sqlsrv_fetch_array($kondisiResult, SQLSRV_FETCH_ASSOC)) {
-        if (!empty($rowKondisi['kondisiRuangan'])) {
-            $kondisiList[] = $rowKondisi['kondisiRuangan'];
-        }
+  while ($rowKondisi = sqlsrv_fetch_array($kondisiResult, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($rowKondisi['kondisiRuangan'])) {
+      $kondisiList[] = $rowKondisi['kondisiRuangan'];
     }
+  }
 }
 
 // Tambahkan file pagination.php agar fungsi pagination bisa digunakan
@@ -139,9 +139,12 @@ include '../../templates/sidebar.php';
         </ul>
       </nav>
     </div>
-    <div id="rightControls">
-      <button class="btn btn-success" id="exportExcelBtn" style="display:none;">
-        <i class="bi bi-file-earmark-excel me-0"></i> Export ke Excel
+    <div id="rightControls" class="d-flex">
+      <button class="btn btn-success me-2" id="exportExcelBtn" style="display:none;">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export ke Excel
+      </button>
+      <button class="btn btn-danger" id="exportPdfBtn" style="display:none;">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Export ke PDF
       </button>
     </div>
   </div>
@@ -167,33 +170,48 @@ include '../../templates/sidebar.php';
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const jenisLaporan = document.getElementById('jenisLaporan');
-  const colLokasiBarang = document.getElementById('colLokasiBarang');
-  const colKondisiRuangan = document.getElementById('colKondisiRuangan');
-  const colBulan = document.getElementById('colBulan');
-  const colTahun = document.getElementById('colTahun');
+  document.addEventListener('DOMContentLoaded', function() {
+    const jenisLaporan = document.getElementById('jenisLaporan');
+    const colLokasiBarang = document.getElementById('colLokasiBarang');
+    const colKondisiRuangan = document.getElementById('colKondisiRuangan');
+    const colBulan = document.getElementById('colBulan');
+    const colTahun = document.getElementById('colTahun');
+    const colJenis = document.getElementById('colJenis');
 
-  function updateFilterVisibility() {
-    const value = jenisLaporan.value;
-    // Sembunyikan semua filter khusus dulu
-    colLokasiBarang.style.display = 'none';
-    colKondisiRuangan.style.display = 'none';
+    function updateFilterVisibility() {
+      const value = jenisLaporan.value;
+      // Sembunyikan semua filter khusus dulu
+      colLokasiBarang.style.display = 'none';
+      colKondisiRuangan.style.display = 'none';
 
-    // Tampilkan filter sesuai jenis laporan
-    if (value === 'dataBarang') {
-      colLokasiBarang.style.display = '';
-    } else if (value === 'dataRuangan') {
-      colKondisiRuangan.style.display = '';
+      // Tampilkan filter sesuai jenis laporan
+      if (value === 'dataBarang') {
+        colLokasiBarang.style.display = '';
+        colBulan.style.display = 'none';
+        colTahun.style.display = 'none';
+        colJenis.className = 'col-md-6';
+      } else if (value === 'dataRuangan') {
+        colKondisiRuangan.style.display = '';
+        colBulan.style.display = 'none';
+        colTahun.style.display = 'none';
+        colJenis.className = 'col-md-6';
+      } else if (value === 'peminjamSeringMeminjam' || value === 'barangSeringDipinjam' || value === 'ruanganSeringDipinjam') {
+        colBulan.style.display = '';
+        colTahun.style.display = '';
+        colJenis.className = 'col-md-4';
+      } else {
+        // Reset ke default
+        colBulan.style.display = '';
+        colTahun.style.display = '';
+        colJenis.className = 'col-md-4';
+      }
     }
-    // Filter bulan/tahun tetap tampil untuk semua jenis laporan
-  }
 
-  jenisLaporan.addEventListener('change', updateFilterVisibility);
+    jenisLaporan.addEventListener('change', updateFilterVisibility);
 
-  // Inisialisasi tampilan filter saat load
-  updateFilterVisibility();
-});
+    // Inisialisasi tampilan filter saat load
+    updateFilterVisibility();
+  });
 </script>
-    
+
 <?php include '../../templates/footer.php';

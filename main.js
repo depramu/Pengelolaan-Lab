@@ -171,7 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
   setupFormTambahPeminjamanBrg();
   setupFormTambahPeminjamanRuangan();
 
-  
   // Fitur Tambahan
   setupSidebarPersistence();
   setupInputProtection();
@@ -398,6 +397,10 @@ function setupLaporanPage() {
     const type = jenisLaporanSelect.value;
     const bln = document.getElementById("bulanLaporan").value;
     const thn = document.getElementById("tahunLaporan").value;
+    const lokasiBarang =
+      document.getElementById("lokasiBarangFilter")?.value || "";
+    const kondisiRuangan =
+      document.getElementById("kondisiRuanganFilter")?.value || "";
 
     // Validasi filter
     if (!type || (type !== "dataBarang" && type !== "dataRuangan" && !thn)) {
@@ -413,11 +416,19 @@ function setupLaporanPage() {
     bottomControlsContainer.style.display = "none";
     laporanSummaryText.innerHTML = "";
 
-    // Fetch data
-    let url = `../../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}`;
-    if (type !== "dataBarang" && type !== "dataRuangan") {
+    // Fetch data with pagination
+    let url = `../../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}&page=1`;
+
+    // Tambahkan parameter filter sesuai jenis laporan
+    if (type === "dataBarang") {
+      if (lokasiBarang)
+        url += `&lokasiBarang=${encodeURIComponent(lokasiBarang)}`;
+    } else if (type === "dataRuangan") {
+      if (kondisiRuangan)
+        url += `&kondisiRuangan=${encodeURIComponent(kondisiRuangan)}`;
+    } else {
+      // Untuk laporan yang memerlukan tahun/bulan
       if (thn) url += `&tahun=${thn}`;
-      // Hanya tambahkan bulan jika benar-benar dipilih (tidak kosong)
       if (bln && bln !== "") url += `&bulan=${bln}`;
     }
 
@@ -434,11 +445,11 @@ function setupLaporanPage() {
             areaKontenDiv.style.display = "block";
             bottomControlsContainer.style.display = "flex";
             updateLaporanSummary(fullData, type);
-            renderLaporanTable(fullData, type);
+            renderLaporanTable(fullData, type, res.pagination);
           } else {
             areaKontenDiv.style.display = "none";
             validationMsg.textContent =
-              "Tidak Ada Data Laporan untuk periode yang dipilih.";
+              "Tidak Ada Data Laporan untuk filter yang dipilih.";
             if (validationModal) validationModal.show();
           }
         } else {
@@ -460,12 +471,27 @@ function setupLaporanPage() {
     const colBulan = document.getElementById("colBulan");
     const colTahun = document.getElementById("colTahun");
     const colJenis = document.getElementById("colJenis");
+    const colLokasiBarang = document.getElementById("colLokasiBarang");
+    const colKondisiRuangan = document.getElementById("colKondisiRuangan");
 
     const val = jenisLaporanSelect.value;
-    if (val === "dataBarang" || val === "dataRuangan") {
+
+    // Sembunyikan semua filter khusus dulu
+    colLokasiBarang.style.display = "none";
+    colKondisiRuangan.style.display = "none";
+
+    if (val === "dataBarang") {
       colBulan.style.display = "none";
       colTahun.style.display = "none";
-      colJenis.className = "col-md-10";
+      colLokasiBarang.style.display = "";
+      colJenis.className = "col-md-6";
+      if (bulanSelect) bulanSelect.value = "";
+      if (tahunSelect) tahunSelect.value = "";
+    } else if (val === "dataRuangan") {
+      colBulan.style.display = "none";
+      colTahun.style.display = "none";
+      colKondisiRuangan.style.display = "";
+      colJenis.className = "col-md-6";
       if (bulanSelect) bulanSelect.value = "";
       if (tahunSelect) tahunSelect.value = "";
     } else {
@@ -597,9 +623,10 @@ function setupLaporanPage() {
     XLSX.writeFile(wb, filename);
   }
 
-  // Fungsi untuk render tabel laporan
-  function renderLaporanTable(fullData, reportType) {
+  // Fungsi untuk render tabel laporan dengan pagination
+  function renderLaporanTable(fullData, reportType, pagination) {
     const wadahLaporanDiv = document.getElementById("wadahLaporan");
+    const paginationUl = document.getElementById("paginationUl");
     if (!wadahLaporanDiv) return;
 
     // Header dan keys tanpa ID, kolom pertama selalu "No"
@@ -627,43 +654,266 @@ function setupLaporanPage() {
         keys = ["namaRuangan", "JumlahDipinjam"];
         break;
     }
+
+    // Render tabel
     const tbl = document.createElement("table");
     tbl.className = "table table-striped table-bordered table-hover";
     const thead = tbl.createTHead().insertRow();
     headers.forEach((h) => (thead.insertCell().textContent = h));
     const tbody = tbl.createTBody();
+
+    // Calculate the starting number for current page
+    const startNumber =
+      (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+
     fullData.forEach((item, idx) => {
       const r = tbody.insertRow();
-      r.insertCell().textContent = idx + 1; // Kolom No
+      r.insertCell().textContent = startNumber + idx; // Kolom No dengan nomor urut yang benar
       keys.forEach((k) => (r.insertCell().textContent = item[k] ?? ""));
     });
+
     wadahLaporanDiv.innerHTML = "";
     wadahLaporanDiv.append(tbl);
 
-    // Setup tombol Export ke Excel
-    const exportBtn = document.getElementById("exportExcelBtn");
-    if (exportBtn) {
-      exportBtn.style.display = "block";
-      const newExportBtn = exportBtn.cloneNode(true);
-      exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
+    // Render pagination controls using the existing generatePagination function
+    if (paginationUl && pagination.totalPages > 1) {
+      renderPaginationControls(
+        pagination.currentPage,
+        pagination.totalPages,
+        reportType
+      );
+    } else if (paginationUl) {
+      paginationUl.innerHTML = "";
+    }
 
-      newExportBtn.addEventListener("click", () => {
+    // Setup tombol Export ke Excel dan PDF
+    const exportExcelBtn = document.getElementById("exportExcelBtn");
+    const exportPdfBtn = document.getElementById("exportPdfBtn");
+
+    if (exportExcelBtn) {
+      exportExcelBtn.style.display = "block";
+      const newExportExcelBtn = exportExcelBtn.cloneNode(true);
+      exportExcelBtn.parentNode.replaceChild(newExportExcelBtn, exportExcelBtn);
+
+      newExportExcelBtn.addEventListener("click", () => {
         const bln = document.getElementById("bulanLaporan").value;
         const thn = document.getElementById("tahunLaporan").value;
+        const lokasi =
+          document.getElementById("lokasiBarangFilter")?.value || "";
+        const kondisi =
+          document.getElementById("kondisiRuanganFilter")?.value || "";
 
         let scriptName = "export_laporan_excel_pic.php";
         if (window.location.pathname.includes("/Menu Ka UPT/")) {
           scriptName = "export_laporan_excel_kaupt.php";
         }
 
-        // Buat URL ke script PHP, tanpa &mode=download
-        let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
-        if (thn) previewUrl += `&tahun=${thn}`;
-        if (bln && bln !== "") previewUrl += `&bulan=${bln}`;
+        // Buat URL ke script PHP dengan semua parameter filter dan mode preview
+        let previewUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}&mode=preview`;
+
+        // Tambahkan parameter filter sesuai jenis laporan
+        if (reportType === "dataBarang") {
+          if (lokasi)
+            previewUrl += `&lokasiBarang=${encodeURIComponent(lokasi)}`;
+        } else if (reportType === "dataRuangan") {
+          if (kondisi)
+            previewUrl += `&kondisiRuangan=${encodeURIComponent(kondisi)}`;
+        } else {
+          // Untuk laporan yang memerlukan tahun/bulan
+          if (thn) previewUrl += `&tahun=${thn}`;
+          if (bln && bln !== "") previewUrl += `&bulan=${bln}`;
+        }
 
         window.open(previewUrl, "_blank");
       });
     }
+
+    if (exportPdfBtn) {
+      exportPdfBtn.style.display = "block";
+      const newExportPdfBtn = exportPdfBtn.cloneNode(true);
+      exportPdfBtn.parentNode.replaceChild(newExportPdfBtn, exportPdfBtn);
+
+      newExportPdfBtn.addEventListener("click", () => {
+        const bln = document.getElementById("bulanLaporan").value;
+        const thn = document.getElementById("tahunLaporan").value;
+        const lokasi =
+          document.getElementById("lokasiBarangFilter")?.value || "";
+        const kondisi =
+          document.getElementById("kondisiRuanganFilter")?.value || "";
+
+        let scriptName = "export_pdf_pic.php";
+        if (window.location.pathname.includes("/Menu Ka UPT/")) {
+          scriptName = "export_pdf_kaupt.php";
+        }
+
+        // Buat URL ke script PHP dengan semua parameter filter
+        let pdfUrl = `../../CRUD/Laporan/${scriptName}?jenisLaporan=${reportType}`;
+
+        // Tambahkan parameter filter sesuai jenis laporan
+        if (reportType === "dataBarang") {
+          if (lokasi) pdfUrl += `&lokasiBarang=${encodeURIComponent(lokasi)}`;
+        } else if (reportType === "dataRuangan") {
+          if (kondisi)
+            pdfUrl += `&kondisiRuangan=${encodeURIComponent(kondisi)}`;
+        } else {
+          // Untuk laporan yang memerlukan tahun/bulan
+          if (thn) pdfUrl += `&tahun=${thn}`;
+          if (bln && bln !== "") pdfUrl += `&bulan=${bln}`;
+        }
+
+        // Buka PDF di tab baru (akan langsung download atau preview di browser)
+        window.open(pdfUrl, "_blank");
+      });
+    }
+  }
+
+  // Fungsi untuk render pagination controls menggunakan generatePagination
+  function renderPaginationControls(currentPage, totalPages, reportType) {
+    const paginationUl = document.getElementById("paginationUl");
+    if (!paginationUl) return;
+
+    // Clear existing pagination
+    paginationUl.innerHTML = "";
+
+    // Create pagination container
+    const paginationNav = document.createElement("nav");
+    paginationNav.setAttribute("aria-label", "Page navigation");
+    paginationNav.className = "fixed-pagination";
+
+    const paginationList = document.createElement("ul");
+    paginationList.className = "pagination justify-content-end";
+
+    // Previous button
+    const prevLi = document.createElement("li");
+    prevLi.className = `page-item ${currentPage <= 1 ? "disabled" : ""}`;
+    const prevLink = document.createElement("a");
+    prevLink.className = "page-link";
+    prevLink.href = "#";
+    prevLink.textContent = "<";
+    if (currentPage > 1) {
+      prevLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        loadPage(currentPage - 1, reportType);
+      });
+    }
+    prevLi.appendChild(prevLink);
+    paginationList.appendChild(prevLi);
+
+    // Page numbers
+    const showPages = 1;
+    let ellipsisShown = false;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i <= showPages || // Selalu tampilkan halaman pertama
+        i > totalPages - showPages || // Selalu tampilkan halaman terakhir
+        Math.abs(i - currentPage) <= 1 // Tampilkan halaman saat ini, satu sebelum, dan satu sesudah
+      ) {
+        ellipsisShown = false;
+
+        const pageLi = document.createElement("li");
+        pageLi.className = `page-item ${i === currentPage ? "active" : ""}`;
+        const pageLink = document.createElement("a");
+        pageLink.className = "page-link";
+        pageLink.href = "#";
+        pageLink.textContent = i;
+        if (i !== currentPage) {
+          pageLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            loadPage(i, reportType);
+          });
+        }
+        pageLi.appendChild(pageLink);
+        paginationList.appendChild(pageLi);
+      } else if (!ellipsisShown) {
+        // Tampilkan elipsis (...) hanya sekali
+        const ellipsisLi = document.createElement("li");
+        ellipsisLi.className = "page-item disabled";
+        const ellipsisSpan = document.createElement("span");
+        ellipsisSpan.className = "page-link";
+        ellipsisSpan.textContent = "...";
+        ellipsisLi.appendChild(ellipsisSpan);
+        paginationList.appendChild(ellipsisLi);
+        ellipsisShown = true;
+      }
+    }
+
+    // Next button
+    const nextLi = document.createElement("li");
+    nextLi.className = `page-item ${
+      currentPage >= totalPages ? "disabled" : ""
+    }`;
+    const nextLink = document.createElement("a");
+    nextLink.className = "page-link";
+    nextLink.href = "#";
+    nextLink.textContent = ">";
+    if (currentPage < totalPages) {
+      nextLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        loadPage(currentPage + 1, reportType);
+      });
+    }
+    nextLi.appendChild(nextLink);
+    paginationList.appendChild(nextLi);
+
+    paginationNav.appendChild(paginationList);
+    paginationUl.appendChild(paginationNav);
+  }
+
+  // Fungsi untuk memuat halaman tertentu
+  function loadPage(page, reportType) {
+    const jenisLaporanSelect = document.getElementById("jenisLaporan");
+    const wadahLaporanDiv = document.getElementById("wadahLaporan");
+    const laporanSummaryText = document.getElementById("laporanSummaryText");
+
+    const type = jenisLaporanSelect.value;
+    const bln = document.getElementById("bulanLaporan").value;
+    const thn = document.getElementById("tahunLaporan").value;
+    const lokasiBarang =
+      document.getElementById("lokasiBarangFilter")?.value || "";
+    const kondisiRuangan =
+      document.getElementById("kondisiRuanganFilter")?.value || "";
+
+    // UI Loading state
+    wadahLaporanDiv.innerHTML =
+      '<p class="text-center py-5"><span class="spinner-border spinner-border-sm"></span> Memuat data...</p>';
+
+    // Fetch data with pagination
+    let url = `../../CRUD/Laporan/get_laporan_data.php?jenisLaporan=${type}&page=${page}`;
+
+    // Tambahkan parameter filter sesuai jenis laporan
+    if (type === "dataBarang") {
+      if (lokasiBarang)
+        url += `&lokasiBarang=${encodeURIComponent(lokasiBarang)}`;
+    } else if (type === "dataRuangan") {
+      if (kondisiRuangan)
+        url += `&kondisiRuangan=${encodeURIComponent(kondisiRuangan)}`;
+    } else {
+      // Untuk laporan yang memerlukan tahun/bulan
+      if (thn) url += `&tahun=${thn}`;
+      if (bln && bln !== "") url += `&bulan=${bln}`;
+    }
+
+    fetch(url)
+      .then((res) => {
+        if (!res.ok)
+          throw new Error(res.statusText || "Gagal terhubung ke server");
+        return res.json();
+      })
+      .then((res) => {
+        if (res.status === "success") {
+          const fullData = res.data || [];
+          if (fullData.length > 0) {
+            updateLaporanSummary(fullData, type);
+            renderLaporanTable(fullData, type, res.pagination);
+          }
+        } else {
+          throw new Error(res.message || "Gagal memuat data dari server.");
+        }
+      })
+      .catch((err) => {
+        wadahLaporanDiv.innerHTML = `<p class="text-danger text-center"><strong>Kesalahan:</strong> ${err.message}</p>`;
+      });
   }
 }
 
