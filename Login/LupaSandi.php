@@ -8,13 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'] ?? '';
 
     if (empty($email)) {
-        $error_message = 'Kolom tidak boleh kosong.';
+        $error_message = '*Harus diisi';
     } else {
         require_once __DIR__ . '/../function/reset_password_helper.php';
         try {
             [$success, $msg] = resetUserPassword($conn, $email);
             if ($success) {
-                $_SESSION['flash_success'] = $msg ?: 'Reset password berhasil dikirim. Silakan cek email Anda.';
+                $_SESSION['flash_success'] = $msg ?: 'Kata sandi baru berhasil dikirim ke email Anda';
                 header('Location: LupaSandi.php');
                 exit;
             } else {
@@ -60,29 +60,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-right">
         <div class="login-form-container">
             <h2 class="login-form-title">Lupa Kata Sandi</h2>
-            <h3 class="text-center mb-4" style="color: #fff;">Silahkan Masukkan Email</h3>
 
             <?php
             $success_message = $_SESSION['flash_success'] ?? '';
             unset($_SESSION['flash_success']);
             ?>
-            <?php if ($success_message): ?>
-                <div class="alert alert-success" role="alert">
-                    <?= htmlspecialchars($success_message); ?>
-                </div>
-            <?php endif; ?>
-            <?php if (!empty($error_message)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?= htmlspecialchars($error_message); ?>
-                </div>
-            <?php endif; ?>
 
             <form method="POST">
-                <div class="input-group flex-column">
-                    <span id="emailError" class="text-danger ms-2" style="display:none;font-size:0.9rem;"></span>
+                <div class="input-group flex-column mb-3">
+                    <label for="email" class="form-label fw-semibold d-flex align-items-center">
+                        Email
+                        <?php if (!empty($error_message)): ?>
+                            <span id="emailError" class="text-danger ms-2" style="font-size:0.9rem;">
+                                <?= htmlspecialchars($error_message) ?>
+                            </span>
+                        <?php endif; ?>
+                    </label>
                     <div class="d-flex w-100">
                         <span class="input-group-text"><img src="../icon/mail.svg" alt="Email"></span>
-                        <input type="text" id="email" name="email" class="form-control" placeholder="Masukkan Email">
+                        <input type="text" id="email" name="email" class="form-control" placeholder="Masukkan Email yang Terdaftar">
                     </div>
                 </div>
 
@@ -94,6 +90,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
+
+<?php if (!empty($success_message)): ?>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">Berhasil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body text-center">
+        <?= htmlspecialchars($success_message) ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+  });
+</script>
+<?php endif; ?>
 
 <?php
 

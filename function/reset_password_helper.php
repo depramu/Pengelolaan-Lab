@@ -66,7 +66,7 @@ function resetUserPassword($conn, string $email): array
     }
 
     if ($table === null) {
-        return [false, 'Email tidak ditemukan.'];
+        return [false, '*Email tidak ditemukan'];
     }
 
     $newPass = generateSecurePassword();
@@ -152,7 +152,7 @@ function resetUserPassword($conn, string $email): array
             $mail->send();
             error_log("Password reset successful for email: $email");
             error_log("Password reset completed successfully");
-            return [true, 'Kata sandi baru telah dikirim ke email Anda.'];
+            return [true, 'Kata sandi baru berhasil dikirim ke email Anda'];
         } catch (Exception $e) {
             error_log('Gagal mengirim email: ' . $mail->ErrorInfo);
             return [false, 'Kata sandi berhasil dibuat, namun email gagal dikirim.'];

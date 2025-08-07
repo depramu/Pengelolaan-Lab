@@ -59,6 +59,8 @@
                                 echo BASE_URL . '/Menu/Menu PIC/Peminjaman Ruangan/peminjamanRuangan.php';
                             } else if ($currentFile == 'ubahKataSandi.php') {
                                 echo BASE_URL . '/templates/ubahKataSandi.php';
+                            } else if ($currentFile == 'LupaSandi.php') {
+                                echo BASE_URL . '/Login/login.php';
                             }
                             ?>"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
             </div>
@@ -110,6 +112,8 @@
                         echo 'Peminjaman ruangan telah ditolak.';
                     } else if ($currentFile == 'ubahKataSandi.php') {
                         echo 'Kata Sandi profil berhasil diperbarui.';
+                    } else if ($currentFile == 'LupaSandi.php') {
+                        echo 'Kata sandi baru berhasil dikirim ke email Anda.';
                     }
                     ?>
                 </p>
@@ -165,6 +169,10 @@
                                 case 'ubahKataSandi.php':
                                     echo BASE_URL . '/templates/profil.php';
                                     break;
+                                case 'LupaSandi.php':
+                                    echo BASE_URL . '/Login/login.php';
+                                    break;
+                                    
                                 default:
                                     echo BASE_URL . '/';
                                     break;
