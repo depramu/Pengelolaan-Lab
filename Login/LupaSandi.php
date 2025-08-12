@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../function/init.php';
 
-session_start();
 $error_message = '';
 $showModal = false; // Tambahkan variabel untuk mengontrol modal
 
