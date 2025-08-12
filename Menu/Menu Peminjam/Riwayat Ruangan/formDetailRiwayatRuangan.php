@@ -153,7 +153,7 @@ include __DIR__ . '/../../../templates/sidebar.php';
                                     <hr>
                                     <h6 class="mb-3">DETAIL PENOLAKAN</h6>
                                     <label class="form-label fw-semibold">Alasan Penolakan dari PIC</label>
-                                    <textarea class="form-control bg-light" rows="3" readonly><?= htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik.') ?></textarea>
+                                    <div class="form-control-plaintext text-danger"><?= nl2br(htmlspecialchars($data['alasanPenolakan'] ?? 'Tidak ada alasan spesifik')) ?></div>
                                     <div class="mt-3">
                                         <a href="<?= BASE_URL ?>/Menu/Menu Peminjam/Riwayat Ruangan/riwayatRuangan.php" class="btn btn-secondary">Kembali</a>
                                     </div>
