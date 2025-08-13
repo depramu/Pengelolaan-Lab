@@ -376,6 +376,8 @@ function setupLoginForm() {
 // #3: HALAMAN LAPORAN
 // =================================================================
 
+// main.js
+
 function setupLaporanPage() {
   const btnTampilkan = document.getElementById("tampilkanLaporanBtn");
   if (!btnTampilkan) return;
@@ -389,8 +391,8 @@ function setupLaporanPage() {
       ? new bootstrap.Modal(validationModalEl)
       : null;
     const validationMsg = document.getElementById("validationMessage");
-    const bottomControlsContainer = document.getElementById(
-      "bottomControlsContainer"
+    const bottomControlsWrapper = document.getElementById(
+    "bottomControlsWrapper"
     );
     const laporanSummaryText = document.getElementById("laporanSummaryText");
 
@@ -402,18 +404,48 @@ function setupLaporanPage() {
     const kondisiRuangan =
       document.getElementById("kondisiRuanganFilter")?.value || "";
 
-    // Validasi filter
-    if (!type || (type !== "dataBarang" && type !== "dataRuangan" && !thn)) {
-      validationMsg.textContent = "Silakan pilih jenis laporan dan tahun.";
+    // =================================================================
+    // AWAL BLOK VALIDASI BARU
+    // =================================================================
+    const reportsNeedingYear = [
+      "peminjamSeringMeminjam",
+      "barangSeringDipinjam",
+      "ruanganSeringDipinjam",
+    ];
+
+    // Skenario 3: Jenis laporan belum dipilih.
+    if (!type) {
+      validationMsg.textContent = "Silakan pilih jenis laporan.";
       if (validationModal) validationModal.show();
       return;
     }
+
+    // Validasi untuk laporan yang memerlukan filter tahun/bulan
+    if (reportsNeedingYear.includes(type)) {
+      // Jika tahun kosong, ini adalah error utama.
+      if (!thn) {
+        // Skenario 1: Tahun dan Bulan sama-sama kosong.
+        if (!bln) {
+          validationMsg.textContent = "Silakan pilih bulan dan tahun.";
+        }
+        // Skenario 2: Bulan diisi, tetapi Tahun kosong.
+        else {
+          validationMsg.textContent = "Silakan pilih tahun.";
+        }
+        if (validationModal) validationModal.show();
+        return;
+      }
+    }
+    // =================================================================
+    // AKHIR BLOK VALIDASI BARU
+    // =================================================================
+
 
     // UI Loading state
     wadahLaporanDiv.innerHTML =
       '<p class="text-center py-5"><span class="spinner-border spinner-border-sm"></span> Memuat data...</p>';
     areaKontenDiv.style.display = "block";
-    bottomControlsContainer.style.display = "none";
+    bottomControlsWrapper.style.display = "none";
     laporanSummaryText.innerHTML = "";
 
     // Fetch data with pagination
@@ -443,7 +475,7 @@ function setupLaporanPage() {
           const fullData = res.data || [];
           if (fullData.length > 0) {
             areaKontenDiv.style.display = "block";
-            bottomControlsContainer.style.display = "flex";
+            bottomControlsWrapper.style.display = "block";
             updateLaporanSummary(fullData, type);
             renderLaporanTable(fullData, type, res.pagination);
           } else {
@@ -459,7 +491,7 @@ function setupLaporanPage() {
       .catch((err) => {
         wadahLaporanDiv.innerHTML = `<p class="text-danger text-center"><strong>Kesalahan:</strong> ${err.message}</p>`;
         areaKontenDiv.style.display = "block";
-        bottomControlsContainer.style.display = "none";
+        bottomControlsWrapper.style.display = "none";
       });
   });
 

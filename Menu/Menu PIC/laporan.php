@@ -128,26 +128,42 @@ include '../../templates/sidebar.php';
     ?>
   </div>
 
-  <div id="bottomControlsContainer" class="d-flex justify-content-between align-items-end mt-0">
-    <div id="leftControls">
-      <div id="laporanSummaryText" class="mb-0" style="font-weight: 500;">
-        <!-- Keterangan summary akan muncul di sini -->
+<!-- Wrapper baru untuk mengontrol semua elemen di bawah tabel -->
+<div id="bottomControlsWrapper" style="display: none;">
+
+  <!-- Container Flexbox utama: Summary di kiri, Kontrol di kanan -->
+  <div class="d-flex justify-content-between align-items-end mt-3">
+
+    <!-- Sisi Kiri: Teks Summary -->
+    <div id="laporanSummaryText" style="font-weight: 500;">
+      <!-- Keterangan summary akan muncul di sini -->
+    </div>
+
+    <!-- Sisi Kanan: Wrapper untuk Pagination dan Tombol Export -->
+    <div>
+      <!-- Baris 1 (Kanan): Pagination -->
+      <div class="d-flex justify-content-end">
+        <nav aria-label="Page navigation">
+          <ul class="pagination mb-0" id="paginationUl">
+            <!-- Tombol paginasi akan dirender oleh JavaScript di sini -->
+          </ul>
+        </nav>
       </div>
-      <nav aria-label="Page navigation" id="paginationControlsContainer">
-        <ul class="pagination mb-0" id="paginationUl">
-          <!-- Tombol paginasi akan muncul di sini (client-side JS) -->
-        </ul>
-      </nav>
+
+      <!-- Baris 2 (Kanan): Tombol-tombol Export -->
+      <div id="rightControls" class="d-flex justify-content-end mt-4">
+        <button class="btn btn-success me-2" id="exportExcelBtn" style="display:none;">
+          <i class="bi bi-file-earmark-excel me-1"></i> Export ke Excel
+        </button>
+        <button class="btn btn-danger" id="exportPdfBtn" style="display:none;">
+          <i class="bi bi-file-earmark-pdf me-1"></i> Export ke PDF
+        </button>
+      </div>
     </div>
-    <div id="rightControls" class="d-flex">
-      <button class="btn btn-success me-2" id="exportExcelBtn" style="display:none;">
-        <i class="bi bi-file-earmark-excel me-1"></i> Export ke Excel
-      </button>
-      <button class="btn btn-danger" id="exportPdfBtn" style="display:none;">
-        <i class="bi bi-file-earmark-pdf me-1"></i> Export ke PDF
-      </button>
-    </div>
+
   </div>
+
+</div>
 </main>
 <!-- Akhir Area Konten Utama -->
 

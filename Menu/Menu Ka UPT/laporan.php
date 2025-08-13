@@ -1,8 +1,39 @@
 <?php
-
 require_once __DIR__ . '/../../function/init.php';
-// Penyesuaian: Mengamankan halaman untuk role 'Kepala UPT'
+// Mengamankan halaman untuk role 'Kepala UPT'
 authorize_role('KA UPT'); 
+
+// =========================================================================
+// AWAL BAGIAN YANG DITAMBAHKAN (Dari Halaman PIC)
+// =========================================================================
+
+// Ambil daftar lokasi unik untuk filter Data Barang
+$lokasiList = [];
+$lokasiQuery = "SELECT DISTINCT lokasiBarang FROM Barang WHERE isDeleted = 0 ORDER BY lokasiBarang ASC";
+$lokasiResult = sqlsrv_query($conn, $lokasiQuery);
+if ($lokasiResult !== false) {
+  while ($rowLokasi = sqlsrv_fetch_array($lokasiResult, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($rowLokasi['lokasiBarang'])) {
+      $lokasiList[] = $rowLokasi['lokasiBarang'];
+    }
+  }
+}
+
+// Ambil daftar kondisi unik untuk filter Data Ruangan
+$kondisiList = [];
+$kondisiQuery = "SELECT DISTINCT kondisiRuangan FROM Ruangan ORDER BY kondisiRuangan ASC";
+$kondisiResult = sqlsrv_query($conn, $kondisiQuery);
+if ($kondisiResult !== false) {
+  while ($rowKondisi = sqlsrv_fetch_array($kondisiResult, SQLSRV_FETCH_ASSOC)) {
+    if (!empty($rowKondisi['kondisiRuangan'])) {
+      $kondisiList[] = $rowKondisi['kondisiRuangan'];
+    }
+  }
+}
+
+// =========================================================================
+// AKHIR BAGIAN YANG DITAMBAHKAN
+// =========================================================================
 
 include '../../templates/header.php';
 include '../../templates/sidebar.php';
@@ -17,14 +48,13 @@ include '../../templates/sidebar.php';
   <div class="mb-3">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <!-- Penyesuaian: Link mengarah ke dashboard Ka UPT -->
         <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/Menu Ka UPT/dashboardKaUPT.php">Sistem Pengelolaan Lab</a></li>
         <li class="breadcrumb-item active" aria-current="page">Laporan</li>
       </ol>
     </nav>
   </div>
 
-  <!-- Card untuk Filter Laporan (Struktur dari PIC) -->
+  <!-- Card untuk Filter Laporan -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h5 class="card-title mb-3">Filter Laporan</h5>
@@ -40,12 +70,41 @@ include '../../templates/sidebar.php';
             <option value="ruanganSeringDipinjam">Ruangan yang Sering Dipinjam</option>
           </select>
         </div>
+        
+        <!-- ========================================================================= -->
+        <!-- AWAL BAGIAN YANG DITAMBAHKAN (Dari Halaman PIC) -->
+        <!-- ========================================================================= -->
+
+        <!-- Filter Lokasi Barang (khusus Data Barang) -->
+        <div class="col-md-3" id="colLokasiBarang" style="display:none;">
+          <label for="lokasiBarangFilter" class="form-label">Lokasi Barang</label>
+          <select class="form-select" id="lokasiBarangFilter">
+            <option selected value="">Semua Lokasi</option>
+            <?php foreach ($lokasiList as $lokasi): ?>
+              <option value="<?= htmlspecialchars($lokasi) ?>"><?= htmlspecialchars($lokasi) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <!-- Filter Kondisi Ruangan (khusus Data Ruangan) -->
+        <div class="col-md-3" id="colKondisiRuangan" style="display:none;">
+          <label for="kondisiRuanganFilter" class="form-label">Kondisi Ruangan</label>
+          <select class="form-select" id="kondisiRuanganFilter">
+            <option selected value="">Semua Kondisi</option>
+            <?php foreach ($kondisiList as $kondisi): ?>
+              <option value="<?= htmlspecialchars($kondisi) ?>"><?= htmlspecialchars($kondisi) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        
+        <!-- ========================================================================= -->
+        <!-- AKHIR BAGIAN YANG DITAMBAHKAN -->
+        <!-- ========================================================================= -->
+
         <div class="col-md-3" id="colBulan">
           <label for="bulanLaporan" class="form-label">Bulan</label>
           <select class="form-select" id="bulanLaporan">
             <option selected hidden value="">Pilih Bulan...</option>
             <?php
-            // Penyesuaian: Opsi bulan dibuat dinamis menggunakan PHP
             $bulan = ['01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April', '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus', '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'];
             foreach ($bulan as $num => $nama) echo "<option value=\"{$num}\">{$nama}</option>";
             ?>
@@ -56,7 +115,6 @@ include '../../templates/sidebar.php';
           <select class="form-select" id="tahunLaporan">
             <option selected hidden value="">Pilih Tahun...</option>
             <?php
-            // Penyesuaian: Opsi tahun dibuat dinamis menggunakan PHP untuk 5 tahun terakhir
             $currentYear = date('Y');
             for ($i = 0; $i < 5; $i++) echo "<option value=\"" . ($currentYear - $i) . "\">" . ($currentYear - $i) . "</option>";
             ?>
@@ -79,28 +137,40 @@ include '../../templates/sidebar.php';
     </div>
   </div>
 
-  <!-- Kontrol Bawah Halaman (Paginasi, Summary, dan Export) (Struktur dari PIC) -->
-  <div id="bottomControlsContainer" class="d-flex justify-content-between align-items-end mt-0">
-    <div id="leftControls">
-      <div id="laporanSummaryText" class="mb-0" style="font-weight: 500;">
+  <!-- Wrapper untuk semua kontrol di bawah tabel -->
+  <div id="bottomControlsWrapper" style="display: none;">
+    <!-- Container Flexbox utama: Summary di kiri, Kontrol di kanan -->
+    <div class="d-flex justify-content-between align-items-start mt-3">
+      <!-- Sisi Kiri: Teks Summary -->
+      <div id="laporanSummaryText" class="pt-2" style="font-weight: 500;">
         <!-- Keterangan summary akan muncul di sini -->
       </div>
-      <nav aria-label="Page navigation" id="paginationControlsContainer">
-        <ul class="pagination mb-0" id="paginationUl">
-          <!-- Tombol paginasi akan muncul di sini -->
-        </ul>
-      </nav>
-    </div>
-    <div id="rightControls">
-      <button class="btn btn-success" id="exportExcelBtn" style="display:none;">
-        <i class="bi bi-file-earmark-excel me-0"></i> Export ke Excel
-      </button>
+      <!-- Sisi Kanan: Wrapper untuk Pagination dan Tombol Export -->
+      <div>
+        <!-- Baris 1 (Kanan): Pagination -->
+        <div class="d-flex justify-content-end">
+          <nav aria-label="Page navigation">
+            <ul class="pagination mb-0" id="paginationUl">
+              <!-- Tombol paginasi akan dirender oleh JavaScript di sini -->
+            </ul>
+          </nav>
+        </div>
+        <!-- Baris 2 (Kanan): Tombol-tombol Export -->
+        <div id="rightControls" class="d-flex justify-content-end mt-4">
+          <button class="btn btn-success me-2" id="exportExcelBtn" style="display:none;">
+            <i class="bi bi-file-earmark-excel me-1"></i> Export ke Excel
+          </button>
+          <button class="btn btn-danger" id="exportPdfBtn" style="display:none;">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Export ke PDF
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </main>
 <!-- Akhir Area Konten Utama -->
 
-<!-- Modal untuk Peringatan Validasi (Struktur dari PIC) -->
+<!-- Modal untuk Peringatan Validasi -->
 <div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -117,5 +187,58 @@ include '../../templates/sidebar.php';
     </div>
   </div>
 </div>
+
+<!-- ========================================================================= -->
+<!-- AWAL BAGIAN YANG DITAMBAHKAN (Dari Halaman PIC) -->
+<!-- ========================================================================= -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const jenisLaporan = document.getElementById('jenisLaporan');
+    const colLokasiBarang = document.getElementById('colLokasiBarang');
+    const colKondisiRuangan = document.getElementById('colKondisiRuangan');
+    const colBulan = document.getElementById('colBulan');
+    const colTahun = document.getElementById('colTahun');
+    const colJenis = document.getElementById('colJenis');
+
+    function updateFilterVisibility() {
+      const value = jenisLaporan.value;
+      // Sembunyikan semua filter khusus dulu
+      colLokasiBarang.style.display = 'none';
+      colKondisiRuangan.style.display = 'none';
+
+      // Tampilkan filter sesuai jenis laporan
+      if (value === 'dataBarang') {
+        colLokasiBarang.style.display = '';
+        colBulan.style.display = 'none';
+        colTahun.style.display = 'none';
+        colJenis.className = 'col-md-6';
+      } else if (value === 'dataRuangan') {
+        colKondisiRuangan.style.display = '';
+        colBulan.style.display = 'none';
+        colTahun.style.display = 'none';
+        colJenis.className = 'col-md-6';
+      } else if (value === 'peminjamSeringMeminjam' || value === 'barangSeringDipinjam' || value === 'ruanganSeringDipinjam') {
+        colBulan.style.display = '';
+        colTahun.style.display = '';
+        colJenis.className = 'col-md-4';
+      } else {
+        // Reset ke default
+        colBulan.style.display = '';
+        colTahun.style.display = '';
+        colJenis.className = 'col-md-4';
+      }
+    }
+
+    jenisLaporan.addEventListener('change', updateFilterVisibility);
+
+    // Inisialisasi tampilan filter saat load
+    updateFilterVisibility();
+  });
+</script>
+
+<!-- ========================================================================= -->
+<!-- AKHIR BAGIAN YANG DITAMBAHKAN -->
+<!-- ========================================================================= -->
 
 <?php include '../../templates/footer.php'; ?>
